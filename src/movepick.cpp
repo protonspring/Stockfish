@@ -177,7 +177,9 @@ Move MovePicker::next_move(bool skipQuiets) {
       while (cur < endMoves)
       {
           move = pick_best(cur++, endMoves);
-          if (move != ttMove)
+          if ((move != ttMove)
+              &&  (move != killers[0])
+              &&  (move != killers[1]))
           {
               if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
                   return move;
