@@ -161,22 +161,22 @@ Move MovePicker::next_move(bool skipQuiets) {
   case GOOD_CAPTURES:
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
-         if (pMove->value <= INT_MIN+1) break;  //no more good captures
+         if (pMove->value <= MOVE_SCORE_BAD_CAPTURE) break;
          else if (pMove->move != ttMove)
          {
             if (pos.see_ge(pMove->move, Value(-55 * pMove->value / 1024)))
             {
-               pMove->value = INT_MIN;
+               pMove->value = MOVE_SCORE_SKIP;
                return pMove->move;
             }
-            else pMove->value = INT_MIN+1; //flag for bad captures
+            else pMove->value = MOVE_SCORE_BAD_CAPTURE;
          }
-         else pMove->value = INT_MIN;
+         else pMove->value = MOVE_SCORE_SKIP;
       }
 
       //move bad captures to beginning of moves
       for (ExtMove* idx = moves; idx < endMoves; ++idx)
-         if (idx->value == INT_MIN+1)
+         if (idx->value == MOVE_SCORE_BAD_CAPTURE)
             *endBadCaptures++ = *idx;
 
       ++stage;
@@ -219,13 +219,13 @@ Move MovePicker::next_move(bool skipQuiets) {
       while (    cur < endMoves
              && (!skipQuiets || cur->value >= VALUE_ZERO))
       {
-          Move move = *cur++;
+          pMove = cur++;
 
-          if (   move != ttMove
-              && move != killers[0]
-              && move != killers[1]
-              && move != countermove)
-              return move;
+          if (   pMove->move != ttMove
+              && pMove->move != killers[0]
+              && pMove->move != killers[1]
+              && pMove->move != countermove)
+              return pMove->move;
       }
       ++stage;
       cur = moves; // Point to beginning of bad captures
@@ -246,8 +246,8 @@ Move MovePicker::next_move(bool skipQuiets) {
   case ALL_EVASIONS:
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
-          if (pMove->value == INT_MIN) break;
-          pMove->value = INT_MIN;
+          if (pMove->value == MOVE_SCORE_SKIP) break;
+          pMove->value = MOVE_SCORE_SKIP;
           if (pMove->move != ttMove)
               return pMove->move;
       }
@@ -263,13 +263,11 @@ Move MovePicker::next_move(bool skipQuiets) {
   case PROBCUT_CAPTURES:
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
-          if (pMove->value == INT_MIN) break;
-          pMove->value = INT_MIN;
+          if (pMove->value == MOVE_SCORE_SKIP) break;
+          pMove->value = MOVE_SCORE_SKIP;
           if (   pMove->move != ttMove
               && pos.see_ge(pMove->move, threshold))
-              {
                  return pMove->move;
-              }
       }
       break;
 
@@ -283,9 +281,9 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QCAPTURES:
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
-          if (pMove->value == INT_MIN) 
+          if (pMove->value == MOVE_SCORE_SKIP) 
               break;
-          pMove->value = INT_MIN;
+          pMove->value = MOVE_SCORE_SKIP;
           if (pMove->move != ttMove)
               return pMove->move;
       }
@@ -299,9 +297,9 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QCHECKS:
       while (cur < endMoves)
       {
-          Move move = cur++->move;
-          if (move != ttMove)
-              return move;
+          pMove = cur++;
+          if (pMove->move != ttMove)
+              return pMove->move;
       }
       break;
 
@@ -315,9 +313,9 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QRECAPTURES:
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
-          if (pMove->value == INT_MIN)
+          if (pMove->value == MOVE_SCORE_SKIP)
               break;
-          pMove->value = INT_MIN;
+          pMove->value = MOVE_SCORE_SKIP;
           if (to_sq(pMove->move) == recaptureSquare)
               return pMove->move;
       }

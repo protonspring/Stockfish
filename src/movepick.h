@@ -121,6 +121,9 @@ typedef StatBoards<PIECE_NB, SQUARE_NB, PieceToHistory> ContinuationHistory;
 /// beta algorithm, MovePicker attempts to return the moves which are most likely
 /// to get a cut-off first.
 
+const int MOVE_SCORE_SKIP = INT_MIN;
+const int MOVE_SCORE_BAD_CAPTURE = INT_MIN+1;
+
 class MovePicker {
 public:
   MovePicker(const MovePicker&) = delete;
