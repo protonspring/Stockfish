@@ -162,7 +162,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       while ((pMove = std::max_element(cur, endMoves)) != endMoves)
       {
          if (pMove->value <= INT_MIN+1) break;  //no more good captures
-         if (pMove->move != ttMove)
+         else if (pMove->move != ttMove)
          {
             if (pos.see_ge(pMove->move, Value(-55 * pMove->value / 1024)))
             {
@@ -171,7 +171,7 @@ Move MovePicker::next_move(bool skipQuiets) {
             }
             else pMove->value = INT_MIN+1; //flag for bad captures
          }
-         pMove->value = INT_MIN;
+         else pMove->value = INT_MIN;
       }
 
       //move bad captures to beginning of moves
@@ -268,7 +268,6 @@ Move MovePicker::next_move(bool skipQuiets) {
           if (   pMove->move != ttMove
               && pos.see_ge(pMove->move, threshold))
               {
-                 pMove->value = INT_MIN;
                  return pMove->move;
               }
       }
