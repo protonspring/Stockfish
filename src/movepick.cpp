@@ -62,10 +62,8 @@ namespace {
 
     ExtMove* pMove = std::max_element(begin, end);
     if (pMove == end) return MOVE_NONE;
-    Move move = pMove->move;
-    pMove->move = MOVE_NONE;
-    pMove->value = -1000000;
-    return move;
+    pMove->value = -100000;
+    return *pMove;
   }
 
 } // namespace
