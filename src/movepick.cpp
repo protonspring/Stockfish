@@ -306,7 +306,6 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QSEARCH_RECAPTURES:
       cur = moves;
       endMoves = generate<CAPTURES>(pos, cur);
-      score<CAPTURES>();
       ++stage;
       /* fallthrough */
 
