@@ -310,11 +310,9 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QRECAPTURES:
-      while ((pMove = std::max_element(cur, endMoves)) != endMoves)
+      while (cur < endMoves)
       {
-          if (pMove->value == MOVE_SCORE_SKIP)
-              break;
-          pMove->value = MOVE_SCORE_SKIP;
+          pMove = cur++;
           if (to_sq(pMove->move) == recaptureSquare)
               return pMove->move;
       }
