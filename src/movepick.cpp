@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "movepick.h"
 
@@ -46,6 +47,7 @@ namespace {
         }
   }
 
+/*
   // pick_best() finds the best move in the range (begin, end) and moves it to
   // the front. It's faster than sorting all the moves in advance when there
   // are few moves, e.g., the possible captures.
@@ -53,6 +55,17 @@ namespace {
 
     std::swap(*begin, *std::max_element(begin, end));
     return *begin;
+  }
+*/
+
+  Move pick_best2(ExtMove* begin, ExtMove* end) {
+
+    ExtMove* pMove = std::max_element(begin, end);
+    if (pMove == end) return MOVE_NONE;
+    Move move = pMove->move;
+    pMove->move = MOVE_NONE;
+    pMove->value = -1000000;
+    return move;
   }
 
 } // namespace
@@ -108,6 +121,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
   assert(!pos.checkers());
 
   stage = PROBCUT;
+
   ttMove =   ttm
           && pos.pseudo_legal(ttm)
           && pos.capture(ttm)
@@ -168,9 +182,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case GOOD_CAPTURES:
-      while (cur < endMoves)
+      //while (cur < endMoves)
+      while ((move = pick_best2(cur, endMoves)) != MOVE_NONE)
       {
-          move = pick_best(cur++, endMoves);
+          //move = pick_best(cur++, endMoves);
           if (move != ttMove)
           {
               if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
@@ -249,9 +264,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case ALL_EVASIONS:
-      while (cur < endMoves)
+      //while (cur < endMoves)
+      while ((move = pick_best2(cur, endMoves)) != MOVE_NONE)
       {
-          move = pick_best(cur++, endMoves);
+          //move = pick_best(cur++, endMoves);
           if (move != ttMove)
               return move;
       }
@@ -265,9 +281,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case PROBCUT_CAPTURES:
-      while (cur < endMoves)
+      //while (cur < endMoves)
+      while ((move = pick_best2(cur, endMoves)) != MOVE_NONE)
       {
-          move = pick_best(cur++, endMoves);
+          //move = pick_best(cur++, endMoves);
           if (   move != ttMove
               && pos.see_ge(move, threshold))
               return move;
@@ -282,9 +299,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCAPTURES:
-      while (cur < endMoves)
+      //while (cur < endMoves)
+      while ((move = pick_best2(cur, endMoves)) != MOVE_NONE)
       {
-          move = pick_best(cur++, endMoves);
+          //move = pick_best(cur++, endMoves);
           if (move != ttMove)
               return move;
       }
@@ -312,9 +330,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QRECAPTURES:
-      while (cur < endMoves)
+      //while (cur < endMoves)
+      while ((move = pick_best2(cur, endMoves)) != MOVE_NONE)
       {
-          move = pick_best(cur++, endMoves);
+          //move = pick_best(cur++, endMoves);
           if (to_sq(move) == recaptureSquare)
               return move;
       }
