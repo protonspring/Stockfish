@@ -19,7 +19,6 @@
 */
 
 #include <cassert>
-#include <iostream>
 
 #include "movepick.h"
 
@@ -35,68 +34,50 @@ namespace {
 
   // partial_insertion_sort() sorts moves in descending order up to and including
   // a given limit. The order of moves smaller than the limit is left unspecified.
-  ExtMove* partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
+  void insertion_sort(ExtMove* begin, ExtMove* end) {
 
-    ExtMove* sortedEnd = begin;
     for (ExtMove *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
         {
             ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
+            for (q = p; q != begin && *(q - 1) < tmp; --q)
                 *q = *(q - 1);
             *q = tmp;
         }
-    return sortedEnd;
   }
 
-  // merge sort using space at end of moves array
-  ExtMove* partial_merge_sort(ExtMove* begin, ExtMove* end, int limit)
+  // merge sort moves over limit
+  void partial_merge_sort(ExtMove* begin, ExtMove* end, int limit)
   {
-     //std::cout << std::endl << "Original: " << std::endl;
-     //for (ExtMove *p = begin; p < end; ++p)
-        //std::cout << p->value << ",";
-     //std::cout << std::endl << "done." << std::endl;
-
-     //copy array to extra space
-     ExtMove *pArray = begin + (end-begin);
-     ExtMove* pEnd = pArray;
-     for (ExtMove* p = begin; p < end; ++p)
-        if (p->value > limit) *pEnd++ = *p;
-
-     //std::cout << std::endl << "copied backup: " << std::endl;
-     //for (ExtMove *p = pArray; p < pEnd; ++p)
-        //std::cout << p->value << ",";
-     //std::cout << std::endl << "done." << std::endl;
-
-     //sort two halves
-     ExtMove* pHalfWay = pArray + (pEnd-pArray)/2;
-     partial_insertion_sort(pArray,pHalfWay,limit);
-     partial_insertion_sort(pHalfWay,pEnd,limit);
-
-     //std::cout << std::endl << "sorted backup: " << std::endl;
-     //for (ExtMove *p = pArray; p < pEnd; ++p)
-        //std::cout << p->value << ",";
-     //std::cout << std::endl << "done." << std::endl;
-
-     //merge them back
-     ExtMove *p1 = pArray, *p2 = pHalfWay;
-     ExtMove *pFront = begin;
-     int iMoves = pEnd - pArray;
-     while (pFront < begin + iMoves)
-     {
-        if (p1 >= pHalfWay) *pFront++ = *p2++;
-        else if (p2 >= pEnd) *pFront++ = *p1++;
-        else if (p1->value > p2->value) *pFront++ = *p1++;
-        else *pFront++ = *p2++;
+     //divide moves over/under limit
+     ExtMove* pF = begin;
+     ExtMove* pE = end-1;
+     while (pF < pE) {
+        if (pE->value < limit) { pE--; continue; }
+        if (pF->value >= limit) { pF++; continue; }
+        std::swap(*pF++,*pE--);
      }
 
-     //std::cout << std::endl << "Sorted: " << std::endl;
-     //for (ExtMove *p = begin; p < pFront; ++p)
-        //std::cout << p->value << ",";
-     //std::cout << std::endl << "done." << std::endl;
+     //copy array to extra space
+     ExtMove *pA = begin + (end-begin);
+     pE = pA;
+     for (ExtMove* p = begin; p <= pF; ++p)
+        if (p->value > limit) *pE++ = *p;
 
-     return pFront;
+     //sort two halves
+     ExtMove* pH = pA + (pE - pA)/2;
+     insertion_sort( pA, pH);
+     insertion_sort( pH, pE);
+
+     //merge them back
+     ExtMove *p1 = pA, *p2 = pH;
+     pF= begin;
+     int iMoves = pE - pA;
+     while (pF< begin + iMoves) {
+        if (p1 >= pH) *pF++ = *p2++;
+        else if (p2 >= pE) *pF++ = *p1++;
+        else if (p1->value > p2->value) *pF++ = *p1++;
+        else *pF++ = *p2++;
+     }
   }
 
   // pick_best() finds the best move in the range (begin, end) and moves it to
@@ -269,8 +250,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       cur = endBadCaptures;
       endMoves = generate<QUIETS>(pos, cur);
       score<QUIETS>();
-      endMoves = partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
-      //endMoves = partial_merge_sort(cur,endMoves,-4000 * depth / ONE_PLY);
+      partial_merge_sort(cur,endMoves,-4000 * depth / ONE_PLY);
       ++stage;
       /* fallthrough */
 
