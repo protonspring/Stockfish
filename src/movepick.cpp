@@ -61,7 +61,7 @@ namespace {
      ExtMove *pA = begin + (end-begin);
      pE = pA;
      for (ExtMove* p = begin; p <= pF; ++p)
-        if (p->value > limit) *pE++ = *p;
+        if (p->value >= limit) *pE++ = *p;
 
      //sort two halves
      ExtMove* pH = pA + (pE - pA)/2;
@@ -70,7 +70,7 @@ namespace {
 
      //merge them back
      ExtMove *p1 = pA, *p2 = pH;
-     pF= begin;
+     pF = begin;
      int iMoves = pE - pA;
      while (pF< begin + iMoves) {
         if (p1 >= pH) *pF++ = *p2++;
