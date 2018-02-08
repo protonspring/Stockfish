@@ -82,6 +82,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   {
       stage = QSEARCH_RECAPTURES;
       recaptureSquare = s;
+      ttMove = MOVE_NONE;
       return;
   }
 
@@ -173,13 +174,10 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case GOOD_CAPTURES:
       while ((move = get_next(true)) != MOVE_NONE)
-      {
          if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
              return move;
-
-         // Losing capture, move it to the beginning of the array
-         *endBadCaptures++ = move;
-      }
+         else 
+             *endBadCaptures++ = move; //back to beginning of array
       ++stage;
       move = killers[0];  // First killer move
       if (    move != MOVE_NONE
@@ -223,13 +221,11 @@ Move MovePicker::next_move(bool skipQuiets) {
       if (!skipQuiets)
       {
          while ((move = get_next()) != MOVE_NONE)
-         {
             if (   move != ttMove
                 && move != killers[0]
                 && move != killers[1]
                 && move != countermove)
                 return move;
-         }
       }
       ++stage;
       cur = moves; // Point to beginning of bad captures
@@ -261,10 +257,8 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case PROBCUT_CAPTURES:
       while ((move = get_next(true)) != MOVE_NONE)
-      {
          if (pos.see_ge(move, threshold))
             return move;
-      }
       break;
 
   case QCAPTURES_INIT:
@@ -276,9 +270,7 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QCAPTURES:
       while ((move = get_next(true)) != MOVE_NONE)
-      {
          return move;
-      }
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
       cur = moves;
@@ -298,10 +290,8 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QRECAPTURES:
       while ((move = get_next()) != MOVE_NONE)
-      {
          if (to_sq(move) == recaptureSquare)
             return move;
-      }
       break;
 
   default:
