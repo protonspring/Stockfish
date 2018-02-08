@@ -25,10 +25,11 @@
 namespace {
 
   enum Stages {
-    MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, KILLERS, COUNTERMOVE, QUIET_INIT, QUIET, BAD_CAPTURES,
-    EVASION, EVASIONS_INIT, ALL_EVASIONS,
-    PROBCUT, PROBCUT_INIT, PROBCUT_CAPTURES,
-    QSEARCH, QCAPTURES_INIT, QCAPTURES, QCHECKS, QSEARCH_RECAPTURES, QRECAPTURES
+    MAIN_SEARCH_TTM, CAPTURES_INIT, GOOD_CAPTURES, KILLERS, COUNTERMOVE, QUIET_INIT, QUIET, BAD_CAPTURES,
+    EVASION_TTM, EVASIONS_INIT, ALL_EVASIONS,
+    PROBCUT_TTM, PROBCUT_INIT, PROBCUT_CAPTURES,
+    QSEARCH_TTM, QCAPTURES_INIT, QCAPTURES, QCHECKS, 
+    QSEARCH_RECAP_TTM, QSEARCH_RECAP_INIT, QRECAPTURES
   };
 
   // partial_insertion_sort() sorts moves in descending order up to and including
@@ -72,7 +73,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > DEPTH_ZERO);
 
-  stage = pos.checkers() ? EVASION : MAIN_SEARCH;
+  stage = pos.checkers() ? EVASION_TTM : MAIN_SEARCH_TTM;
   ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
 }
@@ -84,15 +85,18 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   assert(d <= DEPTH_ZERO);
 
   if (pos.checkers())
-      stage = EVASION;
+      stage = EVASION_TTM;
 
   else if (d > DEPTH_QS_RECAPTURES)
-      stage = QSEARCH;
+      stage = QSEARCH_TTM;
 
   else
   {
-      stage = QSEARCH_RECAPTURES;
+      stage = QSEARCH_RECAP_TTM;
       recaptureSquare = s;
+      ttMove = ((ttm) && (pos.pseudo_legal(ttm)) 
+                      && (to_sq(ttm) == s)) ? ttm : MOVE_NONE;
+      stage += (ttMove == MOVE_NONE);
       return;
   }
 
@@ -107,7 +111,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 
   assert(!pos.checkers());
 
-  stage = PROBCUT;
+  stage = PROBCUT_TTM;
   ttMove =   ttm
           && pos.pseudo_legal(ttm)
           && pos.capture(ttm)
@@ -156,7 +160,7 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   switch (stage) {
 
-  case MAIN_SEARCH: case EVASION: case QSEARCH: case PROBCUT:
+  case MAIN_SEARCH_TTM: case EVASION_TTM: case QSEARCH_TTM: case QSEARCH_RECAP_TTM:
       ++stage;
       return ttMove;
 
@@ -304,7 +308,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       }
       break;
 
-  case QSEARCH_RECAPTURES:
+  case QSEARCH_RECAP_INIT:
       cur = moves;
       endMoves = generate<CAPTURES>(pos, cur);
       ++stage;
@@ -314,7 +318,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       while (cur < endMoves)
       {
           move = *cur++;
-          if (to_sq(move) == recaptureSquare)
+          if ((to_sq(move) == recaptureSquare) && (move != ttMove))
               return move;
       }
       break;
