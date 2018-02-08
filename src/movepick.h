@@ -131,6 +131,7 @@ public:
   Move next_move(bool skipQuiets = false);
 
 private:
+  inline Move get_next(bool getBest = false);
   template<GenType> void score();
   ExtMove* begin() { return cur; }
   ExtMove* end() { return endMoves; }
