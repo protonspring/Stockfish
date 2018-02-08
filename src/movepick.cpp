@@ -134,13 +134,15 @@ void MovePicker::score() {
       }
 }
 
-// pick_best() finds the next best (non ttMove) move and moves it to the front. 
+// get_next() finds the next (non ttMove) move in the moves list.
+// if getBest is set, it finds the next highest scored move.
 // It's faster than sorting all the moves in advance when we may cutoff. 
-inline Move MovePicker::pick_best()
+inline Move MovePicker::get_next(bool getBest)
 {
    while (cur < endMoves)
    {
-      std::swap(*cur, *std::max_element(cur, endMoves));
+      if (getBest)
+         std::swap(*cur, *std::max_element(cur, endMoves));
       if (*cur++ != ttMove)
          return *(cur-1);
    }
@@ -170,7 +172,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case GOOD_CAPTURES:
-      while ((move = pick_best()) != MOVE_NONE)
+      while ((move = get_next(true)) != MOVE_NONE)
       {
          if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
              return move;
@@ -246,7 +248,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case ALL_EVASIONS:
-      while ((move = pick_best()) != MOVE_NONE)
+      while ((move = get_next(true)) != MOVE_NONE)
          return move;
       break;
 
@@ -258,7 +260,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case PROBCUT_CAPTURES:
-      while ((move = pick_best()) != MOVE_NONE)
+      while ((move = get_next(true)) != MOVE_NONE)
          if (pos.see_ge(move, threshold))
             return move;
       break;
@@ -271,7 +273,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCAPTURES:
-      while ((move = pick_best()) != MOVE_NONE)
+      while ((move = get_next(true)) != MOVE_NONE)
          return move;
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
@@ -281,12 +283,15 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCHECKS:
+      return get_next(false);
+/*
       while (cur < endMoves)
       {
           move = cur++->move;
           if (move != ttMove)
               return move;
       }
+*/
       break;
 
   case QSEARCH_RECAPTURES:
