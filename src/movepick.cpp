@@ -221,12 +221,16 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QUIET:
       if (!skipQuiets)
-         while ((move = get_next(false)) != MOVE_NONE)
+      {
+         while ((move = get_next()) != MOVE_NONE)
+         {
             if (   move != ttMove
                 && move != killers[0]
                 && move != killers[1]
                 && move != countermove)
                 return move;
+         }
+      }
       ++stage;
       cur = moves; // Point to beginning of bad captures
       /* fallthrough */
@@ -257,8 +261,10 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case PROBCUT_CAPTURES:
       while ((move = get_next(true)) != MOVE_NONE)
+      {
          if (pos.see_ge(move, threshold))
             return move;
+      }
       break;
 
   case QCAPTURES_INIT:
@@ -270,7 +276,9 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QCAPTURES:
       while ((move = get_next(true)) != MOVE_NONE)
+      {
          return move;
+      }
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
       cur = moves;
@@ -279,7 +287,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCHECKS:
-      return get_next(false);
+      return get_next();
       break;
 
   case QSEARCH_RECAPTURES:
@@ -289,9 +297,11 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QRECAPTURES:
-      while ((move = get_next(false)) != MOVE_NONE)
+      while ((move = get_next()) != MOVE_NONE)
+      {
          if (to_sq(move) == recaptureSquare)
             return move;
+      }
       break;
 
   default:
