@@ -221,16 +221,12 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QUIET:
       if (!skipQuiets)
-         while (cur < endMoves)
-         {
-             move = *cur++;
-
-             if (   move != ttMove
-                 && move != killers[0]
-                 && move != killers[1]
-                 && move != countermove)
-                 return move;
-         }
+         while ((move = get_next(false)) != MOVE_NONE)
+            if (   move != ttMove
+                && move != killers[0]
+                && move != killers[1]
+                && move != countermove)
+                return move;
       ++stage;
       cur = moves; // Point to beginning of bad captures
       /* fallthrough */
@@ -284,14 +280,6 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QCHECKS:
       return get_next(false);
-/*
-      while (cur < endMoves)
-      {
-          move = cur++->move;
-          if (move != ttMove)
-              return move;
-      }
-*/
       break;
 
   case QSEARCH_RECAPTURES:
@@ -301,12 +289,9 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QRECAPTURES:
-      while (cur < endMoves)
-      {
-          move = *cur++;
-          if (to_sq(move) == recaptureSquare)
-              return move;
-      }
+      while ((move = get_next(false)) != MOVE_NONE)
+         if (to_sq(move) == recaptureSquare)
+            return move;
       break;
 
   default:
