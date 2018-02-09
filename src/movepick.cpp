@@ -46,16 +46,17 @@ namespace {
         }
   }
 
-  // pick_best() finds the best move in the range (begin, end) and moves it to
-  // the front. It's faster than sorting all the moves in advance when there
-  // are few moves, e.g., the possible captures.
-  Move pick_best(ExtMove* begin, ExtMove* end) {
-
-    std::swap(*begin, *std::max_element(begin, end));
-    return *begin;
-  }
-
 } // namespace
+
+// pick_best() finds the best move in the range (begin, end) and moves it to
+// the front. It's faster than sorting all the moves in advance when there
+// are few moves, e.g., the possible captures.
+inline Move MovePicker::pick_best() {
+
+  std::swap(*cur, *std::max_element(cur, endMoves));
+  return *cur++;
+}
+
 
 
 /// Constructors of the MovePicker class. As arguments we pass information
@@ -170,7 +171,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case GOOD_CAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          move = pick_best();
           if (move != ttMove)
           {
               if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
@@ -251,7 +252,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case ALL_EVASIONS:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          move = pick_best();
           if (move != ttMove)
               return move;
       }
@@ -267,7 +268,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case PROBCUT_CAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          move = pick_best();
           if (   move != ttMove
               && pos.see_ge(move, threshold))
               return move;
@@ -284,7 +285,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QCAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          move = pick_best();
           if (move != ttMove)
               return move;
       }
