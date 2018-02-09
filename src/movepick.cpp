@@ -82,7 +82,6 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   {
       stage = QSEARCH_RECAPTURES;
       recaptureSquare = s;
-      ttMove = MOVE_NONE;
       return;
   }
 
@@ -135,15 +134,13 @@ void MovePicker::score() {
       }
 }
 
-// get_next() finds the next (non ttMove) move in the moves list.
-// if getBest is set, it finds the next highest scored move.
+// get_best() finds the next best (non ttMove) move in the moves list.
 // It's faster than sorting all the moves in advance when we may cutoff. 
-inline Move MovePicker::get_next(bool getBest)
+inline Move MovePicker::get_best()
 {
    while (cur < endMoves)
    {
-      if (getBest)
-         std::swap(*cur, *std::max_element(cur, endMoves));
+      std::swap(*cur, *std::max_element(cur, endMoves));
       if (*cur++ != ttMove)
          return *(cur-1);
    }
@@ -173,11 +170,14 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case GOOD_CAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_best()) != MOVE_NONE)
+      {
          if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
              return move;
-         else 
-             *endBadCaptures++ = move; //back to beginning of array
+
+         // Losing capture, move it to the beginning of the array
+         *endBadCaptures++ = move;
+      }
       ++stage;
       move = killers[0];  // First killer move
       if (    move != MOVE_NONE
@@ -219,14 +219,16 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case QUIET:
       if (!skipQuiets)
-      {
-         while ((move = get_next()) != MOVE_NONE)
-            if (   move != ttMove
-                && move != killers[0]
-                && move != killers[1]
-                && move != countermove)
-                return move;
-      }
+         while (cur < endMoves)
+         {
+             move = *cur++;
+
+             if (   move != ttMove
+                 && move != killers[0]
+                 && move != killers[1]
+                 && move != countermove)
+                 return move;
+         }
       ++stage;
       cur = moves; // Point to beginning of bad captures
       /* fallthrough */
@@ -244,7 +246,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case ALL_EVASIONS:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_best()) != MOVE_NONE)
          return move;
       break;
 
@@ -256,7 +258,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case PROBCUT_CAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_best()) != MOVE_NONE)
          if (pos.see_ge(move, threshold))
             return move;
       break;
@@ -269,7 +271,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_best()) != MOVE_NONE)
          return move;
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
@@ -279,7 +281,12 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCHECKS:
-      return get_next();
+      while (cur < endMoves)
+      {
+          move = cur++->move;
+          if (move != ttMove)
+              return move;
+      }
       break;
 
   case QSEARCH_RECAPTURES:
@@ -289,9 +296,12 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QRECAPTURES:
-      while ((move = get_next()) != MOVE_NONE)
-         if (to_sq(move) == recaptureSquare)
-            return move;
+      while (cur < endMoves)
+      {
+          move = *cur++;
+          if (to_sq(move) == recaptureSquare)
+              return move;
+      }
       break;
 
   default:
