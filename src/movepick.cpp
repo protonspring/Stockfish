@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "movepick.h"
 
@@ -48,6 +49,13 @@ namespace {
   // merge sort moves over limit
   void partial_merge_sort(ExtMove* begin, ExtMove* end, int limit)
   {
+/*
+     std::cout << std::endl << "Original:" << std::endl;
+     for (ExtMove* p = begin; p < end ; ++p)
+        std::cout << "<" << p->value << ">";
+     std::cout << "<end>";
+*/
+
      //divide moves over/under limit
      ExtMove* pF = begin;
      ExtMove* pE = end-1;
@@ -61,23 +69,28 @@ namespace {
      ExtMove *pA = begin + (end-begin);
      pE = pA;
      for (ExtMove* p = begin; p <= pF; ++p)
-        if (p->value >= limit) *pE++ = *p;
+        *pE++ = *p;
 
      //sort two halves
      ExtMove* pH = pA + (pE - pA)/2;
-     insertion_sort( pA, pH);
+     insertion_sort( pA, pH); //pH not included
      insertion_sort( pH, pE);
 
      //merge them back
-     ExtMove *p1 = pA, *p2 = pH;
-     pF = begin;
-     int iMoves = pE - pA;
-     while (pF< begin + iMoves) {
-        if (p1 >= pH) *pF++ = *p2++;
-        else if (p2 >= pE) *pF++ = *p1++;
-        else if (p1->value > p2->value) *pF++ = *p1++;
-        else *pF++ = *p2++;
+     ExtMove *dest = begin, *p1 = pA, *p2 = pH;
+     while (dest <= pF) {
+        if (p1 >= pH) *dest++ = *p2++;
+        else if (p2 >= pE) *dest++ = *p1++;
+        else if (p1->value > p2->value) *dest++ = *p1++;
+        else *dest++ = *p2++;
      }
+
+/*
+     std::cout << std::endl << "Sorted:" << std::endl;
+     for (ExtMove* p = begin; p < end ; ++p)
+        std::cout << "<" << p->value << ">";
+     std::cout << "<end>";
+*/
   }
 
   // pick_best() finds the best move in the range (begin, end) and moves it to
