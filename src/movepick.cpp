@@ -134,9 +134,9 @@ void MovePicker::score() {
       }
 }
 
-// get_best() finds the next best (non ttMove) move in the moves list.
+// pick_best() finds the next best (non ttMove) move in the moves list.
 // It's faster than sorting all the moves in advance when we may cutoff. 
-inline Move MovePicker::get_best()
+inline Move MovePicker::pick_best()
 {
    while (cur < endMoves)
    {
@@ -170,7 +170,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case GOOD_CAPTURES:
-      while ((move = get_best()) != MOVE_NONE)
+      while ((move = pick_best()) != MOVE_NONE)
       {
          if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
              return move;
@@ -246,7 +246,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case ALL_EVASIONS:
-      while ((move = get_best()) != MOVE_NONE)
+      while ((move = pick_best()) != MOVE_NONE)
          return move;
       break;
 
@@ -258,7 +258,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case PROBCUT_CAPTURES:
-      while ((move = get_best()) != MOVE_NONE)
+      while ((move = pick_best()) != MOVE_NONE)
          if (pos.see_ge(move, threshold))
             return move;
       break;
@@ -271,7 +271,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCAPTURES:
-      while ((move = get_best()) != MOVE_NONE)
+      while ((move = pick_best()) != MOVE_NONE)
          return move;
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
