@@ -137,8 +137,9 @@ void MovePicker::score() {
 // get_next() finds the next (non ttMove) move in the moves list.
 // if getBest is set, it finds the next highest scored move.
 // It's faster than sorting all the moves in advance when we may cutoff. 
-inline Move MovePicker::get_next(bool getBest)
-{
+template <bool getBest>
+inline Move MovePicker::get_next() {
+
    while (cur < endMoves)
    {
       if (getBest)
@@ -172,7 +173,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case GOOD_CAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_next<true>()) != MOVE_NONE)
       {
          if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
              return move;
@@ -222,10 +223,9 @@ Move MovePicker::next_move(bool skipQuiets) {
   case QUIET:
       if (!skipQuiets)
       {
-         while ((move = get_next()) != MOVE_NONE)
+         while ((move = get_next<false>()) != MOVE_NONE)
          {
-            if (   move != ttMove
-                && move != killers[0]
+            if (   move != killers[0]
                 && move != killers[1]
                 && move != countermove)
                 return move;
@@ -248,7 +248,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case ALL_EVASIONS:
-      while ((move = get_next(true)) != MOVE_NONE)
+      while ((move = get_next<true>()) != MOVE_NONE)
          return move;
       break;
 
@@ -260,11 +260,9 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case PROBCUT_CAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
-      {
+      while ((move = get_next<true>()) != MOVE_NONE)
          if (pos.see_ge(move, threshold))
             return move;
-      }
       break;
 
   case QCAPTURES_INIT:
@@ -275,10 +273,8 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCAPTURES:
-      while ((move = get_next(true)) != MOVE_NONE)
-      {
+      while ((move = get_next<true>()) != MOVE_NONE)
          return move;
-      }
       if (depth <= DEPTH_QS_NO_CHECKS)
           break;
       cur = moves;
@@ -287,7 +283,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       /* fallthrough */
 
   case QCHECKS:
-      return get_next();
+      return get_next<false>();
       break;
 
   case QSEARCH_RECAPTURES:
@@ -296,9 +292,10 @@ Move MovePicker::next_move(bool skipQuiets) {
       ++stage;
       /* fallthrough */
 
-  case QRECAPTURES:
-      while ((move = get_next()) != MOVE_NONE)
+  case QRECAPTURES: //don't skip ttMove in this stage
+      while (cur < endMoves)
       {
+         move = *cur++;
          if (to_sq(move) == recaptureSquare)
             return move;
       }
