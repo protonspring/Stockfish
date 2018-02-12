@@ -19,7 +19,6 @@
 */
 
 #include <cassert>
-#include <iostream>
 
 #include "movepick.h"
 
@@ -47,50 +46,37 @@ namespace {
   }
 
   // merge sort moves over limit
-  void partial_merge_sort(ExtMove* begin, ExtMove* end, int limit)
-  {
-/*
-     std::cout << std::endl << "Original:" << std::endl;
-     for (ExtMove* p = begin; p < end ; ++p)
-        std::cout << "<" << p->value << ">";
-     std::cout << "<end>";
-*/
+  // try no limit, sorting everything (probably bad)
+  void partial_merge_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-     //divide moves over/under limit
-     ExtMove* pF = begin;
-     ExtMove* pE = end-1;
-     while (pF < pE) {
-        if (pE->value < limit) { pE--; continue; }
-        if (pF->value >= limit) { pF++; continue; }
-        std::swap(*pF++,*pE--);
+     //moves under limit copy right, moves over are moved to sort space
+     ExtMove *pIdx = begin, *pSortEnd = end-1, *pEnd = end;
+     while (pIdx <= pSortEnd) 
+     {
+        if (pSortEnd->value < limit) pSortEnd--;
+        else if (pIdx->value >= limit) *pEnd++ = *pIdx++;
+        else
+        {
+           *pEnd++ = *pSortEnd;
+           *pSortEnd-- = *pIdx++;
+        }
      }
-
-     //copy array to extra space
-     ExtMove *pA = begin + (end-begin);
-     pE = pA;
-     for (ExtMove* p = begin; p <= pF; ++p)
-        *pE++ = *p;
 
      //sort two halves
-     ExtMove* pH = pA + (pE - pA)/2;
-     insertion_sort( pA, pH); //pH not included
-     insertion_sort( pH, pE);
+     ExtMove* pHalf = end + (pEnd - end)/2;
+     insertion_sort(end, pHalf); 
+     insertion_sort(pHalf, pEnd);
 
      //merge them back
-     ExtMove *dest = begin, *p1 = pA, *p2 = pH;
-     while (dest <= pF) {
-        if (p1 >= pH) *dest++ = *p2++;
-        else if (p2 >= pE) *dest++ = *p1++;
-        else if (p1->value > p2->value) *dest++ = *p1++;
-        else *dest++ = *p2++;
+     pIdx = begin;
+     ExtMove *p1 = end, *p2 = pHalf;
+     while (pIdx <= pSortEnd) 
+     {
+        if (p1 == pHalf) *pIdx++ = *p2++;
+        else if (p2 == pEnd) *pIdx++ = *p1++;
+        else if (p1->value > p2->value) *pIdx++ = *p1++;
+        else *pIdx++ = *p2++;
      }
-
-/*
-     std::cout << std::endl << "Sorted:" << std::endl;
-     for (ExtMove* p = begin; p < end ; ++p)
-        std::cout << "<" << p->value << ">";
-     std::cout << "<end>";
-*/
   }
 
   // pick_best() finds the best move in the range (begin, end) and moves it to
