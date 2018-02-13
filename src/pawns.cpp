@@ -103,6 +103,7 @@ namespace {
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
+    e->IsolatedBB[Us] = 0;
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
     e->kingSquares[Us]   = SQ_NONE;
@@ -171,7 +172,7 @@ namespace {
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
 
         else if (!neighbours)
-            score -= Isolated, e->weakUnopposed[Us] += !opposed;
+            score -= Isolated, e->weakUnopposed[Us] += !opposed, e->IsolatedBB[Us] |= s;
 
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
@@ -276,21 +277,8 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   castlingRights[Us] = pos.can_castle(Us);
   int minKingPawnDistance = 0;
 
-  Bitboard pawns = pos.pieces(Us, PAWN);
-
-  //exclude pawns on isolated files from minKingPawnDistance
-  //probably a better way to do this
-  if ((pawns & FileBB[0]) && !(pawns & FileBB[1])) 
-     pawns &= ~FileBB[0];
-  if ((pawns & FileBB[7]) && !(pawns & FileBB[6])) 
-     pawns &= ~FileBB[7];
-  if (pawns)
-     for (int s = 1; s <= 6; ++s)
-        if ((pawns & FileBB[s]) && 
-           !(pawns & FileBB[s-1]) && 
-           !(pawns & FileBB[s+1])) pawns &= ~(FileBB[s]);
-
-  //if there are no non-isolated pawns, then any one pawn will do
+  Bitboard pawns = pos.pieces(Us, PAWN) ^ IsolatedBB[Us];
+  //if no isolated pawns, use any pawn
   if (!pawns) pawns = pos.pieces(Us, PAWN);
 
   if (pawns)
