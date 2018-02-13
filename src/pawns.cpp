@@ -79,7 +79,7 @@ namespace {
   };
 
   const Value kingPawnDistancePenalty[8] = 
-        {-8, -16, -24, -32, -40, -48, -56, -64};
+        {V(-8), V(-16), V(-24), V(-32), V(-40), V(-48), V(-56), V(-64)};
 
   // Max bonus for king safety. Corresponds to start position with all the pawns
   // in front of the king and no enemy pawn on the horizon.
