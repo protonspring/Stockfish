@@ -277,6 +277,19 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   int minKingPawnDistance = 0;
 
   Bitboard pawns = pos.pieces(Us, PAWN);
+
+  //exclude pawns on isolated files from minKingPawnDistance
+  //probably a better way to do this
+  if ((pawns & FileBB[0]) && !(pawns & FileBB[1])) 
+     pawns &= ~FileBB[0];
+  if ((pawns & FileBB[7]) && !(pawns & FileBB[6])) 
+     pawns &= ~FileBB[7];
+  if (pawns)
+     for (int s = 1; s <= 7; ++s)
+        if ((pawns & FileBB[s]) && 
+           !(pawns & FileBB[s-1]) && 
+           !(pawns & FileBB[s+1])) pawns &= ~(FileBB[s]);
+
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
 
