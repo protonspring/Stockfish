@@ -290,6 +290,9 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
            !(pawns & FileBB[s-1]) && 
            !(pawns & FileBB[s+1])) pawns &= ~(FileBB[s]);
 
+  //if there are no non-isolated pawns, then any one pawn will do
+  if (!pawns) pawns = pos.pieces(Us, PAWN);
+
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
 
