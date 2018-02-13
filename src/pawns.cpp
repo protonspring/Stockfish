@@ -78,6 +78,9 @@ namespace {
       { V(21),  V(  23), V( 116), V(41), V(15) } }
   };
 
+  const Value kingPawnDistancePenalty[8] = 
+        {-8, -16, -24, -32, -40, -48, -56, -64};
+
   // Max bonus for king safety. Corresponds to start position with all the pawns
   // in front of the king and no enemy pawn on the horizon.
   const Value MaxSafetyBonus = V(258);
@@ -297,7 +300,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -16 * aveKingPawnDistance);
+  return make_score(bonus, kingPawnDistancePenalty[aveKingPawnDistance]);
 }
 
 // Explicit template instantiation
