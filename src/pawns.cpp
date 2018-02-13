@@ -285,7 +285,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if ((pawns & FileBB[7]) && !(pawns & FileBB[6])) 
      pawns &= ~FileBB[7];
   if (pawns)
-     for (int s = 1; s <= 7; ++s)
+     for (int s = 1; s <= 6; ++s)
         if ((pawns & FileBB[s]) && 
            !(pawns & FileBB[s-1]) && 
            !(pawns & FileBB[s+1])) pawns &= ~(FileBB[s]);
