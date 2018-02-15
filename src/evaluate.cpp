@@ -250,7 +250,7 @@ namespace {
   const Value SpaceThreshold = Value(12222);
 
   // danger level for opponents rooks. 11 spots for theoretical purposes only
-  const int KingRookDanger[11] = { 0, 20, 35, 45, 50, 50, 50, 50, 50, 50, 50 };
+  const int KingRookDanger[11] = { 0, 20, 45, 65, 80, 90, 95, 100, 100, 100, 100 };
 
   // initialize() computes king and pawn attacks, and the king ring bitboard
   // for a given color. This is done at the beginning of the evaluation.
