@@ -249,6 +249,8 @@ namespace {
   const Value LazyThreshold  = Value(1500);
   const Value SpaceThreshold = Value(12222);
 
+  // danger level for opponents rooks. 11 spots for theoretical purposes only
+  const int KingRookDanger[11] = { 20, 50, 100, 200, 400, 800, 1600, 1600, 1600, 1600, 1600 };
 
   // initialize() computes king and pawn attacks, and the king ring bitboard
   // for a given color. This is done at the beginning of the evaluation.
@@ -488,7 +490,8 @@ namespace {
                      + 143 * popcount(pos.pinned_pieces(Us) | unsafeChecks)
                      - 848 * !pos.count<QUEEN>(Them)
                      -   9 * mg_value(score) / 8
-                     +  40;
+                     +       KingRookDanger[pos.count<ROOK>(Them)]
+                     +  20;
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
