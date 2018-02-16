@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -172,7 +173,16 @@ namespace {
         // These files are especially vulnerable and usually must be
         // supported by other pieces
         if ((backward || !neighbours) && (e->semiopen_file(Them, f)))
+        {
+          if (backward) std::cout << "<BACKWARD>";
+          if (!neighbours) std::cout << "<ISOLATED>";
+          std::cout << "<set a weak file for color,file: " << Us << "," << f << ">";
+          std::cout << "<theirpawns:>" << std::endl;
+          std::cout << Bitboards::pretty(theirPawns);
+          std::cout << "<ourpawns:>" << std::endl;
+          std::cout << Bitboards::pretty(ourPawns);
           e->weakFiles[Us] |= (1 << f);
+        }
 
         // Score this pawn
         if (supported | phalanx)

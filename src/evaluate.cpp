@@ -178,8 +178,8 @@ namespace {
   };
 
   // RookOnFile[semiopen/open] contains bonuses for each rooks on weak/open files
-  const Score RookOnSemiOpenFile = S(10, 5); //not tuned
-  const Score RookOnWeakFile     = S(20,10); //not tuned
+  const Score RookOnSemiOpenFile = S(20, 7);
+  const Score RookOnWeakFile     = S(25,10); //not tuned
   const Score RookOnOpenFile     = S(45,20);
 
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
