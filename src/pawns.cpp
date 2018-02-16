@@ -188,10 +188,6 @@ namespace {
             score -= Doubled;
     }
 
-    // update open files and count of open files
-    e->openFiles = e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK];
-    e->openFileCount = popcount(e->openFiles);
-
     return score;
   }
 
@@ -236,7 +232,9 @@ Entry* probe(const Position& pos) {
   e->key = key;
   e->score = evaluate<WHITE>(pos, e) - evaluate<BLACK>(pos, e);
   e->asymmetry = popcount(e->semiopenFiles[WHITE] ^ e->semiopenFiles[BLACK]);
-  e->openFiles = popcount(e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK]);
+  e->openFiles = e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK];
+  e->openFileCount = popcount(e->openFiles);
+
   return e;
 }
 

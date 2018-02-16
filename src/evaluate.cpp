@@ -178,9 +178,9 @@ namespace {
   };
 
   // RookOnFile[semiopen/open] contains bonuses for each rooks on weak/open files
-  const Score RookOnSemiOpenFile = S(20, 7);
-  const Score RookOnWeakFile = S(25,12); //not tuned
-  const Score RookOnOpenFile = S(45,20);
+  const Score RookOnSemiOpenFile = S(10, 5); //not tuned
+  const Score RookOnWeakFile     = S(20,10); //not tuned
+  const Score RookOnOpenFile     = S(45,20);
 
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
   // which piece type attacks which one. Attacks on lesser pieces which are
@@ -386,7 +386,7 @@ namespace {
 
         if (Pt == ROOK)
         {
-            // Bonus for aligning with enemy pawns on the same rank/file
+            // Bonus for aligning with enemy pawns on the same rank
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
@@ -399,7 +399,7 @@ namespace {
                 score += RookOnSemiOpenFile;
 
             // Penalty when trapped by the king, even more if the king cannot castle
-            if (mob <= 3)
+            else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
 
