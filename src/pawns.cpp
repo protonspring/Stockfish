@@ -105,6 +105,7 @@ namespace {
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
+    e->weakFiles[Us] = 0;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = shift<Right>(ourPawns) | shift<Left>(ourPawns);
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
@@ -166,6 +167,13 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // Weak files are our files that are semiopen to our opponent
+        // but have either backward or isolated pawns.
+        // These files are especially vulnerable and usually must be
+        // supported by other pieces
+        if ((backward || !neighbours) && (e->semiopen_file(Them, f)))
+          e->weakFiles[Us] |= (1 << f);
+
         // Score this pawn
         if (supported | phalanx)
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
@@ -179,6 +187,10 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
     }
+
+    // update open files and count of open files
+    e->openFiles = e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK];
+    e->openFileCount = popcount(e->openFiles);
 
     return score;
   }
