@@ -171,8 +171,7 @@ namespace {
         // but have either backward or isolated pawns.
         // These files are especially vulnerable and usually must be
         // supported by other pieces
-        // will be $= semiopen files in probe
-        if (backward || !neighbours)
+        if (!opposed && (backward || !neighbours))
           e->weakFiles[Us] |= (1 << f);
 
         // Score this pawn
@@ -235,8 +234,6 @@ Entry* probe(const Position& pos) {
   e->asymmetry = popcount(e->semiopenFiles[WHITE] ^ e->semiopenFiles[BLACK]);
   e->openFiles = e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK];
   e->openFileCount = popcount(e->openFiles);
-  e->weakFiles[WHITE] &= e->semiopenFiles[BLACK];
-  e->weakFiles[BLACK] &= e->semiopenFiles[WHITE];
   return e;
 }
 

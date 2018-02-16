@@ -179,7 +179,7 @@ namespace {
 
   // RookOnFile[semiopen/open] contains bonuses for each rooks on weak/open files
   const Score RookOnSemiOpenFile = S(20, 7);
-  const Score RookOnWeakFile     = S(25,10); //not tuned
+  const Score RookOnWeakFile     = S(22, 8); //not tuned
   const Score RookOnOpenFile     = S(45,20);
 
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
@@ -390,7 +390,7 @@ namespace {
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
-            // Bonus's for rook on certain files (semiopen/weak/open)
+            // Bonus's for rooks on certain files (semiopen/weak/open)
             if (pe->open_file(file_of(s)))
                 score += RookOnOpenFile;
             else if (pe->weak_file(Them, file_of(s)))
