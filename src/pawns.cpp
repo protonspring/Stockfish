@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -172,17 +171,9 @@ namespace {
         // but have either backward or isolated pawns.
         // These files are especially vulnerable and usually must be
         // supported by other pieces
-        if ((backward || !neighbours) && (e->semiopen_file(Them, f)))
-        {
-          if (backward) std::cout << "<BACKWARD>";
-          if (!neighbours) std::cout << "<ISOLATED>";
-          std::cout << "<set a weak file for color,file: " << Us << "," << f << ">";
-          std::cout << "<theirpawns:>" << std::endl;
-          std::cout << Bitboards::pretty(theirPawns);
-          std::cout << "<ourpawns:>" << std::endl;
-          std::cout << Bitboards::pretty(ourPawns);
+        // will be $= semiopen files in probe
+        if (backward || !neighbours)
           e->weakFiles[Us] |= (1 << f);
-        }
 
         // Score this pawn
         if (supported | phalanx)
@@ -244,7 +235,8 @@ Entry* probe(const Position& pos) {
   e->asymmetry = popcount(e->semiopenFiles[WHITE] ^ e->semiopenFiles[BLACK]);
   e->openFiles = e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK];
   e->openFileCount = popcount(e->openFiles);
-
+  e->weakFiles[WHITE] &= e->semiopenFiles[BLACK];
+  e->weakFiles[BLACK] &= e->semiopenFiles[WHITE];
   return e;
 }
 
