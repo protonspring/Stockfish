@@ -93,15 +93,11 @@ namespace {
     const Direction Right = (Us == WHITE ? NORTH_EAST : SOUTH_WEST);
     const Direction Left  = (Us == WHITE ? NORTH_WEST : SOUTH_EAST);
 
-    Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
-    Bitboard lever, leverPush;
-    Square s;
-    bool opposed, backward;
-    Score score = SCORE_ZERO;
-    const Square* pl = pos.squares<PAWN>(Us);
-
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
+    Square s;
+    Score score = SCORE_ZERO;
+    const Square* pl = pos.squares<PAWN>(Us);
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
@@ -121,23 +117,22 @@ namespace {
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
         // Flag the pawn
-        opposed    = theirPawns & forward_file_bb(Us, s);
-        stoppers   = theirPawns & passed_pawn_mask(Us, s);
-        lever      = theirPawns & PawnAttacks[Us][s];
-        leverPush  = theirPawns & PawnAttacks[Us][s + Up];
-        doubled    = ourPawns   & (s - Up);
-        neighbours = ourPawns   & adjacent_files_bb(f);
-        phalanx    = neighbours & rank_bb(s);
-        supported  = neighbours & rank_bb(s - Up);
+        bool backward       = false;
+        bool opposed        = theirPawns & forward_file_bb(Us, s);
+        Bitboard stoppers   = theirPawns & passed_pawn_mask(Us, s);
+        Bitboard lever      = theirPawns & PawnAttacks[Us][s];
+        Bitboard leverPush  = theirPawns & PawnAttacks[Us][s + Up];
+        Bitboard doubled    = ourPawns   & (s - Up);
+        Bitboard neighbours = ourPawns   & adjacent_files_bb(f);
+        Bitboard phalanx    = neighbours & rank_bb(s);
+        Bitboard supported  = neighbours & rank_bb(s - Up);
 
         // A pawn is backward when it is behind all pawns of the same color on the
         // adjacent files and cannot be safely advanced.
-        if (!neighbours || lever || relative_rank(Us, s) >= RANK_5)
-            backward = false;
-        else
+        if ((neighbours && !lever && (relative_rank(Us, s) < RANK_5)))
         {
             // Find the backmost rank with neighbours or stoppers
-            b = rank_bb(backmost_sq(Us, neighbours | stoppers));
+            Bitboard b = rank_bb(backmost_sq(Us, neighbours | stoppers));
 
             // The pawn is backward when it cannot safely progress to that rank:
             // either there is a stopper in the way on this rank, or there is a
@@ -160,7 +155,7 @@ namespace {
         else if (   stoppers == SquareBB[s + Up]
                  && relative_rank(Us, s) >= RANK_5)
         {
-            b = shift<Up>(supported) & ~theirPawns;
+            Bitboard b = shift<Up>(supported) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
