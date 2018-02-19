@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "movepick.h"
 
@@ -27,7 +28,6 @@ namespace {
   enum Stages {
     MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, KILLERS, COUNTERMOVE, QUIET_INIT, QUIET, BAD_CAPTURES,
     EVASION, EVASIONS_INIT, ALL_EVASIONS,
-    PROBCUT, PROBCUT_INIT, PROBCUT_CAPTURES,
     QSEARCH, QCAPTURES_INIT, QCAPTURES, QCHECKS, QSEARCH_RECAPTURES, QRECAPTURES
   };
 
@@ -107,13 +107,9 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 
   assert(!pos.checkers());
 
-  stage = PROBCUT;
-  ttMove =   ttm
-          && pos.pseudo_legal(ttm)
-          && pos.capture(ttm)
-          && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
-
-  stage += (ttMove == MOVE_NONE);
+  cur = moves;
+  endMoves = generate<CAPTURES>(pos, moves);
+  score<CAPTURES>();
 }
 
 /// score() assigns a numerical value to each move in a list, used for sorting.
@@ -145,6 +141,17 @@ void MovePicker::score() {
       }
 }
 
+Move MovePicker::next_move_probcut() {
+
+   while (cur < endMoves)
+   {
+       Move move = pick_best(cur++, endMoves);
+       if (pos.see_ge(move, threshold))
+           return move;
+   }
+   return MOVE_NONE;
+}
+
 /// next_move() is the most important method of the MovePicker class. It returns
 /// a new pseudo legal move every time it is called, until there are no more moves
 /// left. It picks the move with the biggest value from a list of generated moves
@@ -156,7 +163,7 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   switch (stage) {
 
-  case MAIN_SEARCH: case EVASION: case QSEARCH: case PROBCUT:
+  case MAIN_SEARCH: case EVASION: case QSEARCH:
       ++stage;
       return ttMove;
 
@@ -253,23 +260,6 @@ Move MovePicker::next_move(bool skipQuiets) {
       {
           move = pick_best(cur++, endMoves);
           if (move != ttMove)
-              return move;
-      }
-      break;
-
-  case PROBCUT_INIT:
-      cur = moves;
-      endMoves = generate<CAPTURES>(pos, cur);
-      score<CAPTURES>();
-      ++stage;
-      /* fallthrough */
-
-  case PROBCUT_CAPTURES:
-      while (cur < endMoves)
-      {
-          move = pick_best(cur++, endMoves);
-          if (   move != ttMove
-              && pos.see_ge(move, threshold))
               return move;
       }
       break;
