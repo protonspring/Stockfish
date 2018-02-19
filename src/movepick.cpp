@@ -25,7 +25,7 @@
 namespace {
 
   enum Stages {
-    MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, KILLERS, COUNTERMOVE, QUIET_INIT, QUIET, BAD_CAPTURES,
+    MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, KILLERS, COUNTERMOVE, QUIET_INIT, SORTED_QUIET, UNSORTED_QUIET, BAD_CAPTURES,
     EVASION, EVASIONS_INIT, ALL_EVASIONS,
     PROBCUT, PROBCUT_INIT, PROBCUT_CAPTURES,
     QSEARCH, QCAPTURES_INIT, QCAPTURES, QCHECKS, QSEARCH_RECAPTURES, QRECAPTURES
@@ -33,9 +33,10 @@ namespace {
 
   // partial_insertion_sort() sorts moves in descending order up to and including
   // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
+  ExtMove* partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
+    ExtMove* sortedEnd = begin;
+    for (ExtMove *p = begin + 1; p < end; ++p)
         if (p->value >= limit)
         {
             ExtMove tmp = *p, *q;
@@ -44,6 +45,7 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
         }
+     return sortedEnd;
   }
 
   // pick_best() finds the best move in the range (begin, end) and moves it to
@@ -216,15 +218,30 @@ Move MovePicker::next_move(bool skipQuiets) {
       cur = endBadCaptures;
       endMoves = generate<QUIETS>(pos, cur);
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      endSorted = partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
       ++stage;
       /* fallthrough */
 
-  case QUIET:
+  case SORTED_QUIET:
+      if (!skipQuiets)
+         while (cur < endSorted)
+         {
+             move = *cur++;
+
+             if (   move != ttMove
+                 && move != killers[0]
+                 && move != killers[1]
+                 && move != countermove)
+                 return move;
+         }
+      ++stage;
+      /* fallthrough */
+
+  case UNSORTED_QUIET:
       if (!skipQuiets)
          while (cur < endMoves)
          {
-             move = *cur++;
+             move = pick_best(cur++, endMoves);
 
              if (   move != ttMove
                  && move != killers[0]
