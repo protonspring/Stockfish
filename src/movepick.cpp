@@ -218,12 +218,14 @@ Move MovePicker::next_move(bool skipQuiets) {
       cur = endBadCaptures;
       endMoves = generate<QUIETS>(pos, cur);
       score<QUIETS>();
-      endSorted = partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      sortLimit = -2000 * depth / ONE_PLY;
+      endSorted = partial_insertion_sort(cur, endMoves, sortLimit);
       ++stage;
       /* fallthrough */
 
   case SORTED_QUIET:
       if (!skipQuiets)
+      {
          while (cur < endSorted)
          {
              move = *cur++;
@@ -232,24 +234,35 @@ Move MovePicker::next_move(bool skipQuiets) {
                  && move != killers[0]
                  && move != killers[1]
                  && move != countermove)
+             {
                  return move;
+             }
          }
+      }
       ++stage;
+      if (cur == endMoves) skipQuiets = true;
       /* fallthrough */
 
   case UNSORTED_QUIET:
       if (!skipQuiets)
+      {
+         sortLimit *= 2;
+         endSorted = partial_insertion_sort(cur, endMoves, sortLimit);
+         stage = SORTED_QUIET;
          while (cur < endMoves)
          {
-             move = pick_best(cur++, endMoves);
+             move = *cur++;
 
              if (   move != ttMove
                  && move != killers[0]
                  && move != killers[1]
                  && move != countermove)
+             {
                  return move;
+             }
          }
-      ++stage;
+      }
+      stage = BAD_CAPTURES;
       cur = moves; // Point to beginning of bad captures
       /* fallthrough */
 
