@@ -59,6 +59,10 @@ const Bitboard Rank5BB = Rank1BB << (8 * 4);
 const Bitboard Rank6BB = Rank1BB << (8 * 5);
 const Bitboard Rank7BB = Rank1BB << (8 * 6);
 const Bitboard Rank8BB = Rank1BB << (8 * 7);
+const Bitboard OutpostSquares[COLOR_NB] = {
+    (FileCBB | FileDBB | FileEBB | FileFBB) & (Rank4BB | Rank5BB | Rank6BB), //WHITE
+    (FileCBB | FileDBB | FileEBB | FileFBB) & (Rank5BB | Rank4BB | Rank3BB)  //BLACK
+};
 
 extern int SquareDistance[SQUARE_NB][SQUARE_NB];
 
@@ -75,7 +79,6 @@ extern Bitboard PassedPawnMask[COLOR_NB][SQUARE_NB];
 extern Bitboard PawnAttackSpan[COLOR_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
-
 
 /// Magic holds all magic bitboards relevant data for a single square
 struct Magic {
