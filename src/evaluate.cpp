@@ -168,7 +168,6 @@ namespace {
   const Score Hanging           = S( 52, 30);
   const Score HinderPassedPawn  = S(  8,  1);
   const Score LongRangedBishop  = S( 22,  0);
-  const Score MinorBehindPawn   = S( 16,  0);
   const Score PawnlessFlank     = S( 20, 80);
   const Score RookOnPawn        = S(  8, 24);
   const Score ThreatByPawnPush  = S( 47, 26);
@@ -339,11 +338,6 @@ namespace {
 
             else if (bb &= b & ~pos.pieces(Us))
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
-
-            // Bonus when behind a pawn
-            if (    relative_rank(Us, s) < RANK_5
-                && (pos.pieces(PAWN) & (s + pawn_push(Us))))
-                score += MinorBehindPawn;
 
             if (Pt == BISHOP)
             {
