@@ -154,10 +154,12 @@ inline Bitboard file_bb(Square s) {
 
 template<Direction D>
 constexpr Bitboard shift(Bitboard b) {
-  return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == NORTH_EAST ? (b & ~FileHBB) << 9 : D == SOUTH_EAST ? (b & ~FileHBB) >> 7
-        : D == NORTH_WEST ? (b & ~FileABB) << 7 : D == SOUTH_WEST ? (b & ~FileABB) >> 9
-        : 0;
+
+  return   D >= 0 ? (D == NORTH ? b <<  D : D%8 ==  1 ? (b & ~FileHBB) <<  D 
+                                          : D%8 ==  7 ? (b & ~FileABB) <<  D : 0)
+         : D <  0 ? (D == SOUTH ? b >> -D : D%8 == -1 ? (b & ~FileABB) >> -D 
+                                          : D%8 == -7 ? (b & ~FileHBB) >> -D : 0)
+         : 0;
 }
 
 /// pawn_attacks_bb() returns the pawn attacks for the given color from the
