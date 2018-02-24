@@ -218,7 +218,7 @@ Move MovePicker::next_move(bool skipQuiets) {
       cur = endBadCaptures;
       endMoves = generate<QUIETS>(pos, cur);
       score<QUIETS>();
-      sortLimit = -4000; // * depth / ONE_PLY;
+      sortLimit = -2000 * depth / ONE_PLY;
       endSorted = partial_insertion_sort(cur, endMoves, sortLimit);
       ++stage;
       /* fallthrough */
@@ -246,7 +246,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case UNSORTED_QUIET:
       if (!skipQuiets)
       {
-         sortLimit *= 4;
+         sortLimit *= 3;
          endSorted = partial_insertion_sort(cur, endMoves, sortLimit);
          stage = SORTED_QUIET;
          while (cur < endMoves)
