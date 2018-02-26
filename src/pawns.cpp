@@ -81,7 +81,6 @@ namespace {
   // in front of the king and no enemy pawn on the horizon.
   const Value MaxSafetyBonus = V(258);
 
-  #undef S
   #undef V
 
   template<Color Us>

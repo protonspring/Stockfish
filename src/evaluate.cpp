@@ -178,8 +178,6 @@ namespace {
   const Score WeakQueen         = S( 50, 10);
   const Score WeakUnopposedPawn = S(  5, 25);
 
-#undef S
-
   // Evaluation class computes and stores attacks tables and other working data
   template<Tracing T>
   class Evaluation {
