@@ -65,7 +65,6 @@ namespace {
                    : ((unsigned(b) ^ unsigned(b >> 32)) * DeBruijn32) >> 26;
   }
 
-
   // popcount16() counts the non-zero bits using SWAR-Popcount algorithm
 
   unsigned popcount16(unsigned u) {
@@ -82,36 +81,18 @@ namespace {
 
 Square lsb(Bitboard b) {
   assert(b);
+
   return BSFTable[bsf_index(b)];
 }
 
 Square msb(Bitboard b) {
 
-  assert(b);
-  unsigned b32;
-  int result = 0;
+  Bitboard mask = Bitboard(0xFF) << 56;
 
-  if (b > 0xFFFFFFFF)
-  {
-      b >>= 32;
-      result = 32;
-  }
-
-  b32 = unsigned(b);
-
-  if (b32 > 0xFFFF)
-  {
-      b32 >>= 16;
-      result += 16;
-  }
-
-  if (b32 > 0xFF)
-  {
-      b32 >>= 8;
-      result += 8;
-  }
-
-  return Square(result + MSBTable[b32]);
+  for (int i = 56; i >= 8; i-=8, mask >>= 8)
+     if (b & mask)
+        return Square(i + MSBTable[(b & mask) >> i]);
+  return Square(b);
 }
 
 #endif // ifdef NO_BSF
