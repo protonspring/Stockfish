@@ -87,12 +87,14 @@ Square lsb(Bitboard b) {
 
 Square msb(Bitboard b) {
 
+  int i;
   Bitboard mask = Bitboard(0xFF) << 56;
 
-  for (int i = 56; i >= 8; i-=8, mask >>= 8)
+  for (i = 56; i >= 8; i-=8, mask >>= 8)
      if (b & mask)
-        return Square(i + MSBTable[(b & mask) >> i]);
-  return Square(MSBTable[b]);
+        break;
+
+  return Square(i + MSBTable[(b & mask) >> i]);
 }
 
 #endif // ifdef NO_BSF
