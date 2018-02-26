@@ -96,8 +96,6 @@ const Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   }
 };
 
-#undef S
-
 Score psq[PIECE_NB][SQUARE_NB];
 
 // init() initializes piece-square tables: the white halves of the tables are
