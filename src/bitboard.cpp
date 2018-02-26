@@ -56,6 +56,7 @@ namespace {
 
   void init_magics(Bitboard table[], Magic magics[], Direction directions[]);
 
+
   // bsf_index() returns the index into BSFTable[] to look up the bitscan. Uses
   // Matt Taylor's folding for 32 bit case, extended to 64 bit by Kim Walisch.
 
@@ -81,7 +82,6 @@ namespace {
 
 Square lsb(Bitboard b) {
   assert(b);
-
   return BSFTable[bsf_index(b)];
 }
 
