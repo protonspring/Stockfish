@@ -29,7 +29,6 @@
 namespace {
 
   #define V Value
-  #define S(mg, eg) make_score(mg, eg)
 
   // Isolated pawn penalty
   const Score Isolated = S(13, 18);
