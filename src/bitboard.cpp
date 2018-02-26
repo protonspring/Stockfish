@@ -92,7 +92,7 @@ Square msb(Bitboard b) {
   for (int i = 56; i >= 8; i-=8, mask >>= 8)
      if (b & mask)
         return Square(i + MSBTable[(b & mask) >> i]);
-  return Square(b);
+  return Square(MSBTable[b]);
 }
 
 #endif // ifdef NO_BSF
