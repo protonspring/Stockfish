@@ -175,7 +175,7 @@ Move MovePicker::next_move(bool skipQuiets) {
   case GOOD_CAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          move = *cur++;
           if (move != ttMove)
           {
               if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
