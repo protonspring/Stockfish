@@ -157,7 +157,6 @@ namespace {
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
         else if (neighbours && !lever && relative_rank(Us, s) < RANK_5)
-        //else if (!(!neighbours || lever || relative_rank(Us, s) >= RANK_5))
         {
             // Find the backmost rank with neighbours or stoppers
             b = rank_bb(backmost_sq(Us, neighbours | stoppers));
