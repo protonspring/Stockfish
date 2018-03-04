@@ -166,9 +166,10 @@ namespace {
             // stopper on adjacent file which controls the way to that rank.
             //backward = (b | shift<Up>(b & adjacent_files_bb(f))) & stoppers;
             if ((b | shift<Up>(b & adjacent_files_bb(f))) & stoppers)
+            {
                score -= Backward, e->weakUnopposed[Us] += !opposed;
-
-            assert(!(backward && (forward_ranks_bb(Them, s + Up) & neighbours)));
+               assert(!(forward_ranks_bb(Them, s + Up) & neighbours));
+            }
         }
     }
     return score;
