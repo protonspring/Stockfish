@@ -38,7 +38,7 @@ namespace {
   const Score Backward = S(24, 12);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
-  static Score Connected[2][2][3][RANK_NB] = 
+  Score Connected[2][2][3][RANK_NB] = 
   {{{{S(0,0),S(13, -3),S(24,0),S(18, 4),S( 76,38),S(100, 75),S(175,175),S(0,0)},
      {S(0,0),S(30, -7),S(41,0),S(35, 8),S( 93,46),S(117, 87),S(192,192),S(0,0)},
      {S(0,0),S(47,-11),S(58,0),S(52,13),S(110,55),S(134,100),S(209,209),S(0,0)}},
