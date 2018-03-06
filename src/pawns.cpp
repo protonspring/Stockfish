@@ -128,9 +128,8 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
 
-        // A pawn is backward if there is a square in front of it that
-        // is attacked by or blocked by an enemy pawn, and there are no
-        // friendly pawns can support up to that square.
+        //If there is a forward square that is attacked by or blocked 
+        //by an enemy pawn and there are no friendly pawns can support.
         backward = (stoppers
                   && !(neighbours & forward_ranks_bb(Them, make_square(f,rank_of(backmost_sq(Us, stoppers))) + Up))
                   && !lever
