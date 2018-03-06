@@ -130,9 +130,10 @@ namespace {
 
         // A pawn is backward if an opposing pawn prevents pushing
         // and there are no pawns behind to support
-        backward = ((leverPush || (opposed & rank_bb(s+Up))) &&
-              !(neighbours & forward_ranks_bb(Them, s + Up)) &&
-               relative_rank(Us, s) < RANK_5);
+        backward = ((leverPush || (opposed & rank_bb(s+Up)))
+                  && !(neighbours & forward_ranks_bb(Them, s + Up))
+                  && !lever 
+                  && (relative_rank(Us, s) < RANK_5));
 
         // Passed pawns will be properly scored in evaluation because we need
         // full attack info to evaluate them. Include also not passed pawns
