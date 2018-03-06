@@ -38,7 +38,20 @@ namespace {
   const Score Backward = S(24, 12);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
-  Score Connected[2][2][3][RANK_NB];
+  static Score Connected[2][2][3][RANK_NB] = 
+  {{{{S(0,0),S(13, -3),S(24,0),S(18, 4),S( 76,38),S(100, 75),S(175,175),S(0,0)},
+     {S(0,0),S(30, -7),S(41,0),S(35, 8),S( 93,46),S(117, 87),S(192,192),S(0,0)},
+     {S(0,0),S(47,-11),S(58,0),S(52,13),S(110,55),S(134,100),S(209,209),S(0,0)}},
+    {{S(0,0),S(18, -4),S(21,0),S(47,11),S( 88,44),S(137,102),S(252,252),S(0,0)},
+     {S(0,0),S(35, -8),S(38,0),S(64,16),S(105,52),S(154,115),S(269,269),S(0,0)},
+     {S(0,0),S(52,-13),S(55,0),S(81,20),S(122,61),S(171,128),S(286,286),S(0,0)}}},
+   {{{S(0,0),S( 6, -1),S(12,0),S( 9, 2),S( 38,19),S( 50, 37),S( 87, 87),S(0,0)},
+     {S(0,0),S(23, -5),S(29,0),S(26, 6),S( 55,27),S( 67, 50),S(104,104),S(0,0)},
+     {S(0,0),S(40,-10),S(46,0),S(43,10),S( 72,36),S( 84, 63),S(121,121),S(0,0)}},
+    {{S(0,0),S( 9, -2),S(10,0),S(23, 5),S( 44,22),S( 68, 51),S(126,126),S(0,0)},
+     {S(0,0),S(26, -6),S(27,0),S(40,10),S( 61,30),S( 85, 63),S(143,143),S(0,0)},
+     {S(0,0),S(43,-10),S(44,0),S(57,14),S( 78,39),S(102, 76),S(160,160),S(0,0)}}}
+  };
 
   // Doubled pawn penalty
   const Score Doubled = S(18, 38);
@@ -184,27 +197,6 @@ namespace {
 } // namespace
 
 namespace Pawns {
-
-/// Pawns::init() initializes some tables needed by evaluation. Instead of using
-/// hard-coded tables, when makes sense, we prefer to calculate them with a formula
-/// to reduce independent parameters and to allow easier tuning and better insight.
-
-void init() {
-
-  static const int Seed[RANK_NB] = { 0, 13, 24, 18, 76, 100, 175, 330 };
-
-  for (int opposed = 0; opposed <= 1; ++opposed)
-      for (int phalanx = 0; phalanx <= 1; ++phalanx)
-          for (int support = 0; support <= 2; ++support)
-              for (Rank r = RANK_2; r < RANK_8; ++r)
-  {
-      int v = 17 * support;
-      v += (Seed[r] + (phalanx ? (Seed[r + 1] - Seed[r]) / 2 : 0)) >> opposed;
-
-      Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
-  }
-}
-
 
 /// Pawns::probe() looks up the current position's pawns configuration in
 /// the pawns hash table. It returns a pointer to the Entry if the position
