@@ -25,7 +25,7 @@
 namespace {
 
   enum Stages {
-    MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, KILLER0, KILLER1, COUNTERMOVE, QUIET_INIT, QUIET, BAD_CAPTURES,
+    MAIN_SEARCH, CAPTURES_INIT, GOOD_CAPTURES, COUNTERMOVE, KILLER0, KILLER1, QUIET_INIT, QUIET, BAD_CAPTURES,
     EVASION, EVASIONS_INIT, ALL_EVASIONS,
     PROBCUT, PROBCUT_CAPTURES_INIT, PROBCUT_CAPTURES,
     QSEARCH, QCAPTURES_INIT, QCAPTURES, QCHECKS
@@ -67,8 +67,8 @@ namespace {
 /// MovePicker constructor for the main search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers_p)
-           : pos(p), mainHistory(mh), captureHistory(cph), contHistory(ch), countermove(cm),
-             killers{killers_p[0], killers_p[1]}, depth(d){
+           : pos(p), mainHistory(mh), captureHistory(cph), contHistory(ch),
+             specials{cm, killers_p[0], killers_p[1]}, depth(d) {
 
   assert(d > DEPTH_ZERO);
 
@@ -176,29 +176,21 @@ Move MovePicker::next_move(bool skipQuiets) {
       ++stage;
       /* fallthrough */
 
+  case COUNTERMOVE:
+      if ((specials[0] == specials[1]) || (specials[0]) == (specials[2]))
+        specials[0] = MOVE_NONE;
+
   case KILLER0:
   case KILLER1:
       do
       {
-          move = killers[++stage - KILLER1];
+          move = specials[++stage - COUNTERMOVE];
           if (    move != MOVE_NONE
               &&  move != ttMove
               &&  pos.pseudo_legal(move)
               && !pos.capture(move))
               return move;
       } while (stage <= KILLER1);
-      /* fallthrough */
-
-  case COUNTERMOVE:
-      ++stage;
-      move = countermove;
-      if (    move != MOVE_NONE
-          &&  move != ttMove
-          &&  move != killers[0]
-          &&  move != killers[1]
-          &&  pos.pseudo_legal(move)
-          && !pos.capture(move))
-          return move;
       /* fallthrough */
 
   case QUIET_INIT:
@@ -215,9 +207,9 @@ Move MovePicker::next_move(bool skipQuiets) {
           {
               move = *cur++;
               if (   move != ttMove
-                  && move != killers[0]
-                  && move != killers[1]
-                  && move != countermove)
+                  && move != specials[0]
+                  && move != specials[1]
+                  && move != specials[2])
                   return move;
           }
       ++stage;
