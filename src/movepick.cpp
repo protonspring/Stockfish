@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "movepick.h"
 
@@ -178,7 +179,9 @@ Move MovePicker::next_move(bool skipQuiets) {
 
   case COUNTERMOVE:
       if ((specials[0] == specials[1]) || (specials[0]) == (specials[2]))
-        specials[0] = MOVE_NONE;
+        ++stage;
+        //specials[0] = MOVE_NONE;
+      /* fallthrough */
 
   case KILLER0:
   case KILLER1:
