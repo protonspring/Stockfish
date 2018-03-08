@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+//#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -31,6 +32,17 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
+  // Lever bonus/penalty
+  const Score LeverScore = S(20, 0);
+
+  // Pawns File Bonus (not tuned)
+  const Score PawnFileScore[8] = 
+     {S(3,3), S(6,6), S(9,9), S(12,12), S(12,12), S(9,9), S(6,6), S(3,3)};
+
+  // Passed Pawn File Bonus (not tuned)
+  const Score PassedPawnBonus[8] = 
+     {S(12,12), S(9,9), S(6,6), S( 3, 3), S( 3, 3), S(6,6), S(9,9), S(12,12)};
+    
   // Isolated pawn penalty
   const Score Isolated = S(13, 18);
 
@@ -162,6 +174,64 @@ namespace {
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
+        }
+
+        // Bonus for levers that attack inward, penalty for those that attack outward
+        if (lever)
+        {
+           b = (1UL << s);
+           //std::cout << "<LEVER>" << std::endl;
+           //std::cout << "<SQUARE>" << std::endl;
+           //std::cout << Bitboards::pretty(b) << std::endl;
+           //std::cout << "<levers>" << std::endl;
+           //std::cout << Bitboards::pretty(lever) << std::endl;
+
+           if (Us == WHITE)
+           {
+              if ((f < FILE_E) && (lever & shift<NORTH_EAST>(b)))
+              {
+                //std::cout << "<adding left side white north east>" << std::endl;
+                score += LeverScore;
+              }
+              if ((f > FILE_D) && (lever & shift<NORTH_EAST>(b)))
+              {
+                //std::cout << "<subtracting right side white north east>" << std::endl;
+                score -= LeverScore;
+              }
+              if ((f < FILE_E) && (lever & shift<NORTH_WEST>(b)))
+              {
+                //std::cout << "<subtracting left side white north west>" << std::endl;
+                score -= LeverScore;
+              }
+              if ((f > FILE_D) && (lever & shift<NORTH_WEST>(b)))
+              {
+                //std::cout << "<adding right side white north west>" << std::endl;
+                score += LeverScore;
+              }
+           }
+           else
+           {
+              if ((f < FILE_E) && (lever & shift<SOUTH_EAST>(b)))
+              {
+                //std::cout << "<adding left side black south east>" << std::endl;
+                score += LeverScore;
+              }
+              if ((f > FILE_D) && (lever & shift<SOUTH_EAST>(b)))
+              {
+                //std::cout << "<subtracting right side black south east>" << std::endl;
+                score -= LeverScore;
+              }
+              if ((f < FILE_E) && (lever & shift<SOUTH_WEST>(b)))
+              {
+                //std::cout << "<subtracting left side black south west>" << std::endl;
+                score -= LeverScore;
+              }
+              if ((f > FILE_D) && (lever & shift<SOUTH_WEST>(b)))
+              {
+                //std::cout << "<adding right side black south west>" << std::endl;
+                score += LeverScore;
+              }
+           }
         }
 
         // Score this pawn
