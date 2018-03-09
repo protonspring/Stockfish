@@ -126,6 +126,9 @@ namespace {
     { S( 9, 2), S(15, 5) }  // Bishop
   };
 
+  // Connectedness
+  const Score Connected = S(2,2);
+
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
   // no (friendly) pawn on the rook file.
   const Score RookOnFile[] = { S(20, 7), S(45, 20) };
@@ -606,6 +609,10 @@ namespace {
 
         score += KnightOnQueen * popcount(b);
     }
+
+    // Connectedness for pawns, knights, bishops, rooks, and queens
+    b = (pos.pieces(Us) ^ pos.pieces(Us,KING)) & attackedBy[Us][ALL_PIECES];
+    score += Connected * popcount(b);
 
     if (T)
         Trace::add(THREAT, Us, score);
