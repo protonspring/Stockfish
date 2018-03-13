@@ -23,7 +23,6 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
-//#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -88,8 +87,7 @@ namespace {
   };
 
   // Threshold for lazy and space evaluation
-  //const Value LazyThreshold  = Value(1500);
-  const Value LazyThreshold = Value(1400 + Time.optimum()/2);
+  const Value LazyThreshold = Value(1450 + Time.optimum()/4);
   const Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
@@ -849,8 +847,6 @@ namespace {
     Value v = (mg_value(score) + eg_value(score)) / 2;
     if (abs(v) > LazyThreshold)
        return pos.side_to_move() == WHITE ? v : -v;
-
-    //std::cout << "<" << Time.optimum() << ">" << std::endl;
 
     // Main evaluation begins here
 
