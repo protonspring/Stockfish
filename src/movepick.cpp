@@ -46,15 +46,6 @@ namespace {
         }
   }
 
-  // pick_best() finds the best move in the range (begin, end) and moves it to
-  // the front. It's faster than sorting all the moves in advance when there
-  // are few moves, e.g., the possible captures.
-  Move pick_best(ExtMove* begin, ExtMove* end) {
-
-    std::swap(*begin, *std::max_element(begin, end));
-    return *begin;
-  }
-
 } // namespace
 
 
@@ -168,7 +159,9 @@ begin_switch:
   case GOOD_CAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          if (cur < (endMoves-1))
+           std::swap(*cur, *std::max_element(cur, endMoves));
+          move = *cur++;
           if (move != ttMove)
           {
               if (pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))
@@ -239,7 +232,9 @@ begin_switch:
   case ALL_EVASIONS:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          if (cur < (endMoves-1))
+           std::swap(*cur, *std::max_element(cur, endMoves));
+          move = *cur++;
           if (move != ttMove)
               return move;
       }
@@ -248,7 +243,9 @@ begin_switch:
   case PROBCUT_CAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          if (cur < (endMoves-1))
+           std::swap(*cur, *std::max_element(cur, endMoves));
+          move = *cur++;
           if (   move != ttMove
               && pos.see_ge(move, threshold))
               return move;
@@ -258,7 +255,9 @@ begin_switch:
   case QCAPTURES:
       while (cur < endMoves)
       {
-          move = pick_best(cur++, endMoves);
+          if (cur < (endMoves-1))
+           std::swap(*cur, *std::max_element(cur, endMoves));
+          move = *cur++;
           if (   move != ttMove
               && (depth > DEPTH_QS_RECAPTURES || to_sq(move) == recaptureSquare))
               return move;
