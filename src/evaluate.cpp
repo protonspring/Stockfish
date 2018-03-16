@@ -164,6 +164,7 @@ namespace {
 
   // Assorted bonuses and penalties
   const Score BishopPawns        = S(  8, 12);
+  const Score BadPawnRams        = S( 10, 10); //not tuned
   const Score CloseEnemies       = S(  7,  0);
   const Score Connectivity       = S(  3,  1);
   const Score CorneredBishop     = S( 50, 50);
@@ -349,6 +350,9 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
                     score += LongDiagonalBishop;
+
+                // Penalty according to the number of pawn rams on the same color square
+                score -= BadPawnRams * popcount(pe->pawnRams[Us] & pe->pawns_on_same_color_squares(Us, s));
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
