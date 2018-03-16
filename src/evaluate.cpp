@@ -86,7 +86,8 @@ namespace {
   };
 
   // Threshold for lazy and space evaluation
-  const Value LazyThreshold  = Value(1500);
+  const Value LazyBase = Value(1400);
+  const Value LazyInc = Value(1200);
   const Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
@@ -845,6 +846,8 @@ namespace {
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
+    int rootDepth = pos.thisThread->rootDepth;
+    Value LazyThreshold = (rootDepth < 10) ? LazyBase : LazyBase + LazyInc * (rootDepth-10);
     if (abs(v) > LazyThreshold)
        return pos.side_to_move() == WHITE ? v : -v;
 

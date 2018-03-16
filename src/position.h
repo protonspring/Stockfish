@@ -28,7 +28,7 @@
 
 #include "bitboard.h"
 #include "types.h"
-
+#include "thread.h"
 
 /// StateInfo struct stores information needed to restore a Position object to
 /// its previous state when we retract a move. Whenever a move is made on the
@@ -67,7 +67,7 @@ typedef std::unique_ptr<std::deque<StateInfo>> StateListPtr;
 /// pieces, side to move, hash keys, castling info, etc. Important methods are
 /// do_move() and undo_move(), used by the search to update node info when
 /// traversing the search tree.
-class Thread;
+//class Thread;
 
 class Position {
 public:
