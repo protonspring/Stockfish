@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -352,7 +353,8 @@ namespace {
                     score += LongDiagonalBishop;
 
                 // Penalty according to the number of pawn rams on the same color square
-                score -= BadPawnRams * popcount(pe->pawnRams[Us] & pe->pawns_on_same_color_squares(Us, s));
+                Bitboard bs = (Us == WHITE) ? ~DarkSquares : DarkSquares;
+                score -= BadPawnRams * popcount(pe->pawnRams[Us] & bs);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
