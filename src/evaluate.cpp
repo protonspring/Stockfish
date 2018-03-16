@@ -88,7 +88,7 @@ namespace {
 
   // Threshold for lazy and space evaluation
   const Value LazyBase = Value(1400);
-  const Value LazyInc = Value(1200);
+  const Value LazyInc = Value(200);
   const Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
