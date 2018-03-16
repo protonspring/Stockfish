@@ -352,7 +352,7 @@ namespace {
                     score += LongDiagonalBishop;
 
                 // Penalty according to the number of pawn rams on the same color square
-                Bitboard bs = (Us == WHITE) ? ~DarkSquares : DarkSquares;
+                Bitboard bs = (DarkSquares & s) ? ~DarkSquares : DarkSquares;
                 score -= BadPawnRams * popcount(pe->pawnRams[Us] & bs);
             }
 
