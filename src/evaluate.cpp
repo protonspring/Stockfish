@@ -28,6 +28,7 @@
 #include "evaluate.h"
 #include "material.h"
 #include "pawns.h"
+#include "thread.h"
 
 std::atomic<Score> Eval::Contempt;
 
@@ -846,7 +847,7 @@ namespace {
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    int rootDepth = pos.thisThread->rootDepth;
+    int rootDepth = pos.this_thread()->rootDepth;
     Value LazyThreshold = (rootDepth < 10) ? LazyBase : LazyBase + LazyInc * (rootDepth-10);
     if (abs(v) > LazyThreshold)
        return pos.side_to_move() == WHITE ? v : -v;
