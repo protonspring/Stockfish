@@ -86,7 +86,8 @@ namespace {
   };
 
   // Threshold for lazy and space evaluation
-  const Value LazyThreshold  = Value(1500);
+  const Value LazyBase       = Value(1400);
+  const Value LazyInc        = Value(200);
   const Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
@@ -190,7 +191,7 @@ namespace {
 
   public:
     Evaluation() = delete;
-    explicit Evaluation(const Position& p) : pos(p) {}
+    explicit Evaluation(const Position& p, int depth) : pos(p),iDepth(depth / ONE_PLY) {}
     Evaluation& operator=(const Evaluation&) = delete;
     Value value();
 
@@ -242,6 +243,9 @@ namespace {
     // a white knight on g5 and black's king is on g8, this white knight adds 2
     // to kingAttacksCount[WHITE].
     int kingAttacksCount[COLOR_NB];
+
+    //track depth for LazyEval
+    int iDepth;
   };
 
 
@@ -842,9 +846,13 @@ namespace {
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
+ 
 
     // Early exit if score is high
+    // LazyThreshold is scaled using depth (search more carefully as we get deeper)
+    Value LazyThreshold = (iDepth < 10) ? LazyBase : LazyBase + LazyInc * (iDepth-10);
     Value v = (mg_value(score) + eg_value(score)) / 2;
+
     if (abs(v) > LazyThreshold)
        return pos.side_to_move() == WHITE ? v : -v;
 
@@ -895,8 +903,8 @@ namespace {
 /// evaluate() is the evaluator for the outer world. It returns a static
 /// evaluation of the position from the point of view of the side to move.
 
-Value Eval::evaluate(const Position& pos) {
-  return Evaluation<NO_TRACE>(pos).value();
+Value Eval::evaluate(const Position& pos, int depth) {
+  return Evaluation<NO_TRACE>(pos,depth).value();
 }
 
 
@@ -904,13 +912,13 @@ Value Eval::evaluate(const Position& pos) {
 /// a string (suitable for outputting to stdout) that contains the detailed
 /// descriptions and values of each evaluation term. Useful for debugging.
 
-std::string Eval::trace(const Position& pos) {
+std::string Eval::trace(const Position& pos, int depth) {
 
   std::memset(scores, 0, sizeof(scores));
 
   Eval::Contempt = SCORE_ZERO; // Reset any dynamic contempt
 
-  Value v = Evaluation<TRACE>(pos).value();
+  Value v = Evaluation<TRACE>(pos, depth).value();
 
   v = pos.side_to_move() == WHITE ? v : -v; // Trace scores are from white's point of view
 

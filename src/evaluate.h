@@ -34,9 +34,9 @@ const Value Tempo = Value(20); // Must be visible to search
 
 extern std::atomic<Score> Contempt;
 
-std::string trace(const Position& pos);
+std::string trace(const Position& pos, int depth);
 
-Value evaluate(const Position& pos);
+Value evaluate(const Position& pos, int depth);
 }
 
 #endif // #ifndef EVALUATE_H_INCLUDED
