@@ -164,7 +164,7 @@ namespace {
 
   // Assorted bonuses and penalties
   const Score BishopPawns        = S(  8, 12);
-  const Score BadPawnRams        = S( 15, 15); //not tuned
+  const Score BadPawnRams        = S(  5,  5); //not tuned
   const Score CloseEnemies       = S(  7,  0);
   const Score Connectivity       = S(  3,  1);
   const Score CorneredBishop     = S( 50, 50);
