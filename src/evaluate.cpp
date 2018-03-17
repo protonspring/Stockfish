@@ -351,7 +351,7 @@ namespace {
                 if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
                     score += LongDiagonalBishop;
 
-                // Penalty according to the number of pawn rams on the same color square
+                // Bonus according to the number of enemy pawn rams on the same color square
                 Bitboard bs = (DarkSquares & s) ? DarkSquares : ~DarkSquares;
                 score += PawnRams * popcount(pe->pawnRams[Them] & bs);
             }
