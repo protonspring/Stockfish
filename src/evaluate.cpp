@@ -164,7 +164,7 @@ namespace {
 
   // Assorted bonuses and penalties
   const Score BishopPawns        = S(  8, 12);
-  const Score BadPawnRams        = S(  3,  3); //not tuned
+  const Score PawnRams           = S(  8,  8); //not tuned
   const Score CloseEnemies       = S(  7,  0);
   const Score Connectivity       = S(  3,  1);
   const Score CorneredBishop     = S( 50, 50);
@@ -353,7 +353,7 @@ namespace {
 
                 // Penalty according to the number of pawn rams on the same color square
                 Bitboard bs = (DarkSquares & s) ? DarkSquares : ~DarkSquares;
-                score -= BadPawnRams * popcount(pe->pawnRams[Us] & bs);
+                score += PawnRams * popcount(pe->pawnRams[Them] & bs);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
