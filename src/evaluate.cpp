@@ -181,7 +181,7 @@ namespace {
   const Score TrappedRook        = S( 92,  0);
   const Score WeakQueen          = S( 50, 10);
   const Score WeakUnopposedPawn  = S(  5, 25);
-  const Score KingTargeter       = S(  5,  0);
+  const Score KingTargeter       = S(  0,  5);
 
 #undef S
 
