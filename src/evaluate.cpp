@@ -181,6 +181,7 @@ namespace {
   const Score TrappedRook        = S( 92,  0);
   const Score WeakQueen          = S( 50, 10);
   const Score WeakUnopposedPawn  = S(  5, 25);
+  const Score KingTargeter       = S(  5,  0);
 
 #undef S
 
@@ -300,6 +301,14 @@ namespace {
 
     while ((s = *pl++) != SQ_NONE)
     {
+        // bonus if the piece can attack the kingRing with other pieces removed
+        b = Pt == BISHOP ? attacks_bb<BISHOP>(s,0)
+          : Pt ==   ROOK ? attacks_bb<  ROOK>(s,0)
+          : pos.attacks_from<Pt>(s);
+
+        if (b & kingRing[Them])
+          score += KingTargeter;
+
         // Find attacked squares, including x-ray attacks for bishops and rooks
         b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
           : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
