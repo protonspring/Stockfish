@@ -306,7 +306,7 @@ namespace {
           : Pt ==   ROOK ? attacks_bb<  ROOK>(s,0)
           : pos.attacks_from<Pt>(s);
 
-        if (b & kingRing[Them])
+        if (b & pos.pieces(Them, KING))
           score += KingTargeter;
 
         // Find attacked squares, including x-ray attacks for bishops and rooks
