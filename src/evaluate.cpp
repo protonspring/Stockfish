@@ -849,7 +849,7 @@ namespace {
     Score s2 = (stm == WHITE) ? pe->king_safety<WHITE>(pos,ksq) : pe->king_safety<BLACK>(pos,ksq);
     // Early exit if king is safe and score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if ((abs(v) > LazyThreshold) && (mg_value(s2) > 100) && (eg_value(s2) > -17))
+    if ((abs(v) > LazyThreshold) && (mg_value(s2) > 30) && (eg_value(s2) > -17))
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
