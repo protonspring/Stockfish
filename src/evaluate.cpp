@@ -88,7 +88,7 @@ namespace {
 
   // Threshold for lazy and space evaluation
   //constexpr Value LazyThreshold  = Value(1500);
-  const Value LazyThreshold  = Value(1450 + Time.optimum()/2);
+  const Value LazyThreshold  = Value(1450 + Time.optimum()/8);
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
