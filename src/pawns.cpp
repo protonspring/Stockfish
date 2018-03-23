@@ -38,7 +38,7 @@ namespace {
   constexpr Score Backward = S(24, 12);
 
   // Bonus for passed pawns that are neighbors
-  constexpr Score PassedNeighbours = S(10,10);
+  constexpr Score PassedNeighbours = S(4,4);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
