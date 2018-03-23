@@ -159,6 +159,9 @@ namespace {
   // PassedDanger[Rank] contains a term to weight the passed score
   constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 2, 7, 12, 19 };
 
+  // Bonus for neighboring passed pawns
+  constexpr Score HardPassedCombo = S(10,10);
+
   // KingProtector[PieceType-2] contains a penalty according to distance from king
   constexpr Score KingProtector[] = { S(3, 5), S(4, 3), S(3, 0), S(1, -1) };
 
@@ -627,7 +630,19 @@ namespace {
     Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
     Score score = SCORE_ZERO;
 
-    b = pe->passed_pawns(Us);
+    //first see if there are any hard passed pawns that have neighbors 
+    b = pe->hard_passed_pawns(Us);
+    while (b)
+    {
+        Square s = pop_lsb(&b);
+        File f = file_of(s);
+
+        if (b & adjacent_files_bb(f))
+           score += HardPassedCombo;
+    }
+
+    //score pseudo passed pawns 
+    b = pe->soft_passed_pawns(Us);
 
     while (b)
     {

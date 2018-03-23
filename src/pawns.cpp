@@ -101,7 +101,7 @@ namespace {
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
-    e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
+    e->softPassedPawns[Us] = e->hardPassedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
@@ -149,11 +149,14 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (   !(stoppers ^ lever ^ leverPush)
+        if ( !stoppers)
+            e->hardPassedPawns[Us] |= s;
+
+        else if (   !(stoppers ^ lever ^ leverPush)
             && !(ourPawns & forward_file_bb(Us, s))
             && popcount(supported) >= popcount(lever)
             && popcount(phalanx)   >= popcount(leverPush))
-            e->passedPawns[Us] |= s;
+            e->softPassedPawns[Us] |= s;
 
         else if (   stoppers == SquareBB[s + Up]
                  && relative_rank(Us, s) >= RANK_5)
@@ -161,7 +164,7 @@ namespace {
             b = shift<Up>(supported) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
-                    e->passedPawns[Us] |= s;
+                    e->softPassedPawns[Us] |= s;
         }
 
         // Score this pawn
@@ -177,6 +180,9 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
     }
+
+    //all hard passed pawns are also soft passed
+    e->softPassedPawns[Us] |= e->hardPassedPawns[Us];
 
     return score;
   }
@@ -223,7 +229,7 @@ Entry* probe(const Position& pos) {
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
   e->openFiles = popcount(e->semiopenFiles[WHITE] & e->semiopenFiles[BLACK]);
-  e->asymmetry = popcount(  (e->passedPawns[WHITE]   | e->passedPawns[BLACK])
+  e->asymmetry = popcount(  (e->softPassedPawns[WHITE]   | e->softPassedPawns[BLACK])
                           | (e->semiopenFiles[WHITE] ^ e->semiopenFiles[BLACK]));
 
   return e;
