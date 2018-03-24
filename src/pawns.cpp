@@ -47,9 +47,11 @@ namespace {
   // ShelterWeakness[rank]
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   Value ShelterWeakness[RANK_NB];
-  constexpr Value ShelterRANK1= V(100);
-  constexpr Value ShelterBase = V(-10);
-  constexpr Value ShelterInc  = V(20);
+  Value ShelterRANK1= V(100);
+  Value ShelterBase = V(-10);
+  Value ShelterInc  = V(20);
+
+  TUNE(ShelterRANK1,ShelterBase,ShelterInc);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
