@@ -46,7 +46,7 @@ namespace {
   // Weakness of our pawn shelter in front of the king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[4][RANK_NB] = {
-    {   V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101), V(120) },
+      { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101), V(120) },
       { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113), V(120) },
       { V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115), V(120) },
       { V( 72), V( 6), V(52), V(74), V( 83), V( 84), V(112), V(120) }
@@ -259,8 +259,8 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-      if (f == file_of(ksq))
-         safety -= 20; //subtract weakness?
+      if ((f == file_of(ksq)) && (rkUs == RANK_1)) //RANK_1 == we have no pawns on this file
+         safety -= 20;
 
       safety -=  ShelterWeakness[d][rkUs]
                + StormDanger
