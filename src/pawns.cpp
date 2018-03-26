@@ -43,9 +43,8 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
-  // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
+  // Weakness of our pawn shelter in front of the king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  //constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
   constexpr Value ShelterWeakness[4][RANK_NB] = {
     {   V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101), V(120) },
       { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113), V(120) },
