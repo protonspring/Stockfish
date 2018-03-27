@@ -257,7 +257,6 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-
       safety +=  ShelterStrength[f == file_of(ksq)][d][rkUs]
                - StormDanger
                  [f == file_of(ksq) && rkThem == relative_rank(Us, ksq) + 1 ? BlockedByKing  :
