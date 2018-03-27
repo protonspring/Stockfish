@@ -241,11 +241,10 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
-  Bitboard b =   pos.pieces(PAWN)
-               & (forward_ranks_bb(Us, ksq) | rank_bb(ksq))
-               & (adjacent_files_bb(center) | file_bb(center));
-  Bitboard ourPawns = b & pos.pieces(Us);
-  Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard b =  (forward_ranks_bb(Us, ksq) | rank_bb(ksq))
+              & (adjacent_files_bb(center) | file_bb(center));
+  Bitboard ourPawns   = b & pos.pieces(  Us, PAWN);
+  Bitboard theirPawns = b & pos.pieces(Them, PAWN);
   Value safety = MaxSafetyBonus;
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
