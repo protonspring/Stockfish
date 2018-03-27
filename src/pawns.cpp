@@ -44,8 +44,8 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
-  const Value base = Value(86);
-  constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
+  Value base = Value(86);
+  Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
     { { V(base- 98), V(base-20), V(base-11), V(base-42), V(base-83), V(base- 84), V(base-101) }, // Not On King file
       { V(base-103), V(base- 8), V(base-33), V(base-86), V(base- 87), V(base-105), V(base-113) },
       { V(base-100), V(base- 2), V(base-65), V(base-95), V(base- 59), V(base- 89), V(base-115) },
@@ -55,6 +55,10 @@ namespace {
       { V(base-121), V(base-26), V(base-65), V(base-90), V(base- 65), V(base- 76), V(base-117) },
       { V(base- 79), V(base- 0), V(base-45), V(base-65), V(base- 94), V(base- 92), V(base-105) } }
   };
+
+
+  TUNE(SetRange(70,100),base, Pawns::init);
+  
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
