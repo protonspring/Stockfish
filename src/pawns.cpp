@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -43,16 +44,16 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
-  // Strength of king pawn shelter by [isKingFile][distance from edge][rank].
+  const Value base = Value(86);
   constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 0), V(66), V(75), V(44), V( 0), V( 0), V( 0) }, // Not On King file
-      { V( 0), V(78), V(53), V( 0), V( 0), V( 0), V( 0) },
-      { V( 0), V(84), V(21), V( 0), V( 0), V( 0), V( 0) },
-      { V( 0), V(80), V(34), V(12), V( 0), V( 0), V( 0) } },
-    { { V( 0), V(57), V(83), V(59), V( 0), V( 0), V( 0) }, // On King file
-      { V( 0), V(79), V(53), V( 0), V( 0), V( 0), V( 0) },
-      { V( 0), V(60), V(21), V( 0), V( 0), V( 0), V( 0) },
-      { V( 0), V(86), V(41), V(21), V( 0), V( 0), V( 0) } }
+    { { V(base- 98), V(base-20), V(base-11), V(base-42), V(base-83), V(base- 84), V(base-101) }, // Not On King file
+      { V(base-103), V(base- 8), V(base-33), V(base-86), V(base- 87), V(base-105), V(base-113) },
+      { V(base-100), V(base- 2), V(base-65), V(base-95), V(base- 59), V(base- 89), V(base-115) },
+      { V(base- 72), V(base- 6), V(base-52), V(base-74), V(base- 83), V(base- 84), V(base-112) } },
+    { { V(base-105), V(base-19), V(base- 3), V(base-27), V(base- 85), V(base- 93), V(base- 84) }, // On King file
+      { V(base-121), V(base- 7), V(base-33), V(base-95), V(base-112), V(base- 86), V(base- 72) },
+      { V(base-121), V(base-26), V(base-65), V(base-90), V(base- 65), V(base- 76), V(base-117) },
+      { V(base- 79), V(base- 0), V(base-45), V(base-65), V(base- 94), V(base- 92), V(base-105) } }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
@@ -76,6 +77,10 @@ namespace {
       { V(23),  V(  29), V(  96), V(41), V(15) },
       { V(21),  V(  23), V( 116), V(41), V(15) } }
   };
+
+  // Max bonus for king safety. Corresponds to start position with all the pawns
+  // in front of the king and no enemy pawn on the horizon.
+  constexpr Value MaxSafetyBonus = V(258);
 
   #undef S
   #undef V
@@ -252,6 +257,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
+
       safety +=  ShelterStrength[f == file_of(ksq)][d][rkUs]
                - StormDanger
                  [f == file_of(ksq) && rkThem == relative_rank(Us, ksq) + 1 ? BlockedByKing  :
