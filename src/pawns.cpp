@@ -45,8 +45,8 @@ namespace {
 
   // Strength of king pawn shelter by [distance from edge][rank].
   // RANK_1 = 0 is for files where we have no pawns or our pawn is behind our king.
-  Value NoPawnOnKingFile = V(11);
-  constexpr Value ShelterStrength[4][4] = {
+  Value NoPawnOnKingFile = V(12);
+  Value ShelterStrength[4][4] = {
       { V( 12), V( 90), V( 99), V(68) },
       { V(  7), V(102), V( 77), V(24) },
       { V( 10), V(108), V( 45), V(15) },
