@@ -24,11 +24,11 @@
 
 namespace {
 
-  int sortingBase = 0;
-  int sortingInc = -4000;
+  int sortingBase = -500;
+  int sortingInc = -3500;
 
-  TUNE(SetRange(-4000,4000),sortingBase);
-  TUNE(SetRange(-8000,0),sortingInc);
+  TUNE(SetRange(-3000,1000),sortingBase);
+  TUNE(SetRange(-6000,0),sortingInc);
 
   enum Stages {
     MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
