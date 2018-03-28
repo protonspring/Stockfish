@@ -53,7 +53,7 @@ namespace {
       { V( 38), V(104), V( 58), V(36) }
   };
 
-  TUNE(SetRange(-10,30), NoPawnOnKingFile, Pawns::init);
+  TUNE(ShelterStrength, Pawns::init);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
