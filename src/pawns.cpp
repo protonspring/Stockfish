@@ -45,7 +45,7 @@ namespace {
 
   // Strength of king pawn shelter by [distance from edge][rank].
   // RANK_1 = 0 is for files where we have no pawns or our pawn is behind our king.
-  Value NoPawnOnKingFile = V(15);
+  Value NoPawnOnKingFile = V(11);
   constexpr Value ShelterStrength[4][4] = {
       { V( 12), V( 90), V( 99), V(68) },
       { V(  7), V(102), V( 77), V(24) },
@@ -53,7 +53,7 @@ namespace {
       { V( 38), V(104), V( 58), V(36) }
   };
 
-  TUNE(SetRange(0,40), NoPawnOnKingFile, Pawns::init);
+  TUNE(SetRange(-10,30), NoPawnOnKingFile, Pawns::init);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
