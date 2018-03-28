@@ -24,6 +24,12 @@
 
 namespace {
 
+  int sortingBase = 0;
+  int sortingInc = -4000;
+
+  TUNE(SetRange(-4000,4000),sortingBase);
+  TUNE(SetRange(-8000,0),sortingInc);
+
   enum Stages {
     MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
     EVASION_TT, EVASION_INIT, EVASION,
@@ -204,7 +210,7 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      partial_insertion_sort(cur, endMoves, sortingBase + sortingInc * depth / ONE_PLY);
       ++stage;
       /* fallthrough */
 
