@@ -47,10 +47,10 @@ namespace {
   // RANK_1 = 0 is for files where we have no pawns or our pawn is behind our king.
   Value NoPawnOnKingFile = V(12);
   constexpr Value ShelterStrength[4][4] = {
-      { V( 12), V( 90), V( 99), V(68) },
-      { V(  7), V(102), V( 77), V(24) },
-      { V( 10), V(108), V( 45), V(15) },
-      { V( 38), V(104), V( 58), V(36) }
+      { V( 12), V( 93), V( 98), V(68) },
+      { V(  7), V(101), V( 75), V(24) },
+      { V( 10), V(106), V( 47), V(15) },
+      { V( 37), V(103), V( 59), V(37) }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
