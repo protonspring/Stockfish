@@ -48,10 +48,10 @@ namespace {
   Value NoPawnOnKingFile = V(12);
   Value SafetyBase = V(-72);
   Value ShelterStrength[4][4] = {
-      { V( 12), V( 90), V( 99), V(68) },
-      { V(  7), V(102), V( 77), V(24) },
-      { V( 10), V(108), V( 45), V(15) },
-      { V( 38), V(104), V( 58), V(36) }
+      { V(  0), V(100), V( 80), V(60) },
+      { V(  0), V(100), V( 70), V(40) },
+      { V(  0), V(100), V( 60), V(20) },
+      { V(  0), V(100), V( 50), V( 0) }
   };
 
   TUNE(ShelterStrength, Pawns::init);
