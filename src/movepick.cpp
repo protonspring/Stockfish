@@ -26,9 +26,11 @@ namespace {
 
   int sortingBase = -500;
   int sortingInc = -3500;
+  int sortingLimit = -25000;
 
   TUNE(SetRange(-3000,1000),sortingBase);
   TUNE(SetRange(-6000,0),sortingInc);
+  TUNE(SetRange(-40000,-20000),sortingLimit);
 
   enum Stages {
     MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
@@ -210,7 +212,7 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, sortingBase + sortingInc * depth / ONE_PLY);
+      partial_insertion_sort(cur, endMoves, std::max(sortingLimit,sortingBase + sortingInc * depth / ONE_PLY));
       ++stage;
       /* fallthrough */
 
