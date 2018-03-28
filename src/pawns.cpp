@@ -91,7 +91,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
+    Bitboard b, neighbours, stoppers, doubled, supported, phalanx, behind;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
@@ -127,6 +127,7 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
+        behind     = ourPawns   & forward_file_bb(Them, s);
 
         // A pawn is backward when it is behind all pawns of the same color on the
         // adjacent files and cannot be safely advanced.
@@ -151,7 +152,7 @@ namespace {
         // not attacked more times than defended.
         if (   !(stoppers ^ lever ^ leverPush)
             && !(ourPawns & forward_file_bb(Us, s))
-            && popcount(supported) >= popcount(lever)
+            && popcount(supported | behind) >= popcount(lever)
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
