@@ -204,7 +204,7 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      partial_insertion_sort(cur, endMoves, std::max(-25500,-500 - 3800 * depth / ONE_PLY));
       ++stage;
       /* fallthrough */
 
