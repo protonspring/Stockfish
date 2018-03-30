@@ -46,17 +46,17 @@ namespace {
 
   // Strength of pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  constexpr Value BaseSafety = Value(-72);
-  constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 12), V( 90), V( 99), V( 68), V( 27), V( 26), V(  9) }, // Not On King file
-      { V(  7), V(102), V( 77), V( 24), V( 23), V(  5), V( -3) },
-      { V( 10), V(108), V( 45), V( 15), V( 51), V( 21), V( -5) },
-      { V( 38), V(104), V( 58), V( 36), V( 27), V( 26), V( -2) } },
-    { { V(  5), V( 91), V(107), V( 83), V( 25), V( 17), V( 26) }, // On King file
-      { V(-11), V(103), V( 77), V( 15), V( -2), V( 24), V( 38) },
-      { V(-11), V( 84), V( 45), V( 20), V( 45), V( 34), V( -7) },
-      { V( 31), V(110), V( 65), V( 45), V( 16), V( 18), V(  5) } }
-  };
+  Value BaseSafety = Value(-73);
+  Value ShelterStrength[2][4][6] = {
+    { { V( 12), V( 87), V( 88), V( 71), V( 27), V( 24)}, // Not On King file
+      { V(  7), V(106), V( 76), V( 25), V( 22), V(  5)},
+      { V( 11), V(106), V( 45), V( 17), V( 50), V( 20)},
+      { V( 37), V(106), V( 58), V( 35), V( 27), V( 26)} },
+    { { V(  5), V( 88), V(108), V( 80), V( 25), V( 16)}, // On King file
+      { V(-11), V(111), V( 78), V( 13), V( -2), V( 24)},
+      { V(-10), V( 84), V( 46), V( 21), V( 50), V( 34)},
+      { V( 33), V(106), V( 61), V( 44), V( 17), V( 18)} }
+    };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
@@ -239,6 +239,9 @@ template<Color Us>
 Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
+  constexpr Bitboard ShelterMask = (Us == WHITE ?
+               Rank1BB | Rank2BB | Rank3BB | Rank4BB | Rank5BB | Rank6BB :
+               Rank8BB | Rank7BB | Rank6BB | Rank5BB | Rank4BB | Rank3BB);
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
@@ -246,7 +249,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard b =   pos.pieces(PAWN)
                & (forward_ranks_bb(Us, ksq) | rank_bb(ksq))
                & (adjacent_files_bb(center) | file_bb(center));
-  Bitboard ourPawns = b & pos.pieces(Us);
+  Bitboard ourPawns = b & pos.pieces(Us) & ShelterMask;
   Bitboard theirPawns = b & pos.pieces(Them);
   Value safety = BaseSafety;
 
