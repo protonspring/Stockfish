@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -242,8 +241,8 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Bitboard ShelterMask = (Us == WHITE ?
-               Rank1BB | Rank2BB | Rank3BB | Rank4BB | Rank5BB | Rank6BB :
-               Rank8BB | Rank7BB | Rank6BB | Rank5BB | Rank4BB | Rank3BB);
+               Rank1BB | Rank2BB | Rank3BB | Rank4BB | Rank5BB:
+               Rank8BB | Rank7BB | Rank6BB | Rank5BB | Rank4BB);
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
