@@ -241,9 +241,9 @@ template<Color Us>
 Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
-  Bitboard ShelterMask = (Us == WHITE ? 
-               RankBB[RANK_2] | RankBB[RANK_3] | RankBB[RANK_4] | RankBB[RANK_5] :
-               RankBB[RANK_7] | RankBB[RANK_6] | RankBB[RANK_5] | RankBB[RANK_4]);
+  constexpr Bitboard ShelterMask = (Us == WHITE ? 
+               Rank2BB | Rank3BB | Rank4BB | Rank5BB | Rank6BB :
+               Rank7BB | Rank6BB | Rank5BB | Rank4BB | Rank3BB);
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
