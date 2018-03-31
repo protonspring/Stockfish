@@ -47,14 +47,14 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   Value BaseSafety = Value(-74);
   Value ShelterStrength[2][4][5] = {
-    { { V( 12), V( 90), V( 89), V( 71), V( 28)}, // Not On King file
-      { V(  7), V(113), V( 75), V( 25), V( 22)},
-      { V( 11), V(108), V( 42), V( 17), V( 50)},
-      { V( 37), V(107), V( 59), V( 35), V( 27)} },
-    { { V(  5), V( 87), V(103), V( 79), V( 25)}, // On King file
-      { V(-11), V(112), V( 79), V( 13), V( -2)},
-      { V(-10), V( 86), V( 45), V( 21), V( 48)},
-      { V( 33), V(107), V( 60), V( 43), V( 17)} }
+    { { V( 12), V( 88), V( 92), V( 71), V( 28)}, // Not On King file
+      { V(  7), V(113), V( 73), V( 25), V( 22)},
+      { V( 11), V(108), V( 43), V( 17), V( 50)},
+      { V( 37), V(109), V( 60), V( 35), V( 26)} },
+    { { V(  5), V( 86), V(109), V( 83), V( 25)}, // On King file
+      { V(-11), V(113), V( 79), V( 13), V( -2)},
+      { V(-10), V( 85), V( 45), V( 21), V( 47)},
+      { V( 33), V(106), V( 59), V( 43), V( 17)} }
     };
 
 TUNE(SetRange(-100,-50),BaseSafety,SetDefaultRange,ShelterStrength,Pawns::init);
