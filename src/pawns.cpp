@@ -46,16 +46,18 @@ namespace {
   // Strength of pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   Value BaseSafety = Value(-74);
-  Value ShelterStrength[2][4][5] = {
-    { { V( 12), V( 88), V( 92), V( 69), V( 28)}, // Not On King file
-      { V(  7), V(115), V( 72), V( 25), V( 22)},
-      { V( 11), V(109), V( 42), V( 16), V( 50)},
-      { V( 37), V(104), V( 60), V( 35), V( 26)} },
-    { { V(  5), V( 83), V(113), V( 85), V( 25)}, // On King file
-      { V(-11), V(113), V( 79), V( 13), V( -2)},
-      { V(-10), V( 85), V( 45), V( 21), V( 46)},
-      { V( 33), V(107), V( 61), V( 42), V( 17)} }
+  Value ShelterStrength[2][4][4] = {
+    { { V( 12), V( 88), V( 92), V( 69)}, // Not On King file
+      { V(  7), V(115), V( 72), V( 25)},
+      { V( 11), V(109), V( 42), V( 16)},
+      { V( 37), V(104), V( 60), V( 35)} },
+    { { V(  5), V( 83), V(113), V( 85)}, // On King file
+      { V(-11), V(113), V( 79), V( 13)},
+      { V(-10), V( 85), V( 45), V( 21)},
+      { V( 33), V(107), V( 61), V( 42)} }
     };
+
+TUNE(SetRange(-100,-50),BaseSafety,SetDefaultRange,ShelterStrength);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
@@ -239,8 +241,8 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Bitboard ShelterMask = (Us == WHITE ?
-               Rank1BB | Rank2BB | Rank3BB | Rank4BB | Rank5BB :
-               Rank8BB | Rank7BB | Rank6BB | Rank5BB | Rank4BB );
+               Rank1BB | Rank2BB | Rank3BB | Rank4BB :
+               Rank8BB | Rank7BB | Rank6BB | Rank5BB);
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
