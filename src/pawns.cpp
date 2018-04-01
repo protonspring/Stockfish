@@ -45,16 +45,16 @@ namespace {
 
   // Strength of pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  Value BaseSafety = Value(-73);
+  Value BaseSafety = Value(-72);
   Value ShelterStrength[2][4][4] = {
     { { V( 12), V( 89), V( 97), V( 69)}, // Not On King file
       { V(  7), V(112), V( 74), V( 25)},
-      { V( 12), V(109), V( 45), V( 16)},
-      { V( 37), V(101), V( 59), V( 33)} },
-    { { V(  5), V( 85), V(118), V( 89)}, // On King file
+      { V( 12), V(111), V( 43), V( 16)},
+      { V( 36), V( 98), V( 60), V( 34)} },
+    { { V(  5), V( 85), V(116), V( 89)}, // On King file
       { V(-11), V(110), V( 79), V( 12)},
-      { V(-10), V( 86), V( 45), V( 21)},
-      { V( 33), V(108), V( 60), V( 41)} }
+      { V(-10), V( 90), V( 45), V( 21)},
+      { V( 33), V(103), V( 57), V( 39)} }
     };
 
 TUNE(SetRange(-100,-50),BaseSafety,SetDefaultRange,ShelterStrength,Pawns::init);
