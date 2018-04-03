@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -173,7 +174,7 @@ namespace {
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
-  constexpr Score RookBehind         = S(  0, 20);
+  constexpr Score RookBehind         = S( 20,  5);
   constexpr Score SliderOnQueen      = S( 42, 21);
   constexpr Score ThreatByPawnPush   = S( 47, 26);
   constexpr Score ThreatByRank       = S( 16,  3);
@@ -379,7 +380,7 @@ namespace {
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for being behind enemy pawns
-            if (relative_rank(Us, s) > relative_rank(Us , backmost_sq(Them,pos.pieces(Them,PAWN))))
+            if (relative_rank(Us, s) >= relative_rank(Us , backmost_sq(Them,pos.pieces(Them,PAWN))))
                 score += RookBehind;
 
             // Bonus for rook on an open or semi-open file
