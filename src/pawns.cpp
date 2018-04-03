@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <math.h>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -43,18 +44,27 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // Pawn shelter interpolation equation variables
+  Value SafetyBase = V(-75);
+  int ShelterBase = 120;
+  int ShelterMultiplier = 2;
+  int ShelterXoffset = 10;
+  int ShelterYoffset = 10;
+  Value ShelterRANK1 = V(100);
+  Value ShelterStrength[int(FILE_NB) / 2][RANK_NB];
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
-      { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113) },
-      { V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
-      { V( 72), V( 6), V(52), V(74), V( 83), V( 84), V(112) } },
-    { { V(105), V(19), V( 3), V(27), V( 85), V( 93), V( 84) }, // On King file
-      { V(121), V( 7), V(33), V(95), V(112), V( 86), V( 72) },
-      { V(121), V(26), V(65), V(90), V( 65), V( 76), V(117) },
-      { V( 79), V( 0), V(45), V(65), V( 94), V( 92), V(105) } }
-  };
+  //constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
+    //{ { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
+      //{ V(103), V( 8), V(33), V(86), V( 87), V(105), V(113) },
+      //{ V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
+      //{ V( 72), V( 6), V(52), V(74), V( 83), V( 84), V(112) } },
+    //{ { V(105), V(19), V( 3), V(27), V( 85), V( 93), V( 84) }, // On King file
+      //{ V(121), V( 7), V(33), V(95), V(112), V( 86), V( 72) },
+      //{ V(121), V(26), V(65), V(90), V( 65), V( 76), V(117) },
+      //{ V( 79), V( 0), V(45), V(65), V( 94), V( 92), V(105) } }
+  //};
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
@@ -80,7 +90,7 @@ namespace {
 
   // Max bonus for king safety. Corresponds to start position with all the pawns
   // in front of the king and no enemy pawn on the horizon.
-  constexpr Value MaxSafetyBonus = V(258);
+  //constexpr Value MaxSafetyBonus = V(258);
 
   #undef S
   #undef V
@@ -203,6 +213,14 @@ void init() {
 
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
   }
+
+  for (File f = FILE_A; f < FILE_E ; ++f) //distance from edge
+  {
+    ShelterStrength[f][0] = ShelterRANK1;
+    for (Rank r = RANK_2; r < RANK_8; r=Rank(r+1))
+       ShelterStrength[f][r] = Value(ShelterMultiplier*(pow(ShelterXoffset - f,2) + 
+                               pow(ShelterYoffset - r,2) ) - ShelterBase);
+  };
 }
 
 
@@ -246,7 +264,8 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
                & (adjacent_files_bb(center) | file_bb(center));
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
-  Value safety = MaxSafetyBonus;
+  //Value safety = MaxSafetyBonus;
+  Value safety = SafetyBase;
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
@@ -257,8 +276,8 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-      safety -=  ShelterWeakness[f == file_of(ksq)][d][rkUs]
-               + StormDanger
+      safety +=  ShelterStrength[d][rkUs]
+               - StormDanger
                  [f == file_of(ksq) && rkThem == relative_rank(Us, ksq) + 1 ? BlockedByKing  :
                   rkUs   == RANK_1                                          ? Unopposed :
                   rkThem == rkUs + 1                                        ? BlockedByPawn  : Unblocked]
