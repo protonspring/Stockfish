@@ -379,7 +379,7 @@ namespace {
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for being behind all enemy pawns
-            if (relative_rank(Us, s) >= relative_rank(Us , backmost_sq(Them,pos.pieces(Them,PAWN))))
+            if (!(forward_ranks_bb(Us,s) & pos.pieces(Them,PAWN)))
                 score += RookBehind;
 
             // Bonus for rook on an open or semi-open file
