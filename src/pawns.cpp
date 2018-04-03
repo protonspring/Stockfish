@@ -47,14 +47,14 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   Value BaseSafety = Value(-73);
   Value ShelterStrength[2][FILE_NB/2][RANK_NB-1] = {
-    { { V( 13), V( 87), V( 90), V( 72), V( 26), V( 25), V(  0)}, // Not On King file
-      { V(  7), V(111), V( 79), V( 24), V( 22), V(  5), V(  0)},
-      { V( 11), V(108), V( 45), V( 17), V( 53), V( 20), V(  0)},
-      { V( 36), V(106), V( 58), V( 35), V( 27), V( 27), V(  0)} },
-    { { V(  5), V( 84), V(108), V( 78), V( 26), V( 17), V(  0)}, // On King file
-      { V(-11), V(109), V( 76), V( 14), V( -2), V( 24), V(  0)},
-      { V(-10), V( 84), V( 46), V( 20), V( 50), V( 34), V(  0)},
-      { V( 34), V(104), V( 60), V( 45), V( 17), V( 18), V(  0)} }
+    { { V( 12), V( 87), V( 88), V( 71), V( 27), V( 24)}, // Not On King file
+      { V(  7), V(106), V( 76), V( 25), V( 22), V(  5)},
+      { V( 11), V(106), V( 45), V( 17), V( 50), V( 20)},
+      { V( 37), V(106), V( 58), V( 35), V( 27), V( 26)} },
+    { { V(  5), V( 88), V(108), V( 80), V( 25), V( 16)}, // On King file
+      { V(-11), V(111), V( 78), V( 13), V( -2), V( 24)},
+      { V(-10), V( 84), V( 46), V( 21), V( 50), V( 34)},
+      { V( 33), V(106), V( 61), V( 44), V( 17), V( 18)} }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
@@ -238,6 +238,9 @@ template<Color Us>
 Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
+  constexpr Bitboard ShelterMask = (Us == WHITE ?
+             Rank1BB | Rank2BB | Rank3BB | Rank4BB | Rank5BB | Rank6BB :
+             Rank8BB | Rank7BB | Rank6BB | Rank5BB | Rank4BB | Rank3BB);
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
@@ -245,7 +248,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard b =   pos.pieces(PAWN)
                & (forward_ranks_bb(Us, ksq) | rank_bb(ksq))
                & (adjacent_files_bb(center) | file_bb(center));
-  Bitboard ourPawns = b & pos.pieces(Us);
+  Bitboard ourPawns = b & pos.pieces(Us) & ShelterMask;
   Bitboard theirPawns = b & pos.pieces(Them);
   Value safety = BaseSafety;
 
