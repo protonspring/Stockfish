@@ -173,6 +173,7 @@ namespace {
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
+  constexpr Score RookBehind         = S(  0, 20);
   constexpr Score SliderOnQueen      = S( 42, 21);
   constexpr Score ThreatByPawnPush   = S( 47, 26);
   constexpr Score ThreatByRank       = S( 16,  3);
@@ -376,6 +377,10 @@ namespace {
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
+
+            // Bonus for being behind enemy pawns
+            if (relative_rank(Us, s) > relative_rank(Us , backmost_sq(Them,pos.pieces(Them,PAWN))))
+                score += RookBehind;
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
