@@ -292,7 +292,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
       if (bonus2 > bonus)
          bonus += (bonus2 - bonus)/2;
   }
-  else if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
+  if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
   {
       Value bonus2 = shelter_storm<Us>(pos, relative_square(Us, SQ_C1));
       if (bonus2 > bonus)
