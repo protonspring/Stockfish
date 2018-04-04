@@ -23,7 +23,6 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
-//#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -851,9 +850,7 @@ namespace {
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    //Value lt = LazyThreshold + Value(float(LazyThreshold) * (float(pos.rule50_count())/150.0));
-    Value lt = LazyThreshold + Value((int)LazyThreshold * pow(pos.rule50_count()/65.0,3));
-    //std::cout << "<" << pos.rule50_count() << "," << lt << ">";
+    Value lt = LazyThreshold * (100 + pos.rule50_count()) / 100;
     if (abs(v) > lt)
        return pos.side_to_move() == WHITE ? v : -v;
 
