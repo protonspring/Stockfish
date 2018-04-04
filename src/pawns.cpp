@@ -43,6 +43,12 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // Castling pseudo offsets
+  Value kingSideOffset = V(10);
+  Value queenSideOffset = V(10);
+
+  TUNE(SetRange(-40,40),kingSideOffset,queenSideOffset);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -287,10 +293,10 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   // If we can castle use the bonus after the castling if it is bigger
   if (pos.can_castle(MakeCastling<Us, KING_SIDE>::right))
-      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_G1))-10);
+      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_G1))-kingSideOffset);
 
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
-      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1))-10);
+      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1))-queenSideOffset);
 
   return make_score(bonus, -16 * minKingPawnDistance);
 }
