@@ -850,7 +850,8 @@ namespace {
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if (abs(v) > LazyThreshold)
+    Value lt = LazyThreshold + Value(float(LazyThreshold) * (float(pos.rule50_count())/50.0));
+    if (abs(v) > lt)
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
