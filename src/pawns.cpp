@@ -181,6 +181,7 @@ namespace {
             score -= Doubled;
 
         // No bishop on my color bonus
+        if (pos.count<BISHOP>(Them) == 1)
         if (((s & DarkSquares) && (!(pos.pieces(Them,BISHOP) & DarkSquares))) ||
             ((s & ~DarkSquares) && (!(pos.pieces(Them,BISHOP) & ~DarkSquares))))
             score += NoBishop;
