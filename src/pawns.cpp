@@ -43,6 +43,9 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // No bishop on my color bonus
+  constexpr Score NoBishop = S(5, 5);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -176,6 +179,11 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+
+        // No bishop on my color bonus
+        if (((s & DarkSquares) && (!(pos.pieces(Them,BISHOP) & DarkSquares))) ||
+            ((s & ~DarkSquares) && (!(pos.pieces(Them,BISHOP) & ~DarkSquares))))
+            score += NoBishop;
     }
 
     return score;
