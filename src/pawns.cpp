@@ -47,7 +47,7 @@ namespace {
   Value kingSideOffset = V(10);
   Value queenSideOffset = V(18);
 
-  TUNE(SetRange(-40,40),kingSideOffset,queenSideOffset);
+  TUNE(kingSideOffset,queenSideOffset);
 
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
