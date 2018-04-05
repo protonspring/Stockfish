@@ -162,8 +162,8 @@ namespace {
   constexpr Score KingProtector[] = { S(3, 5), S(4, 3), S(3, 0), S(1, -1) };
 
   // Assorted bonuses and penalties
-  constexpr Score BishopOurPawns     = S(  8, 12);
-  constexpr Score BishopTheirPawns   = S(  8, 12);
+  Score BishopOurPawns     = S(  8, 12);
+  Score BishopTheirPawns   = S(  8, 12);
   constexpr Score CloseEnemies       = S(  7,  0);
   constexpr Score Connectivity       = S(  3,  1);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -181,6 +181,8 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
+
+  TUNE(BishopOurPawns,BishopTheirPawns);
 
 #undef S
 
