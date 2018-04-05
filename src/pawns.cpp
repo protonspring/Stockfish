@@ -45,7 +45,7 @@ namespace {
 
   // Castling pseudo offsets
   Value kingSideOffset = V(10);
-  Value queenSideOffset = V(10);
+  Value queenSideOffset = V(18);
 
   TUNE(SetRange(-40,40),kingSideOffset,queenSideOffset);
 
