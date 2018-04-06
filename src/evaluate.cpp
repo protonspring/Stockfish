@@ -354,10 +354,10 @@ Value PawnValueEg = Value(240);
 
             if (Pt == BISHOP)
             {
-                // Penalty for rammed pawns on the same color square
+                // Penalty for our rammed pawns on the same color square
                 score -= BishopPawnRamOurs * pe->rams_on_same_color_squares(Us, s);
 
-                // bonus for rammed enemy pawns on the same color square
+                // bonus for enemy rammed pawns on the same color square
                 score += BishopPawnRamTheirs * pe->rams_on_same_color_squares(Them, s);
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares

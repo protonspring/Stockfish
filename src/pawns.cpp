@@ -28,9 +28,6 @@
 
 namespace {
 
-Value PawnValueMg = Value(191);
-Value PawnValueEg = Value(260);
-
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
