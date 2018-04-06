@@ -45,8 +45,8 @@ struct Entry {
     return semiopenFiles[c] & (1 << f);
   }
 
-  int pawns_on_same_color_squares(Color c, Square s) const {
-    return pawnsOnSquares[c][bool(DarkSquares & s)];
+  int rams_on_same_color_squares(Color c, Square s) const {
+    return ramsOnSquares[c][bool(DarkSquares & s)];
   }
 
   template<Color Us>
@@ -71,7 +71,7 @@ struct Entry {
   int weakUnopposed[COLOR_NB];
   int castlingRights[COLOR_NB];
   int semiopenFiles[COLOR_NB];
-  int pawnsOnSquares[COLOR_NB][COLOR_NB]; // [color][light/dark squares]
+  int ramsOnSquares[COLOR_NB][COLOR_NB]; // [color][light/dark squares]
   int asymmetry;
   int openFiles;
 };
