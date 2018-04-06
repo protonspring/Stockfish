@@ -182,7 +182,7 @@ namespace {
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
 
-  TUNE(BishopPawnRamOurs,BishopPawnRamTheirs);
+  TUNE(SetRange(-20,40),BishopPawnRamOurs,BishopPawnRamTheirs);
 
 #undef S
 
