@@ -131,6 +131,10 @@ enum Color {
   WHITE, BLACK, COLOR_NB = 2
 };
 
+enum SqColor {
+  LIGHT, DARK, SQCOLOR_NB = 2
+};
+
 enum CastlingSide {
   KING_SIDE, QUEEN_SIDE, CASTLING_SIDE_NB = 2
 };
