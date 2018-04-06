@@ -73,6 +73,9 @@ using namespace Trace;
 
 namespace {
 
+Value PawnValueMg = Value(171);
+Value PawnValueEg = Value(240);
+
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
   constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
@@ -182,7 +185,7 @@ namespace {
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
 
-  TUNE(BishopPawnRamOurs,BishopPawnRamTheirs);
+  TUNE(BishopPawnRamOurs,BishopPawnRamTheirs,PawnValueMg,PawnValueEg);
 
 #undef S
 

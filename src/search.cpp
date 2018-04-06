@@ -73,7 +73,7 @@ namespace {
   }
 
   // Margin for pruning capturing moves: almost linear in depth
-  constexpr int CapturePruneMargin[] = { 0,
+  int CapturePruneMargin[] = { 0,
                                          1 * PawnValueEg * 1055 / 1000,
                                          2 * PawnValueEg * 1042 / 1000,
                                          3 * PawnValueEg * 963  / 1000,
