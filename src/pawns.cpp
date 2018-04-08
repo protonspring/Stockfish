@@ -182,6 +182,8 @@ namespace {
     }
 
     e->pawnWidth[Us] = maxFile > minFile ? maxFile - minFile : 0;
+    if (e->pawnWidth[Us] < 5)
+        e->pawnWidth[Us] = 0;
 
     return score;
   }
