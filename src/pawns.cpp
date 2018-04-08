@@ -108,10 +108,10 @@ namespace {
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
-    if ((theirPawns & (FileABB | FileBBB)) && 
+    if ((theirPawns & (FileABB | FileBBB)) &&
         (theirPawns & (FileGBB | FileHBB)))
        e->widePawns[Them] = true;
-    else 
+    else
        e->widePawns[Them] = false;
 
     // Loop through all pawns of the current color and score each pawn
