@@ -97,6 +97,7 @@ namespace {
     bool opposed, backward;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
+    File minFile = FILE_H, maxFile = FILE_A;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -108,18 +109,14 @@ namespace {
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
-    if ((theirPawns & (FileABB | FileBBB)) && 
-        (theirPawns & (FileGBB | FileHBB)))
-       e->widePawns[Them] = true;
-    else 
-       e->widePawns[Them] = false;
-
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
         assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         File f = file_of(s);
+        if (f > maxFile) maxFile = f;
+        if (f < minFile) maxFile = f;
 
         e->semiopenFiles[Us]   &= ~(1 << f);
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
@@ -183,6 +180,8 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
     }
+
+    e->pawnWidth[Us] = maxFile > minFile ? maxFile - minFile : 0;
 
     return score;
   }
