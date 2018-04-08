@@ -108,6 +108,12 @@ namespace {
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
+    if ((theirPawns & (FileABB | FileBBB)) && 
+        (theirPawns & (FileGBB | FileHBB)))
+       e->widePawns[Them] = true;
+    else 
+       e->widePawns[Them] = false;
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
@@ -127,7 +133,7 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
-
+        
         // A pawn is backward when it is behind all pawns of the same color on the
         // adjacent files and cannot be safely advanced.
         if (!neighbours || lever || relative_rank(Us, s) >= RANK_5)

@@ -180,6 +180,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
+  constexpr Score KnightWidePawns    = S(  0, 10);
 
 #undef S
 
@@ -345,6 +346,12 @@ namespace {
             if (    relative_rank(Us, s) < RANK_5
                 && (pos.pieces(PAWN) & (s + pawn_push(Us))))
                 score += MinorBehindPawn;
+
+            if (Pt == KNIGHT)
+            {
+                if (pe->widePawns[Them])
+                   score -= KnightWidePawns;
+            }
 
             if (Pt == BISHOP)
             {
