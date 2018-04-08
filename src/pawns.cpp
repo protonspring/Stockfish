@@ -90,6 +90,7 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
+    constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
 
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
@@ -100,6 +101,7 @@ namespace {
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
+    Bitboard pawnRams    = 0;
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
@@ -127,6 +129,10 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
+
+        // if blocked and !lever, it's a blocked RAM
+        if ((s & shift<Down>(theirPawns)) && !lever)
+           pawnRams |= s;
 
         // A pawn is backward when it is behind all pawns of the same color on the
         // adjacent files and cannot be safely advanced.
@@ -177,6 +183,9 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
     }
+
+    e->ramsOnSquares[Us][BLACK] = popcount(pawnRams & DarkSquares);
+    e->ramsOnSquares[Us][WHITE] = popcount(pawnRams) - e->ramsOnSquares[Us][BLACK];
 
     return score;
   }

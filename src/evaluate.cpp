@@ -163,6 +163,7 @@ namespace {
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  8, 12);
+  constexpr Score BishopRams         = S(  0,  5);
   constexpr Score CloseEnemies       = S(  7,  0);
   constexpr Score Connectivity       = S(  3,  1);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -350,6 +351,11 @@ namespace {
             {
                 // Penalty according to number of pawns on the same color square as the bishop
                 score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s);
+
+                // bonus for enemy rams on the same color as the bishop
+                // if there are less than X enemy pawns (no bonus if very full)
+                if (pos.count<PAWN>(Them) < 5)
+                  score += BishopRams * pe->rams_on_same_color_squares(Them, s);
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
