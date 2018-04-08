@@ -116,7 +116,7 @@ namespace {
 
         File f = file_of(s);
         if (f > maxFile) maxFile = f;
-        if (f < minFile) maxFile = f;
+        if (f < minFile) minFile = f;
 
         e->semiopenFiles[Us]   &= ~(1 << f);
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
