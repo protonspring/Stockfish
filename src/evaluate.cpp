@@ -350,7 +350,7 @@ namespace {
                 && (pos.pieces(PAWN) & (s + pawn_push(Us))))
                 score += MinorBehindPawn;
 
-            if (Pt == KNIGHT)
+            if ((Pt == KNIGHT) && (pos.count<BISHOP>(Us) == 0))
                 score -= KnightPawnWidth * pe->pawnWidth[Them];
 
             if (Pt == BISHOP)
