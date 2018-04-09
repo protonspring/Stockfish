@@ -476,7 +476,7 @@ namespace {
                      + 191 * popcount(kingRing[Us] & weak)
                      + 143 * popcount(pinned | unsafeChecks)
                      - 848 * !pos.count<QUEEN>(Them)
-                     -   mg_value(score)
+                     -       mg_value(score)
                      +  40;
 
         score = make_score(8*mg_value(score)/9,eg_value(score));

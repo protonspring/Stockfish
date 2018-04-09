@@ -46,36 +46,36 @@ namespace {
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
-      { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113) },
-      { V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
-      { V( 72), V( 6), V(52), V(74), V( 83), V( 84), V(112) } },
-    { { V(105), V(19), V( 3), V(27), V( 85), V( 93), V( 84) }, // On King file
-      { V(121), V( 7), V(33), V(95), V(112), V( 86), V( 72) },
-      { V(121), V(26), V(65), V(90), V( 65), V( 76), V(117) },
-      { V( 79), V( 0), V(45), V(65), V( 94), V( 92), V(105) } }
+    { { V(9* 98/8), V(9*20/8), V(9*11/8), V(9*42/8), V(9* 83/8), V(9* 84/8), V(9*101/8) }, // Not On King file
+      { V(9*103/8), V(9* 8/8), V(9*33/8), V(9*86/8), V(9* 87/8), V(9*105/8), V(9*113/8) },
+      { V(9*100/8), V(9* 2/8), V(9*65/8), V(9*95/8), V(9* 59/8), V(9* 89/8), V(9*115/8) },
+      { V(9* 72/8), V(9* 6/8), V(9*52/8), V(9*74/8), V(9* 83/8), V(9* 84/8), V(9*112/8) } },
+    { { V(9*105/8), V(9*19/8), V(9* 3/8), V(9*27/8), V(9* 85/8), V(9* 93/8), V(9* 84/8) }, // On King file
+      { V(9*121/8), V(9* 7/8), V(9*33/8), V(9*95/8), V(9*112/8), V(9* 86/8), V(9* 72/8) },
+      { V(9*121/8), V(9*26/8), V(9*65/8), V(9*90/8), V(9* 65/8), V(9* 76/8), V(9*117/8) },
+      { V(9* 79/8), V(9* 0/8), V(9*45/8), V(9*65/8), V(9* 94/8), V(9* 92/8), V(9*105/8) } }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(-290), V(-274), V(57), V(41) },  // BlockedByKing
-      { V( 0),  V(  60), V( 144), V(39), V(13) },
-      { V( 0),  V(  65), V( 141), V(41), V(34) },
-      { V( 0),  V(  53), V( 127), V(56), V(14) } },
-    { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
-      { V( 1),  V(  64), V( 143), V(26), V(13) },
-      { V( 1),  V(  47), V( 110), V(44), V(24) },
-      { V( 0),  V(  72), V( 127), V(50), V(31) } },
-    { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
-      { V( 0),  V(   0), V(  88), V(27), V( 2) },
-      { V( 0),  V(   0), V( 101), V(16), V( 1) },
-      { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19) },
-      { V(23),  V(  29), V(  96), V(41), V(15) },
-      { V(21),  V(  23), V( 116), V(41), V(15) } }
+    { { V(9* 0/8),  V(9*-290/8), V(9*-274/8), V(9*57/8), V(9*41/8) },  // BlockedByKing
+      { V(9* 0/8),  V(9*  60/8), V(9* 144/8), V(9*39/8), V(9*13/8) },
+      { V(9* 0/8),  V(9*  65/8), V(9* 141/8), V(9*41), V(9*34/8) },
+      { V(9* 0/8),  V(9*  53/8), V(9* 127/8), V(9*56/8), V(9*14/8) } },
+    { { V(9* 4/8),  V(9*  73/8), V(9* 132/8), V(9*46/8), V(9*31/8) },  // Unopposed
+      { V(9* 1/8),  V(9*  64/8), V(9* 143/8), V(9*26/8), V(9*13/8) },
+      { V(9* 1/8),  V(9*  47/8), V(9* 110/8), V(9*44/8), V(9*24/8) },
+      { V(9* 0/8),  V(9*  72/8), V(9* 127/8), V(9*50/8), V(9*31/8) } },
+    { { V(9* 0/8),  V(9*   0/8), V(9*  19/8), V(9*23/8), V(9* 1/8) },  // BlockedByPawn
+      { V(9* 0/8),  V(9*   0/8), V(9*  88/8), V(9*27/8), V(9* 2/8) },
+      { V(9* 0/8),  V(9*   0/8), V(9* 101/8), V(9*16/8), V(9* 1/8) },
+      { V(9* 0/8),  V(9*   0/8), V(9* 111/8), V(9*22/8), V(9*15/8) } },
+    { { V(9*22/8),  V(9*  45/8), V(9* 104/8), V(9*62/8), V(9* 6/8) },  // Unblocked
+      { V(9*31/8),  V(9*  30/8), V(9*  99/8), V(9*39/8), V(9*19/8) },
+      { V(9*23/8),  V(9*  29/8), V(9*  96/8), V(9*41/8), V(9*15/8) },
+      { V(9*21/8),  V(9*  23/8), V(9* 116/8), V(9*41/8), V(9*15/8) } }
   };
 
   // Max bonus for king safety. Corresponds to start position with all the pawns
@@ -292,7 +292,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(9 * bonus / 8, -16 * minKingPawnDistance);
+  return make_score(bonus, -16 * minKingPawnDistance);
 }
 
 // Explicit template instantiation
