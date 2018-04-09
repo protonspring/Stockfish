@@ -97,7 +97,6 @@ namespace {
     bool opposed, backward;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
-    File minFile = FILE_H, maxFile = FILE_A;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -108,6 +107,7 @@ namespace {
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
+    e->pawnWidth[Us] = 0;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -115,8 +115,6 @@ namespace {
         assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         File f = file_of(s);
-        if (f > maxFile) maxFile = f;
-        if (f < minFile) minFile = f;
 
         e->semiopenFiles[Us]   &= ~(1 << f);
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
@@ -181,9 +179,11 @@ namespace {
             score -= Doubled;
     }
 
-    e->pawnWidth[Us] = maxFile > minFile ? maxFile - minFile : 0;
-    if (e->pawnWidth[Us] < 5)
-        e->pawnWidth[Us] = 0;
+    if (pos.count<PAWN>(Us) > 1)
+    {
+       b = e->semiopenFiles[Us] ^ 0xFF;
+       e->pawnWidth[Us] = int(msb(b) - lsb(b));
+    }
 
     return score;
   }

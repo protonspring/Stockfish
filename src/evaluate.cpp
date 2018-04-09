@@ -181,7 +181,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
-  constexpr Score KnightPawnWidth    = S(  0,  3);
+  constexpr Score KnightPawnWidth    = S(  0,  2);
 
 #undef S
 
