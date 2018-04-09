@@ -45,7 +45,7 @@ namespace {
 
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
+  Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
     { { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
       { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113) },
       { V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
@@ -81,6 +81,11 @@ namespace {
   // Max bonus for king safety. Corresponds to start position with all the pawns
   // in front of the king and no enemy pawn on the horizon.
   constexpr Value MaxSafetyBonus = V(258);
+
+  // minKingPawnDistance
+  Value KingPawnDistance = V(-16);
+
+  TUNE(ShelterWeakness,KingPawnDistance);
 
   #undef S
   #undef V
@@ -292,7 +297,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -16 * minKingPawnDistance);
+  return make_score(bonus, KingPawnDistance * minKingPawnDistance);
 }
 
 // Explicit template instantiation
