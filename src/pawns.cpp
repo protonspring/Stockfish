@@ -181,9 +181,9 @@ namespace {
             score -= Doubled;
 
         //more aggressive pawn pushing for pawns NOT on the side of the king
-        if ((pos.square<KING>(Us) & KingSide) && (s & QueenSide))
+        if ((pos.square<KING>(Us) & KingSide) && (QueenSide & s))
            score += NoKingPawnPush * relative_rank(Us,s);
-        if ((pos.square<KING>(Us) & QueenSide) && (s & KingSide))
+        if ((pos.square<KING>(Us) & QueenSide) && (KingSide & s))
            score += NoKingPawnPush * relative_rank(Us,s);
     }
 
