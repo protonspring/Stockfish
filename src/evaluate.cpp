@@ -479,7 +479,6 @@ namespace {
                      -       mg_value(score)
                      +  40;
 
-        score = make_score(8*mg_value(score)/9,eg_value(score));
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
         {
