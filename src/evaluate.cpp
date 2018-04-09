@@ -350,7 +350,10 @@ namespace {
                 && (pos.pieces(PAWN) & (s + pawn_push(Us))))
                 score += MinorBehindPawn;
 
-            if ((Pt == KNIGHT) && (pos.count<BISHOP>(Us) == 0))
+            assert(pos.non_pawn_material(strongSide) == BishopValueMg);
+
+            //knight/pawn penalty if our only non-pawn piece is a knight.
+            if ((Pt == KNIGHT) && (pos.non_pawn_material(Us) == KnightValueMg))
                 score -= KnightPawnWidth * pe->pawnWidth[Them];
 
             if (Pt == BISHOP)
