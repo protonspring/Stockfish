@@ -43,6 +43,9 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // Add some points for pawn pushing (test super aggressive pushing)
+  constexpr Score NoKingPawnPush = S(2,0);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -176,6 +179,12 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+
+        //more aggressive pawn pushing for pawns NOT on the side of the king
+        if ((pos.square<KING>(Us) & KingSide) && (s & QueenSide))
+           score += NoKingPawnPush * relative_rank(Us,s);
+        if ((pos.square<KING>(Us) & QueenSide) && (s & KingSide))
+           score += NoKingPawnPush * relative_rank(Us,s);
     }
 
     return score;
