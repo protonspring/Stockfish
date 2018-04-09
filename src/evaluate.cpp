@@ -172,7 +172,6 @@ namespace {
   constexpr Score LongDiagonalBishop = S( 22,  0);
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
-  constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
   constexpr Score SliderOnQueen      = S( 42, 21);
   constexpr Score ThreatByPawnPush   = S( 47, 26);
@@ -488,14 +487,9 @@ namespace {
         }
     }
 
-    Bitboard kf = KingFlank[file_of(ksq)];
-
-    // Penalty when our king is on a pawnless flank
-    if (!(pos.pieces(PAWN) & kf))
-        score -= PawnlessFlank;
-
     // Find the squares that opponent attacks in our king flank, and the squares
     // which are attacked twice in that flank but not defended by our pawns.
+    Bitboard kf = KingFlank[file_of(ksq)];
     b1 = attackedBy[Them][ALL_PIECES] & kf & Camp;
     b2 = b1 & attackedBy2[Them] & ~attackedBy[Us][PAWN];
 
