@@ -43,17 +43,22 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // minKingPawnDistance penalties Us/Them
+  int mkpd[COLOR_NB] = {-22,-16};
+
+  TUNE(SetRange(-60,30),mkpd);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 94), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
+    { { V( 98), V(20), V(11), V(42), V( 83), V( 84), V(101) }, // Not On King file
       { V(103), V( 8), V(33), V(86), V( 87), V(105), V(113) },
-      { V(101), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
-      { V( 69), V( 6), V(52), V(74), V( 83), V( 84), V(112) } },
-    { { V(107), V(19), V( 3), V(27), V( 85), V( 93), V( 84) }, // On King file
-      { V(115), V( 7), V(33), V(95), V(112), V( 86), V( 72) },
-      { V(119), V(26), V(65), V(90), V( 65), V( 76), V(117) },
-      { V( 74), V( 0), V(45), V(65), V( 94), V( 92), V(105) } }
+      { V(100), V( 2), V(65), V(95), V( 59), V( 89), V(115) },
+      { V( 72), V( 6), V(52), V(74), V( 83), V( 84), V(112) } },
+    { { V(105), V(19), V( 3), V(27), V( 85), V( 93), V( 84) }, // On King file
+      { V(121), V( 7), V(33), V(95), V(112), V( 86), V( 72) },
+      { V(121), V(26), V(65), V(90), V( 65), V( 76), V(117) },
+      { V( 79), V( 0), V(45), V(65), V( 94), V( 92), V(105) } }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
@@ -277,11 +282,14 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.can_castle(Us);
-  int minKingPawnDistance = 0;
+  int minKingPawnDistance[COLOR_NB] = {0,0};
+  Bitboard ourPawns = pos.pieces(Us, PAWN), theirPawns = pos.pieces(~Us,PAWN);
 
-  Bitboard pawns = pos.pieces(Us, PAWN);
-  if (pawns)
-      while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
+  if (ourPawns)
+      while (!(DistanceRingBB[ksq][minKingPawnDistance[Us]++] & ourPawns)) {}
+
+  if (theirPawns)
+      while (!(DistanceRingBB[ksq][minKingPawnDistance[~Us]++] & theirPawns)) {}
 
   Value bonus = shelter_storm<Us>(pos, ksq);
 
@@ -292,7 +300,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -22 * minKingPawnDistance);
+  return make_score(bonus, mkpd[Us] * minKingPawnDistance[Us] + mkpd[~Us] * minKingPawnDistance[~Us]);
 }
 
 // Explicit template instantiation
