@@ -181,6 +181,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
+  constexpr Score ThreatUp           = S(  5,  5);
 
 #undef S
 
@@ -614,6 +615,22 @@ namespace {
        & attackedBy[Us][ALL_PIECES]   & ~attackedBy2[Us]
        & attackedBy[Them][ALL_PIECES] & ~attackedBy2[Them];
     score += Overload * popcount(b);
+
+    // Bonus for pawns attacking any non-pawn pieces
+    if (attackedBy[Us][PAWN] & (pos.pieces(Them,KNIGHT,BISHOP) | pos.pieces(Them,ROOK,QUEEN)))
+       score += ThreatUp;
+
+    // Bonus for Bishops attacking rooks or queens
+    if (attackedBy[Us][BISHOP] & pos.pieces(Them,ROOK,QUEEN))
+       score += ThreatUp;
+
+    // Bonus for Knights attacking rooks or queens
+    if (attackedBy[Us][KNIGHT] & pos.pieces(Them,ROOK,QUEEN))
+       score += ThreatUp;
+
+    // Bonus for Rooks attacks Queens
+    if (attackedBy[Us][ROOK] & pos.pieces(Them,QUEEN))
+       score += ThreatUp;
 
     if (T)
         Trace::add(THREAT, Us, score);
