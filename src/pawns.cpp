@@ -43,6 +43,12 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  int mkpdPenalty = V(-15);
+  int mgFileDistance = V(-5);
+  int egFileDistance = V(-15);
+
+  TUNE(SetRange(-20,40),mkpdPenalty,mgFileDistance,egFileDistance);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -290,15 +296,15 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
-  egbonus -= Value(16 * minKingPawnDistance);
+  egbonus -= Value(mkpdPenalty * minKingPawnDistance);
 
   File f = file_of(ksq);
   pawns = pos.pieces(PAWN);
   if (pawns)
       while (!(DistanceFilesBB[f][++fileDistance] & pawns)) {}
 
-  //mgbonus -=  5 * fileDistance;
-  egbonus -= 15 * fileDistance;
+  mgbonus -=  mgFileDistance * fileDistance;
+  egbonus -= egFileDistance * fileDistance;
 
   return make_score(mgbonus,egbonus);
 }
