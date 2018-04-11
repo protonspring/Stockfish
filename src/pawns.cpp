@@ -287,7 +287,13 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, bonus/16);
+  // end game score as distance to closest potentially passed pawn
+  Bitboard b = passedPawns[~Us] | passedPawns[Us];
+  int passedPawnDistance = 0;
+  if (b)
+      while (!(DistanceRingBB[ksq][passedPawnDistance++] & pawns)) {}
+ 
+  return make_score(bonus, -16 * passedPawnDistance);
 }
 
 // Explicit template instantiation
