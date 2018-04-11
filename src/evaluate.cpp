@@ -491,7 +491,7 @@ namespace {
     Bitboard kf = KingFlank[file_of(ksq)];
 
     // Penalty when our king is on a pawnless flank
-    if (!(pos.pieces(PAWN) & kf))
+    if (!(pos.pieces(Them,PAWN) & kf))
         score -= PawnlessFlank;
 
     // Find the squares that opponent attacks in our king flank, and the squares
