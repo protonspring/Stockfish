@@ -34,6 +34,7 @@ Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
 Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard DistanceRingBB[SQUARE_NB][8];
+Bitboard DistanceFilesBB[FILE_NB][FILE_NB];
 Bitboard ForwardFileBB[COLOR_NB][SQUARE_NB];
 Bitboard PassedPawnMask[COLOR_NB][SQUARE_NB];
 Bitboard PawnAttackSpan[COLOR_NB][SQUARE_NB];
@@ -93,6 +94,15 @@ void Bitboards::init() {
 
   for (File f = FILE_A; f <= FILE_H; ++f)
       FileBB[f] = f > FILE_A ? FileBB[f - 1] << 1 : FileABB;
+
+  for (File f = FILE_A; f <= FILE_H; ++f)
+      for (int offset = 0; offset < 8; offset++)
+      {
+         if ((f - offset) >= FILE_A)
+            DistanceFilesBB[f][offset] |= FileBB[f-offset];
+         if ((f + offset) <= FILE_H)
+            DistanceFilesBB[f][offset] |= FileBB[f+offset];
+      }
 
   for (Rank r = RANK_1; r <= RANK_8; ++r)
       RankBB[r] = r > RANK_1 ? RankBB[r - 1] << 8 : Rank1BB;

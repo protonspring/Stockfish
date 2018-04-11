@@ -277,22 +277,30 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.can_castle(Us);
-  int minKingPawnDistance = 0;
-
+  int minKingPawnDistance = 0, fileDistance = -1;
+  Value egbonus = Value(0), mgbonus = shelter_storm<Us>(pos,ksq);
   Bitboard pawns = pos.pieces(Us, PAWN);
-  if (pawns)
-      while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
-
-  Value bonus = shelter_storm<Us>(pos, ksq);
 
   // If we can castle use the bonus after the castling if it is bigger
   if (pos.can_castle(MakeCastling<Us, KING_SIDE>::right))
-      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_G1)));
+      mgbonus = std::max(mgbonus, shelter_storm<Us>(pos, relative_square(Us, SQ_G1)));
 
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
-      bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
+      mgbonus = std::max(mgbonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -16 * minKingPawnDistance);
+  if (pawns)
+      while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
+  egbonus -= Value(16 * minKingPawnDistance);
+
+  File f = file_of(ksq);
+  pawns = pos.pieces(PAWN);
+  if (pawns)
+      while (!(DistanceFilesBB[f][++fileDistance] & pawns)) {}
+
+  //mgbonus -=  5 * fileDistance;
+  egbonus -= 15 * fileDistance;
+
+  return make_score(mgbonus,egbonus);
 }
 
 // Explicit template instantiation
