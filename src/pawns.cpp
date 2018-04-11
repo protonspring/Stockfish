@@ -288,9 +288,9 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
   // end game score as distance to closest potentially passed pawn
-  Bitboard b = passedPawns[~Us] | passedPawns[Us];
+  Bitboard pawns = passedPawns[~Us] | passedPawns[Us];
   int passedPawnDistance = 0;
-  if (b)
+  if (pawns)
       while (!(DistanceRingBB[ksq][passedPawnDistance++] & pawns)) {}
  
   return make_score(bonus, -16 * passedPawnDistance);
