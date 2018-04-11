@@ -43,6 +43,9 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // MinPawnDistanceDivisor
+  int mkpdDivisor = 16;
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -287,7 +290,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, shelter_storm<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, bonus/16);
+  return make_score(bonus, bonus/mkpdDivisor);
 }
 
 // Explicit template instantiation
