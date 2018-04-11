@@ -46,6 +46,8 @@ namespace {
   // MinPawnDistanceDivisor
   int mkpdDivisor = 16;
 
+  TUNE(mkpdDivisor);
+
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
