@@ -43,9 +43,9 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
-  int mkpdPenalty = V(-15);
-  int mgFileDistance = V(-5);
-  int egFileDistance = V(-15);
+  int mkpdPenalty = V(15);
+  int mgFileDistance = V(5);
+  int egFileDistance = V(15);
 
   TUNE(SetRange(-20,40),mkpdPenalty,mgFileDistance,egFileDistance);
 
@@ -296,7 +296,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
-  egbonus -= Value(mkpdPenalty * minKingPawnDistance);
+  egbonus -= mkpdPenalty * minKingPawnDistance;
 
   File f = file_of(ksq);
   pawns = pos.pieces(PAWN);
