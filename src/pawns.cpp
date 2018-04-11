@@ -275,7 +275,6 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 template<Color Us>
 Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
-  const Direction Down = Us == WHITE ? SOUTH : NORTH;
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.can_castle(Us);
   int minKingPawnDistance = 0;
@@ -287,7 +286,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   {
      pawns = pos.pieces(PAWN);
      if (pawns)
-        minKingPawnDistance = distance(ksq,backmost_sq(Us,shift<Down>(pos.pieces(PAWN))));
+        minKingPawnDistance = distance(ksq,backmost_sq(Us,pawns));
   }
 
   Value bonus = shelter_storm<Us>(pos, ksq);
