@@ -283,11 +283,8 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
   else
-  {
-     pawns = pos.pieces(PAWN);
-     if (pawns)
-        minKingPawnDistance = distance(ksq,backmost_sq(Us,pawns));
-  }
+     if (pos.pieces(PAWN))
+        minKingPawnDistance = distance(ksq,backmost_sq(Us,pos.pieces(PAWN)));
 
   Value bonus = shelter_storm<Us>(pos, ksq);
 
