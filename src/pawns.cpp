@@ -297,8 +297,8 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pawns)
       while (!(DistanceFilesBB[f][++fileDistance] & pawns)) {}
 
-  //mgbonus -=  5 * fileDistance;
-  egbonus -= 15 * fileDistance;
+  mgbonus -= 15 * fileDistance;
+  egbonus -= 12 * fileDistance;
 
   return make_score(mgbonus,egbonus);
 }
