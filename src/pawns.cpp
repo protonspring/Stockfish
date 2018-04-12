@@ -280,11 +280,11 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   int minKingPieceDistance = 0;
 
   //king safety order of nearby pieces: our pawns, any our piece, enemy pawns
-  Bitboard pieces = pos.pieces(Us, PAWN);
-  if (!pieces) pieces = pos.pieces(Us);
-  if (!pieces) pieces = pos.pieces(~Us,PAWN);
-  if (pieces)
-      while (!(DistanceRingBB[ksq][minKingPieceDistance++] & pieces)) {}
+  Bitboard b = pos.pieces(Us, PAWN);
+  if (!b) b = pos.pieces(Us);
+  if (!b) b = pos.pieces(~Us,PAWN);
+  if (b)
+      while (!(DistanceRingBB[ksq][minKingPieceDistance++] & b)) {}
 
   Value bonus = shelter_storm<Us>(pos, ksq);
 
