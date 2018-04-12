@@ -183,7 +183,7 @@ namespace {
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
   Score KnightWidePawns    = S(  0, 10);
 
-  TUNE(SetRange(-20,20),KnightWidePawns);
+  TUNE(SetRange(-20,40),KnightWidePawns);
 
 #undef S
 
