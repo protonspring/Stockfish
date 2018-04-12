@@ -40,9 +40,6 @@ namespace {
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
-  // Doubled pawn penalty
-  constexpr Score Doubled = S(18, 38);
-
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value ShelterWeakness[][int(FILE_NB) / 2][RANK_NB] = {
@@ -173,9 +170,6 @@ namespace {
 
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
-
-        if (doubled && !supported)
-            score -= Doubled;
     }
 
     return score;
