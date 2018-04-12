@@ -169,7 +169,7 @@ namespace {
   constexpr Score Hanging            = S( 52, 30);
   constexpr Score HinderPassedPawn   = S(  8,  1);
   constexpr Score KnightOnQueen      = S( 21, 11);
-  constexpr Score LongDiagonalBishop = S( 22,  0);
+  constexpr Score LongDiagonalBishop = S( 11,  0);
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
   constexpr Score PawnlessFlank      = S( 20, 80);
@@ -354,8 +354,8 @@ namespace {
                 // Penalty according to number of pawns on the same color square as the bishop
                 score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s);
 
-                // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
+                // Bonus for bishop that attacks a center square.
+                if (Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN))))
                     score += LongDiagonalBishop;
             }
 
