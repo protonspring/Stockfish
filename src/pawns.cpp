@@ -41,8 +41,8 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // Doubled pawn penalty
-  //constexpr Score Doubled[FILE_NB] = 
-     //{ S(18+6, 38+12), S(18+4, 38+8), S(18+2, 38+4), S(18, 38), S(18, 38), S(18+2, 38+4), S(18+4, 38+8), S(18+6, 38+12) };
+  constexpr Score Doubled[FILE_NB] = 
+     { S(18+4, 38+8), S(18+2, 38+4), S(18+1, 38+2), S(18, 38), S(18, 38), S(18+1, 38+2), S(18+2, 38+4), S(18+4, 38+8) };
 
   // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
@@ -175,8 +175,8 @@ namespace {
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
-        //if (doubled && !supported)
-            //score -= Doubled[f];
+        if (doubled && !supported)
+            score -= Doubled[f];
     }
 
     return score;
