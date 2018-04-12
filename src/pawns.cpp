@@ -281,7 +281,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
 
   //king safety order of nearby pieces: our pawns, any our piece, enemy pawns
   Bitboard b = pos.pieces(Us, PAWN);
-  if (!b) b = pos.pieces(Us) ^ pos.pieces(Us,KING);
+  if (!b) b = pos.pieces(Us);
   if (!b) b = pos.pieces(PAWN);
   if (b)
       while (!(DistanceRingBB[ksq][minKingPieceDistance++] & b)) {}
