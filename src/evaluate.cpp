@@ -181,7 +181,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
-  constexpr Score CloseToEnemyKing   = S(  1,  1);
+  constexpr Score EnemyKingDistance  = S(  1,  1);
 
 #undef S
 
@@ -309,8 +309,8 @@ namespace {
 
     while ((s = *pl++) != SQ_NONE)
     {
-        // a tiny bonus for being close to the enemy king
-        score += CloseToEnemyKing * distance(eksq,s);
+        // a tiny penalty for being far from the enemy king
+        score -= EnemyKingDistance * distance(eksq,s);
 
         // Find attacked squares, including x-ray attacks for bishops and rooks
         b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
