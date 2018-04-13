@@ -181,7 +181,9 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
-  constexpr Score EnemyKingDistance  = S(  1,  1);
+  Score EnemyKingDistance  = S(  0,  2);
+
+  TUNE(SetRange(0,10),EnemyKingDistance);
 
 #undef S
 
