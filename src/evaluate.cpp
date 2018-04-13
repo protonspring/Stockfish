@@ -169,7 +169,7 @@ namespace {
   constexpr Score Hanging            = S( 52, 30);
   constexpr Score HinderPassedPawn   = S(  8,  1);
   constexpr Score KnightOnQueen      = S( 21, 11);
-  constexpr Score LongDiagonalBishop = S( 22,  0);
+  Score LongDiagonalBishop = S( 14,  0);
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
   constexpr Score PawnlessFlank      = S( 20, 80);
@@ -181,6 +181,8 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
+
+  TUNE(SetRange(0,30),LongDiagonalBishop);
 
 #undef S
 
