@@ -183,7 +183,7 @@ namespace {
   constexpr Score WeakUnopposedPawn  = S(  5, 25);
   Score EnemyKingDistance  = S(  0,  2);
 
-  TUNE(SetRange(0,10),EnemyKingDistance);
+  TUNE(SetRange(-10,10),EnemyKingDistance);
 
 #undef S
 
