@@ -31,7 +31,8 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
-  constexpr Score PawnlessFlank  = S(  6, 80);
+  Score PawnlessFlank  = S(  6, 80);
+  TUNE(PawnlessFlank);
 
   // Isolated pawn penalty
   constexpr Score Isolated = S(13, 18);
