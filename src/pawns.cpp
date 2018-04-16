@@ -31,10 +31,12 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
-  constexpr Score PawnlessFlank  = S(  23, 86); //king on a pawnless flank
+  Score PawnlessFlank  = S(  23, 86); //king on a pawnless flank
   constexpr Score Isolated = S(13, 18);
   constexpr Score Backward = S(24, 12);
   constexpr Score Doubled = S(18, 38);
+
+  TUNE(PawnlessFlank);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
