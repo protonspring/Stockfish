@@ -247,9 +247,11 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
   Value safety = MaxSafetyBonus;
+  kingFlanks[Us] = 0;
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      kingFlanks[Us] |= file_bb(f);
       b = ourPawns & file_bb(f);
       Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
 
