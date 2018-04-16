@@ -31,7 +31,7 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
-  Score PawnlessFlank  = S(  23, 86); //king on a pawnless flank
+  Score PawnlessFlank  = S(  20, 80); //king on a pawnless flank
   constexpr Score Isolated = S(13, 18);
   constexpr Score Backward = S(24, 12);
   constexpr Score Doubled = S(18, 38);
