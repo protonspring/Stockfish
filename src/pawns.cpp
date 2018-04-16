@@ -96,8 +96,8 @@ namespace {
     Square s;
     bool opposed, backward;
     Score score = SCORE_ZERO;
-    const Square* pl = pos.squares<PAWN>(Us);
 
+    const Square* pl    = pos.squares<PAWN>(Us);
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
@@ -246,30 +246,30 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
-  constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
-
+  constexpr Color Them   = (Us == WHITE ? BLACK : WHITE);
+  constexpr Direction Up = (Us == WHITE ? NORTH : SOUTH);
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
-  File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
-  Bitboard ourPawns = KingShelterStormBB[Us][ksq] & pos.pieces(Us,PAWN);
-  Bitboard theirPawns = KingShelterStormBB[Us][ksq] & pos.pieces(Them,PAWN);
+  Bitboard pawns = KingShelterStormBB[Us][ksq] & pos.pieces(PAWN);
+  Bitboard pawns2 = pawns; //so we can pop_lsb without disturbing the pawns
+  Bitboard ourPawns = pawns & pos.pieces(Us,PAWN);
   Value safety = BaseSafety;
 
-  for (File f = File(center - 1); f <= File(center + 1); ++f)
+  // Loop through all pawns in the king shelter/storm mask 
+  while (pawns2)
   {
-      Bitboard b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-
-      b = theirPawns & file_bb(f);
-      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-
-      int d = std::min(f, ~f);
-      safety +=  ShelterStrength[f == file_of(ksq)][d][rkUs]
-               - StormDanger
-                 [f == file_of(ksq) && rkThem == relative_rank(Us, ksq) + 1 ? BlockedByKing  :
-                  rkUs   == RANK_1                                          ? Unopposed :
-                  rkThem == rkUs + 1                                        ? BlockedByPawn  : Unblocked]
-                 [d][rkThem];
+     Square s = pop_lsb(&pawns2);
+     File f = file_of(s);
+     int d = std::min(f,~f);
+     if (ourPawns & s)
+        safety += ShelterStrength[f == file_of(ksq)][d][rank_of(s)];
+     else //enemy pawn
+     {
+        safety -= StormDanger[ (s == (ksq+Up)) ? BlockedByKing:
+             (!(ourPawns & forward_file_bb(Them, s))) ? Unopposed:
+             (ourPawns & (s-Up)) ? BlockedByPawn:
+             Unblocked ][d][rank_of(s)];
+     }
   }
 
   return safety;
