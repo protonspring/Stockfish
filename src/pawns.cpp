@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -255,6 +256,9 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+
+      // if enemy pawn is passed our pawn in this flank ignore our pawn
+      if ((rkThem < rkUs) && (rkThem != RANK_1)) rkUs = RANK_1;
 
       int d = std::min(f, ~f);
       safety -=  ShelterWeakness[f == file_of(ksq)][d][rkUs]
