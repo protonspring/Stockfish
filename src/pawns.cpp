@@ -43,8 +43,7 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
-  // Weakness of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
-  // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
+  // Strength of king pawn shelter by [isKingFile][distance from edge][rank].
   constexpr Value BaseSafety = Value(-72);
   constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
     { { V(  0), V( 90), V( 99), V( 68), V( 27), V( 26), V(  9) }, // Not On King file
@@ -58,8 +57,6 @@ namespace {
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
-  // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
-  // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
     { { V( 0),  V(-290), V(-274), V(57), V(41) },  // BlockedByKing
       { V( 0),  V(  60), V( 144), V(39), V(13) },
