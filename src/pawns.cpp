@@ -241,16 +241,23 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      int d = std::min(f,~f);
       Bitboard ourPawns = b & pos.pieces(Us) & file_bb(f);
-      safety += ourPawns ? ShelterStrength[f == file_of(ksq)][std::min(f, ~f)]
-                                [relative_rank(Us, backmost_sq(Us, ourPawns))] : 0;
+      if (ourPawns)
+      {
+          Rank r = relative_rank(Us, backmost_sq(Us, ourPawns));
+          safety += ShelterStrength[f == file_of(ksq)][d][r];
+      }
 
       Bitboard theirPawns = b & pos.pieces(Them) & file_bb(f);
-      safety -= theirPawns ? StormDanger 
-                  [(shift<Down>(theirPawns) & ksq) ? BlockedByKing  :
-           !(ourPawns & file_bb(f))                ? Unopposed :
-           (shift<Down>(theirPawns) & ourPawns)    ? BlockedByPawn  : Unblocked]
-          [std::min(f,~f)][relative_rank(Us, frontmost_sq(Them, theirPawns))] : 0;
+      if (theirPawns)
+      {
+         Rank r = relative_rank(Us, frontmost_sq(Them, theirPawns));
+         safety -= StormDanger 
+            [(shift<Down>(theirPawns) & ksq)     ? BlockedByKing  :
+            !(ourPawns & file_bb(f))             ? Unopposed      :
+            (shift<Down>(theirPawns) & ourPawns) ? BlockedByPawn  : Unblocked][d][r];
+      }
   }
 
   return safety;
