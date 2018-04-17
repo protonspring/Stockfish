@@ -250,7 +250,6 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
       b = theirPawns & file_bb(f);
       safety -= b ? StormDanger [(shift<Down>(b) & ksq) ? BlockedByKing  :
- 
                          !(ourPawns & file_bb(f))          ? Unopposed :
                          (shift<Down>(b) & ourPawns)       ? BlockedByPawn  : Unblocked]
                         [std::min(f,~f)][relative_rank(Us, frontmost_sq(Them, b))] : 0;
