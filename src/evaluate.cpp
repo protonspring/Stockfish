@@ -92,7 +92,7 @@ namespace {
   constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 78, 56, 45, 11 };
 
   // coefficiencts for king Danger equation
-  int KingDangerCOEF[4] = {102, 191, 143, 848 };
+  int KingDangerCOEF[5] = {102, 191, 143, 848, 2};
   TUNE(KingDangerCOEF);
 
   // Penalties for enemy's safe checks
@@ -480,7 +480,7 @@ namespace {
                      + KingDangerCOEF[1]        * popcount(kingRing[Us] & weak)
                      + KingDangerCOEF[2]        * popcount(pinned | unsafeChecks)
                      - KingDangerCOEF[3]        * !pos.count<QUEEN>(Them)
-                     -                            mg_value(score);
+                     - KingDangerCOEF[4]        * mg_value(score);
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
