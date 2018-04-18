@@ -37,8 +37,8 @@ namespace {
   // Backward pawn penalty
   constexpr Score Backward = S(24, 12);
 
-  // Connected pawn bonus by opposed, phalanx, #support and rank
-  Score Connected[2][2][3][RANK_NB];
+  // Connected pawn bonus by opposed, #phalanx, #support and rank
+  Score Connected[2][3][3][RANK_NB];
 
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
@@ -166,7 +166,7 @@ namespace {
 
         // Score this pawn
         if (supported | phalanx)
-            score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
+            score += Connected[opposed][popcount(phalanx)][popcount(supported)][relative_rank(Us, s)];
 
         else if (!neighbours)
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
@@ -194,7 +194,7 @@ void init() {
   static constexpr int Seed[RANK_NB] = { 0, 13, 24, 18, 76, 100, 175, 330 };
 
   for (int opposed = 0; opposed <= 1; ++opposed)
-      for (int phalanx = 0; phalanx <= 1; ++phalanx)
+      for (int phalanx = 0; phalanx <= 2; ++phalanx)
           for (int support = 0; support <= 2; ++support)
               for (Rank r = RANK_2; r < RANK_8; ++r)
   {
