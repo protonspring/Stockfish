@@ -40,6 +40,9 @@ namespace {
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
+  // shelter/storm pawn count penalty/bonus
+  Value PawnCount = V( 6);
+
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
@@ -264,6 +267,9 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
                   rkThem == rkUs + 1                                        ? BlockedByPawn  : Unblocked]
                  [d][rkThem];
   }
+
+  //adjust safety according to # of pawns in the shelter/storm
+  safety += PawnCount * (popcount(ourPawns) - popcount(theirPawns));
 
   return safety;
 }
