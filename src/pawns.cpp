@@ -250,7 +250,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us,PAWN);
   Bitboard theirPawns = b & pos.pieces(Them,PAWN);
   Value safety = MaxSafetyBonus;
-  if (popcount(theirPawns) > 3)
+  if (popcount(theirPawns) > popcount(ourPawns))
      safety -= ShelterStormCount;
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
