@@ -41,7 +41,7 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // shelter/storm pawn count penalty/bonus
-  Value PawnCount = V( 5);
+  Value ShelterStormCount = V( 5);
 
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
@@ -267,8 +267,11 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
                  [d][rkThem];
   }
 
-  //adjust safety according to # of pawns in the shelter/storm
-  safety += PawnCount * (popcount(ourPawns) - popcount(theirPawns));
+  //adjust safety according to # of pawns in the shelter/storm area
+  b = b & (adjacent_files_bb(center) | file_bb(center));
+  ourPawns = ourPawns & b;
+  theirPawns = theirPawns & b;
+  safety += ShelterStormCount * (popcount(ourPawns) - popcount(theirPawns));
 
   return safety;
 }
