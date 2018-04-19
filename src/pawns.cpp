@@ -41,7 +41,7 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // shelter/storm pawn count penalty/bonus
-  Value PawnCount = V( 7);
+  Value PawnCount = V( 5);
 
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
