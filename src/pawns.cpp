@@ -41,7 +41,7 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // shelter/storm pawn count penalty/bonus
-  Value ShelterStormCount = V(8);
+  Value ShelterStormCount = V(12);
 
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
@@ -249,7 +249,9 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
              & (adjacent_files_bb(center) | file_bb(center));
   Bitboard ourPawns = b & pos.pieces(Us,PAWN);
   Bitboard theirPawns = b & pos.pieces(Them,PAWN);
-  Value safety = MaxSafetyBonus + ShelterStormCount * (popcount(ourPawns) - popcount(theirPawns));
+  Value safety = MaxSafetyBonus;
+  if (popcount(ourPawns) < popcount(theirPawns))
+     safety -= ShelterStormCount;
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
