@@ -41,7 +41,7 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // shelter/storm pawn count penalty/bonus
-  Value ShelterStormCount = V( 8);
+  Value ShelterStormCount = V(8);
 
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
@@ -244,12 +244,13 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
 
   enum { BlockedByKing, Unopposed, BlockedByPawn, Unblocked };
 
-  Bitboard b = pos.pieces(PAWN) & (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
-  Bitboard ourPawns = b & pos.pieces(Us);
-  Bitboard theirPawns = b & pos.pieces(Them);
-  Value safety = MaxSafetyBonus;
-
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
+  Bitboard b = (forward_ranks_bb(Us, ksq) | rank_bb(ksq))
+             & (adjacent_files_bb(center) | file_bb(center));
+  Bitboard ourPawns = b & pos.pieces(Us,PAWN);
+  Bitboard theirPawns = b & pos.pieces(Them,PAWN);
+  Value safety = MaxSafetyBonus + ShelterStormCount * (popcount(ourPawns) - popcount(theirPawns));
+
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
       b = ourPawns & file_bb(f);
@@ -266,13 +267,6 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
                   rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
                  [d][rkThem];
   }
-
-  //adjust safety according to # of pawns in the shelter/storm area
-  b = adjacent_files_bb(center) | file_bb(center);
-  b &= (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
-  ourPawns = pos.pieces(Us,PAWN) & b;
-  theirPawns = pos.pieces(Them,PAWN) & b;
-  safety += ShelterStormCount * (popcount(ourPawns) - popcount(theirPawns));
 
   return safety;
 }
