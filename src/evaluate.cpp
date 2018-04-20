@@ -272,7 +272,7 @@ namespace {
     if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
     {
         kingRing[Us] = attackedBy[Us][KING];
-        if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
+        if (rrs<Us>(pos.square<KING>(Us)) == RANK_1)
             kingRing[Us] |= shift<Up>(kingRing[Us]);
 
         if (file_of(pos.square<KING>(Us)) == FILE_H)
@@ -345,7 +345,7 @@ namespace {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
 
             // Bonus when behind a pawn
-            if (    relative_rank(Us, s) < RANK_5
+            if (    rrs<Us>(s) < RANK_5
                 && (pos.pieces(PAWN) & (s + pawn_push(Us))))
                 score += MinorBehindPawn;
 
@@ -377,7 +377,7 @@ namespace {
         if (Pt == ROOK)
         {
             // Bonus for aligning rook with enemy pawns on the same rank/file
-            if (relative_rank(Us, s) >= RANK_5)
+            if (rrs<Us>(s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
@@ -544,7 +544,7 @@ namespace {
             Square s = pop_lsb(&b);
             score += ThreatByMinor[type_of(pos.piece_on(s))];
             if (type_of(pos.piece_on(s)) != PAWN)
-                score += ThreatByRank * (int)relative_rank(Them, s);
+                score += ThreatByRank * (int)rrs<Them>(s);
         }
 
         b = (pos.pieces(Them, QUEEN) | weak) & attackedBy[Us][ROOK];
@@ -553,7 +553,7 @@ namespace {
             Square s = pop_lsb(&b);
             score += ThreatByRook[type_of(pos.piece_on(s))];
             if (type_of(pos.piece_on(s)) != PAWN)
-                score += ThreatByRank * (int)relative_rank(Them, s);
+                score += ThreatByRank * (int)rrs<Them>(s);
         }
 
         b = weak & attackedBy[Us][KING];
@@ -648,7 +648,7 @@ namespace {
         bb = forward_file_bb(Us, s) & (attackedBy[Them][ALL_PIECES] | pos.pieces(Them));
         score -= HinderPassedPawn * popcount(bb);
 
-        int r = relative_rank(Us, s);
+        int r = rrs<Us>(s);
         int w = PassedDanger[r];
 
         Score bonus = PassedRank[r];

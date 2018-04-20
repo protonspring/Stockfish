@@ -408,6 +408,16 @@ constexpr Rank rank_of(Square s) {
   return Rank(s >> 3);
 }
 
+template<Color Us>
+Rank rr(Rank r) {
+   return (Us == WHITE) ? r : Rank(RANK_8 - r);
+}
+
+template<Color Us>
+Rank rrs(Square s) {
+  return rr<Us>(rank_of(s));
+}
+
 constexpr Square relative_square(Color c, Square s) {
   return Square(s ^ (c * 56));
 }
