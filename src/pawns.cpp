@@ -47,14 +47,14 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value BaseSafety = Value(-87);
   constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
-    { { V( 12), V( 90), V( 99), V( 68), V( 27), V( 26), V(  9) }, // Not On King file
-      { V(  7), V(102), V( 77), V( 24), V( 23), V(  5), V( -3) },
-      { V( 10), V(108), V( 45), V( 15), V( 51), V( 21), V( -5) },
-      { V( 38), V(104), V( 58), V( 36), V( 27), V( 26), V( -2) } },
-    { { V(  5), V( 91), V(107), V( 83), V( 25), V( 17), V( 26) }, // On King file
-      { V(-11), V(103), V( 77), V( 15), V( -2), V( 24), V( 38) },
-      { V(-11), V( 84), V( 45), V( 20), V( 45), V( 34), V( -7) },
-      { V( 31), V(110), V( 65), V( 45), V( 16), V( 18), V(  5) } }
+    { { V(  0), V( 90), V( 99), V( 68), V( 27), V( 26), V(  9) }, // Not On King file
+      { V(  0), V(102), V( 77), V( 24), V( 23), V(  5), V( -3) },
+      { V(  0), V(108), V( 45), V( 15), V( 51), V( 21), V( -5) },
+      { V(  0), V(104), V( 58), V( 36), V( 27), V( 26), V( -2) } },
+    { { V(  0), V( 91), V(107), V( 83), V( 25), V( 17), V( 26) }, // On King file
+      { V(  0), V(103), V( 77), V( 15), V( -2), V( 24), V( 38) },
+      { V(  0), V( 84), V( 45), V( 20), V( 45), V( 34), V( -7) },
+      { V(  0), V(110), V( 65), V( 45), V( 16), V( 18), V(  5) } }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
