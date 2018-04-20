@@ -64,18 +64,18 @@ namespace {
       { V( 0),  V(  60), V( 144), V(39), V(13) },
       { V( 0),  V(  65), V( 141), V(41), V(34) },
       { V( 0),  V(  53), V( 127), V(56), V(14) } },
-    { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
-      { V( 1),  V(  64), V( 143), V(26), V(13) },
-      { V( 1),  V(  47), V( 110), V(44), V(24) },
+    { { V( 0),  V(  73), V( 132), V(46), V(31) },  // Unopposed
+      { V( 0),  V(  64), V( 143), V(26), V(13) },
+      { V( 0),  V(  47), V( 110), V(44), V(24) },
       { V( 0),  V(  72), V( 127), V(50), V(31) } },
     { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
       { V( 0),  V(   0), V(  88), V(27), V( 2) },
       { V( 0),  V(   0), V( 101), V(16), V( 1) },
       { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19) },
-      { V(23),  V(  29), V(  96), V(41), V(15) },
-      { V(21),  V(  23), V( 116), V(41), V(15) } }
+    { { V( 0),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
+      { V( 0),  V(  30), V(  99), V(39), V(19) },
+      { V( 0),  V(  29), V(  96), V(41), V(15) },
+      { V( 0),  V(  23), V( 116), V(41), V(15) } }
   };
 
   #undef S
@@ -249,17 +249,12 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       if ((b = ourPawns & file_bb(f)))
          safety += ShelterStrength[f == file_of(ksq)][d][relative_rank(Us, backmost_sq(Us, b))];
 
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-
-      b = theirPawns & file_bb(f);
-      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-
-      safety -= StormDanger
-                 [(shift<Down>(b) & ksq)        ? BlockedByKing :
-                  !(ourPawns & file_bb(f))      ? Unopposed     :
-                  rkThem == (rkUs + 1)          ? BlockedByPawn : Unblocked]
-                  //(shift<Down>(b) & ourPawns) ? BlockedByPawn : Unblocked]
-                 [d][rkThem];
+      if ((b = theirPawns & file_bb(f)))
+         safety -= StormDanger
+                    [(shift<Down>(b) & ksq)      ? BlockedByKing :
+                     !(ourPawns & file_bb(f))    ? Unopposed     :
+                     (shift<Down>(b) & ourPawns) ? BlockedByPawn : Unblocked]
+                    [d][relative_rank(Us, frontmost_sq(Them, b))];
   }
 
   return safety;
