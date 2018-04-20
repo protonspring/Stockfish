@@ -44,8 +44,8 @@ namespace {
   constexpr Score Doubled = S(18, 38);
 
   // Strength of our pawn shelter in front of the king by [isKingFile][distance from edge][rank].
-  constexpr Value BaseSafety = Value(-72);
-  constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
+  Value BaseSafety = Value(-72);
+  Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
     { { V(0), V( 90), V( 99), V( 68), V( 27), V( 26), V(0) }, // Not On King file
       { V(0), V(102), V( 77), V( 24), V( 23), V(  5), V(0) },
       { V(0), V(108), V( 45), V( 15), V( 51), V( 21), V(0) },
@@ -55,6 +55,8 @@ namespace {
       { V(0), V( 84), V( 45), V( 20), V( 45), V( 34), V(0) },
       { V(0), V(110), V( 65), V( 45), V( 16), V( 18), V(0) } }
   };
+
+  TUNE(BaseSafety,SetRange(0,140),ShelterStrength);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
