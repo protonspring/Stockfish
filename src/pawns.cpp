@@ -45,13 +45,12 @@ namespace {
 
   // Weakness of our pawn shelter in front of the king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
-  constexpr Value BaseSafety = Value(-72);
-  constexpr Value NoPawnOnKingFile = Value(10);
-  constexpr Value ShelterStrength[][int(FILE_NB) / 2][RANK_NB] = {
-    { V( 12), V( 90), V( 99), V( 68), V( 27), V( 26), V(  9) },
-    { V(  7), V(102), V( 77), V( 24), V( 23), V(  5), V( -3) },
-    { V( 10), V(108), V( 45), V( 15), V( 51), V( 21), V( -5) },
-    { V( 38), V(104), V( 58), V( 36), V( 27), V( 26), V( -2) }
+  constexpr Value BaseSafety = Value(-73);
+  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+    { V( 13), V( 84), V( 99), V( 68), V( 26), V( 24), V(  9) },
+    { V(  7), V( 96), V( 77), V( 25), V( 19), V(  5), V(  0) },
+    { V( 10), V(110), V( 49), V( 13), V( 51), V( 18), V( -8) },
+    { V( 37), V(104), V( 54), V( 39), V( 27), V( 25), V( -2) }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
@@ -238,7 +237,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard b = pos.pieces(PAWN) & (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
-  Value safety = (ourPawns & file_bb(file_of(ksq))) ? BaseSafety : BaseSafety - NoPawnOnKingFile;
+  Value safety = (ourPawns & file_bb(file_of(ksq))) ? BaseSafety : BaseSafety - 11;
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -250,7 +249,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-      safety +=  ShelterStrength[f == file_of(ksq)][d][rkUs]
+      safety +=  ShelterStrength[d][rkUs]
                - StormDanger
                  [(shift<Down>(b) & ksq) ? BlockedByKing :
                   rkUs   == RANK_1       ? Unopposed     :
