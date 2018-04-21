@@ -46,6 +46,9 @@ namespace {
   // Weakness of our pawn shelter in front of the king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   constexpr Value BaseSafety = Value(-73);
+  constexpr Value NoPawnOnKingFile[FILE_NB] = 
+    { V(10), V(10), V(10), V(10), V(10), V(10), V(10), V(10) };
+
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V( 13), V( 84), V( 99), V( 68), V( 26), V( 24), V(  9) },
     { V(  7), V( 96), V( 77), V( 25), V( 19), V(  5), V(  0) },
@@ -237,7 +240,10 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard b = pos.pieces(PAWN) & (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
-  Value safety = (ourPawns & file_bb(file_of(ksq))) ? BaseSafety : BaseSafety - 11;
+
+  Value safety = BaseSafety;
+  if (!(ourPawns & file_bb(file_of(ksq))))
+     safety -= NoPawnOnKingFile[file_of(ksq)];
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
