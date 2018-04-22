@@ -47,13 +47,13 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawns or our pawn is behind our king.
   Value BaseSafety = Value(-67);
   Value NoPawnOnKingFile[FILE_NB] = 
-    { V( 8), V(11), V( 9), V(12), V(11), V( 5), V(11), V(14) };
+    { V( 8), V(12), V(12), V(15), V(10), V( 6), V(10), V(15) };
 
   Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 15), V( 88), V(101), V( 68), V( 28), V( 23), V( 13) },
-    { V(  9), V(107), V( 75), V( 14), V( 25), V( 14), V( -4) },
-    { V(  6), V(108), V( 51), V( 12), V( 45), V( 17), V(-12) },
-    { V( 36), V(103), V( 49), V( 43), V( 33), V( 18), V( -9) }
+    { V( 20), V( 90), V( 93), V( 66), V( 26), V( 19), V( 14) },
+    { V(  8), V(114), V( 76), V( 18), V( 25), V( 12), V(-10) },
+    { V( 17), V(114), V( 54), V( 16), V( 44), V( 19), V(-13) },
+    { V( 44), V(101), V( 49), V( 49), V( 33), V( 22), V( -6) }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
