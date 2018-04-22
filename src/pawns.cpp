@@ -241,9 +241,7 @@ Value Entry::shelter_storm(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = BaseSafety;
-  if (!(ourPawns & file_bb(file_of(ksq))))
-     safety -= NoPawnOnKingFile[file_of(ksq)];
+  Value safety = (ourPawns & file_bb(file_of(ksq))) ? BaseSafety : BaseSafety - NoPawnOnKingFile[file_of(ksq)];
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
