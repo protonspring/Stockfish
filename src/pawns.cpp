@@ -45,10 +45,10 @@ namespace {
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V(  0), V(64), V(77), V( 44), V( 4), V( -1), V(-11) },
-    { V(  0), V(83), V(51), V(-10), V( 1), V(-10), V(-28) },
-    { V(  0), V(84), V(27), V(-12), V(21), V( -7), V(-36) },
-    { V(  0), V(79), V(25), V( 19), V( 9), V( -6), V(-33) }
+    { V(  0), V(69), V(78), V( 48), V( 1), V(  1), V(-11) },
+    { V(  0), V(83), V(49), V(-13), V(-3), V( -5), V(-28) },
+    { V(  0), V(84), V(35), V( -8), V(25), V( -9), V(-38) },
+    { V(  0), V(75), V(26), V( 21), V(12), V( -6), V(-39) }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
