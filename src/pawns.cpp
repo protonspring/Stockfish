@@ -44,12 +44,16 @@ namespace {
   constexpr Score Doubled = S(18, 38);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
-  Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+  Value safety1 = V(-22);
+  Value safety2 = V(-32);
+  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V(  0), V( 73), V(86), V( 53), V( 13), V(  8), V( -2) },
     { V(  0), V( 98), V(66), V(  5), V( 16), V(  5), V(-13) },
     { V(  0), V(102), V(45), V(  6), V( 39), V( 11), V(-18) },
     { V(  0), V( 67), V(13), V(  7), V( -3), V(-18), V(-45) }
   };
+
+  TUNE(SetRange(-50, 0),safety1,safety2);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
@@ -235,7 +239,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (ourPawns & file_bb(ksq)) ? Value(-22) : Value(-32);
+  Value safety = (ourPawns & file_bb(ksq)) ? safety1 : safety2;
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
