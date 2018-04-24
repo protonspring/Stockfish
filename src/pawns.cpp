@@ -44,12 +44,11 @@ namespace {
   constexpr Score Doubled = S(18, 38);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
-  // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -9), V(64), V(77), V( 44), V( 4), V( -1), V(-11) },
-    { V(-15), V(83), V(51), V(-10), V( 1), V(-10), V(-28) },
-    { V(-18), V(84), V(27), V(-12), V(21), V( -7), V(-36) },
-    { V( 12), V(79), V(25), V( 19), V( 9), V( -6), V(-33) }
+    { V(  0), V( 73), V(86), V( 53), V( 13), V(  8), V( -2) },
+    { V(  0), V( 98), V(66), V(  5), V( 16), V(  5), V(-13) },
+    { V(  0), V(102), V(45), V(  6), V( 39), V( 11), V(-18) },
+    { V(  0), V( 67), V(13), V(  7), V( -3), V(-18), V(-45) }
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
@@ -236,24 +235,22 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (ourPawns & file_bb(ksq)) ? Value(5) : Value(-5);
+  Value safety = (ourPawns & file_bb(ksq)) ? Value(-22) : Value(-32);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
+      int d = std::min(f, ~f);
+      if ((b = ourPawns & file_bb(f)))
+         safety +=  ShelterStrength[d][relative_rank(Us, backmost_sq(Us, b))];
 
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
-      safety +=  ShelterStrength[d][rkUs]
-               - StormDanger
-                 [(shift<Down>(b) & ksq) ? BlockedByKing :
-                  rkUs   == RANK_1       ? Unopposed     :
-                  rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
-                 [d][rkThem];
+      safety -= StormDanger[(shift<Down>(b) & ksq) ? BlockedByKing :
+                            rkUs   == RANK_1       ? Unopposed     :
+                            rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
+                           [d][rkThem];
   }
 
   return safety;
