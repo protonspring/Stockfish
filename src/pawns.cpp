@@ -55,7 +55,7 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
-  constexpr Value StormDanger[][4][RANK_NB] = {
+  Value StormDanger[][4][RANK_NB] = {
     { { V( 0),  V(  79), V( 129), V(48), V(31) },  // Unopposed
       { V( 0),  V(  64), V( 146), V(28), V(12) },
       { V( 0),  V(  45), V( 112), V(42), V(24) },
@@ -69,6 +69,8 @@ namespace {
       { V(25),  V(  30), V(  84), V(42), V(16) },
       { V(21),  V(  21), V( 109), V(44), V(14) } }
   };
+
+  TUNE(StormDanger);
 
   #undef S
   #undef V
