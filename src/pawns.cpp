@@ -226,6 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   enum { Unopposed, Blocked, Opposed };
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
+  constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
 
   Bitboard b = pos.pieces(PAWN) & (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
   Bitboard ourPawns = b & pos.pieces(Us);
@@ -245,8 +246,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int d = std::min(f, ~f);
       safety +=  ShelterStrength[d][rkUs]
                - StormDanger[rkUs == RANK_1     ? Unopposed :
-                             rkThem == rkUs + 1 ? Blocked   :
-                             Opposed][d][rkThem];
+                 ((rkThem == rkUs + 1) || (shift<Down>(b) & ksq)) ? 
+                  Blocked : Opposed][d][rkThem];
   }
 
   return safety;
