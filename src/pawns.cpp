@@ -56,18 +56,18 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(  79), V( 129), V(48), V(31) },  // Unopposed
-      { V( 0),  V(  64), V( 146), V(28), V(12) },
-      { V( 0),  V(  45), V( 112), V(42), V(24) },
-      { V( 0),  V(  77), V( 134), V(47), V(33) } },
-    { { V( 0),  V(   0), V(  19), V(21), V( 1) },  // Blocked
-      { V( 0),  V(   0), V(  83), V(27), V( 2) },
-      { V( 0),  V(   0), V( 106), V(17), V( 1) },
-      { V( 0),  V(   0), V( 111), V(23), V(15) } },
-    { { V(22),  V(  42), V( 116), V(62), V( 6) },  // Opposed 
-      { V(30),  V(  28), V(  97), V(43), V(20) },
-      { V(25),  V(  30), V(  84), V(42), V(16) },
-      { V(21),  V(  21), V( 109), V(44), V(14) } }
+    { { V( 0),  V(  73), V( 114), V(50), V(33) },  // Unopposed
+      { V( 0),  V(  69), V( 139), V(27), V(14) },
+      { V( 0),  V(  44), V( 102), V(52), V(27) },
+      { V( 0),  V(  70), V( 152), V(35), V(32) } },
+    { { V( 0),  V(   0), V(  21), V(19), V( 5) },  // Blocked
+      { V( 0),  V(   0), V(  86), V(22), V( 3) },
+      { V( 0),  V(   0), V( 110), V(22), V( 2) },
+      { V( 0),  V(   0), V( 111), V(20), V(12) } },
+    { { V(19),  V(  37), V( 107), V(58), V( 8) },  // Opposed 
+      { V(25),  V(  30), V( 106), V(32), V(19) },
+      { V(23),  V(  29), V(  87), V(38), V(19) },
+      { V(18),  V(  20), V( 112), V(39), V(14) } }
   };
 
   #undef S
