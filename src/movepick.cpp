@@ -64,11 +64,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
              recaptureSquare(rs), depth(d) {
 
   if (killers != NULL)
-  {
-     refutations[0] = killers[0];
-     refutations[1] = killers[1];
-     refutations[2] = cm;
-  }
+     refutations[0] = killers[0], refutations[1] = killers[1], refutations[2] = cm;
 
   stage = pos.checkers() ? EVASION_TT : d > DEPTH_ZERO ? MAIN_TT : QSEARCH_TT;
 
