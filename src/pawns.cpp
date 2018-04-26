@@ -251,7 +251,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety +=  ShelterStrength[d][rkUs]
                - StormDanger
                  [(shift<Down>(b) & ksq) ? BlockedByKing :
-                  rkUs   == RANK_1       ? Unopposed     :
+                  (ourPawns & file_bb(f))? Unopposed     :
                   rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
                  [d][rkThem];
   }
