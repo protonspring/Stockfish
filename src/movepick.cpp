@@ -51,37 +51,34 @@ namespace {
 
 } // namespace
 
-
 /// Constructors of the MovePicker class. As arguments we pass information
 /// to help it to return the (presumably) good moves first, to decide which
 /// moves to return (in the quiescence search, for instance, we only want to
 /// search captures, promotions, and some checks) and how important good move
 /// ordering is at the current node.
 
-/// MovePicker constructor for the main search
+/// MovePicker constructor for the main search and qsearch
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
-                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
+                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers, Square rs)
            : pos(p), mainHistory(mh), captureHistory(cph), contHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) {
+             recaptureSquare(rs), depth(d) {
 
-  assert(d > DEPTH_ZERO);
+  if (killers != NULL)
+  {
+     refutations[0] = killers[0];
+     refutations[1] = killers[1];
+     refutations[2] = cm;
+  }
 
-  stage = pos.checkers() ? EVASION_TT : MAIN_TT;
-  ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
-}
+  stage = pos.checkers() ? EVASION_TT : d > DEPTH_ZERO ? MAIN_TT : QSEARCH_TT;
 
-/// MovePicker constructor for quiescence search
-MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
-                       const CapturePieceToHistory* cph, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), recaptureSquare(rs), depth(d) {
+  if (d > DEPTH_ZERO)
+     ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
+  else
+     ttMove = ttm
+              && pos.pseudo_legal(ttm)
+              && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare) ? ttm : MOVE_NONE;
 
-  assert(d <= DEPTH_ZERO);
-
-  stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
-  ttMove =    ttm
-           && pos.pseudo_legal(ttm)
-           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
 }
 
