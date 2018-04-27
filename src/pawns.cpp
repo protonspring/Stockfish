@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -56,10 +57,10 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(-290), V(-274), V(57), V(41) },  // BlockedByKing
-      { V( 0),  V(  60), V( 144), V(39), V(13) },
-      { V( 0),  V(  65), V( 141), V(41), V(34) },
-      { V( 0),  V(  53), V( 127), V(56), V(14) } },
+    { { V( 0+9),  V(-290+9), V(-274+9), V(57+9), V(41+9) },  // BlockedByKing
+      { V( 0+15),  V(  60+15), V( 144+15), V(39+15), V(13+15) },
+      { V( 0+18),  V(  65+18), V( 141+18), V(41+18), V(34+18) },
+      { V(-12),  V(  53-12), V( 127-12), V(56-12), V(14-12) } },
     { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
       { V( 1),  V(  64), V( 143), V(26), V(13) },
       { V( 1),  V(  47), V( 110), V(44), V(24) },
@@ -248,12 +249,26 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-      safety +=  ShelterStrength[d][rkUs]
-               - StormDanger
-                 [(shift<Down>(b) & ksq) ? BlockedByKing :
-                  rkUs   == RANK_1       ? Unopposed     :
-                  rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
-                 [d][rkThem];
+      if (shift<Down>(b) & ksq) 
+      {
+          //safety += ShelterStrength[d][rkUs];
+          safety -= StormDanger[BlockedByKing][d][rkThem];
+      }
+      else if (rkUs == RANK_1) 
+      {
+          safety += ShelterStrength[d][rkUs];
+          safety -= StormDanger[Unopposed][d][rkThem];
+      }
+      else if (rkThem == (rkUs + 1)) 
+      {
+          safety += ShelterStrength[d][rkUs];
+          safety -= StormDanger[BlockedByPawn][d][rkThem];
+      }
+      else 
+      {
+          safety += ShelterStrength[d][rkUs];
+          safety -= StormDanger[Unblocked][d][rkThem];
+      }
   }
 
   return safety;
