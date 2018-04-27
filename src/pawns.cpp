@@ -238,10 +238,10 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   Value safety = (ourPawns & file_bb(ksq)) ? Value(5) : Value(-5);
 
-  if (pos.count<PAWN>() == 0) return Value(-5);
+  //if (pos.count<PAWN>() == 0) return Value(-5);
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
-  //if (!(b & (file_bb(File(center-1)) | file_bb(File(center)) | file_bb(File(center+1)))))
-     //return Value(-5); //there are no relevant pawns
+  if (!(b & (file_bb(File(center-1)) | file_bb(File(center)) | file_bb(File(center+1)))))
+     return Value(-5); //there are no relevant pawns
 
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
