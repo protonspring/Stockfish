@@ -248,12 +248,26 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
+
+      if (shift<Down>(b) & ksq)
+         safety += ShelterStrength[d][rkUs] - StormDanger[BlockedByKing][d][rkThem];
+      else if (!(ourPawns & file_bb(f)))
+         safety += ShelterStrength[d][rkUs] - StormDanger[Unopposed][d][rkThem];
+      else if (shift<Down>(b) & ourPawns)
+         safety += ShelterStrength[d][rkUs] - StormDanger[BlockedByPawn][d][rkThem];
+      else 
+         safety += ShelterStrength[d][rkUs] - StormDanger[Unblocked][d][rkThem];
+
+/*
       safety +=  ShelterStrength[d][rkUs]
                - StormDanger
-                 [(shift<Down>(b) & ksq) ? BlockedByKing :
-                  rkUs   == RANK_1       ? Unopposed     :
-                  rkThem == (rkUs + 1)   ? BlockedByPawn : Unblocked]
+                 [(shift<Down>(b) & ksq)      ? BlockedByKing :
+                  //rkUs   == RANK_1          ? Unopposed     :
+                  !(ourPawns & file_bb(f))    ? Unopposed     :
+                  //rkThem == (rkUs + 1)      ? BlockedByPawn : Unblocked]
+                  (shift<Down>(b) & ourPawns) ? BlockedByPawn : Unblocked]
                  [d][rkThem];
+*/
   }
 
   return safety;
