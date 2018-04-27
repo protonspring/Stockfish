@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -57,22 +56,22 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0+9),  V(-290+9), V(-274+9), V(57+9), V(41+9) },  // BlockedByKing
-      { V( 0+15),  V(  60+15), V( 144+15), V(39+15), V(13+15) },
-      { V( 0+18),  V(  65+18), V( 141+18), V(41+18), V(34+18) },
-      { V(-12),  V(  53-12), V( 127-12), V(56-12), V(14-12) } },
-    { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
-      { V( 1),  V(  64), V( 143), V(26), V(13) },
-      { V( 1),  V(  47), V( 110), V(44), V(24) },
-      { V( 0),  V(  72), V( 127), V(50), V(31) } },
-    { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
-      { V( 0),  V(   0), V(  88), V(27), V( 2) },
-      { V( 0),  V(   0), V( 101), V(16), V( 1) },
-      { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19) },
-      { V(23),  V(  29), V(  96), V(41), V(15) },
-      { V(21),  V(  23), V( 116), V(41), V(15) } }
+    { { V( 0),  V(-290), V(-274), V(57), V(41) },  // BlockedByKing
+      { V( 0),  V(  60), V( 144), V(39), V(13) },
+      { V( 0),  V(  65), V( 141), V(41), V(34) },
+      { V( 0),  V(  53), V( 127), V(56), V(14) } },
+    { { V( 4+9),  V(  73+9), V( 132+9),  V(46+9), V(31+9) , V(0+9), V(0+9)},  // Unopposed
+      { V( 1+15),  V( 64+15), V(143+15), V(26+15), V(13+15), V(0+15), V(0+15) },
+      { V( 1+18),  V( 47+18), V(110+18), V(44+18), V(24+18), V(0+18), V(0+18) },
+      { V( 0-12),  V( 72-12), V(127-12), V(50-12), V(31-12), V(0-12), V(0-12) } },
+    { { V( 0),  V(   0), V(  19-64), V(23-77), V( 1-44), V( 0-4), V( 0+1) },  // BlockedByPawn
+      { V( 0),  V(   0), V(  88-83), V(27-51), V( 2+10), V( 0-1), V( 0+10) },
+      { V( 0),  V(   0), V( 101-84), V(16-27), V( 1+12), V( 0-21), V( 0+7) },
+      { V( 0),  V(   0), V( 111-79), V(22-25), V(15-19), V( 0-9), V( 0+6) } },
+    { { V(22),  V(  45), V( 104), V(62), V( 6), V( 0), V( 0) },  // Unblocked
+      { V(31),  V(  30), V(  99), V(39), V(19), V( 0), V( 0) },
+      { V(23),  V(  29), V(  96), V(41), V(15), V( 0), V( 0) },
+      { V(21),  V(  23), V( 116), V(41), V(15), V( 0), V( 0) } }
   };
 
   #undef S
@@ -242,33 +241,19 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-
+      int d = std::min(f, ~f);
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
       if (shift<Down>(b) & ksq) 
-      {
-          //safety += ShelterStrength[d][rkUs];
-          safety -= StormDanger[BlockedByKing][d][rkThem];
-      }
-      else if (rkUs == RANK_1) 
-      {
-          safety += ShelterStrength[d][rkUs];
-          safety -= StormDanger[Unopposed][d][rkThem];
-      }
-      else if (rkThem == (rkUs + 1)) 
-      {
-          safety += ShelterStrength[d][rkUs];
-          safety -= StormDanger[BlockedByPawn][d][rkThem];
-      }
+         safety -= StormDanger[BlockedByKing][d][rkThem];
+      else if (!(ourPawns & file_bb(f))) 
+         safety -= StormDanger[Unopposed][d][rkThem];
+      else if (shift<Down>(b) & ourPawns )
+         safety -= StormDanger[BlockedByPawn][d][rkThem];
       else 
-      {
-          safety += ShelterStrength[d][rkUs];
-          safety -= StormDanger[Unblocked][d][rkThem];
-      }
+          safety += ShelterStrength[d][relative_rank(Us, backmost_sq(Us, ourPawns & file_bb(f)))]
+                  - StormDanger[Unblocked][d][rkThem];
   }
 
   return safety;
