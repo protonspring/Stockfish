@@ -57,22 +57,22 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(-290), V(-274), V(57), V(41) },  // BlockedByKing
-      { V( 0),  V(  60), V( 144), V(39), V(13) },
-      { V( 0),  V(  65), V( 141), V(41), V(34) },
-      { V( 0),  V(  53), V( 127), V(56), V(14) } },
-    { { V( 4+9),  V(  73+9), V( 132+9),  V(46+9), V(31+9) , V(0+9), V(0+9)},  // Unopposed
-      { V( 1+15),  V( 64+15), V(143+15), V(26+15), V(13+15), V(0+15), V(0+15) },
-      { V( 1+18),  V( 47+18), V(110+18), V(44+18), V(24+18), V(0+18), V(0+18) },
-      { V( 0-12),  V( 72-12), V(127-12), V(50-12), V(31-12), V(0-12), V(0-12) } },
-    { { V( 0),  V(  45), V(  19-64), V(23-77), V( 1-44), V( 0-4), V( 0+1) },  // BlockedByPawn
-      { V( 0),  V(  30), V(  88-83), V(27-51), V( 2+10), V( 0-1), V( 0+10) },
-      { V( 0),  V(  29), V( 101-84), V(16-27), V( 1+12), V( 0-21), V( 0+7) },
-      { V( 0),  V(  23), V( 111-79), V(22-25), V(15-19), V( 0-9), V( 0+6) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6), V( 0), V( 0) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19), V( 0), V( 0) },
-      { V(23),  V(  29), V(  96), V(41), V(15), V( 0), V( 0) },
-      { V(21),  V(  23), V( 116), V(41), V(15), V( 0), V( 0) } }
+    { { V(  9),  V(-281), V(-265), V( 66), V( 50) },  // BlockedByKing
+      { V( 15),  V(  75), V( 159), V( 54), V( 28) },
+      { V( 18),  V(  83), V( 159), V( 59), V( 52) },
+      { V(-12),  V(  41), V( 115), V( 44), V(  2) } },
+    { { V( 13),  V(  82), V( 141), V( 55), V( 40), V(  9), V(  9) },  // Unopposed
+      { V( 16),  V(  79), V( 158), V( 41), V( 28), V( 15), V( 15) },
+      { V( 19),  V(  65), V( 128), V( 62), V( 42), V( 18), V( 18) },
+      { V(-12),  V(  60), V( 115), V( 38), V( 19), V(-12), V(-12) } },
+    { { V(  0),  V(   0), V( -45), V(-54), V(-43), V( -4), V(  1) },  // BlockedByPawn
+      { V(  0),  V(   0), V(   5), V(-24), V( 12), V( -1), V( 10) },
+      { V(  0),  V(   0), V(  17), V(-11), V( 13), V(-21), V(  7) },
+      { V(  0),  V(   0), V(  32), V( -3), V( -4), V( -9), V(  6) } },
+    { { V( 22),  V(  45), V( 104), V( 62), V(  6), V(  0), V(  0) },  // Unblocked
+      { V( 31),  V(  30), V(  99), V( 39), V( 19), V(  0), V(  0) },
+      { V( 23),  V(  29), V(  96), V( 41), V( 15), V(  0), V(  0) },
+      { V( 21),  V(  23), V( 116), V( 41), V( 15), V(  0), V(  0) } }
   };
 
   #undef S
@@ -242,53 +242,23 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-
+      int d = std::min(f, ~f);
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
       if (shift<Down>(b) & ksq)
-      {
-          safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[BlockedByKing][d][rkThem];
-      }
-      //else if (rkUs == RANK_1)
       else if (!(ourPawns & file_bb(f)))
-      {
-          //safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[Unopposed][d][rkThem];
-      }
-      //else if ((rkUs != RANK_1 ) && (rkThem == (rkUs + 1)))
       else if ((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns))
-      {
-         //if ((rkUs + 1) != rkThem)
-           //std::cout << "<ERROR>";
-         // safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[BlockedByPawn][d][rkThem];
-      }
       else 
       {
+          b = ourPawns & file_bb(f);
+          Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
           safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[Unblocked][d][rkThem];
       }
-
-/*
-      if ((rkUs != RANK_1) && (rkThem == (rkUs + 1)) != ((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns)))
-      {
-            std::cout << std::endl << "<rkUs: " << rkUs << ">";
-            std::cout << "<color: " << Us << ">";
-            std::cout << "<rkThem: " << rkThem << ">";
-            std::cout << "<file : " << f << ">";
-            std::cout << "<cond: " << bool((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns));
-            std::cout << "<THEIRS pawns>" << Bitboards::pretty(b);
-            std::cout << "<THEIRS BB>" << Bitboards::pretty(rank_bb(relative_rank(Us,rkThem)));
-            std::cout << "<their PAWN>" << Bitboards::pretty(rank_bb(relative_rank(Us,rkThem)) & b);
-            std::cout << "<OURS>" << Bitboards::pretty(ourPawns);
-            std::cout << std::endl;
-         }
-*/
   }
 
   return safety;
