@@ -253,12 +253,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       else if ((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns))
           safety -= StormDanger[BlockedByPawn][d][rkThem];
       else 
-      {
-          b = ourPawns & file_bb(f);
-          Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-          safety += ShelterStrength[d][rkUs];
-          safety -= StormDanger[Unblocked][d][rkThem];
-      }
+          safety += ShelterStrength[d][relative_rank(Us, backmost_sq(Us, ourPawns & file_bb(f)))]
+                 - StormDanger[Unblocked][d][rkThem];
   }
 
   return safety;
