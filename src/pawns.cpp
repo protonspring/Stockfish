@@ -65,10 +65,10 @@ namespace {
       { V( 1+15),  V( 64+15), V(143+15), V(26+15), V(13+15), V(0+15), V(0+15) },
       { V( 1+18),  V( 47+18), V(110+18), V(44+18), V(24+18), V(0+18), V(0+18) },
       { V( 0-12),  V( 72-12), V(127-12), V(50-12), V(31-12), V(0-12), V(0-12) } },
-    { { V( 0),  V(   0), V(  19-64), V(23-77), V( 1-44), V( 0-4), V( 0+1) },  // BlockedByPawn
-      { V( 0),  V(   0), V(  88-83), V(27-51), V( 2+10), V( 0-1), V( 0+10) },
-      { V( 0),  V(   0), V( 101-84), V(16-27), V( 1+12), V( 0-21), V( 0+7) },
-      { V( 0),  V(   0), V( 111-79), V(22-25), V(15-19), V( 0-9), V( 0+6) } },
+    { { V( 0),  V(  45), V(  19-64), V(23-77), V( 1-44), V( 0-4), V( 0+1) },  // BlockedByPawn
+      { V( 0),  V(  30), V(  88-83), V(27-51), V( 2+10), V( 0-1), V( 0+10) },
+      { V( 0),  V(  29), V( 101-84), V(16-27), V( 1+12), V( 0-21), V( 0+7) },
+      { V( 0),  V(  23), V( 111-79), V(22-25), V(15-19), V( 0-9), V( 0+6) } },
     { { V(22),  V(  45), V( 104), V(62), V( 6), V( 0), V( 0) },  // Unblocked
       { V(31),  V(  30), V(  99), V(39), V(19), V( 0), V( 0) },
       { V(23),  V(  29), V(  96), V(41), V(15), V( 0), V( 0) },
@@ -260,8 +260,11 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
           //safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[Unopposed][d][rkThem];
       }
-      else if (rkThem == (rkUs + 1))
+      //else if ((rkUs != RANK_1 ) && (rkThem == (rkUs + 1)))
+      else if ((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns))
       {
+         //if ((rkUs + 1) != rkThem)
+           //std::cout << "<ERROR>";
          // safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[BlockedByPawn][d][rkThem];
       }
@@ -270,6 +273,22 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
           safety += ShelterStrength[d][rkUs];
           safety -= StormDanger[Unblocked][d][rkThem];
       }
+
+/*
+      if ((rkUs != RANK_1) && (rkThem == (rkUs + 1)) != ((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns)))
+      {
+            std::cout << std::endl << "<rkUs: " << rkUs << ">";
+            std::cout << "<color: " << Us << ">";
+            std::cout << "<rkThem: " << rkThem << ">";
+            std::cout << "<file : " << f << ">";
+            std::cout << "<cond: " << bool((shift<Down>(rank_bb(relative_rank(Us,rkThem)) & b) & ourPawns));
+            std::cout << "<THEIRS pawns>" << Bitboards::pretty(b);
+            std::cout << "<THEIRS BB>" << Bitboards::pretty(rank_bb(relative_rank(Us,rkThem)));
+            std::cout << "<their PAWN>" << Bitboards::pretty(rank_bb(relative_rank(Us,rkThem)) & b);
+            std::cout << "<OURS>" << Bitboards::pretty(ourPawns);
+            std::cout << std::endl;
+         }
+*/
   }
 
   return safety;
