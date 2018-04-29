@@ -43,6 +43,9 @@ namespace {
   // Doubled pawn penalty
   constexpr Score Doubled = S(18, 38);
 
+  // a bonus if we have more pawns than the enemy between open files
+  constexpr Score PawnImbalance = S(20,0);
+
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
@@ -168,6 +171,27 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+    }
+
+    //check for imbalance of pawns between open files
+    File start = FILE_A;
+    for (File f = FILE_A; f <= FILE_H; f = File(f + 1))
+    {
+       if (!((ourPawns | theirPawns) & file_bb(f))) //totally open file
+       {
+          if (f-2 > start)  //space between open files
+          {
+             int p1 = 0, p2 = 0;
+             for (File f2 = start; f2 <= f; f2 = File(f2 + 1))
+             {
+                p1 += popcount(ourPawns & file_bb(f2));
+                p2 += popcount(theirPawns & file_bb(f2));
+             }
+             if (p1 > p2)
+                score += PawnImbalance;
+          }
+          start = f;
+       }
     }
 
     return score;
