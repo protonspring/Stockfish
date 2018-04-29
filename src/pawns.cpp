@@ -179,7 +179,7 @@ namespace {
     {
        if (!((ourPawns | theirPawns) & file_bb(f))) //totally open file
        {
-          if (f-2 > start)  //space between open files
+          if (((f-start) > 2) && ((f-start) < 5)) //space between open files
           {
              int p1 = 0, p2 = 0;
              for (File f2 = start; f2 <= f; f2 = File(f2 + 1))
