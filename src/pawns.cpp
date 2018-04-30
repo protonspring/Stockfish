@@ -55,6 +55,7 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
+  Value SafeKingBlock = V(380);
   constexpr Value StormDanger[][4][RANK_NB] = {
     { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
       { V( 1),  V(  64), V( 143), V(26), V(13) },
@@ -69,6 +70,8 @@ namespace {
       { V(23),  V(  29), V(  96), V(41), V(15) },
       { V(21),  V(  23), V( 116), V(41), V(15) } }
   };
+
+  TUNE(SafeKingBlock);
 
   #undef S
   #undef V
@@ -236,7 +239,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   Value safety = (ourPawns & file_bb(ksq)) ? Value(5) : Value(-5);
   if ((KingSafeBlockMask & ksq) && (shift<Down>(theirPawns) & ksq))
-       safety += 363 + 43 * relative_rank(Us,ksq); //safety += 380;
+     safety += SafeKingBlock;
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
