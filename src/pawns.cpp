@@ -226,8 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   constexpr Color     Them             = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down             = (Us == WHITE ? SOUTH : NORTH);
-  constexpr Bitboard KingSafeBlockMask = (FileABB | FileHBB) &
-     (Us == WHITE ? Rank1BB|Rank2BB : Rank7BB|Rank8BB);
+  constexpr Bitboard KingSafeBlockMask = 0x8181000000008181; //A1,A2,A7,A8,H1,H2,H7,H8
 
   enum { Unopposed, BlockedByPawn, Unblocked };
   Bitboard b = pos.pieces(PAWN) & (forward_ranks_bb(Us, ksq) | rank_bb(ksq));
