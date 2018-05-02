@@ -31,20 +31,15 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
-  // Isolated pawn penalty
+  // Pawn penalties
   constexpr Score Isolated = S(13, 18);
-
-  // Backward pawn penalty
   constexpr Score Backward = S(24, 12);
+  constexpr Score Doubled = S(18, 38);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
-  // Doubled pawn penalty
-  constexpr Score Doubled = S(18, 38);
-
   // Strength of pawn shelter for our king by [distance from edge][rank].
-  // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V(0), V(64), V(77), V( 44), V( 4), V( -1), V(-11) },
     { V(0), V(83), V(51), V(-10), V( 1), V(-10), V(-28) },
@@ -53,21 +48,19 @@ namespace {
   };
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
-  // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
-  // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 13),  V(  81), V( 141), V(55), V(40), V(  9), V(  9) },  // Unopposed
-      { V( 16),  V(  79), V( 158), V(41), V(28), V( 15), V( 15) },
-      { V( 19),  V(  65), V( 128), V(62), V(42), V( 18), V( 18) },
-      { V(-12),  V(  60), V( 115), V(38), V(19), V(-12), V(-12) } },
-    { { V(  0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
-      { V(  0),  V(   0), V(  88), V(27), V( 2) },
-      { V(  0),  V(   0), V( 101), V(16), V( 1) },
-      { V(  0),  V(   0), V( 111), V(22), V(15) } },
-    { { V( 22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V( 31),  V(  30), V(  99), V(39), V(19) },
-      { V( 23),  V(  29), V(  96), V(41), V(15) },
-      { V( 21),  V(  23), V( 116), V(41), V(15) } }
+    { { V(  0),  V(  81-20), V( 141-20), V(55-20), V(40-20), V(  9-20), V(  9-20) },  // Unopposed
+      { V(  0),  V(  79-20), V( 158-20), V(41-20), V(28-20), V( 15-20), V( 15-20) },
+      { V(  0),  V(  65-20), V( 128-20), V(62-20), V(42-20), V( 18-20), V( 18-20) },
+      { V(  0),  V(  60-20), V( 115-20), V(38-20), V(19-20), V(-12-20), V(-12-20) } },
+    { { V(  0),  V(   0), V(  19-20), V(23-20), V( 1-20), V( -20), V( -20) },  // BlockedByPawn
+      { V(  0),  V(   0), V(  88-20), V(27-20), V( 2-20), V( -20), V( -20) },
+      { V(  0),  V(   0), V( 101-20), V(16-20), V( 1-20), V( -20), V( -20) },
+      { V(  0),  V(   0), V( 111-20), V(22-20), V(15-20), V( -20), V( -20) } },
+    { { V( 0),  V(  45-20), V( 104-20), V(62-20), V( 6-20), V( -20), V( -20) },  // Unblocked
+      { V(  0),  V(  30-20), V(  99-20), V(39-20), V(19-20), V( -20), V( -20) },
+      { V( 0),  V(  29-20), V(  96-20), V(41-20), V(15-20), V( -20), V( -20) },
+      { V( 0),  V(  23-20), V( 116-20), V(41-20), V(15-20), V( -20), V( -20) } }
   };
 
   #undef S
@@ -233,7 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (ourPawns & file_bb(ksq)) ? Value(5) : Value(-5);
+  Value safety = (ourPawns & file_bb(ksq)) ? Value(5-60) : Value(-5-60);
 
   if ((shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks) & ksq)
       safety += 374;
@@ -245,12 +238,10 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       if ((b = ourPawns & file_bb(f)))
          safety += ShelterStrength[d][relative_rank(Us, backmost_sq(Us,b))];
 
-      b = theirPawns & file_bb(f);
-      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-
-      safety -= StormDanger[!(ourPawns & file_bb(f)) ? Unopposed     :
-                             shift<Down>(b) & ourPawns ? BlockedByPawn : Unblocked]
-                            [d][rkThem];
+      if ((b = theirPawns & file_bb(f)))
+         safety -= StormDanger[!(ourPawns & file_bb(f)) ? Unopposed    :
+                      shift<Down>(b) & ourPawns ? BlockedByPawn : Unblocked]
+                      [d][relative_rank(Us, frontmost_sq(Them, b))];
   }
 
   return safety;
