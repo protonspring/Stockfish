@@ -56,18 +56,18 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 4-20+9),  V(  73-20+9), V( 132-20+9), V(46-20+9), V(31-20+9), V(-20+9), V(-20+9) },  // Unopposed
-      { V( 1-20+15),  V(  64-20+15), V( 143-20+15), V(26-20+15), V(13-20+15), V(-20+15), V(-20+15) },
-      { V( 1-20+18),  V(  47-20+18), V( 110-20+18), V(44-20+18), V(24-20+18), V(-20+18), V(-20+18) },
-      { V( 0-20-12),  V(  72-20-12), V( 127-20-12), V(50-20-12), V(31-20-12), V(-20-12), V(-20-12) } },
-    { { V( 0-20),  V(   0-20), V(  19-20), V(23-20), V( 1-20), V(-20), V(-20) },  // BlockedByPawn
-      { V( 0-20),  V(   0-20), V(  88-20), V(27-20), V( 2-20), V(-20), V(-20) },
-      { V( 0-20),  V(   0-20), V( 101-20), V(16-20), V( 1-20), V(-20), V(-20) },
-      { V( 0-20),  V(   0-20), V( 111-20), V(22-20), V(15-20), V(-20), V(-20) } },
-    { { V(22-20),  V(  45-20), V( 104-20), V(62-20), V( 6-20), V(-20), V(-20) },  // Unblocked
-      { V(31-20),  V(  30-20), V(  99-20), V(39-20), V(19-20), V(-20), V(-20) },
-      { V(23-20),  V(  29-20), V(  96-20), V(41-20), V(15-20), V(-20), V(-20) },
-      { V(21-20),  V(  23-20), V( 116-20), V(41-20), V(15-20), V(-20), V(-20) } }
+    { { V(0),  V(  73-20+9), V( 132-20+9), V(46-20+9), V(31-20+9), V(-20+9), V(-20+9) },  // Unopposed
+      { V(0),  V(  64-20+15), V( 143-20+15), V(26-20+15), V(13-20+15), V(-20+15), V(-20+15) },
+      { V(0),  V(  47-20+18), V( 110-20+18), V(44-20+18), V(24-20+18), V(-20+18), V(-20+18) },
+      { V(0),  V(  72-20-12), V( 127-20-12), V(50-20-12), V(31-20-12), V(-20-12), V(-20-12) } },
+    { { V( 0),  V(   0), V(  19-20), V(23-20), V( 1-20), V(-20), V(-20) },  // BlockedByPawn
+      { V( 0),  V(   0), V(  88-20), V(27-20), V( 2-20), V(-20), V(-20) },
+      { V( 0),  V(   0), V( 101-20), V(16-20), V( 1-20), V(-20), V(-20) },
+      { V( 0),  V(   0), V( 111-20), V(22-20), V(15-20), V(-20), V(-20) } },
+    { { V(0),  V(  45-20), V( 104-20), V(62-20), V( 6-20), V(-20), V(-20) },  // Unblocked
+      { V(0),  V(  30-20), V(  99-20), V(39-20), V(19-20), V(-20), V(-20) },
+      { V(0),  V(  29-20), V(  96-20), V(41-20), V(15-20), V(-20), V(-20) },
+      { V(0),  V(  23-20), V( 116-20), V(41-20), V(15-20), V(-20), V(-20) } }
   };
 
   #undef S
@@ -233,25 +233,29 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
+  File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   Value safety = (ourPawns & file_bb(ksq)) ? Value(5-60) : Value(-5-60);
 
+  //bonus if the king blocks an enemy pawn here
   if ((shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks) & ksq)
       safety += 374;
 
-  File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
-  for (File f = File(center - 1); f <= File(center + 1); ++f)
+  //penalty if king is on a center file (D or E) and no pawns on that file
+  File f = file_of(ksq);
+  if ((std::min(f,~f) == 3) && (!(file_bb(f) & b)))
+      safety -= 32;
+
+  for (f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
-
-      b = theirPawns & file_bb(f);
-      Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-
       int d = std::min(f, ~f);
-      safety +=  ShelterStrength[d][rkUs]
-               - StormDanger[rkUs == RANK_1     ? Unopposed     :
-                             rkUs == rkThem - 1 ? BlockedByPawn : Unblocked]
-                            [d][rkThem];
+
+      if ((b = ourPawns & file_bb(f)))
+         safety +=  ShelterStrength[d][relative_rank(Us, backmost_sq(Us, b))];
+
+      if ((b = theirPawns & file_bb(f)))
+         safety -= StormDanger[!(ourPawns & file_bb(f))  ? Unopposed     :
+                               shift<Down>(b) & ourPawns ? BlockedByPawn : Unblocked]
+                            [d][relative_rank(Us, frontmost_sq(Them, b))];
   }
 
   return safety;
