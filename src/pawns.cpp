@@ -162,9 +162,11 @@ namespace {
             score -= Backward, e->weakUnopposed[Us] += !opposed;
     }
 
-    //score all doubled pawns
+    //score all doubled pawns (off by 1 or 2 ranks).
     supported = e->pawnAttacks[Us] & ourPawns;
-    doubled = (ourPawns & shift<Up>(ourPawns)) & ~(supported);
+    doubled = ourPawns &
+              (shift<Up>(ourPawns) | shift<Up>(shift<Up>(ourPawns))) &
+              ~supported;
     score -= Doubled * popcount(doubled);
 
     return score;
