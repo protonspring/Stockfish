@@ -163,9 +163,12 @@ namespace {
     }
 
     //score all doubled pawns
-    supported = e->pawnAttacks[Us] & ourPawns;
-    doubled = (ourPawns & shift<Up>(ourPawns)) & ~(supported);
-    score -= Doubled * popcount(doubled);
+    if (pos.count<PAWN>(Us) > 2)
+    {
+       supported = e->pawnAttacks[Us] & ourPawns;
+       doubled = (ourPawns & shift<Up>(ourPawns)) & ~(supported);
+       score -= Doubled * popcount(doubled);
+    }
 
     return score;
   }
