@@ -55,7 +55,7 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
-  constexpr Value StormDanger[][4][RANK_NB] = {
+  Value StormDanger[3][4][RANK_NB] = {
     { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
       { V( 1),  V(  64), V( 143), V(26), V(13) },
       { V( 1),  V(  47), V( 110), V(44), V(24) },
@@ -63,11 +63,7 @@ namespace {
     { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
       { V( 0),  V(   0), V(  88), V(27), V( 2) },
       { V( 0),  V(   0), V( 101), V(16), V( 1) },
-      { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19) },
-      { V(23),  V(  29), V(  96), V(41), V(15) },
-      { V(21),  V(  23), V( 116), V(41), V(15) } }
+      { V( 0),  V(   0), V( 111), V(22), V(15) } }
   };
 
   #undef S
@@ -178,6 +174,13 @@ void init() {
       v += (Seed[r] + (phalanx ? (Seed[r + 1] - Seed[r]) / 2 : 0)) >> opposed;
 
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
+  }
+
+  for (int file = 0;file < FILE_E; ++file)
+  {
+     StormDanger[2][file][0] = StormDanger[2][file][4] = Value(25 - 5 * file);
+     StormDanger[2][file][1] = StormDanger[2][file][3] = StormDanger[2][file][0] * 2;
+     StormDanger[2][file][2] = StormDanger[2][file][1] * 3;
   }
 }
 
