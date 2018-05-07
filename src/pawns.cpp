@@ -125,19 +125,24 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (   !(stoppers ^ lever ^ leverPush)
-            && !(ourPawns & forward_file_bb(Us, s))
-            && popcount(supported) >= popcount(lever) - 1
-            && popcount(phalanx)   >= popcount(leverPush))
+        if (!stoppers)                                    //no stoppers at all
             e->passedPawns[Us] |= s;
-
-        else if (stoppers == SquareBB[s + Up])
+        else if (stoppers == SquareBB[s + Up]             //only one stopper that blocks
+                   && relative_rank(Us, s) >= RANK_5)
         {
             b = shift<Up>(supported) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
+        else if (   !(stoppers ^ lever)      //all stoppers are levers
+            && !(ourPawns & forward_file_bb(Us, s))
+            && popcount(supported) >= popcount(lever) - 1)
+            e->passedPawns[Us] |= s;
+        else if (   !(stoppers ^ leverPush) //some stoppers are lever push
+            && !(ourPawns & forward_file_bb(Us, s))
+            && popcount(phalanx)   >= popcount(leverPush))
+            e->passedPawns[Us] |= s;
 
         // Score this pawn
         if (supported | phalanx)
