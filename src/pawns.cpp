@@ -139,8 +139,9 @@ namespace {
             && !(ourPawns & forward_file_bb(Us, s))
             && popcount(supported) >= popcount(lever) - 1)
             e->passedPawns[Us] |= s;
-        else if (   !(stoppers ^ leverPush) //some stoppers are lever push
+        else if (   !(stoppers ^ lever ^ leverPush) // comprehensive analysis
             && !(ourPawns & forward_file_bb(Us, s))
+            && popcount(supported) >= popcount(lever) - 1)
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
