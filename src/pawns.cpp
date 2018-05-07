@@ -125,9 +125,27 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (!stoppers)                                    //no stoppers at all
+
+        //no stoppers at all
+        if (!stoppers)
             e->passedPawns[Us] |= s;
-        else if (stoppers == SquareBB[s + Up]             //only one stopper that blocks
+
+        //all stoppers are lever/leverPush
+        else if (!(stoppers ^ lever ^ leverPush) && !(ourPawns & forward_file_bb(Us, s)))
+        {
+            //all stoppers are levers
+            if ((!(stoppers ^ lever) && (popcount(supported) >= (popcount(lever) - 1))))
+               e->passedPawns[Us] |= s;
+
+            //some stoppers are leverPush
+            else if (!(stoppers ^ lever ^ leverPush)
+                && (popcount(supported) >= popcount(lever) - 1)
+                && (popcount(phalanx)   >= popcount(leverPush)))
+               e->passedPawns[Us] |= s;
+        }
+
+        //only one stopper that blocks
+        else if (stoppers == SquareBB[s + Up]
                    && relative_rank(Us, s) >= RANK_5)
         {
             b = shift<Up>(supported) & ~theirPawns;
@@ -135,15 +153,6 @@ namespace {
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
-        else if (   !(stoppers ^ lever)      //all stoppers are levers
-            && !(ourPawns & forward_file_bb(Us, s))
-            && popcount(supported) >= popcount(lever) - 1)
-            e->passedPawns[Us] |= s;
-        else if (   !(stoppers ^ lever ^ leverPush) // comprehensive analysis
-            && !(ourPawns & forward_file_bb(Us, s))
-            && popcount(supported) >= popcount(lever) - 1)
-            && popcount(phalanx)   >= popcount(leverPush))
-            e->passedPawns[Us] |= s;
 
         // Score this pawn
         if (supported | phalanx)
