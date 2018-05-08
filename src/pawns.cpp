@@ -56,18 +56,14 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(  59), V( 115), V(54), V(20) },  // Unopposed
+    { { V( 0),  V(  59), V( 115), V(54), V(20) },  // UnBlocked 
       { V( 0),  V(  47), V( 120), V(31), V(14) },
       { V( 0),  V(  37), V( 105), V(42), V(19) },
       { V( 0),  V(  45), V( 120), V(46), V(22) } },
-    { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
+    { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // Blocked
       { V( 0),  V(   0), V(  88), V(27), V( 2) },
       { V( 0),  V(   0), V( 101), V(16), V( 1) },
-      { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(25),  V(  59), V( 115), V(54), V(20) },  // Unblocked
-      { V(25),  V(  47), V( 120), V(31), V(14) },
-      { V(25),  V(  37), V( 105), V(42), V(19) },
-      { V(25),  V(  45), V( 120), V(46), V(22) } }
+      { V( 0),  V(   0), V( 111), V(22), V(15) } }
   };
 
   #undef S
@@ -212,7 +208,7 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
-  enum { Unopposed, BlockedByPawn, Unblocked };
+  enum { UnBlocked, Blocked };
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
@@ -229,17 +225,17 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      int d = std::min(f, ~f);
       b = ourPawns & file_bb(f);
       Rank rkUs = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
+      safety += ShelterStrength[d][rkUs];
 
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      safety -= StormDanger[(rkUs == rkThem - 1) && (rkUs != RANK_1) ? Blocked : UnBlocked][d][rkThem];
 
-      int d = std::min(f, ~f);
-      safety +=  ShelterStrength[d][rkUs]
-               - StormDanger[rkUs == RANK_1     ? Unopposed     :
-                             rkUs == rkThem - 1 ? BlockedByPawn : Unblocked]
-                            [d][rkThem];
+      if ((rkUs > RANK_1) && (rkThem == RANK_1))
+        safety -= 25;
   }
 
   return safety;
