@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -241,16 +240,6 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                - StormDanger[rkUs == RANK_1     ? Unopposed :
                              rkUs == rkThem - 1 ? BlockedByPawn : Unblocked]
                             [d][rkThem];
-
-      if ((rkUs == RANK_1 ? Unopposed : rkUs == rkThem - 1 ? BlockedByPawn : Unblocked) == Unblocked)
-      {
-          if (rkThem == RANK_2)
-          {
-              std::cout << std::endl << std::endl << "<STRANGE>";
-              std::cout << Bitboards::pretty(theirPawns);
-              std::cout << Bitboards::pretty(ourPawns);
-          }
-      }
   }
 
   return safety;
