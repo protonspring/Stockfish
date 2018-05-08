@@ -232,10 +232,11 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-      safety -= StormDanger[(rkUs == rkThem - 1) && (rkUs != RANK_1) ? Blocked : UnBlocked][d][rkThem];
 
       if ((rkUs > RANK_1) && (rkThem == RANK_1))
         safety -= 25;
+      else
+        safety -= StormDanger[(rkUs == rkThem - 1) && (rkUs != RANK_1) ? Blocked : UnBlocked][d][rkThem];
   }
 
   return safety;
