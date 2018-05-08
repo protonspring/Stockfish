@@ -56,10 +56,10 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 0),  V(  59), V( 115), V(54), V(20) },  // UnBlocked
-      { V( 0),  V(  47), V( 120), V(31), V(14) },
-      { V( 0),  V(  37), V( 105), V(42), V(19) },
-      { V( 0),  V(  45), V( 120), V(46), V(22) } },
+    { { V(25),  V(  59), V( 115), V(54), V(20) },  // UnBlocked
+      { V(25),  V(  47), V( 120), V(31), V(14) },
+      { V(25),  V(  37), V( 105), V(42), V(19) },
+      { V(25),  V(  45), V( 120), V(46), V(22) } },
     { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // Blocked
       { V( 0),  V(   0), V(  88), V(27), V( 2) },
       { V( 0),  V(   0), V( 101), V(16), V( 1) },
@@ -233,8 +233,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       b = theirPawns & file_bb(f);
       Rank rkThem = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-      safety -= (rkUs && !rkThem) ? 25 :
-             StormDanger[rkUs && (rkUs == rkThem - 1) ? Blocked : UnBlocked][d][rkThem];
+      if (rkUs || rkThem)
+         safety -= StormDanger[rkUs && (rkUs == rkThem - 1) ? Blocked : UnBlocked][d][rkThem];
   }
 
   return safety;
