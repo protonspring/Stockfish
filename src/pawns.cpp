@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -56,18 +57,22 @@ namespace {
   // For the unopposed and unblocked cases, RANK_1 = 0 is used when opponent has
   // no pawn on the given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V( 4),  V(  73), V( 132), V(46), V(31) },  // Unopposed
-      { V( 1),  V(  64), V( 143), V(26), V(13) },
-      { V( 1),  V(  47), V( 110), V(44), V(24) },
+    { { V( 0),  V(  73), V( 132), V(46), V(31) },  // Unopposed
+      { V( 0),  V(  64), V( 143), V(26), V(13) },
+      { V( 0),  V(  47), V( 110), V(44), V(24) },
       { V( 0),  V(  72), V( 127), V(50), V(31) } },
     { { V( 0),  V(   0), V(  19), V(23), V( 1) },  // BlockedByPawn
       { V( 0),  V(   0), V(  88), V(27), V( 2) },
       { V( 0),  V(   0), V( 101), V(16), V( 1) },
       { V( 0),  V(   0), V( 111), V(22), V(15) } },
-    { { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
-      { V(31),  V(  30), V(  99), V(39), V(19) },
-      { V(23),  V(  29), V(  96), V(41), V(15) },
-      { V(21),  V(  23), V( 116), V(41), V(15) } }
+    //{ { V(22),  V(  45), V( 104), V(62), V( 6) },  // Unblocked
+      //{ V(31),  V(  30), V(  99), V(39), V(19) },
+      //{ V(23),  V(  29), V(  96), V(41), V(15) },
+      //{ V(21),  V(  23), V( 116), V(41), V(15) } }
+    { { V(22),  V(  73), V( 132), V(46), V(31) },  // Unblocked
+      { V(31),  V(  64), V( 143), V(26), V(13) },
+      { V(23),  V(  47), V( 110), V(44), V(24) },
+      { V(21),  V(  72), V( 127), V(50), V(31) } }
   };
 
   #undef S
@@ -237,9 +242,19 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       int d = std::min(f, ~f);
       safety +=  ShelterStrength[d][rkUs]
-               - StormDanger[(rkUs == RANK_1) || (rkThem < rkUs) ? Unopposed :
+               - StormDanger[rkUs == RANK_1     ? Unopposed :
                              rkUs == rkThem - 1 ? BlockedByPawn : Unblocked]
                             [d][rkThem];
+
+      if ((rkUs == RANK_1 ? Unopposed : rkUs == rkThem - 1 ? BlockedByPawn : Unblocked) == Unblocked)
+      {
+          if (rkThem == RANK_2)
+          {
+              std::cout << std::endl << std::endl << "<STRANGE>";
+              std::cout << Bitboards::pretty(theirPawns);
+              std::cout << Bitboards::pretty(ourPawns);
+          }
+      }
   }
 
   return safety;
