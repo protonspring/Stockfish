@@ -45,12 +45,9 @@ namespace {
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 0), V(83), V(84), V( 38), V(13), V(  0), V(-30) },
-    { V( 0), V(83), V(52), V(-17), V(13), V(  0), V(-30) },
-    { V( 0), V(83), V(25), V(-24), V(13), V(  0), V(-30) },
-    { V( 0), V(83), V(19), V(  8), V(13), V(  0), V(-30) }
-  };
+  Value ShelterStrength[RANK_NB] = {V( 0), V(83), V(50), V( 30), V(15), V( 6) };
+
+  TUNE(ShelterStrength);
 
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
@@ -233,7 +230,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       int d = std::min(f, ~f);
 
-      safety += ShelterStrength[d][ourRank];
+      safety += ShelterStrength[ourRank];
       if (ourRank || theirRank)
          safety -= StormDanger[ourRank && (ourRank == theirRank - 1) ? BlockedByPawn : UnBlocked][d][theirRank];
   }
