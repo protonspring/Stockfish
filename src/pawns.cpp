@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -74,6 +75,12 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
+    constexpr Direction Left = (Us == WHITE ? WEST : EAST);
+    constexpr Direction Right= (Us == WHITE ? EAST : WEST);
+    constexpr Direction UpRight  = (Us == WHITE ? NORTH_EAST : SOUTH_WEST);
+    constexpr Direction UpLeft   = (Us == WHITE ? NORTH_WEST : SOUTH_EAST);
+    constexpr Direction DownRight  = (Us == WHITE ? SOUTH_EAST : NORTH_WEST);
+    constexpr Direction DownLeft   = (Us == WHITE ? SOUTH_WEST : NORTH_EAST);
 
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
@@ -130,10 +137,15 @@ namespace {
         else if (   stoppers == SquareBB[s + Up]
                  && relative_rank(Us, s) >= RANK_5)
         {
-            b = shift<Up>(supported) & ~theirPawns;
-            while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
-                    e->passedPawns[Us] |= s;
+            if (((ourPawns & shift<DownLeft>(SquareBB[s])) &&
+                !(theirPawns & shift<Left>(SquareBB[s])) &&
+                !(theirPawns & shift<UpLeft>(shift<Left>(SquareBB[s])))) ||
+
+               ((ourPawns & shift<DownRight>(SquareBB[s])) &&
+                !(theirPawns & shift<Right>(SquareBB[s])) &&
+                !(theirPawns & shift<UpRight>(shift<Right>(SquareBB[s])))))
+
+               e->passedPawns[Us] |= s;
         }
 
         // Score this pawn
