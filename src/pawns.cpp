@@ -55,16 +55,12 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
   // given file, or their pawn is behind our king.
-  constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V(12),  V( 54), V(118), V( 54), V( 26) },  // UnBlocked
-      { V(12),  V( 54), V(118), V( 54), V( 26) },
-      { V(12),  V( 54), V(118), V( 54), V( 26) },
-      { V(12),  V( 54), V(118), V( 54), V( 26) } },
-    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },  // BlockedByPawn
+  constexpr Value UnblockedPawn[RANK_NB] = {V(12), V(54), V(118), V(54), V(26)};
+  constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
+    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
       { V( 0),  V(  0), V( 68), V(-12), V( 13) },
       { V( 0),  V(  0), V(111), V(-25), V( -3) },
-      { V( 0),  V(  0), V(108), V( 14), V( 21) } }
-  };
+      { V( 0),  V(  0), V(108), V( 14), V( 21) } };
 
   #undef S
   #undef V
@@ -208,7 +204,6 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
-  enum { UnBlocked, BlockedByPawn };
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
@@ -235,7 +230,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       safety += ShelterStrength[d][ourRank];
       if (ourRank || theirRank)
-         safety -= StormDanger[ourRank && (ourRank == theirRank - 1) ? BlockedByPawn : UnBlocked][d][theirRank];
+         safety -= (ourRank && (ourRank == theirRank - 1)) ?
+                    BlockedByPawn[d][theirRank] : UnblockedPawn[theirRank];
   }
 
   return safety;
