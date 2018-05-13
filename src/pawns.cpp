@@ -52,10 +52,15 @@ namespace {
     { V(11), V(83), V(19), V(  8), V(18), V(-21), V(-30) }
   };
 
-  // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
-  // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
-  // given file, or their pawn is behind our king.
-  constexpr Value UnblockedPawn[RANK_NB] = {V(19), V(61), V(124), V(60), V(33)};
+  // Danger of enemy pawns moving toward our king.
+  // For calculating the danger of unblocked pawns, for each file, 
+  // multiply a distance from edge to a step value(1) and add it to the base (0);
+  // RANK_1 is used when the opponent has no pawn on the file
+  constexpr Value Unblocked[2][RANK_NB] = 
+    { {V(19), V(61), V(124), V(60), V(33), V( 0), V( 0)},
+      {V( 2), V( 2), V(  2), V( 2), V( 2), V( 2), V( 2)} };
+
+  // The danger of pawns blocked by pawns by [distance from edge][rank]
   constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
     { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
       { V( 0),  V(  0), V( 68), V(-12), V( 13) },
@@ -230,8 +235,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       safety += ShelterStrength[d][ourRank];
       if (ourRank || theirRank)
-         safety -= (ourRank && (ourRank == theirRank - 1)) ?
-                    BlockedByPawn[d][theirRank] : (UnblockedPawn[theirRank] - 2*d);
+         safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedByPawn[d][theirRank] : 
+                   (Unblocked[0][theirRank] - Unblocked[1][theirRank]*d);
   }
 
   return safety;
