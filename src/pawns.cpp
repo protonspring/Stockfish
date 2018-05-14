@@ -57,8 +57,8 @@ namespace {
   // multiply a distance from edge to a step value(1) and add it to the base (0);
   // RANK_1 is used when the opponent has no pawn on the file
   constexpr Value Unblocked[2][RANK_NB] = 
-    { {V(19), V(61), V(124), V(60), V(33), V( 0), V( 0)},
-      {V( 2), V( 2), V(  2), V( 2), V( 2), V( 2), V( 2)} };
+    { {V(18), V(64), V(124), V(61), V(32), V( 1), V( 5)},
+      {V( 2), V( 2), V(  1), V( 2), V( 3), V(-1), V( 2)} };
 
   // The danger of pawns blocked by pawns by [distance from edge][rank]
   constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
