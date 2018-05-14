@@ -60,7 +60,20 @@ namespace {
           { {V(19), V(61), V(124), V(60), V(33), V(10), V(10)},
             {V( 2), V( 2), V(  2), V( 2), V( 2), V( 2), V( 2)} };
 
-  TUNE(UnblockedPawn);
+  TUNE(SetRange(0,40), UnblockedPawn[0][0],
+       SetRange(40,80), UnblockedPawn[0][1],
+       SetRange(100,140), UnblockedPawn[0][2],
+       SetRange(40,80), UnblockedPawn[0][3],
+       SetRange(10,50), UnblockedPawn[0][4],
+       SetRange(-20,20), UnblockedPawn[0][5],
+       SetRange(-20,20), UnblockedPawn[0][6],
+       SetRange(-10,10), UnblockedPawn[1][0],
+       SetRange(-10,10), UnblockedPawn[1][1],
+       SetRange(-10,10), UnblockedPawn[1][2],
+       SetRange(-10,10), UnblockedPawn[1][3],
+       SetRange(-10,10), UnblockedPawn[1][4],
+       SetRange(-10,10), UnblockedPawn[1][5],
+       SetRange(-10,10), UnblockedPawn[1][6]);
 
   constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
     { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
