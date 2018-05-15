@@ -52,19 +52,16 @@ namespace {
     { V(11), V(83), V(19), V(  8), V(18), V(-21), V(-30) }
   };
 
-  // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
-  // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
-  // given file, or their pawn is behind our king.
-  constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V(19),  V( 61), V(124), V( 60), V( 33) },  // UnBlocked
-      { V(17),  V( 59), V(122), V( 58), V( 31) },
-      { V(15),  V( 57), V(120), V( 54), V( 29) },
-      { V(13),  V( 55), V(118), V( 54), V( 27) } },
-    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },  // BlockedByPawn
+  // Danger of enemy pawns moving toward our king.
+  // RANK_1 is used when the opponent has no pawn on the file
+  constexpr Value Unblocked[RANK_NB] = {V(21), V(64), V(127), V(64), V(33), V(10), V(10) };
+
+  // The danger of pawns blocked by pawns by [distance from edge][rank]
+  constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
+    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
       { V( 0),  V(  0), V( 68), V(-12), V( 13) },
       { V( 0),  V(  0), V(111), V(-25), V( -3) },
-      { V( 0),  V(  0), V(108), V( 14), V( 21) } }
-  };
+      { V( 0),  V(  0), V(108), V( 14), V( 21) } };
 
   #undef S
   #undef V
@@ -208,7 +205,6 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
-  enum { UnBlocked, BlockedByPawn };
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
@@ -235,7 +231,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       safety += ShelterStrength[d][ourRank];
       if (ourRank || theirRank)
-         safety -= StormDanger[ourRank && (ourRank == theirRank - 1) ? BlockedByPawn : UnBlocked][d][theirRank];
+         safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedByPawn[d][theirRank] : 
+                   (Unblocked[theirRank] - 3*d);
   }
 
   return safety;
