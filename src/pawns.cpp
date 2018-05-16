@@ -61,11 +61,8 @@ namespace {
       { V( 0),  V( 42), V(118), V( 56), V( 27) },
       { V( 3),  V( 54), V(110), V( 55), V( 26) } };
 
-  constexpr Value BlockedByPawn[4][RANK_NB] =
-    { { V( 0),  V(  0), V( 50), V(-10), V(-50) },  // BlockedByPawn
-      { V( 0),  V(  0), V( 70), V( 10), V(-30) },
-      { V( 0),  V(  0), V( 90), V( 30), V(-10) },
-      { V( 0),  V(  0), V(110), V( 50), V( 10) } };
+  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(50), V(5), V(-50) };
+  constexpr Value bbpOffset = V(20);
 
   #undef S
   #undef V
@@ -235,9 +232,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       safety += ShelterStrength[d][ourRank];
       if (ourRank || theirRank)
-         //safety -= StormDanger[ourRank && (ourRank == theirRank - 1) ? BlockedByPawn : UnBlocked][d][theirRank];
          safety -= (ourRank && (ourRank == theirRank - 1)) ? 
-             BlockedByPawn[d][theirRank] : Unblocked[d][theirRank];
+             BlockedByPawn[theirRank] + bbpOffset * d : Unblocked[d][theirRank];
   }
 
   return safety;
