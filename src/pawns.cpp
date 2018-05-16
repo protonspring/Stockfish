@@ -61,8 +61,13 @@ namespace {
       { V( 0),  V( 42), V(118), V( 56), V( 27) },
       { V( 3),  V( 54), V(110), V( 55), V( 26) } };
 
-  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(50), V(5), V(-50) };
-  constexpr Value bbpOffset = V(20);
+  Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(50), V(5), V(-50) };
+  Value bbpOffset = V(20);
+
+  TUNE (SetRange(40,60),BlockedByPawn[2],
+        SetRange(-10,10), BlockedByPawn[3],
+        SetRange(-60,-40), BlockedByPawn[4],
+        SetRange(10,30),bbpOffset);
 
   #undef S
   #undef V
