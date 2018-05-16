@@ -61,8 +61,7 @@ namespace {
       { V( 0),  V( 42), V(118), V( 56), V( 27) },
       { V( 3),  V( 54), V(110), V( 55), V( 26) } };
 
-  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(50), V(5), V(-50) };
-  constexpr Value bbpOffset = V(20);
+  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(50), V(7), V(-52) };
 
   #undef S
   #undef V
@@ -232,8 +231,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       safety += ShelterStrength[d][ourRank];
       if (ourRank || theirRank)
-         safety -= (ourRank && (ourRank == theirRank - 1)) ? 
-             BlockedByPawn[theirRank] + bbpOffset * d : Unblocked[d][theirRank];
+         safety -= (ourRank && (ourRank == theirRank - 1)) ?
+             BlockedByPawn[theirRank] + 18 * d : Unblocked[d][theirRank];
   }
 
   return safety;
