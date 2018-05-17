@@ -60,7 +60,7 @@ namespace {
       { V(15),  V( 45), V(131), V(  8), V( 25) },
       { V( 0),  V( 42), V(118), V( 56), V( 27) },
       { V( 3),  V( 54), V(110), V( 55), V( 26) } };
-  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(75), V(-10), V(-20), V(-20), V(-20) };
+  constexpr Value BlockedByPawn[RANK_NB] = {V(0), V(0), V(75), V(-10), V(-20) };
 
   #undef S
   #undef V
@@ -229,7 +229,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int d = std::min(f, ~f);
 
       safety += ShelterStrength[d][ourRank];
-      if (ourRank || theirRank) //&& (theirRank < RANK_6))
+      if ((ourRank || theirRank) && (theirRank < RANK_6))
          safety -= (ourRank && (ourRank == theirRank - 1)) ?
              (BlockedByPawn[theirRank] + 10*d) : UnBlocked[d][theirRank];
   }
