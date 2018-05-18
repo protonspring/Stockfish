@@ -54,7 +54,7 @@ namespace {
 
   // Danger of unblocked enemy pawns moving toward our king by rank.
   // RANK_1 is used when there is no enemy pawn on the file
-  constexpr Value Unblocked[RANK_NB] = {V(11), V(53), V(116), V(52), V(25)};
+  constexpr Value Unblocked[RANK_NB] = {V(14), V(56), V(119), V(55), V(28)};
 
   // Danger of blocked enemy pawns ahead of king by [distance from edge][rank]
   constexpr Value BlockedByPawn[FILE_NB / 2][RANK_NB] =
