@@ -56,10 +56,10 @@ namespace {
   // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
   // given file, or their pawn is behind our king.
   constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V(20),  V( 79), V(112), V( 51), V( 26) },  // UnBlocked
-      { V(15),  V( 54), V(112), V( 51), V( 26) },
-      { V( 8),  V( 54), V(112), V( 51), V( 26) },
-      { V( 8),  V( 54), V(112), V( 51), V( 26) } },
+    { { V(15),  V( 79), V(112), V( 51), V( 26) },  // UnBlocked
+      { V(12),  V( 45), V(112), V( 51), V( 26) },
+      { V( 9),  V( 42), V(112), V( 51), V( 26) },
+      { V( 9),  V( 54), V(112), V( 51), V( 26) } },
     { { V( 0),  V(  0), V( 37), V(  5), V(-48) },  // BlockedByPawn
       { V( 0),  V(  0), V( 68), V(-12), V( 13) },
       { V( 0),  V(  0), V(111), V(-25), V( -3) },
