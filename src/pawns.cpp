@@ -55,7 +55,7 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
   // given file, or their pawn is behind our king.
-  constexpr Value StormUnBlocked[RANK_NB] = {V(17),V(63),V(117),V(56),V(33)};
+  constexpr Value StormUnBlocked[RANK_NB] = {V(20),V(60),V(120),V(60),V(35)};
 
   constexpr Value StormBlockedByPawn[4][RANK_NB] =
     { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
@@ -230,7 +230,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 
-         StormBlockedByPawn[d][theirRank] : StormUnBlocked[theirRank] - 3*d;
+         StormBlockedByPawn[d][theirRank] : StormUnBlocked[theirRank] - 5*d;
   }
 
   return safety;
