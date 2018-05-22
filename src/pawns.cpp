@@ -55,16 +55,13 @@ namespace {
   // Danger of enemy pawns moving toward our king by [type][distance from edge][rank].
   // For the unblocked case, RANK_1 = 0 is used when opponent has no pawn on the
   // given file, or their pawn is behind our king.
-  constexpr Value StormDanger[][4][RANK_NB] = {
-    { { V(15),  V( 79), V(112), V( 51), V( 26) },  // UnBlocked
-      { V(12),  V( 45), V(112), V( 51), V( 26) },
-      { V( 9),  V( 42), V(112), V( 51), V( 26) },
-      { V( 9),  V( 54), V(112), V( 51), V( 26) } },
-    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },  // BlockedByPawn
+  constexpr Value StormUnBlocked[RANK_NB] = {V(14),V(60),V(114),V(53),V(30)};
+
+  constexpr Value StormBlockedByPawn[4][RANK_NB] =
+    { { V( 0),  V(  0), V( 37), V(  5), V(-48) },
       { V( 0),  V(  0), V( 68), V(-12), V( 13) },
       { V( 0),  V(  0), V(111), V(-25), V( -3) },
-      { V( 0),  V(  0), V(108), V( 14), V( 21) } }
-  };
+      { V( 0),  V(  0), V(108), V( 14), V( 21) } };
 
   #undef S
   #undef V
@@ -208,7 +205,6 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
-  enum { UnBlocked, BlockedByPawn };
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
@@ -225,17 +221,16 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      int d = std::min(f, ~f);
+
       b = ourPawns & file_bb(f);
       int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
+      safety += ShelterStrength[d][ourRank];
 
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
-      int d = std::min(f, ~f);
-
-      safety += ShelterStrength[d][ourRank];
-      safety -= StormDanger[ourRank && (ourRank == theirRank - 1) ? BlockedByPawn : UnBlocked]
-                           [d][theirRank];
+      safety -= (ourRank && (ourRank == theirRank - 1)) ? 
+         StormBlockedByPawn[d][theirRank] : StormUnBlocked[theirRank] - 2*d;
   }
 
   return safety;
