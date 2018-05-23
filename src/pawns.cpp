@@ -55,10 +55,10 @@ namespace {
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = the opponent has no pawn on the file or the pawn is behind our king
   constexpr Value UnBlocked[4][RANK_NB] =
-    { { V( 15), V( 59), V( 97), V( 41), V( 17), V(-10), V(-10) },
-      { V( 15), V( 59), V(131), V(  8), V( 25), V(  0), V(  0) },
-      { V( 15), V( 59), V(133), V( 71), V( 42), V( 15), V( 15) },
-      { V( 15), V( 59), V(122), V( 67), V( 38), V( 12), V( 12) } };
+    { { V( 15), V( 52), V( 97), V( 41), V( 17), V(-10), V(-10) },
+      { V( 15), V( 52), V(131), V(  8), V( 25), V(  0), V(  0) },
+      { V( 15), V( 52), V(133), V( 71), V( 42), V( 15), V( 15) },
+      { V( 15), V( 52), V(122), V( 67), V( 38), V( 12), V( 12) } };
 
   // Danger of blocked pawns ahead of our king by rank.
   constexpr Value BlockedByPawn[RANK_NB] =
