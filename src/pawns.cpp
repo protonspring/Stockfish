@@ -46,19 +46,19 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = we have no pawn on the file or our pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V(  7-25), V(76-25), V( 84-25), V( 38-25), V(  7-25), V( 30-25), V(-19-25) },
-    { V(-13-5), V(83-5), V( 42-5), V(-27-5), V(  2-5), V(-32-5), V(-45-5) },
-    { V(-26+20), V(63+20), V(  5+20), V(-44+20), V( -5+20), V(  2+20), V(-59+20) },
-    { V(-19+27), V(53+27), V(-11+27), V(-22+27), V(-12+27), V(-51+27), V(-60+27) }
+    { V(  7), V(76), V( 84), V( 38), V(  7), V( 30), V(-19) },
+    { V(-3), V(93), V( 52), V(-17), V( 12), V(-22), V(-35) },
+    { V(-6), V(83), V( 25), V(-24), V( 15), V( 22), V(-39) },
+    { V( 11), V(83), V( 19), V(  8), V( 18), V(-21), V(-30) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = the opponent has no pawn on the file or the pawn is behind our king
   constexpr Value UnBlocked[4][RANK_NB] =
-    { { V( 0), V( 79-25), V(107-25), V( 51-25), V( 27-25), V(  0-25), V(  0-25) },
-      { V( 0), V( 35-5), V(121-5), V( -2-5), V( 15-5), V(-10-5), V(-10-5) },
-      { V( 0), V( 22+20), V( 98+20), V( 36+20), V(  7+20), V(-20+20), V(-20+20) },
-      { V( 0), V( 24+27), V( 80+27), V( 25+27), V( -4+27), V(-30+27), V(-30+27) } };
+    { { V(  0), V( 79), V(107), V( 51), V( 27), V(  0), V(  0) },
+      { V(  0), V( 45), V(131), V(  8), V( 25), V(  0), V(  0) },
+      { V(  0), V( 42), V(118), V( 56), V( 27), V(  0), V(  0) },
+      { V(  0), V( 54), V(110), V( 55), V( 26), V(  0), V(  0) } };
 
   // Danger of blocked pawns ahead of our king by rank.
   constexpr Value BlockedByPawn[RANK_NB] =
