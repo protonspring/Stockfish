@@ -47,19 +47,19 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V(  7), V(76), V( 84), V( 38), V(  7), V( 30), V(-19) },
-    { V(-13+10), V(83+10), V( 42+10), V(-27+10), V(  2+10), V(-32+10), V(-45+10) },
-    { V(-26+20), V(63+20), V(  5+20), V(-44+20), V( -5+20), V(  2+20), V(-59+20) },
-    { V(-19+30), V(53+30), V(-11+30), V(-22+30), V(-12+30), V(-51+30), V(-60+30) }
+    { V(-13), V(83), V( 42), V(-27), V(  2), V(-32), V(-45) },
+    { V(-26+10), V(63+10), V(  5+10), V(-44+10), V( -5+10), V(  2+10), V(-59+10) },
+    { V(-19+20), V(53+20), V(-11+20), V(-22+20), V(-12+20), V(-51+20), V(-60+20) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn 
   // is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 25), V( 79), V(107), V( 51), V( 27) },
-    { V(  5+10), V( 35+10), V(121+10), V( -2+10), V( 15+10) },
-    { V(-20+20), V( 22+20), V( 98+20), V( 36+20), V(  7+20) },
-    { V(-27+30), V( 24+30), V( 80+30), V( 25+30), V( -4+30) }
+    { V( 25), V( 79), V(107), V( 51), V( 27), V(  0), V(  0) },
+    { V(  5), V( 35), V(121), V( -2), V( 15), V(-10), V(-10) },
+    { V(-20+10), V( 22+10), V( 98+10), V( 36+10), V(  7+10), V(-20+10), V(-20+10) },
+    { V(-27+20), V( 24+20), V( 80+20), V( 25+20), V( -4+20), V(-30+20), V(-30+20) }
   };
 
   // Danger of blocked enemy pawns storming our king, by rank
