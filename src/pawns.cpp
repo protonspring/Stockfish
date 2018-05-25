@@ -56,10 +56,10 @@ namespace {
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn 
   // is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 25), V( 79), V(107), V( 40), V( 27), V(  0), V(  0) },
-    { V(  5), V( 35), V(121), V( 30), V( 17), V(-10), V(-10) },
-    { V(-20), V( 22), V( 98), V( 20), V(  7), V(-20), V(-20) },
-    { V(-27), V( 24), V( 80), V( 10), V( -3), V(-30), V(-30) }
+    { V( 25), V( 79), V(107), V( 35), V( 27), V(  0), V(  0) },
+    { V(  5), V( 35), V(121), V( 20), V( 17), V(-10), V(-10) },
+    { V(-20), V( 22), V( 98), V( 10), V(  7), V(-20), V(-20) },
+    { V(-27), V( 24), V( 80), V(  0), V( -3), V(-30), V(-30) }
   };
 
   // Danger of blocked enemy pawns storming our king, by rank
