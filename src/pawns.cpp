@@ -39,8 +39,6 @@ namespace {
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
-
-  // Doubled pawn penalty
   constexpr Score Doubled = S(13, 40);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
@@ -56,10 +54,10 @@ namespace {
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn 
   // is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 15), V( 79), V(100), V( 45), V( 27), V(  0), V(  0) },
+    { V( 25), V( 79), V(100), V( 45), V( 27), V(  0), V(  0) },
     { V(  5), V( 35), V( 90), V( 35), V( 17), V(-10), V(-10) },
-    { V( -5), V( 22), V( 80), V( 25), V(  7), V(-20), V(-20) },
-    { V(-15), V( 24), V( 70), V( 15), V( -3), V(-30), V(-30) }
+    { V(-20), V( 22), V( 80), V( 25), V(  7), V(-20), V(-20) },
+    { V(-27), V( 24), V( 70), V( 15), V( -3), V(-30), V(-30) }
   };
 
   // Danger of blocked enemy pawns storming our king, by rank
