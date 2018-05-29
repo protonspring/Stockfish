@@ -46,10 +46,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V(  7), V( 76), V( 70), V( 38), V(  7), V( 30), V(-19) },
-    { V(-13), V( 83), V( 50), V(-27), V(  2), V(-32), V(-45) },
-    { V(-26), V( 63), V( 30), V(-44), V( -5), V(  2), V(-59) },
-    { V(-19), V( 53), V( 10), V(-22), V(-12), V(-51), V(-60) }
+    { V(  7), V(76), V( 30), V(-12), V(  7), V( 30), V(-19) },
+    { V(-13), V(83), V( 20), V(-27), V(  2), V(-32), V(-45) },
+    { V(-26), V(63), V( 10), V(-44), V( -5), V(  2), V(-59) },
+    { V(-19), V(53), V(  0), V(-22), V(-12), V(-51), V(-60) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
@@ -222,18 +222,19 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety += Value(374);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
-  if (std::min(center, ~center) < FILE_C)
-      safety += 50;
-
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      int d = std::min(f, ~f);
+
       b = ourPawns & file_bb(f);
       int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
+
+      if ((d == FILE_A) && (ourRank > RANK_2) && (ourRank < RANK_5))
+         safety += 50;
 
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
-      int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
                                                         : UnblockedStorm[d][theirRank];
