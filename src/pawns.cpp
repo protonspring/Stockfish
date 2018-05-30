@@ -63,6 +63,8 @@ namespace {
   constexpr Value BlockedStorm[RANK_NB] =
     { V(  0), V(  0), V( 95), V( 10), V(  0), V(  0), V(  0) };
 
+TUNE(SetRange(-30,140),UnblockedStorm,BlockedStorm,PawnlessFile);
+
   #undef S
   #undef V
 
