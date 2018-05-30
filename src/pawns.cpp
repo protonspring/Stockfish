@@ -53,14 +53,14 @@ namespace {
   };
 
   // Danger having no enemy pawn on a file by [distance from edge]
-  constexpr Value PawnlessFile[FILE_NB/2] = {V(25), V(15), V(0), V(3)};
+  Value PawnlessFile[FILE_NB/2] = {V(25), V(15), V(0), V(3)};
 
   // Danger of enemy pawns moving toward our king by rank.
-  constexpr Value UnblockedStorm[RANK_NB] =
+  Value UnblockedStorm[RANK_NB] =
     { V(  0), V( 49), V( 96), V( 45), V( 27), V(  0), V(  0) };
 
   // Danger of blocked enemy pawns storming our king by rank
-  constexpr Value BlockedStorm[RANK_NB] =
+  Value BlockedStorm[RANK_NB] =
     { V(  0), V(  0), V( 95), V( 10), V(  0), V(  0), V(  0) };
 
 TUNE(SetRange(-30,140),UnblockedStorm,BlockedStorm,PawnlessFile);
