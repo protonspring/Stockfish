@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -102,6 +103,9 @@ namespace {
         e->semiopenFiles[Us]   &= ~(1 << f);
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
+        std::cout << "<square: " << s << ">";
+        std::cout << Bitboards::pretty(pawn_attack_span(Us, s)) << std::endl;
+
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
         stoppers   = theirPawns & passed_pawn_mask(Us, s);
@@ -147,7 +151,7 @@ namespace {
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
-        if (doubled && neighbours)
+        if (doubled)
            score -= Doubled;
     }
 
