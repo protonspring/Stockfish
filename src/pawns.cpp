@@ -85,7 +85,7 @@ namespace {
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
-    e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
+    e->backwardpawns[Us] = e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
@@ -144,7 +144,10 @@ namespace {
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
         else if (backward)
+        {
             score -= Backward, e->weakUnopposed[Us] += !opposed;
+            e->backwardpawns[Us] |= s;
+        }
 
         if (doubled && !supported)
             score -= Doubled;
@@ -249,10 +252,14 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.can_castle(Us);
   int minKingPawnDistance = 0;
+  int minKingBackwardPawnDistance = 0;
 
   Bitboard pawns = pos.pieces(Us, PAWN);
   if (pawns)
       while (!(DistanceRingBB[ksq][minKingPawnDistance++] & pawns)) {}
+
+  if (backwardpawns[~Us])
+      while (!(DistanceRingBB[ksq][minKingBackwardPawnDistance++] & backwardpawns[~Us])) {}
 
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
@@ -263,7 +270,7 @@ Score Entry::do_king_safety(const Position& pos, Square ksq) {
   if (pos.can_castle(MakeCastling<Us, QUEEN_SIDE>::right))
       bonus = std::max(bonus, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -16 * minKingPawnDistance);
+  return make_score(bonus, -8 * (minKingPawnDistance+minKingBackwardPawnDistance));
 }
 
 // Explicit template instantiation
