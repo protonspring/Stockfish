@@ -41,7 +41,7 @@ namespace {
   Score Connected[2][2][3][RANK_NB];
 
   // Doubled pawn penalty
-  constexpr Score Doubled = S(13, 40);
+  constexpr Score Doubled = S(12, 39);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -110,7 +110,8 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
-        doubled    = (ourPawns & forward_file_bb(Us, s));
+        doubled    = (ourPawns & forward_file_bb(Us, s)) &&
+                     !(ourPawns & pawn_attack_span(Us, s-Up));
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
@@ -146,7 +147,7 @@ namespace {
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
-        if (doubled && !neighbours)
+        if (doubled)
            score -= Doubled;
     }
 
