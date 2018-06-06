@@ -107,7 +107,7 @@ namespace {
         lever      = theirPawns & PawnAttacks[Us][s];
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         neighbours = ourPawns   & adjacent_files_bb(f);
-        doubled    = ourPawns   & forward_file_bb(Us, s);
+        doubled    = ourPawns   & forward_file_bb(Them, s);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
         unsupportedLead = (ourPawns & (s - Up)) && !supported;
