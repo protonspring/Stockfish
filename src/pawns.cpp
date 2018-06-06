@@ -34,8 +34,8 @@ namespace {
   // Pawn penalties
   constexpr Score Isolated = S(13, 16);
   constexpr Score Backward = S(17, 11);
-  Score Doubled = S( 3,  4);
-  Score UnsupportedLead = S(13,43);
+  constexpr Score Doubled = S( 3,  4);
+  constexpr Score UnsupportedLead = S(13,43);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
