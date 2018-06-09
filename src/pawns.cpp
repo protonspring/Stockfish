@@ -35,7 +35,9 @@ namespace {
   constexpr Score Isolated = S(13, 16);
   constexpr Score Backward = S(17, 11);
   constexpr Score Doubled  = S(13, 40);
-  constexpr Score Alone    = S( 5,  5);
+  Score WeakPawn = S( 5,  5);
+
+  TUNE(WeakPawn);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -147,7 +149,7 @@ namespace {
             score -= Doubled;
 
         if (!phalanx && !supported)
-            score -= Alone;
+            score -= WeakPawn;
     }
 
     return score;
