@@ -161,6 +161,8 @@ namespace {
   // KingProtector[PieceType-2] contains a penalty according to distance from king
   constexpr Score KingProtector[] = { S(3, 5), S(4, 3), S(3, 0), S(1, -1) };
 
+  Score MinorBehindPawn[2] = { S( 16,  0), S(16, 0) }; //knight,bishop
+
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  5);
   constexpr Score CloseEnemies       = S(  7,  0);
@@ -170,7 +172,6 @@ namespace {
   constexpr Score HinderPassedPawn   = S(  8,  1);
   constexpr Score KnightOnQueen      = S( 21, 11);
   constexpr Score LongDiagonalBishop = S( 22,  0);
-  constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
   constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
@@ -333,40 +334,51 @@ namespace {
         // Penalty if the piece is far from the king
         score -= KingProtector[Pt - 2] * distance(s, pos.square<KING>(Us));
 
-        if (Pt == BISHOP || Pt == KNIGHT)
+        if (Pt == KNIGHT)
         {
-            // Bonus if piece is on an outpost square or can reach one
+            // Bonus if knight is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
-                score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & s)] * 2;
+                score += Outpost[0][bool(attackedBy[Us][PAWN] & s)] * 2;
 
             else if (bb &= b & ~pos.pieces(Us))
-                score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
+                score += Outpost[0][bool(attackedBy[Us][PAWN] & bb)];
+
+            // Bonus when behind a pawn
+            if ((relative_rank(Us, s) < RANK_5) && (pos.pieces(PAWN) & (s + pawn_push(Us))))
+                score += MinorBehindPawn[0];
+        }
+
+        if (Pt == BISHOP)
+        {
+            // Bonus if bishop is on an outpost square or can reach one
+            bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
+            if (bb & s)
+                score += Outpost[1][bool(attackedBy[Us][PAWN] & s)] * 2;
+
+            else if (bb &= b & ~pos.pieces(Us))
+                score += Outpost[1][bool(attackedBy[Us][PAWN] & bb)];
 
             // Bonus when behind a pawn
             if (    relative_rank(Us, s) < RANK_5
                 && (pos.pieces(PAWN) & (s + pawn_push(Us))))
-                score += MinorBehindPawn;
+                score += MinorBehindPawn[1];
 
-            if (Pt == BISHOP)
-            {
-                // Penalty according to number of pawns on the same color square as the
-                // bishop, bigger when the center files are blocked with pawns.
-                Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
+            // Penalty according to number of pawns on the same color square as the
+            // bishop, bigger when the center files are blocked with pawns.
+            Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
 
-                score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s)
-                                     * (1 + popcount(blocked & CenterFiles));
+            score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s)
+                                 * (1 + popcount(blocked & CenterFiles));
 
-                // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
-                    score += LongDiagonalBishop;
-            }
+            // Bonus for bishop on a long diagonal which can "see" both center squares
+            if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
+                score += LongDiagonalBishop;
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially
             // when that pawn is also blocked.
-            if (   Pt == BISHOP
-                && pos.is_chess960()
+            if (pos.is_chess960()
                 && (s == relative_square(Us, SQ_A1) || s == relative_square(Us, SQ_H1)))
             {
                 Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
