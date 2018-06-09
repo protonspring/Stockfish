@@ -163,6 +163,8 @@ namespace {
 
   Score MinorBehindPawn[2] = { S( 16,  0), S(16, 0) }; //knight,bishop
 
+  TUNE(SetRange(-20,20),MinorBehindPawn);
+
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  5);
   constexpr Score CloseEnemies       = S(  7,  0);
