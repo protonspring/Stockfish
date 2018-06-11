@@ -161,7 +161,7 @@ namespace {
   // KingProtector[PieceType-2] contains a penalty according to distance from king
   constexpr Score KingProtector[] = { S(3, 5), S(4, 3), S(3, 0), S(1, -1) };
 
-  Score MinorBehindPawn[2] = { S( 16,  0), S(16, 0) }; //knight,bishop
+  Score MinorBehindPawn[2] = { S( 19,  6), S(17, 3) }; //knight,bishop
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  5);
