@@ -223,6 +223,10 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
            && distance(bksq, rsq) >= 3)
       result = RookValueEg - distance(wksq, psq);
 
+  // If the stronger side's king is closer to the queening square, it's a win.
+  else if (distance(wksq,queeningSq) <= distance(bksq,queeningSq))
+      result = RookValueEg - distance(wksq, psq);
+
   // If the pawn is far advanced and supported by the defending king,
   // the position is drawish
   else if (   rank_of(bksq) <= RANK_3
