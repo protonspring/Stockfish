@@ -225,9 +225,8 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
 
   // If the pawn is far advanced and supported by the defending king,
   // the position is drawish
-  else if (   rank_of(bksq) <= RANK_3
+  else if (   rank_of(bksq) < rank_of(wksq)
            && distance(bksq, psq) == 1
-           && rank_of(wksq) >= RANK_4
            && distance(wksq, psq) > 2 + (pos.side_to_move() == strongSide))
       result = Value(80) - 8 * distance(wksq, psq);
 
