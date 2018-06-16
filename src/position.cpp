@@ -548,10 +548,16 @@ bool Position::legal(Move m) const {
   assert(color_of(moved_piece(m)) == us);
   assert(piece_on(square<KING>(us)) == make_piece(us, KING));
 
+  // If the moving piece is a king, check whether the destination
+  // square is attacked by the opponent. Castling moves are checked
+  // for legality during move generation.
+  if (type_of(piece_on(from)) == KING)
+      return type_of(m) == CASTLING || !(attackers_to(to_sq(m)) & pieces(~us));
+
   // En passant captures are a tricky special case. Because they are rather
   // uncommon, we do it simply by testing whether the king is attacked after
   // the move is made.
-  if (type_of(m) == ENPASSANT)
+  else if (type_of(m) == ENPASSANT)
   {
       Square ksq = square<KING>(us);
       Square to = to_sq(m);
@@ -567,15 +573,9 @@ bool Position::legal(Move m) const {
             && !(attacks_bb<BISHOP>(ksq, occupied) & pieces(~us, QUEEN, BISHOP));
   }
 
-  // If the moving piece is a king, check whether the destination
-  // square is attacked by the opponent. Castling moves are checked
-  // for legality during move generation.
-  if (type_of(piece_on(from)) == KING)
-      return type_of(m) == CASTLING || !(attackers_to(to_sq(m)) & pieces(~us));
-
   // A non-king move is legal if and only if it is not pinned or it
   // is moving along the ray towards or away from the king.
-  return   !(blockers_for_king(us) & from)
+  else return   !(blockers_for_king(us) & from)
         ||  aligned(from, to_sq(m), square<KING>(us));
 }
 
