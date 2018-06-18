@@ -159,18 +159,21 @@ namespace Pawns {
 
 void init() {
 
-  static constexpr int Seed[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
+  static int Seed[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
+  static int cv[5] = {17,1,2,2,4};
 
   for (int opposed = 0; opposed <= 1; ++opposed)
       for (int phalanx = 0; phalanx <= 1; ++phalanx)
           for (int support = 0; support <= 2; ++support)
               for (Rank r = RANK_2; r < RANK_8; ++r)
   {
-      int v = 17 * support;
-      v += (Seed[r] + (phalanx ? (Seed[r + 1] - Seed[r]) / 2 : 0)) >> opposed;
+      int v = cv[0] * support;
+      v += (Seed[r] + (phalanx ? (Seed[r + cv[1]] - Seed[r]) / cv[2] : 0)) >> opposed;
 
-      Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
+      Connected[opposed][phalanx][support][r] = make_score(v, v * (r - cv[3]) / cv[4]);
   }
+
+  TUNE(SetRange(1,30),Seed,cv,Pawns::init);
 }
 
 
