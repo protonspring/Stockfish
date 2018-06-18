@@ -38,6 +38,9 @@ namespace {
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
+  static int Seed[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
+  static int cv[5] = {17,1,2,2,4};
+  TUNE(SetRange(1,30),Seed,cv,Pawns::init);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -159,8 +162,6 @@ namespace Pawns {
 
 void init() {
 
-  static int Seed[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
-  static int cv[5] = {17,1,2,2,4};
 
   for (int opposed = 0; opposed <= 1; ++opposed)
       for (int phalanx = 0; phalanx <= 1; ++phalanx)
@@ -173,7 +174,6 @@ void init() {
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - cv[3]) / cv[4]);
   }
 
-  TUNE(SetRange(1,30),Seed,cv,Pawns::init);
 }
 
 
