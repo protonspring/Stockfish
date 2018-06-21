@@ -37,7 +37,7 @@ namespace {
   constexpr Score Doubled  = S(13, 40);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
-  constexpr Score Connected[2][2][3][RANK_NB] =
+  Score Connected[2][2][3][RANK_NB] =
   {{{{S(0,0),S(13, -3),S(24,0), S(18, 4),S(65, 32),S(100,75), S(175,175)},
      {S(0,0),S(30, -7),S(41,0), S(35, 8),S(82, 41),S(117,87), S(192,192)},
      {S(0,0),S(47,-11),S(58,0), S(52,13),S(99, 49),S(134,100),S(209,209)}},
@@ -50,6 +50,8 @@ namespace {
     {{S(0,0),S( 9, -2),S(10,0), S(20, 5),S(41, 20),S( 68, 51),S(126,126)},
      {S(0,0),S(26, -6),S(27,0), S(37, 9),S(58, 29),S( 85, 63),S(143,143)},
      {S(0,0),S(43,-10),S(44,0), S(54,13),S(75, 37),S(102, 76),S(160,160)}}}};
+
+  TUNE(Connected);
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
