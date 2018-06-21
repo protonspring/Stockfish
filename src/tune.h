@@ -30,7 +30,9 @@ typedef Range (RangeFun)(double);
 
 // Default Range function, to calculate Option's min-max values
 inline Range default_range(double v) {
-  return v > 0 ? Range(0, 2 * v) : Range(2 * v, 0);
+  double minDelta = 10.0;
+  return v > 0 ? Range(std::min(0.0, v-minDelta),std::max(2*v, v+minDelta))
+               : Range(std::min(2*v, v-minDelta),std::max(v,v+minDelta));
 }
 
 struct SetRange {
