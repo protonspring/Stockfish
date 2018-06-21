@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -37,7 +38,34 @@ namespace {
   constexpr Score Doubled  = S(13, 40);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
-  Score Connected[2][2][3][RANK_NB];
+  constexpr Score Connected[2][2][3][RANK_NB] =
+  {
+    { //opposed=0, phalanx=0
+     {
+      {S(0,0),S(13, -3),S(24,0), S(18, 4),S(65,32),S(100,75), S(175,175)},//support=0
+      {S(0,0),S(30, -7),S(41,0), S(35, 8),S(82,41),S(117,87), S(192,192)},//support=1
+      {S(0,0),S(47,-11),S(58,0), S(52,13),S(99,49),S(134,100),S(209,209)} //support=2
+     },
+     { //opposed=0, phalanx=1
+      {S(0,0),S(18, -4),S(21,0), S(41,10),S(82,41),S(137,102),S(252,252)},//support=0
+      {S(0,0),S(35, -8),S(38,0), S(58,14),S(99,49),S(154,115), S(269,269)},//support=1
+      {S(0,0),S(52,-13),S(55,0), S(75,18),S(116,58),S(171,128),S(286,286)} //support=2
+     }
+    },
+    {
+     { //opposed=1, phalanx=0
+      {S(0,0),S( 6, -1),S(12,0), S( 9, 2),S(32,16),S( 50,37), S( 87, 87)},//support=0
+      {S(0,0),S(23, -5),S(29,0), S(26, 6),S(49,24),S( 67,50), S(104,104)},//support=1
+      {S(0,0),S(40,-10),S(46,0), S(43,10),S(66,33),S( 84,63), S(121,121)} //support=2
+     },
+     { //opposed=1, phalanx=1
+      {S(0,0),S( 9, -2),S(10,0), S(20, 5),S(41,20),S( 68,51), S(126,126)},//support=0
+      {S(0,0),S(26, -6),S(27,0), S(37, 9),S(58,29),S( 85,63), S(143,143)},//support=1
+      {S(0,0),S(43,-10),S(44,0), S(54,13),S(75,37),S(102,76),S(160,160)} //support=2
+     }
+    }
+  };
+
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -152,27 +180,6 @@ namespace {
 } // namespace
 
 namespace Pawns {
-
-/// Pawns::init() initializes some tables needed by evaluation. Instead of using
-/// hard-coded tables, when makes sense, we prefer to calculate them with a formula
-/// to reduce independent parameters and to allow easier tuning and better insight.
-
-void init() {
-
-  static constexpr int Seed[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
-
-  for (int opposed = 0; opposed <= 1; ++opposed)
-      for (int phalanx = 0; phalanx <= 1; ++phalanx)
-          for (int support = 0; support <= 2; ++support)
-              for (Rank r = RANK_2; r < RANK_8; ++r)
-  {
-      int v = 17 * support;
-      v += (Seed[r] + (phalanx ? (Seed[r + 1] - Seed[r]) / 2 : 0)) >> opposed;
-
-      Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
-  }
-}
-
 
 /// Pawns::probe() looks up the current position's pawns configuration in
 /// the pawns hash table. It returns a pointer to the Entry if the position
