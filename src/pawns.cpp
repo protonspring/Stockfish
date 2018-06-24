@@ -39,6 +39,9 @@ namespace {
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
+  // Danger of blocked enemy pawns storming our king, by rank
+  Value BlockedStorm[RANK_NB];
+
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
@@ -57,10 +60,6 @@ namespace {
     { V(-4), V( 28), V( 87), V(18), V(-3), V(-14), V(-11) },
     { V(-5), V( 22), V( 75), V(14), V( 2), V( -5), V(-19) }
   };
-
-  // Danger of blocked enemy pawns storming our king, by rank
-  constexpr Value BlockedStorm[RANK_NB] =
-    { V(0), V(0), V( 81), V(-10), V(-10), V(-10), V(-10) };
 
   #undef S
   #undef V
@@ -171,6 +170,9 @@ void init() {
 
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
   }
+
+  for (Rank r = RANK_3; r < RANK_8; ++r)
+      BlockedStorm[r] = Value(80 / (1 + 10 * (r-2)));
 }
 
 
