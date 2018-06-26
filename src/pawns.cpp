@@ -60,7 +60,11 @@ namespace {
 
   // Danger of blocked enemy pawns storming our king, by rank
   constexpr Value BlockedStorm[RANK_NB] =
-    { V(0), V(0), V( 81), V(-9), V(-5), V(-1), V(26) };
+    { V(0), V(0), V( 81), V(-10), V(-5), V( 0), V( 0) };
+
+  // Penalty for blocked pawns by rank (only very advanced)
+  constexpr Score BlockedPawns[RANK_NB] =
+    { S(0, 0), S(0, 0), S(0, 0), S(0, 0), S(5, 5), S(10,10), S(20,20) };
 
   #undef S
   #undef V
@@ -72,7 +76,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
-    Bitboard lever, leverPush;
+    Bitboard lever, leverPush, blocked;
     Square s;
     bool opposed, backward;
     Score score = SCORE_ZERO;
@@ -104,6 +108,7 @@ namespace {
         lever      = theirPawns & PawnAttacks[Us][s];
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         doubled    = ourPawns   & (s - Up);
+        blocked    = theirPawns & (s + Up);
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
@@ -144,6 +149,9 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+
+        if (blocked && !lever)
+            score -= BlockedPawns[relative_rank(Us, s)];
     }
 
     return score;
