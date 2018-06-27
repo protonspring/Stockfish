@@ -226,8 +226,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
-      safety -= ((shift<Down>(theirPawns) & b) ? BlockedStorm[theirRank]
-                                               : UnblockedStorm[d][theirRank];
+      safety -= (shift<Down>(theirPawns) & b) ? BlockedStorm[theirRank]
+                                              : UnblockedStorm[d][theirRank];
   }
 
   return safety;
