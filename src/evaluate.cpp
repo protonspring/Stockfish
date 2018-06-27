@@ -149,6 +149,9 @@ namespace {
     S(0, 0), S(4, 17), S(7, 20), S(14, 36), S(42, 62), S(165, 171), S(279, 252)
   };
 
+  // ProtectedPassedPawn bonus.
+  constexpr Score ProtectedPasser = S(5,10);
+
   // PassedFile[File] contains a bonus according to the file of a passed pawn
   constexpr Score PassedFile[FILE_NB] = {
     S( 11, 14), S( 0, -5), S(-2, -8), S(-25,-13),
@@ -654,6 +657,9 @@ namespace {
         int w = PassedDanger[r];
 
         Score bonus = PassedRank[r];
+
+        if (pe->pawn_attacks(Us) & s)
+            bonus += ProtectedPasser;
 
         if (w)
         {
