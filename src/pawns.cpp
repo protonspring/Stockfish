@@ -71,7 +71,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
+    Bitboard neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
@@ -123,13 +123,12 @@ namespace {
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (   stoppers == SquareBB[s + Up]
-                 && relative_rank(Us, s) >= RANK_5)
+        else if (!more_than_one(opposed) && !(ourPawns & forward_file_bb(Us, s)))
         {
-            b = shift<Up>(supported) & ~theirPawns;
-            while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
-                    e->passedPawns[Us] |= s;
+            if ((f > FILE_B) && (ourPawns & FileBB[f-1]) && !(theirPawns & (FileBB[f-1] | FileBB[f-2])))
+            e->passedPawns[Us] |= s;
+            else if ((f < FILE_G) && (ourPawns & FileBB[f+1]) && !(theirPawns & (FileBB[f+1] | FileBB[f+2])))
+            e->passedPawns[Us] |= s;
         }
 
         // Score this pawn
