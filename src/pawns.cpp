@@ -123,7 +123,7 @@ namespace {
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (!more_than_one(opposed) && !(ourPawns & forward_file_bb(Us, s)))
+        else if (opposed && !more_than_one(stoppers) && !(ourPawns & forward_file_bb(Us, s)))
         {
             if ((f > FILE_B) && (ourPawns & (FileBB[f-1] & forward_ranks_bb(Them,s+WEST))) && !(theirPawns & (FileBB[f-1] | FileBB[f-2])))
             e->passedPawns[Us] |= s;
