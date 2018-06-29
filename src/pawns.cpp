@@ -35,6 +35,9 @@ namespace {
   constexpr Score Isolated = S( 4, 20);
   constexpr Score Backward = S(21, 22);
   constexpr Score Doubled  = S(12, 54);
+  constexpr Score LeverIn  = S( 2,  0);
+  constexpr Score LeverOut = S( 8,  0);
+  constexpr Score LeverIso = S(10,  0);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -144,6 +147,11 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+
+        if (lever & ((f == std::min(f, ~f) ? shift<WEST>(FileBB[f]) : shift<EAST>(FileBB[f]))))
+           score -= LeverOut;
+        else if (lever & ((f == std::min(f, ~f) ? shift<EAST>(FileBB[f]) : shift<WEST>(FileBB[f]))))
+           score -= LeverIn;
     }
 
     return score;
