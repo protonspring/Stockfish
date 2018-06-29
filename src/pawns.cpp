@@ -125,9 +125,9 @@ namespace {
 
         else if (!more_than_one(opposed) && !(ourPawns & forward_file_bb(Us, s)))
         {
-            if ((f > FILE_B) && (ourPawns & (FileBB[f-1] & forward_ranks_bb(Them,s))) && !(theirPawns & (FileBB[f-1] | FileBB[f-2])))
+            if ((f > FILE_B) && (ourPawns & (FileBB[f-1] & forward_ranks_bb(Them,s+WEST))) && !(theirPawns & (FileBB[f-1] | FileBB[f-2])))
             e->passedPawns[Us] |= s;
-            else if ((f < FILE_G) && (ourPawns & (FileBB[f+1] & forward_ranks_bb(Them,s))) && !(theirPawns & (FileBB[f+1] | FileBB[f+2])))
+            else if ((f < FILE_G) && (ourPawns & (FileBB[f+1] & forward_ranks_bb(Them,s+EAST))) && !(theirPawns & (FileBB[f+1] | FileBB[f+2])))
             e->passedPawns[Us] |= s;
         }
 
