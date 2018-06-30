@@ -38,6 +38,8 @@ namespace {
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
+  Score PawnRank[RANK_NB] =
+    {S(0,0), S(0,0), S(5,5), S(10,10), S(15,15), S( 20, 20), S( 25, 25)};
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -133,6 +135,8 @@ namespace {
         }
 
         // Score this pawn
+        score += PawnRank[relative_rank(Us, s)];
+
         if (supported | phalanx)
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
 
