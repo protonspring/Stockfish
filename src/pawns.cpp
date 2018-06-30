@@ -121,8 +121,8 @@ namespace {
         {
            if (!stoppers)
                e->passedPawns[Us] |= s;
-           else if ((!(stoppers ^ lever) && //stoppers are only levers
-                    (popcount(supported) >= popcount(lever -1))))
+           else if ((!(stoppers ^ leverPush) && //stoppers are only leverPushes
+                    (popcount(phalanx) >= popcount(leverPush))))
                e->passedPawns[Us] |= s;
            else if (   !(stoppers ^ lever ^ leverPush)
                && popcount(supported) >= popcount(lever) - 1
