@@ -123,7 +123,8 @@ namespace {
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (opposed && !more_than_one(stoppers)) //only 1 opposed pawn
+        else if (opposed && !more_than_one(stoppers)
+                         && relative_rank(Us, s) >= RANK_5) //only 1 opposed pawn
         {
            b = neighbours && forward_ranks_bb(Them,s);
            while(b)
