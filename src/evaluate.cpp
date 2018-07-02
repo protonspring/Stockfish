@@ -269,7 +269,7 @@ namespace {
     attackedBy2[Us]            = attackedBy[Us][KING] & attackedBy[Us][PAWN];
 
     // Init our king safety tables only if we are going to use them
-    if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
+    if (pos.non_pawn_material(Them))
     {
         kingRing[Us] = attackedBy[Us][KING];
         if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
