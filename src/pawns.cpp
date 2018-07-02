@@ -126,11 +126,19 @@ namespace {
         else if (   stoppers == SquareBB[s + Up]
                  && relative_rank(Us, s) >= RANK_5)
         {
+           b = neighbours && forward_ranks_bb(Them,s);
+           while(b)
+               if (!more_than_one(theirPawns & (passed_pawn_mask(Us,pop_lsb(&b)) & ~forward_ranks_bb(Us,s+Up))))
+                    e->passedPawns[Us] |= s;
+        }
+
+/*
             b = shift<Up>(supported) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
+*/
 
         // Score this pawn
         if (supported | phalanx)
