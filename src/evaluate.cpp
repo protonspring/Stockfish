@@ -251,7 +251,6 @@ namespace {
   void Evaluation<T>::initialize() {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
     constexpr Bitboard LowRanks = (Us == WHITE ? Rank2BB | Rank3BB: Rank7BB | Rank6BB);
 
@@ -269,17 +268,9 @@ namespace {
     attackedBy2[Us]            = attackedBy[Us][KING] & attackedBy[Us][PAWN];
 
     // Init our king safety tables only if we are going to use them
-    if (pos.non_pawn_material(Them))
+    if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
     {
-        kingRing[Us] = attackedBy[Us][KING];
-        if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
-            kingRing[Us] |= shift<Up>(kingRing[Us]);
-
-        if (file_of(pos.square<KING>(Us)) == FILE_H)
-            kingRing[Us] |= shift<WEST>(kingRing[Us]);
-
-        else if (file_of(pos.square<KING>(Us)) == FILE_A)
-            kingRing[Us] |= shift<EAST>(kingRing[Us]);
+        kingRing[Us] = KingRing[pos.square<KING>(Us)];
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
         kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
