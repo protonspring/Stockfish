@@ -160,7 +160,8 @@ void Bitboards::init() {
           }
 
       //Calculate KingRings (shift 1 from edge ranks)
-      File f = file_of(s1);
+      File f = (file_of(s1) == FILE_A) ? FILE_B :
+               (file_of(s1) == FILE_H) ? FILE_G : file_of(s1);
       Rank r = (rank_of(s1) == RANK_1) ? RANK_2 :
                (rank_of(s1) == RANK_8) ? RANK_7 : rank_of(s1);
       KingRing[s1] = (FileBB[f-1] | FileBB[f] | FileBB[f+1]) &
