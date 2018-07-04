@@ -181,6 +181,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+  constexpr Score AimedAtKing        = S(  5,  5);
 
 #undef S
 
@@ -307,6 +308,13 @@ namespace {
 
     while ((s = *pl++) != SQ_NONE)
     {
+        // small bonus for being "aimed" at the king, when king can't castle
+        b = Pt == BISHOP ? attacks_bb<BISHOP>(s, 0)
+          : Pt ==   ROOK ? attacks_bb<  ROOK>(s, 0)
+                         : pos.attacks_from<Pt>(s);
+        if ((b & kingRing[Them])) // && !pos.can_castle(Them))
+           score += AimedAtKing;
+
         // Find attacked squares, including x-ray attacks for bishops and rooks
         b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
           : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
