@@ -312,7 +312,7 @@ namespace {
         b = Pt == BISHOP ? attacks_bb<BISHOP>(s, 0)
           : Pt ==   ROOK ? attacks_bb<  ROOK>(s, 0)
                          : pos.attacks_from<Pt>(s);
-        if ((b & kingRing[Them])) // && !pos.can_castle(Them))
+        if ((b & kingRing[Them]) && !pos.can_castle(Them))
            score += AimedAtKing;
 
         // Find attacked squares, including x-ray attacks for bishops and rooks
