@@ -611,7 +611,8 @@ namespace {
     }
 
     // Connectivity: ensure that knights, bishops, rooks, and queens are protected
-    b = (pos.pieces(Us) ^ pos.pieces(Us, PAWN, KING)) & attackedBy[Us][ALL_PIECES];
+    // and weak pawns
+    b = ((pos.pieces(Us) ^ pos.pieces(Us, PAWN, KING)) | pe->weakPawns[Us]) & attackedBy[Us][ALL_PIECES];
     score += Connectivity * popcount(b);
 
     if (T)
