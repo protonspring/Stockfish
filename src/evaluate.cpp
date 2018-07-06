@@ -181,6 +181,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+  constexpr Score QueenSupport       = S(  2,  2);
 
 #undef S
 
@@ -402,6 +403,9 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            //bonus if the queen supports our non_pawn_material
+            score += QueenSupport * popcount(b & pos.non_pawn_material(Us));
         }
     }
     if (T)
