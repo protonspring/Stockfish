@@ -616,7 +616,7 @@ namespace {
     score += Connectivity * popcount(b);
 
     //penalty for pawns that are not supported.
-    score -= UnsupportedPawn * popcount(pe->weakPawns[Us] ^ attackedBy[Us][ALL_PIECES]);
+    score -= UnsupportedPawn * popcount(pe->weakPawns[Us] & ~attackedBy[Us][ALL_PIECES]);
 
     if (T)
         Trace::add(THREAT, Us, score);
