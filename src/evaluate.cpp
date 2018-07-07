@@ -177,6 +177,7 @@ namespace {
   constexpr Score ThreatBySafePawn   = S(165,133);
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
+  constexpr Score WeakRook           = S( 20,  5);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
 
 #undef S
@@ -391,6 +392,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
+
+            //penalty if a bishop can pin this rook
+            Bitboard rookPinners;
+            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners))
+                score -= WeakRook;
         }
 
         if (Pt == QUEEN)
