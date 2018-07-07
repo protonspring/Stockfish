@@ -178,7 +178,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
-  constexpr Score UnsupportedWeakPawn= S( 10,  5);
+  constexpr Score UnsupportedPawn    = S(  2,  0);
 
 #undef S
 
@@ -615,11 +615,9 @@ namespace {
     b = (pos.pieces(Us) ^ pos.pieces(Us, PAWN, KING)) & attackedBy[Us][ALL_PIECES];
     score += Connectivity * popcount(b);
 
-    //penalty for weak pawns that are not supported.
-    b = pe->weak_pawns(Us);
-    if (popcount(b) != popcount(b & attackedBy[Us][ALL_PIECES]))
-       score -= UnsupportedWeakPawn;
-   
+    //penalty for pawns that are not supported.
+    score -= UnsupportedPawn * popcount(pe->weakPawns[Us] ^ attackedBy[Us][ALL_PIECES]);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
