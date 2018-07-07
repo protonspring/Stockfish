@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -145,7 +146,7 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
 
-        if (!supported && relative_rank(Us,s) > RANK_2)
+        if (!supported && relative_rank(Us,s) > RANK_3)
             e->weakPawns[Us] |= s;
     }
 
