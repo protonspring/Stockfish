@@ -393,9 +393,10 @@ namespace {
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
 
-            //penalty if a bishop can pin this rook
+            //penalty if a bishop could pin this rook
             Bitboard rookPinners;
-            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners))
+            Bitboard rookBlockers = pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners);
+            if (rookBlockers && !(rookBlockers ^ pos.pieces(Them)))
                 score -= WeakRook;
         }
 
