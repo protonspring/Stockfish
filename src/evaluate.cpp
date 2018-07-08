@@ -396,7 +396,8 @@ namespace {
             //penalty if a bishop could pin this rook
             Bitboard rookPinners;
             Bitboard rookBlockers = pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners);
-            if (rookBlockers && !(rookBlockers ^ pos.pieces(Them)))
+            //if (rookBlockers && !(rookBlockers ^ pos.pieces(Them)))
+            if (popcount(rookBlockers) == 1)
                 score -= WeakRook;
         }
 
