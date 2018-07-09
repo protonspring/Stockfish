@@ -328,8 +328,8 @@ namespace {
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
-        //slight bonus if we're forking pieces
-        if (more_than_one(b & pos.pieces(Them)))
+        //slight bonus if we're forking non-pawn pieces
+        if (more_than_one(b & (pos.pieces(Them) ^ pos.pieces(Them,PAWN))))
            score += Forking;
 
         if (Pt == BISHOP || Pt == KNIGHT)
