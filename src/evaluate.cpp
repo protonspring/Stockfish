@@ -178,6 +178,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+  constexpr Score AttackCountDiff    = S(  3,  3);
 
 #undef S
 
@@ -401,6 +402,10 @@ namespace {
                 score -= WeakQueen;
         }
     }
+
+    score += AttackCountDiff * 
+             (popcount(attackedBy[Us][ALL_PIECES] & pos.pieces(Them)) - 
+             popcount(attackedBy[Them][ALL_PIECES] & pos.pieces(Us)));
     if (T)
         Trace::add(Pt, Us, score);
 
