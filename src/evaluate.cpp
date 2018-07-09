@@ -178,6 +178,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+  constexpr Score Forking            = S(  3,  3);
 
 #undef S
 
@@ -326,6 +327,10 @@ namespace {
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
+
+        //slight bonus if we're forking pieces
+        if (more_than_one(b & pos.pieces(Them)))
+           score += Forking;
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
