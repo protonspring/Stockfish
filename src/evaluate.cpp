@@ -328,7 +328,7 @@ namespace {
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         // Penalty if the piece is far from the OPPONENT king
-        score -= make_score(1,1) * distance(s, pos.square<KING>(Them));
+        score -= make_score(1,1) * (distance(s, pos.square<KING>(Them)) / 2);
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
