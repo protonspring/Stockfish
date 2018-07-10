@@ -35,6 +35,7 @@ namespace {
   constexpr Score Isolated = S( 4, 20);
   constexpr Score Backward = S(21, 22);
   constexpr Score Doubled  = S(12, 54);
+  constexpr Score Thorned  = S(10, 10);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -74,7 +75,7 @@ namespace {
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
     Square s;
-    bool opposed, backward;
+    bool opposed, backward, thorned;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -132,6 +133,13 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // A "thorned" pawn is blocked on the 6th rank and passed neighbouring
+        // enemy pawns.  Blockades the opposing king on the 8th rank
+        thorned =  (relative_rank(Us,s) == RANK_6) && 
+                   (theirPawns & (s + Up)) && 
+                   (pos.square<KING>(Us) & passed_pawn_mask(Us, s)) &&
+                  !(theirPawns & pawn_attack_span(Us, s));
+
         // Score this pawn
         if (supported | phalanx)
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
@@ -144,6 +152,9 @@ namespace {
 
         if (doubled && !supported)
             score -= Doubled;
+
+        if (thorned)
+            score += Thorned;
     }
 
     return score;
