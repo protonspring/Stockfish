@@ -236,7 +236,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       if ((theirRank == RANK_3) &&
           (ourRank == RANK_2) &&
           !(ourPawns & pawn_attack_span(Them,thornSquare)))
-         safety -= Value(50);
+         safety -= Value(200);
   }
 
   return safety;
