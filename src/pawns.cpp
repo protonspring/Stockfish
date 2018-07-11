@@ -35,6 +35,7 @@ namespace {
   constexpr Score Isolated = S( 4, 20);
   constexpr Score Backward = S(21, 22);
   constexpr Score Doubled  = S(12, 54);
+  constexpr Value Thorned  = V(100);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -232,11 +233,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                                         : UnblockedStorm[d][theirRank];
 
       //check for a thorned enemy pawn
-      Square thornSquare = make_square(f,theirRank);
-      if ((theirRank == RANK_3) &&
-          (ourRank == RANK_2) &&
-          !(ourPawns & pawn_attack_span(Them,thornSquare)))
-         safety -= Value(200);
+      if ((theirRank == RANK_3) && (ourRank == RANK_2) &&
+          !(ourPawns & pawn_attack_span(Them,make_square(f,theirRank))))
+         safety -= Thorned;
   }
 
   return safety;
