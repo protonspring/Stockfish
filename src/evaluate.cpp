@@ -178,6 +178,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+  constexpr Score MinKnightPawnDistance = S( 3, 3);
 
 #undef S
 
@@ -357,6 +358,15 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
                     score += LongDiagonalBishop;
+            }
+            else  //Pt == KNIGHT
+            {
+                int minKnightPawnDistance = 0;
+
+                Bitboard pawns = pos.pieces(PAWN);
+                if (pawns)
+                    while (!(DistanceRingBB[s][minKnightPawnDistance++] & pawns)) {}
+                score -= MinKnightPawnDistance * minKnightPawnDistance;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
