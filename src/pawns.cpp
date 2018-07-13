@@ -35,7 +35,7 @@ namespace {
   constexpr Score Isolated = S( 4, 20);
   constexpr Score Backward = S(21, 22);
   constexpr Score Doubled  = S(12, 54);
-  Value Thorned  = V(100);
+  Value Thorned  = V(60);
 
   TUNE(Thorned);
 
