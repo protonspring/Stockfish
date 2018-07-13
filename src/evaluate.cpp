@@ -180,7 +180,7 @@ namespace {
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
 
-  TUNE(MinorBehindPawn,MinorBlocksPawn);
+  TUNE(SetRange(-10,30),MinorBehindPawn,MinorBlocksPawn);
 
 #undef S
 
