@@ -166,8 +166,8 @@ namespace {
   constexpr Score HinderPassedPawn   = S(  5, -1);
   constexpr Score KnightOnQueen      = S( 21, 11);
   constexpr Score LongDiagonalBishop = S( 22,  0);
-  constexpr Score MinorBehindPawn    = S( 16,  0);
-  constexpr Score MinorBlocksPawn    = S( 16,  0);
+  Score MinorBehindPawn    = S( 16,  0);
+  Score MinorBlocksPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
   constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
@@ -179,6 +179,8 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 26);
+
+  TUNE(MinorBehindPawn,MinorBlocksPawn);
 
 #undef S
 
