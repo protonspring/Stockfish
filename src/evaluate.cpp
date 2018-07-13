@@ -167,6 +167,7 @@ namespace {
   constexpr Score KnightOnQueen      = S( 21, 11);
   constexpr Score LongDiagonalBishop = S( 22,  0);
   constexpr Score MinorBehindPawn    = S( 16,  0);
+  constexpr Score MinorBlocksPawn    = S( 16,  0);
   constexpr Score Overload           = S( 10,  5);
   constexpr Score PawnlessFlank      = S( 20, 80);
   constexpr Score RookOnPawn         = S(  8, 24);
@@ -338,9 +339,12 @@ namespace {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
 
             // Bonus when behind a pawn
-            if (    relative_rank(Us, s) < RANK_5
-                && (pos.pieces(PAWN) & (s + pawn_push(Us))))
+            if (shift<Down>(pos.pieces(Us,PAWN)) & s)
                 score += MinorBehindPawn;
+ 
+            // Bonus when blocks enemy pawn
+            if (shift<Down>(pos.pieces(Them,PAWN)) & s)
+                score += MinorBlocksPawn;
 
             // Penalty if the piece is far from the king
             score -= KingProtector[Pt == BISHOP] * distance(s, pos.square<KING>(Us));
