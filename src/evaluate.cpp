@@ -599,9 +599,8 @@ namespace {
         Square s = pos.square<QUEEN>(Them);
         safeThreats = mobilityArea[Us] & ~stronglyProtected;
 
-        b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
-
-        score += KnightOnQueen * popcount(b & safeThreats);
+        if (attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s) & safeThreats)
+           score += KnightOnQueen;
 
         b =  (attackedBy[Us][BISHOP] & pos.attacks_from<BISHOP>(s))
            | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
