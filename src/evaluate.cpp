@@ -715,9 +715,8 @@ namespace {
 
   // Evaluation::space() computes the space evaluation for a given side. The
   // space evaluation is a simple bonus based on the number of safe squares
-  // available for minor pieces on the central four files on ranks 2--4. Safe
-  // squares one, two or three squares behind a friendly pawn are counted
-  // twice. Finally, the space bonus is multiplied by a weight. The aim is to
+  // available for minor pieces on the central four files on ranks 2--4.
+  // Finally, the space bonus is multiplied by a weight. The aim is to
   // improve play on game opening.
 
   template<Tracing T> template<Color Us>
@@ -736,15 +735,10 @@ namespace {
                    & ~pos.pieces(Us, PAWN)
                    & ~attackedBy[Them][PAWN];
 
-    // Find all squares which are at most three squares behind some friendly pawn
-    Bitboard behind = pos.pieces(Us, PAWN);
-    behind |= (Us == WHITE ? behind >>  8 : behind <<  8);
-    behind |= (Us == WHITE ? behind >> 16 : behind << 16);
-
-    int bonus = popcount(safe) + popcount(behind & safe);
+    int bonus = 2 * popcount(safe);
     int weight = pos.count<ALL_PIECES>(Us) - 2 * pe->open_files();
 
-    Score score = make_score(bonus * weight * weight / 16, 0);
+    Score score = make_score(bonus * weight * weight / 23, 0);
 
     if (T)
         Trace::add(SPACE, Us, score);
