@@ -732,7 +732,7 @@ namespace {
 
     // Find the available squares for our pieces inside the area defined by SpaceMask
     Bitboard safe = SpaceMask & ~pos.pieces(Us, PAWN) & ~attackedBy[Them][PAWN];
-    int value = (2*popcount(safe) - (pos.count<ALL_PIECES>(Us) - pos.count<PAWN>(Us))) * 11;
+    int value = (2*popcount(safe) - (pos.count<ALL_PIECES>(Us) - pos.count<PAWN>(Us))) * 13;
 
     Score score = make_score(value,0);
 
