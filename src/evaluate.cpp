@@ -336,7 +336,7 @@ namespace {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
 
             // Knight and Bishop bonus for being right behind a pawn
-            if ((shift<Down>(pos.pieces(PAWN)) & s) && (pos.non_pawn_material() >= 2*RookValueMg))
+            if ((shift<Down>(pos.pieces(PAWN)) & s))
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
@@ -352,8 +352,7 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                if ((more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s))) &&
-                    (pos.non_pawn_material() >= 2*RookValueMg))
+                if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
                     score += LongDiagonalBishop;
             }
 
@@ -497,8 +496,7 @@ namespace {
     b2 = b1 & attackedBy2[Them] & ~attackedBy[Us][PAWN];
 
     // King tropism, to anticipate slow motion attacks on our king
-    if (pos.non_pawn_material() >= 2*RookValueMg)
-       score -= CloseEnemies * (popcount(b1) + popcount(b2));
+    score -= CloseEnemies * (popcount(b1) + popcount(b2));
 
     if (T)
         Trace::add(KING, Us, score);
