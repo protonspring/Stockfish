@@ -154,10 +154,8 @@ namespace {
   // PassedDanger[Rank] contains a term to weight the passed score
   constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
 
-  // KingProtector[knight/bishop] contains a penalty according to distance from king
-  constexpr Score KingProtector[] = { S(5, 6), S(6, 5) };
-
   // Assorted bonuses and penalties
+  constexpr Score KnightProtector    = S(  5,  6);
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  6,  0);
   constexpr Score Connectivity       = S(  3,  1);
@@ -341,9 +339,6 @@ namespace {
             if (shift<Down>(pos.pieces(PAWN)) & s)
                 score += MinorBehindPawn;
 
-            // Penalty if the piece is far from the king
-            score -= KingProtector[Pt == BISHOP] * distance(s, pos.square<KING>(Us));
-
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
@@ -357,6 +352,8 @@ namespace {
                 if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
                     score += LongDiagonalBishop;
             }
+            else  //Penalty if knight is far from the king
+               score -= KnightProtector * distance(s, pos.square<KING>(Us));
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially
