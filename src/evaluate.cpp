@@ -336,7 +336,7 @@ namespace {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
 
             // Knight and Bishop bonus for being right behind a pawn
-            if (shift<Down>(pos.pieces(PAWN)) & s)
+            if ((shift<Down>(pos.pieces(PAWN)) & s) && (pos.non_pawn_material() >= 2*RookValueMg))
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
@@ -352,7 +352,8 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                if (more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s)))
+                if ((more_than_one(Center & (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s))) &&
+                    (pos.non_pawn_material() >= 2*RookValueMg))
                     score += LongDiagonalBishop;
             }
 
@@ -382,7 +383,7 @@ namespace {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
+            else if ((mob <= 3) && (pos.non_pawn_material() >= 2*RookValueMg))
             {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
@@ -496,7 +497,8 @@ namespace {
     b2 = b1 & attackedBy2[Them] & ~attackedBy[Us][PAWN];
 
     // King tropism, to anticipate slow motion attacks on our king
-    score -= CloseEnemies * (popcount(b1) + popcount(b2));
+    if (pos.non_pawn_material() >= 2*RookValueMg)
+       score -= CloseEnemies * (popcount(b1) + popcount(b2));
 
     if (T)
         Trace::add(KING, Us, score);
@@ -641,8 +643,11 @@ namespace {
 
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
-        bb = forward_file_bb(Us, s) & pos.pieces(Them);
-        score -= HinderPassedPawn * popcount(bb);
+        if (pos.non_pawn_material() >= 2*RookValueMg)
+        {
+           bb = forward_file_bb(Us, s) & pos.pieces(Them);
+           score -= HinderPassedPawn * popcount(bb);
+        }
 
         int r = relative_rank(Us, s);
         int w = PassedDanger[r];
