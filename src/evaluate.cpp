@@ -472,8 +472,7 @@ namespace {
                      + 185 * popcount(kingRing[Us] & weak)
                      + 129 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
                      - 873 * !pos.count<QUEEN>(Them)
-                     -   6 * mg_value(score) / 8
-                     -   2 ;
+                     -   6 * mg_value(score) / 8;
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
