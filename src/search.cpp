@@ -250,12 +250,10 @@ void MainThread::search() {
       {
           Depth depthDiff = th->completedDepth - bestThread->completedDepth;
           Value scoreDiff = th->rootMoves[0].score - bestThread->rootMoves[0].score;
-          bool asGood = (int(double(th->rootMoves[0].score) * 0.98) > int(bestThread->rootMoves[0].score)) 
-               || (th->rootMoves[0].score >= VALUE_MATE_IN_MAX_PLY);
+          bool asGood = (int(th->rootMoves[0].score) > int(double(bestThread->rootMoves[0].score) * 0.95));
 
-          if ((asGood && (depthDiff > 0)) || 
-             ((scoreDiff > 0) && (depthDiff >= 0)) ||
-             th->rootMoves[0].score >= VALUE_MATE_IN_MAX_PLY)
+          if ((scoreDiff > 0) && (depthDiff >= 0 || th->rootMoves[0].score >= VALUE_MATE_IN_MAX_PLY)) ||
+              (asGood && (depthDiff > 0)))
               bestThread = th;
       }
   }
