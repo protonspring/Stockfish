@@ -71,7 +71,7 @@ namespace Trace {
 
 using namespace Trace;
 
-namespace {
+namespace Eval {
 
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
@@ -146,16 +146,7 @@ namespace {
   };
 
   // PassedFile[File] contains a bonus according to the file of a passed pawn
-  constexpr Score PassedFile[FILE_NB] = {
-    S(3*FILE_A*FILE_A, -7),
-    S(3*FILE_B*FILE_B, -9),
-    S(3*FILE_C*FILE_C,  8),
-    S(3*FILE_D*FILE_D, 14),
-    S(3*FILE_D*FILE_D, 14),
-    S(3*FILE_C*FILE_C,  8),
-    S(3*FILE_B*FILE_B, -9),
-    S(3*FILE_A*FILE_A, -7)
-  };
+  Score PassedFile[FILE_NB];
 
   // PassedDanger[Rank] contains a term to weight the passed score
   constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
@@ -877,7 +868,19 @@ namespace {
            + Eval::Tempo;
   }
 
-} // namespace
+/// Eval::init() initializes some tables needed by evaluation. Instead of using
+/// hard-coded tables, when makes sense, we prefer to calculate them with a formula
+/// to reduce independent parameters and to allow easier tuning and better insight.
+
+void init() {
+
+  for (File f = FILE_A; f <= FILE_H; ++f) {
+     File f2 = std::min(f,~f);
+     PassedFile[f] = make_score(3*f2*f2, 7*(f2-1));
+  }
+}
+
+} // namespace Eval
 
 
 /// evaluate() is the evaluator for the outer world. It returns a static
