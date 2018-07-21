@@ -147,14 +147,14 @@ namespace {
 
   // PassedFile[File] contains a bonus according to the file of a passed pawn
   constexpr Score PassedFile[FILE_NB] = {
-    S(3*FILE_A*FILE_A, -7 + FILE_A*FILE_A*FILE_A),
-    S(3*FILE_B*FILE_B, -7 + FILE_B*FILE_B*FILE_B),
-    S(3*FILE_C*FILE_C, -7 + FILE_C*FILE_C*FILE_C),
-    S(3*FILE_D*FILE_D, -7 + FILE_D*FILE_D*FILE_D),
-    S(3*FILE_D*FILE_D, -7 + FILE_D*FILE_D*FILE_D),
-    S(3*FILE_C*FILE_C, -7 + FILE_C*FILE_C*FILE_C),
-    S(3*FILE_B*FILE_B, -7 + FILE_B*FILE_B*FILE_B),
-    S(3*FILE_A*FILE_A, -7 + FILE_A*FILE_A*FILE_A)
+    S(3*FILE_A*FILE_A, -7),
+    S(3*FILE_B*FILE_B, -9),
+    S(3*FILE_C*FILE_C,  8),
+    S(3*FILE_D*FILE_D, 14),
+    S(3*FILE_D*FILE_D, 14),
+    S(3*FILE_C*FILE_C,  8),
+    S(3*FILE_B*FILE_B, -9),
+    S(3*FILE_A*FILE_A, -7)
   };
 
   // PassedDanger[Rank] contains a term to weight the passed score
