@@ -146,7 +146,7 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
 
-        if (lever && relative_rank(Us,s) > RANK_5)
+        if (lever && (relative_rank(Us,s) > RANK_4))
             score += DeepLever;
     }
 
