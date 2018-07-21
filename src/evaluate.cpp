@@ -699,7 +699,7 @@ namespace {
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
             bonus = bonus / 2;
 
-        score += bonus + PassedFile[file_of(s)];
+        score += bonus - PassedFile[file_of(s)];
     }
 
     if (T)
