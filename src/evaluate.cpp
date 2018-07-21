@@ -145,11 +145,8 @@ namespace {
     S(0, 0), S(5, 18), S(12, 23), S(10, 31), S(57, 62), S(163, 167), S(271, 250)
   };
 
-  // PassedFile[File] contains a bonus according to the file of a passed pawn
-  constexpr Score PassedFile[FILE_NB] = {
-    S( -1,  7), S( 0,  9), S(-9, -8), S(-30,-14),
-    S(-30,-14), S(-9, -8), S( 0,  9), S( -1,  7)
-  };
+  // PassedFile[File] contains a penalty according to the file of a passed pawn
+  constexpr Score PassedFile = S( 4, 4);
 
   // PassedDanger[Rank] contains a term to weight the passed score
   constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
@@ -701,7 +698,8 @@ namespace {
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
             bonus = bonus / 2;
 
-        score += bonus + PassedFile[file_of(s)];
+        File pf = file_of(s);
+        score += bonus - PassedFile * std::min(pf,~pf);
     }
 
     if (T)
