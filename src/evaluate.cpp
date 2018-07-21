@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+//#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -690,7 +691,7 @@ namespace Eval {
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
             bonus = bonus / 2;
 
-        score += bonus - PassedFile[file_of(s)];
+        score += bonus + PassedFile[file_of(s)];
     }
 
     if (T)
@@ -874,13 +875,15 @@ namespace Eval {
 
 void init() {
   //constexpr int PassedFileMG[FILE_NB] = { 1,  0, 9, 30, 30, 9,  0,  1};
-  //constexpr int PassedFileEG[FILE_NB] = {-7, -9, 8, 14, 14, 8, -9, -7};
+  constexpr int PassedFileEG[FILE_NB] = {-7, -9, 8, 14, 14, 8, -9, -7};
 
   for (File f = FILE_A; f <= FILE_H; ++f) {
      File f2 = std::min(f,~f);
-     //PassedFile[f] = make_score(Value(PassedFileMG[f]),Value(PassedFileEG[f]));
-     PassedFile[f] = make_score(2+f2*f2*f2, 7*(f2-1));
-     //PassedFile[f] = make_score(2+f2*f2*f2, PassedFileEG[f]);
+     //PassedFile[f] = make_score(-2-f2*f2*f2, -7*(f2-1));
+     PassedFile[f] = make_score(-3-f2*f2*f2, PassedFileEG[f]);
+
+     //std::cout << "<f: " << mg_value(PassedFile[f]) << ","
+                         //<< eg_value(PassedFile[f]) << ">";
   }
 }
 
