@@ -880,7 +880,7 @@ void init() {
   for (File f = FILE_A; f <= FILE_H; ++f) {
      File f2 = std::min(f,~f);
      //PassedFile[f] = make_score(-2-f2*f2*f2, -7*(f2-1));
-     PassedFile[f] = make_score(-4-f2*f2*f2, PassedFileEG[f]);
+     PassedFile[f] = make_score(-5-f2*f2*f2, PassedFileEG[f]);
 
      //std::cout << "<f: " << mg_value(PassedFile[f]) << ","
                          //<< eg_value(PassedFile[f]) << ">";
