@@ -540,7 +540,7 @@ namespace Eval {
                 score += ThreatByRank * (int)relative_rank(Them, s);
         }
 
-        b = (pos.pieces(Them, QUEEN) | weak) & attackedBy[Us][ROOK];
+        b = weak & attackedBy[Us][ROOK];
         while (b)
         {
             Square s = pop_lsb(&b);
@@ -555,7 +555,7 @@ namespace Eval {
 
         score += Hanging * popcount(weak & ~attackedBy[Them][ALL_PIECES]);
 
-        b =  weak & nonPawnEnemies & attackedBy[Them][ALL_PIECES];
+        b = weak & nonPawnEnemies & attackedBy[Them][ALL_PIECES];
         score += Overload * popcount(b);
     }
 
