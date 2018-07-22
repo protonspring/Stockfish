@@ -142,7 +142,7 @@ namespace Eval {
   };
 
   // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
-  constexpr Score PassedRank[RANK_NB] = {
+  Score PassedRank[RANK_NB] = {
     S(0, 0), S(5, 18), S(12, 23), S(10, 31), S(57, 62), S(163, 167), S(271, 250)
   };
 
@@ -875,11 +875,17 @@ namespace Eval {
 
 void init() {
 
-  for (File f = FILE_A; f <= FILE_H; ++f) {
+  //constexpr int PassedRankMG[RANK_NB] = {0,  5, 12, 10, 57, 163, 271 };
+  //constexpr int PassedRankEG[RANK_NB] = {0, 18, 23, 31, 62, 167, 250 };
 
-     File f2 = std::min(f,~f);
-     PassedFile[f] = make_score(-4-f2*f2*f2, -7*(f2-1));
-     PassedDanger[f] = f < RANK_4 ? 0 : PassedDanger[f-1] + f;
+  //for (File f = FILE_A; f <= FILE_H; ++f) {
+  for (int i = 0; i <= 7; ++i) {
+
+     int d = std::min(i,~i);
+     PassedFile[i] = make_score(-4-d*d*d, -7*(d-1));
+     PassedDanger[i] = i < RANK_4 ? 0 : i*i/2;
+     //std::cout << "<" << PassedDanger[i] << ">";
+     //PassedRank[f] = make_score(i*i*i,i*i*i);
   }
 }
 
