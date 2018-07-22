@@ -877,16 +877,15 @@ void init() {
 
   //constexpr int PassedRankMG[RANK_NB] = {0,  5, 12, 10, 57, 163, 271 };
   //constexpr int PassedRankEG[RANK_NB] = {0, 18, 23, 31, 62, 167, 250 };
-  constexpr int PassedDangerL[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
+  //constexpr int PassedDangerL[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
 
-  //for (File f = FILE_A; f <= FILE_H; ++f) {
-  for (int i = 0; i <= 7; ++i) {
+  for (File f = FILE_A; f <= FILE_H; ++f) {
 
-     int d = std::min(i,~i);
-     PassedFile[i] = make_score(-4-d*d*d, -7*(d-1));
-     //PassedDanger[i] = i < RANK_4 ? 0 : i*i/2; //(i-1)*(i-1)-(i-1);
-     PassedDanger[i] = PassedDangerL[i];
-     //std::cout << "<" << PassedDanger[i] << ">";
+     int d = std::min(f,~f);
+     PassedFile[f] = make_score(-4-d*d*d, -7*(d-1));
+     PassedDanger[f] = f < RANK_4 ? 0 : (f-1)*(f-1)-(f-1);
+     //PassedDanger[f] = PassedDangerL[f];
+     //std::cout << "<" << PassedDanger[f] << ">";
      //PassedRank[f] = make_score(i*i*i,i*i*i);
   }
 }
