@@ -883,7 +883,7 @@ void init() {
 
      int d = std::min(i,~i);
      PassedFile[i] = make_score(-4-d*d*d, -7*(d-1));
-     PassedDanger[i] = i < RANK_4 ? 0 : -1+i*i/2;
+     PassedDanger[i] = i < RANK_4 ? 0 : (i-1)*(i-1)-(i-1);
      //std::cout << "<" << PassedDanger[i] << ">";
      //PassedRank[f] = make_score(i*i*i,i*i*i);
   }
