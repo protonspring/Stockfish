@@ -23,7 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
-//#include <iostream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -877,13 +877,15 @@ void init() {
 
   //constexpr int PassedRankMG[RANK_NB] = {0,  5, 12, 10, 57, 163, 271 };
   //constexpr int PassedRankEG[RANK_NB] = {0, 18, 23, 31, 62, 167, 250 };
+  constexpr int PassedDangerL[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
 
   //for (File f = FILE_A; f <= FILE_H; ++f) {
   for (int i = 0; i <= 7; ++i) {
 
      int d = std::min(i,~i);
      PassedFile[i] = make_score(-4-d*d*d, -7*(d-1));
-     PassedDanger[i] = i < RANK_4 ? 0 : (i-1)*(i-1)-(i-1);
+     //PassedDanger[i] = i < RANK_4 ? 0 : i*i/2; //(i-1)*(i-1)-(i-1);
+     PassedDanger[i] = PassedDangerL[i];
      //std::cout << "<" << PassedDanger[i] << ">";
      //PassedRank[f] = make_score(i*i*i,i*i*i);
   }
