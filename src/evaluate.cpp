@@ -150,7 +150,7 @@ namespace Eval {
   Score PassedFile[FILE_NB];
 
   // PassedDanger[Rank] contains a term to weight the passed score
-  int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
+  int PassedDanger[RANK_NB]; // = { 0, 0, 0, 3, 7, 11, 20 };
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
@@ -874,18 +874,12 @@ namespace Eval {
 /// to reduce independent parameters and to allow easier tuning and better insight.
 
 void init() {
-  //constexpr int PassedFileMG[FILE_NB] = { 1,  0, 9, 30, 30, 9,  0,  1};
-  //constexpr int PassedFileEG[FILE_NB] = {-7, -9, 8, 14, 14, 8, -9, -7};
 
   for (File f = FILE_A; f <= FILE_H; ++f) {
+
      File f2 = std::min(f,~f);
      PassedFile[f] = make_score(-4-f2*f2*f2, -7*(f2-1));
-     //PassedFile[f] = make_score(-4-f2*f2*f2, PassedFileEG[f]);
-
-     //std::cout << "<f: " << mg_value(PassedFile[f]) << ","
-                         //<< eg_value(PassedFile[f]) << ">";
-
-     //PassedDanger[f] = f < RANK_4 ? 0 : PassedDanger[f-1] + f;
+     PassedDanger[f] = f < RANK_4 ? 0 : PassedDanger[f-1] + f;
   }
 }
 
