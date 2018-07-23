@@ -869,11 +869,14 @@ namespace Eval {
 void init() {
 
   for (File f = FILE_A; f <= FILE_H; ++f) {
+  // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
+  constexpr Score PassedRankMG[RANK_NB] = {0, 5, 12, 10, 57, 163, 271, };
+  constexpr Score PassedRankEG[RANK_NB] = {0, 18, 23, 31, 62, 167, 250 };
 
      int d = std::min(f,~f);
      PassedFile[f] = make_score(-4-d*d*d, -7*(d-1));
      PassedDanger[f] = Rank(f) < RANK_4 ? 0 : 2+(f-1)*(f-1)-(f-1);
-     PassedRank[f] = make_score(f*f*f,f*f*f);
+     PassedRank[f] = make_score(f*f*f,PassedRankEG[RANK_NB]);
   }
 }
 
