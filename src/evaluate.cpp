@@ -23,7 +23,6 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
-#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -141,16 +140,10 @@ namespace Eval {
     S(0, 0), S(0, 24), S(38, 71), S(38, 61), S(0, 38), S(36, 38)
   };
 
-  // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
-  Score PassedRank[RANK_NB] = {
-    S(0, 0), S(5, 18), S(12, 23), S(10, 31), S(57, 62), S(163, 167), S(271, 250)
-  };
-
-  // PassedFile[File] contains a bonus according to the file of a passed pawn
-  Score PassedFile[FILE_NB];
-
-  // PassedDanger[Rank] contains a term to weight the passed score
-  int PassedDanger[RANK_NB]; // = { 0, 0, 0, 3, 7, 11, 20 };
+  //Some bonuses for passed pawns
+  Score PassedRank[RANK_NB];  //passed bonus by rank
+  Score PassedFile[FILE_NB];  //passed bonus by file
+  int PassedDanger[RANK_NB];  //a weight for passed pawns by distance from king
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
@@ -875,17 +868,12 @@ namespace Eval {
 
 void init() {
 
-  //constexpr int PassedRankMG[RANK_NB] = {0,  5, 12, 10, 57, 163, 271 };
-  //constexpr int PassedRankEG[RANK_NB] = {0, 18, 23, 31, 62, 167, 250 };
-  //constexpr int PassedDangerL[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
-
   for (File f = FILE_A; f <= FILE_H; ++f) {
 
      int d = std::min(f,~f);
      PassedFile[f] = make_score(-4-d*d*d, -7*(d-1));
      PassedDanger[f] = Rank(f) < RANK_4 ? 0 : 3+(f-1)*(f-1)-(f-1);
      PassedRank[f] = make_score(f*f*f,f*f*f);
-     std::cout << "<" << mg_value(PassedRank[f]) << ">";
   }
 }
 
