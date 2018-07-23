@@ -152,7 +152,7 @@ namespace {
   };
 
   // PassedDanger[Rank] contains a term to weight the passed score
-  constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 13, 21 };
+  constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 4, 8, 14, 22 };
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
