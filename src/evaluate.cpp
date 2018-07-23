@@ -875,7 +875,7 @@ void init() {
      int d = std::min(f,~f);
      PassedFile[f] = make_score(-4-d*d*d, -7*(d-1));
      PassedDanger[f] = Rank(f) < RANK_4 ? 0 : 2+(f-1)*(f-1)-(f-1);
-     PassedRank[f] = make_score(Valu(PassedRankMG[f],Value(PassedRankEG[f]));
+     PassedRank[f] = make_score(Value(PassedRankMG[f]),Value(PassedRankEG[f]));
      //PassedRank[f] = Rank(f) < RANK_2 ? make_score(0,0) : make_score(Value(PassedRankMG[f]),(f-1)*(f-1)*(f-1)+6*(f-1)*(f-1)-5*(f-1)+10);
   }
 }
