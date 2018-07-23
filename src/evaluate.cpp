@@ -877,7 +877,7 @@ void init() {
      PassedFile[f] = make_score(-4-d*d*d, -7*(d-1));
      PassedDanger[f] = Rank(f) < RANK_4 ? 0 : 2+(f-1)*(f-1)-(f-1);
      //PassedRank[f] = make_score(f*f*f,Value(PassedRankEG[f]));
-     PassedRank[f] = Rank(f) < RANK_2 ? make_score(0,0) : make_score(Value(PassedRankMG[f]),25+f*f*f);
+     PassedRank[f] = Rank(f) < RANK_2 ? make_score(0,0) : make_score(Value(PassedRankMG[f]),18+f*f*f-2*f);
   }
 }
 
