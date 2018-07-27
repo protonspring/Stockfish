@@ -374,7 +374,7 @@ namespace {
         {
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
-                score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
+                score += RookOnPawn * bool(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
@@ -563,7 +563,7 @@ namespace {
         score += Hanging * popcount(weak & ~attackedBy[Them][ALL_PIECES]);
 
         b = weak & nonPawnEnemies & attackedBy[Them][ALL_PIECES];
-        score += Overload * popcount(b);
+        score += Overload * bool(b);
     }
 
     // Bonus for enemy unopposed weak pawns
@@ -636,7 +636,7 @@ namespace {
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
         bb = forward_file_bb(Us, s) & pos.pieces(Them);
-        score -= HinderPassedPawn * popcount(bb);
+        score -= HinderPassedPawn * bool(bb);
 
         int r = relative_rank(Us, s);
         int w = PassedDanger[r];
