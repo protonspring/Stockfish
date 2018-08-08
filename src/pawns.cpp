@@ -119,8 +119,7 @@ namespace {
         // not attacked more times than defended.
         if (   !(stoppers ^ lever ^ leverPush)
             && !(ourPawns & forward_file_bb(Us, s))
-            && popcount(supported) >= popcount(lever) - 1
-            && popcount(phalanx)   >= popcount(leverPush))
+            && popcount(supported & phalanx) >= popcount(lever & leverPush))
             e->passedPawns[Us] |= s;
 
         else if (   stoppers == SquareBB[s + Up]
