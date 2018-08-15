@@ -64,7 +64,7 @@ namespace {
 
   // Bonus for king blocking enemy pawns on edge ranks (some additional safety)
   constexpr Value KingBlocker[RANK_NB] =
-    { V(375), V(200), V(50), V(0), V(0), V(0), V(0) };
+    { V(375), V(150), V(0), V(0), V(0), V(0), V(0) };
 
   #undef S
   #undef V
