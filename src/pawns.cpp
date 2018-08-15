@@ -63,8 +63,10 @@ namespace {
     { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
 
   // Bonus for king blocking enemy pawns on edge files (some additional safety)
-  constexpr Value KingBlocker[RANK_NB] =
+  Value KingBlocksPawn[RANK_NB] =
     { V(375), V(150), V(0), V(0), V(0), V(0), V(0) };
+
+TUNE(SetRange(0,400),KingBlocksPawn);
 
   #undef S
   #undef V
@@ -217,7 +219,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Value safety = (ourPawns & file_bb(ksq)) ? Value(5) : Value(-5);
 
   if (shift<Down>(theirPawns) & (FileABB | FileHBB) & ksq)
-      safety += KingBlocker[relative_rank(Us,ksq)];
+      safety += KingBlocksPawn[relative_rank(Us,ksq)];
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
