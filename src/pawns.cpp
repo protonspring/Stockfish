@@ -62,7 +62,7 @@ namespace {
   constexpr Value BlockedStorm[RANK_NB] =
     { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
 
-  // Bonus for king blocking enemy pawns on edge ranks (some additional safety)
+  // Bonus for king blocking enemy pawns on edge files (some additional safety)
   constexpr Value KingBlocker[RANK_NB] =
     { V(375), V(150), V(0), V(0), V(0), V(0), V(0) };
 
