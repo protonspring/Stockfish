@@ -32,7 +32,7 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
- constexpr Score Isolated = S( 5, 15);
+ constexpr Score Isolated[FILE_NB] = {S( 7, 17), S( 6, 16), S( 5, 15), S( 3, 10), S( 3, 10), S( 5, 15), S( 6, 16), S( 7, 17) };
  constexpr Score Backward = S( 9, 24);
  constexpr Score Doubled  = S(11, 56);
 
@@ -136,7 +136,7 @@ namespace {
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
 
         else if (!neighbours)
-            score -= Isolated, e->weakUnopposed[Us] += !opposed;
+            score -= Isolated[f], e->weakUnopposed[Us] += !opposed;
 
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
