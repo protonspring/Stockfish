@@ -381,7 +381,7 @@ namespace {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
-            else if ((mob <= 3) && (distance(s,pos.square<KING>(Us)) <= 3))
+            else if ((mob <= 3) && (distance(s,pos.square<KING>(Us)) <= 4))
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
         }
 
