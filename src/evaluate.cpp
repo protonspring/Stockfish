@@ -383,7 +383,6 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if ((mob <= 3) && (!pos.can_castle(Us)) && (rank_of(s) == rank_of(pos.square<KING>(Us))))
                    score -= (TrappedRook - make_score(mob * 22, 0));
-            }
         }
 
         if (Pt == QUEEN)
