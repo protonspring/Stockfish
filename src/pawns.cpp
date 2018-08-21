@@ -108,6 +108,9 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
 
+        if ((lever) && !more_than_one(ourPawns & FileBB[f]))
+           e->almostopenFiles[Us] |= (1 << f);
+
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
         backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
