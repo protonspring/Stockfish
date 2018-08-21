@@ -381,7 +381,7 @@ namespace {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
             // Bonus for rook on an almost open file (levered pawn)
-            if (pe->almostopen_file(Us, file_of(s)))
+            else if (pe->almostopen_file(Us, file_of(s)))
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))] / 2;
 
             // Penalty when trapped by the king, even more if the king cannot castle
