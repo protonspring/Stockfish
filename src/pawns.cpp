@@ -113,7 +113,7 @@ namespace {
         backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
                   && (stoppers & (leverPush | (s + Up)));
 
-        if (neighbours || opposed)
+        if (!backward || opposed)
            e->semiopenFiles[Us]   &= ~(1 << f);
 
         // Passed pawns will be properly scored in evaluation because we need
