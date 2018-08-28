@@ -175,6 +175,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 29);
+  constexpr Score AttacksWeakPawn    = S(  8,  0);
 
 #undef S
 
@@ -323,6 +324,9 @@ namespace {
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
+
+        if (b & pe->weakPawns[Them])
+           score += AttacksWeakPawn;
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {

@@ -131,6 +131,9 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        if (backward || !neighbours)
+           e->weakPawns[Us] |= s;
+
         // Score this pawn
         if (supported | phalanx)
             score += Connected[opposed][bool(phalanx)][popcount(supported)][relative_rank(Us, s)];
