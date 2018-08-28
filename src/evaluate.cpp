@@ -175,6 +175,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 29);
+  constexpr Score AttackWeakPawn     = S(  8,  0);
 
 #undef S
 
@@ -324,6 +325,9 @@ namespace {
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
+        if (pe->weakPawns[Them] & b)
+           score += AttackWeakPawn;
+
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
@@ -374,7 +378,7 @@ namespace {
         {
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
-                score += RookOnPawn * popcount(pe->weakPawns[Them] & PseudoAttacks[ROOK][s]);
+                score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
