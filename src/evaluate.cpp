@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -31,6 +32,9 @@
 #include "thread.h"
 
 namespace Trace {
+
+  int count;
+  int sum;
 
   enum Tracing { NO_TRACE, TRACE };
 
@@ -788,10 +792,11 @@ namespace {
 
     Color strongSide = eg > VALUE_DRAW ? WHITE : BLACK;
     int sf = me->scale_factor(pos, strongSide);
+    int sf2 = sf;
 
     // If scale is not already specific, scale down the endgame via general heuristics
     if (sf == SCALE_FACTOR_NORMAL)
-        sf = std::min(int(40 + (pos.opposite_bishops() ? 0 : 7) * pos.count<PAWN>(strongSide)), sf);
+            sf = std::min(int(30 + (pos.opposite_bishops() ? 3 : 8) * pos.count<PAWN>(strongSide)), sf);
 
     return ScaleFactor(sf);
   }
