@@ -132,7 +132,7 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
-        if (backward || !neighbours)
+        if (!supported)
            e->weakPawns[Us] |= s;
 
         // Score this pawn
