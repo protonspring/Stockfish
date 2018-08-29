@@ -36,7 +36,7 @@ namespace {
  constexpr Score Backward = S( 9, 24);
  constexpr Score Doubled  = S(11, 56);
 
- constexpr Value PawnHole = V(3);
+ constexpr Value PawnHole = V(2);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -233,7 +233,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                                         : UnblockedStorm[d][theirRank];
   }
 
-  //penalty for pawn holes in our camp
+  //penalty for pawn holes in our king flank 
   safety -= PawnHole * popcount(HoleRanks & KingFlank[file_of(ksq)] & ~pawnAttacksSpan[Us]);
 
   return safety;
