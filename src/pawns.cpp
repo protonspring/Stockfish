@@ -35,6 +35,7 @@ namespace {
  constexpr Score Isolated = S( 5, 15);
  constexpr Score Backward = S( 9, 24);
  constexpr Score Doubled  = S(11, 56);
+ constexpr Score PawnHole = S( 3,  0);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -70,6 +71,8 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
+    constexpr Bitboard  HoleRegion = (Us == WHITE ? (Rank3BB | Rank4BB) & (FileCBB | FileDBB | FileEBB | FileFBB )
+                                            : (Rank6BB | Rank5BB) & (FileCBB | FileDBB | FileEBB | FileFBB ));
 
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
@@ -144,6 +147,9 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
     }
+
+    //penalty for pawn holes in our camp
+    score -= PawnHole * popcount(HoleRegion & ~e->pawnAttacksSpan[Us]);
 
     return score;
   }
