@@ -71,8 +71,8 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
-    constexpr Bitboard  HoleRegion = (Us == WHITE ? (Rank3BB | Rank4BB) & (FileCBB | FileDBB | FileEBB | FileFBB )
-                                            : (Rank6BB | Rank5BB) & (FileCBB | FileDBB | FileEBB | FileFBB ));
+    constexpr Bitboard  HoleRanks = (Us == WHITE ? (Rank3BB | Rank4BB) 
+                                            : (Rank6BB | Rank5BB));
 
     Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
@@ -149,7 +149,7 @@ namespace {
     }
 
     //penalty for pawn holes in our camp
-    score -= PawnHole * popcount(HoleRegion & ~e->pawnAttacksSpan[Us]);
+    score -= PawnHole * popcount(HoleRanks & KingFlank[file_of(pos.square<KING>(Us))] & ~e->pawnAttacksSpan[Us]);
 
     return score;
   }
