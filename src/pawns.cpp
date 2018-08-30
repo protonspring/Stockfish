@@ -220,18 +220,18 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int d = std::min(f, ~f);
       b = ourPawns & file_bb(f);
       int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
-      if (more_than_one(b))
-      {
-         Square s2 = frontmost_sq(Us, b);
-         safety += ShelterStrength[d][rank_of(s2)] / 2;
-      }
+      //if (more_than_one(b))
+      //{
+         //Square s2 = frontmost_sq(Us, b);
+         //safety += ShelterStrength[d][rank_of(s2)];
+      //}
 
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
       if (more_than_one(b))
       {
          Square s2 = backmost_sq(Them, b);
-         safety -= UnblockedStorm[d][rank_of(s2)] / 2;
+         safety -= UnblockedStorm[d][rank_of(s2)];
       }
 
       safety += ShelterStrength[d][ourRank];
