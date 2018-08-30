@@ -230,7 +230,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
       if (more_than_one(b))
       {
-         Square s2 = backmost_sq(Us, b);
+         Square s2 = backmost_sq(Them, b);
          safety -= UnblockedStorm[d][rank_of(s2)] / 2;
       }
 
