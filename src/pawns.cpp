@@ -226,7 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       if (more_than_one(b))
       {
          Square s2 = backmost_sq(Them, b);
-         safety -= UnblockedStorm[d][relative_rank(Us,s2)] / 4;
+         safety -= UnblockedStorm[d][relative_rank(Us,s2)] / 2;
       }
 
       safety += ShelterStrength[d][ourRank];
