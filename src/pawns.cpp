@@ -42,10 +42,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    { V(  0), V( 87), V( 99), V( 64), V( 45), V( 24), V(  31) },
+    { V(  0), V(104), V( 78), V( -6), V( 14), V( 32), V( -20) },
+    { V(  0), V( 85), V( 33), V(  8), V( 42), V( 13), V( -35) },
+    { V(  0), V( 26), V(  8), V(-13), V( -9), V(-28), V(-127) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
@@ -212,21 +212,20 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard theirPawns = b & pos.pieces(Them);
 
   Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
-                 Value(374) : Value(5);
+                 Value(374-75) : Value(5-75);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
+      int d = std::min(f, ~f);
+      if ((b = ourPawns & file_bb(f)))
+         safety += ShelterStrength[d][relative_rank(Us, backmost_sq(Us, b))];
 
       b = theirPawns & file_bb(f);
-      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
+      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
-      safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
-                                                        : UnblockedStorm[d][theirRank];
+      safety -= shift<Down>(b) & ourPawns ? BlockedStorm[theirRank]
+                                          : UnblockedStorm[d][theirRank];
   }
 
   return safety;
