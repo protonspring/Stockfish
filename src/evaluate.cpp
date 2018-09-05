@@ -638,7 +638,7 @@ namespace {
 
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
-        if (forward_file_bb(Us, s) & pos.pieces(Them))
+        if (forward_file_bb(Us, s) & pos.pieces())
             score -= HinderPassedPawn;
 
         int r = relative_rank(Us, s);
