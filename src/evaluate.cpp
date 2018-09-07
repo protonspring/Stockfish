@@ -688,8 +688,6 @@ namespace {
 
                 bonus += make_score(k * w, k * w);
             }
-            else if (pos.pieces(Us) & blockSq)
-                bonus += make_score(w + r * 2, w + r * 2);
         } // w != 0
 
         // Scale down bonus for candidate passers which need more than one
