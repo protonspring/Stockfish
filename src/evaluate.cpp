@@ -666,7 +666,7 @@ namespace {
                 // in the pawn's path attacked or occupied by the enemy.
                 defendedSquares = unsafeSquares = squaresToQueen = forward_file_bb(Us, s);
 
-                bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN) & pos.attacks_from<ROOK>(s);
+                bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
 
                 if (!(pos.pieces(Us) & bb))
                     defendedSquares &= attackedBy[Us][ALL_PIECES];
@@ -688,6 +688,8 @@ namespace {
 
                 bonus += make_score(k * w, k * w);
             }
+            else if (pos.pieces(Us) & blockSq)
+                bonus += make_score(w + r * 2, w + r * 2);
         } // w != 0
 
         // Scale down bonus for candidate passers which need more than one
