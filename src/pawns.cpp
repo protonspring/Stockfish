@@ -36,8 +36,6 @@ namespace {
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
 
- constexpr Value PawnHole = V(2);
-
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
@@ -208,8 +206,6 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
-  constexpr Bitboard  HoleRanks  = (Us == WHITE ? (Rank3BB | Rank4BB)
-                                                : (Rank6BB | Rank5BB));
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
@@ -232,9 +228,6 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
                                                         : UnblockedStorm[d][theirRank];
   }
-
-  //penalty for pawn holes in our king flank 
-  safety -= PawnHole * popcount(HoleRanks & KingFlank[file_of(ksq)] & ~pawnAttacksSpan[Us]);
 
   return safety;
 }
