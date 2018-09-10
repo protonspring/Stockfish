@@ -493,7 +493,7 @@ namespace {
     constexpr Bitboard  HoleRanks  = (Us == WHITE ? (Rank3BB | Rank4BB)
                                                   : (Rank6BB | Rank5BB));
 
-    score -= make_score(2,0) * popcount(HoleRanks & kingFlank & ~pe->pawnAttacksSpan[Us]);
+    score -= make_score(5,0) * popcount(HoleRanks & kingFlank & ~pe->pawnAttacksSpan[Us]);
 
     if (T)
         Trace::add(KING, Us, score);
