@@ -221,11 +221,11 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
 
       //penalize a levered pawn in our shelter
-      if (b && (popcount(b) == 1))
+      if (popcount(b) == 1)
       {
          Square s = backmost_sq(Us, b);
          if (PawnAttacks[Us][s] & theirPawns)
-            safety -= Value(5);
+            safety -= Value(30);
       }
 
       b = theirPawns & file_bb(f);
