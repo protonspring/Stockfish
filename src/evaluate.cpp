@@ -332,14 +332,18 @@ namespace {
             {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & s)] * 2;
 
-                //double bonus if the opponent cannot exchange the piece
-                if (!(attackedBy[Them][ALL_PIECES] & s))
-                   score += Outpost[Pt == BISHOP][0];
+                //more bonus if the opponent cannot exchange the piece
+                if (pos.count<KNIGHT>(Them) == 0) &&
+                    pos.count<BISHOP>(Them) == 1) &&
+
+                    ((DarkSquares & pos.pieces(Them,BISHOP)) != (DarkSquares & s))
+                {
+                   score += Outpost[0][0];
+                }
             }
 
             else if (bb &= b & ~pos.pieces(Us))
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
-
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
