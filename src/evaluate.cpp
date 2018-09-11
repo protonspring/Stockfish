@@ -175,7 +175,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 29);
-  constexpr Score PawnHoles          = S(  3,  0);
+  constexpr Score PawnHoles          = S(  2,  0);
 
 #undef S
 
@@ -404,6 +404,8 @@ namespace {
     //general penalty for pawn holes in our king flank
     bb = KingFlank[file_of(pos.square<KING>(Us))] & PawnHoleRanks & ~pe->pawn_attacks_span(Us);
     score -= PawnHoles * popcount(bb);
+
+    //std::cout << "<" << popcount(bb) << ">" << std::endl;
 
     if (T)
         Trace::add(Pt, Us, score);
