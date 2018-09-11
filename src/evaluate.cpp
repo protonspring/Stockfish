@@ -405,8 +405,6 @@ namespace {
     bb = KingFlank[file_of(pos.square<KING>(Us))] & PawnHoleRanks & ~pe->pawn_attacks_span(Us);
     score -= PawnHoles * popcount(bb);
 
-    //std::cout << "<" << popcount(bb) << ">" << std::endl;
-
     if (T)
         Trace::add(Pt, Us, score);
 
