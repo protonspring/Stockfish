@@ -333,10 +333,10 @@ namespace {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & s)] * 2;
 
                 //more bonus if the opponent cannot exchange the piece
-                if (pos.count<KNIGHT>(Them) == 0) &&
-                    pos.count<BISHOP>(Them) == 1) &&
+                if ((pos.count<KNIGHT>(Them) == 0) &&
+                    (pos.count<BISHOP>(Them) == 1) &&
 
-                    ((DarkSquares & pos.pieces(Them,BISHOP)) != (DarkSquares & s))
+                    ((DarkSquares & pos.pieces(Them,BISHOP)) != (DarkSquares & s)))
                 {
                    score += Outpost[0][0];
                 }
