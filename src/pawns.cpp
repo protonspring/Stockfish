@@ -62,6 +62,8 @@ namespace {
   constexpr Value BlockedStorm[RANK_NB] =
     { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
 
+  constexpr Value PawnHole = V(2);
+
   #undef S
   #undef V
 
@@ -206,6 +208,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
+  constexpr Bitboard  HoleRanks = (Us == WHITE ? (Rank3BB | Rank4BB) : (Rank6BB | Rank5BB));
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
@@ -228,6 +231,8 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
                                                         : UnblockedStorm[d][theirRank];
   }
+
+  safety -= PawnHole * popcount(HoleRanks & KingFlank[file_of(ksq)] & ~pawnAttacksSpan[Us]);
 
   return safety;
 }
