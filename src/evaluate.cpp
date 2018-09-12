@@ -651,8 +651,8 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            bonus += make_score(0, (  king_proximity(Them, blockSq)
-                                    - king_proximity(Us,   blockSq) - 2) * w);
+            bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
+                                    - king_proximity(Us,   blockSq) * 2) * w);
 
             // If blockSq is not the queening square then consider also a second push
             if (r != RANK_7)
@@ -672,7 +672,7 @@ namespace {
                     defendedSquares &= attackedBy[Us][ALL_PIECES];
 
                 if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
+                    unsafeSquares &= attackedBy[Them][ALL_PIECES];
 
                 // If there aren't any enemy attacks, assign a big bonus. Otherwise
                 // assign a smaller bonus if the block square isn't attacked.
