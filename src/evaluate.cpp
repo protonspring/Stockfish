@@ -638,7 +638,7 @@ namespace {
 
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
-        if (forward_file_bb(Us, s) & pos.pieces(Them))
+        if (forward_file_bb(Us, s) & pos.pieces())
             score -= HinderPassedPawn;
 
         int r = relative_rank(Us, s);
@@ -688,8 +688,7 @@ namespace {
 
                 bonus += make_score(k * w, k * w);
             }
-            else if (pos.pieces(Us) & blockSq)
-                bonus += make_score(w + r * 2, w + r * 2);
+
         } // w != 0
 
         // Scale down bonus for candidate passers which need more than one
