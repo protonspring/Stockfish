@@ -627,7 +627,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
+    Bitboard b;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
