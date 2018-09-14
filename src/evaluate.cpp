@@ -152,7 +152,7 @@ namespace {
   };
 
   // PassedDanger[Rank] contains a term to weight the passed score
-  constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
+  constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 6, 14, 22, 40 };
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
@@ -651,8 +651,8 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
-                                    - king_proximity(Us,   blockSq) * 2) * w);
+            bonus += make_score(0, (  king_proximity(Them, blockSq) * 3
+                                    - king_proximity(Us,   blockSq)) * w);
 
             // If blockSq is not the queening square then consider also a second push
             if (r != RANK_7)
