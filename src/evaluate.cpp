@@ -159,6 +159,7 @@ namespace {
   constexpr Score CloseEnemies       = S(  6,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 57, 32);
+  constexpr Score HinderPassedPawn   = S(  8,  0);
   constexpr Score KingProtector      = S(  6,  6);
   constexpr Score KnightOnQueen      = S( 21, 11);
   constexpr Score LongDiagonalBishop = S( 46,  0);
@@ -651,14 +652,21 @@ namespace {
             bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
                                     - king_proximity(Us,   blockSq) * 2) * w);
 
-            //bonus if we have rooks/queens behind the passed pawn
+            //bonus for rook/queen behind the pawn
             if ((forward_file_bb(Them, s) & pos.pieces(Us, ROOK, QUEEN) & pos.attacks_from<ROOK>(s)))
-               k += 3;
+               k = 2;
 
             //bonus for attacks on the blockSq
-            if (((attackedBy[Us][ALL_PIECES] & blockSq) && !(attackedBy[Them][ALL_PIECES] & blockSq))   ||
-               ((attackedBy2[Us] & blockSq) && !(attackedBy2[Them] & blockSq)))
-               k += 2;
+            k += bool(attackedBy[Us][KNIGHT] & blockSq) +
+                 bool(attackedBy[Us][BISHOP] & blockSq) +
+                 bool(attackedBy[Us][ROOK] & blockSq) +
+                 bool(attackedBy[Us][QUEEN] & blockSq) +
+                 bool(attackedBy[Us][KING] & blockSq) -
+                 bool(attackedBy[Them][KNIGHT] & blockSq) -
+                 bool(attackedBy[Them][BISHOP] & blockSq) -
+                 bool(attackedBy[Them][ROOK] & blockSq) -
+                 bool(attackedBy[Them][QUEEN] & blockSq) -
+                 bool(attackedBy[Them][KING] & blockSq);
 
             bonus += make_score(k * w, k * w);
 
