@@ -651,7 +651,7 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            bonus += make_score(0, (  king_proximity(Them, blockSq) * (4 + (r == RANK_7))
+            bonus += make_score(0, (  king_proximity(Them, blockSq) * (3 + 2*(r == RANK_7))
                                     - king_proximity(Us,   blockSq) * 2) * w);
 
             // If the pawn is free to advance, then increase the bonus
