@@ -659,11 +659,8 @@ namespace {
                 bonus -= make_score(0, king_proximity(Us, blockSq + Up) * w);
 
             //if enemy is blocking the pawn, bonus for attacks on the piece
-            if (pos.pieces(Them) & attackedBy2[Us] & blockSq)
+            if (pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & blockSq)
                 bonus += make_score(4 * w, 4 * w);
-
-            else if (pos.pieces(Them) & attackedBy[Us][ALL_PIECES] & blockSq)
-                bonus += make_score(2 * w, 2 * w);
 
             // If the pawn is free to advance, then increase the bonus
             else if (pos.empty(blockSq))
