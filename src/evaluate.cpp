@@ -666,7 +666,7 @@ namespace {
                 bonus += make_score(2 * w, 2 * w);
 
             // If the pawn is free to advance, then increase the bonus
-            else //if (pos.empty(blockSq))
+            else if (pos.empty(blockSq))
             {
                 // If there is a rook or queen attacking/defending the pawn from behind,
                 // consider all the squaresToQueen. Otherwise consider only the squares
