@@ -642,7 +642,9 @@ namespace {
             score -= HinderPassedPawn;
 
         int r = relative_rank(Us, s);
-        int w = PassedDanger[r];
+
+        //weight, but scale down if not already fully passed
+        int w = PassedDanger[r] / (1 + !pos.pawn_passed(Us, s + Up));
 
         Score bonus = PassedRank[r];
 
@@ -691,12 +693,6 @@ namespace {
             else if (pos.pieces(Us) & blockSq)
                 bonus += make_score(w + r * 2, w + r * 2);
         } // w != 0
-
-        // Scale down bonus for candidate passers which need more than one
-        // pawn push to become passed, or have a pawn in front of them.
-        if (   !pos.pawn_passed(Us, s + Up)
-            || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
-            bonus = bonus / 2;
 
         score += bonus + PassedFile[file_of(s)];
     }
