@@ -688,7 +688,7 @@ namespace {
 
                 bonus += make_score(k * w, k * w);
             }
-            else if (pos.pieces(Us) & blockSq)
+            else if (attackedBy2[Us] & blockSq)
                 bonus += make_score(w + r * 2, w + r * 2);
         } // w != 0
 
