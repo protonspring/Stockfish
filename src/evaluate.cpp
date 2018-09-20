@@ -627,7 +627,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, unsafeSquares;
+    Bitboard b, bb;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -664,16 +664,16 @@ namespace {
                 //check for a rook/queen behind the pawn
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN) & pos.attacks_from<ROOK>(s);
 
-                //more bonus if WE have a queen/rook behind or attack the blockSq
-                int k = ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq)) ? 6 : 0;
+                //bonus if WE have a queen/rook behind or attack the blockSq
+                int k = 6*((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq));
 
-                unsafeSquares = forward_file_bb(Us, s);
-                if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
+                //bonus if the opponent doesn't attack/block the block square
+                if (!((attackedBy[Them][ALL_PIECES] | pos.pieces(Them)) & blockSq))
+                   k += 9;
 
-                // If there aren't any enemy attacks, assign a big bonus. Otherwise
-                // assign a smaller bonus if the block square isn't attacked.
-                k += !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 9 : 0;
+                //bonus if no attack from behind and no attacks on forward squares
+                if (!(pos.pieces(Them) & bb) && !(attackedBy[Them][ALL_PIECES] & forward_file_bb(Us, s)))
+                   k += 11;
 
                 bonus += make_score(k * w, k * w);
             }
