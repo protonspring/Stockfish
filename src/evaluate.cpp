@@ -831,9 +831,10 @@ namespace {
     pe = Pawns::probe(pos);
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
-    // Early exit if score is high
+    // Early exit if score is high for the side to move
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if (abs(v) > LazyThreshold)
+    if ((pos.side_to_move() == WHITE && v > LazyThreshold) ||
+        (pos.side_to_move() == BLACK && v < -LazyThreshold))
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
