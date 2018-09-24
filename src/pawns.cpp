@@ -127,7 +127,7 @@ namespace {
         {
             b = supported;
             while (b)
-                if (!more_than_one(theirPawns & PawnAttackSpan[Us][pop_lsb(&b)]))
+                if (!more_than_one(theirPawns & PassedPawnMask[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
 
