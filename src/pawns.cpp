@@ -59,7 +59,7 @@ namespace {
   };
 
   // Danger of blocked enemy pawns storming our king, by rank
-  constexpr Value BlockedPawn = V(40);
+  constexpr Value BlockedPawn = V(20);
 
   #undef S
   #undef V
