@@ -71,7 +71,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard b, neighbours, stoppers, doubled, supported, phalanx;
+    Bitboard neighbours, stoppers, doubled, supported, phalanx;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
@@ -122,14 +122,10 @@ namespace {
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (   stoppers == SquareBB[s + Up]
-                 && relative_rank(Us, s) >= RANK_5)
-        {
-            b = shift<Up>(supported) & ~theirPawns;
-            while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
+        else if (   (stoppers == SquareBB[s + Up])
+                 && (relative_rank(Us, s) >= RANK_5)
+                 && (shift<Up>(supported) & ~theirPawns))
                     e->passedPawns[Us] |= s;
-        }
 
         // Score this pawn
         if (supported | phalanx)
