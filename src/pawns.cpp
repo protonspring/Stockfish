@@ -125,9 +125,9 @@ namespace {
         else if (   stoppers == SquareBB[s + Up]
                  && relative_rank(Us, s) >= RANK_5)
         {
-            b = shift<Up>(supported) & ~theirPawns;
+            b = supported | phalanx;
             while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
+                if (!more_than_one(theirPawns & PassedPawnMask[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
 
