@@ -58,10 +58,6 @@ namespace {
     { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
   };
 
-  // Danger of blocked enemy pawns storming our king, by rank
-  constexpr Value BlockedStorm[RANK_NB] =
-    { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
-
   #undef S
   #undef V
 
@@ -217,16 +213,15 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
+      int d = std::min(f, ~f);
+
       b = ourPawns & file_bb(f);
       int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
+      safety += ShelterStrength[d][ourRank];
 
       b = theirPawns & file_bb(f);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
-      int d = std::min(f, ~f);
-      safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
-                                                        : UnblockedStorm[d][theirRank];
+      safety -= UnblockedStorm[d][theirRank];
   }
 
   return safety;
