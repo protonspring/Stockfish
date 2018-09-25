@@ -53,14 +53,14 @@ namespace {
   // is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
     { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) },
-    { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
-    { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
-    { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
+    { V( 44-44), V(-18-44), V(123-44), V(46-44), V(39-44), V( -7-44), V( 23-44) },
+    { V(  4-4), V( 52-4), V(162-4), V(37-4), V( 7-4), V(-14-4), V( -2-4) },
+    { V(-10+10), V(-14+10), V( 90+10), V(15+10), V( 2+10), V( -7+10), V(-16+10) }
   };
 
   // Danger of blocked enemy pawns storming our king, by rank
   constexpr Value BlockedStorm[RANK_NB] =
-    { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
+    { V(0), V(0), V(66-40), V(6-40), V(5-40), V(1-40), V(15-40) };
 
   #undef S
   #undef V
@@ -212,7 +212,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard theirPawns = b & pos.pieces(Them);
 
   Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
-                 Value(374) : Value(5);
+                 Value(374-44-4) : Value(5-44-4);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
