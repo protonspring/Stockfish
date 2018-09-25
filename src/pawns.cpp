@@ -130,6 +130,9 @@ namespace {
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
+        else if (popcount(PassedPawnMask[Us][s-Up] & theirPawns) <
+                 popcount(PassedPawnMask[Them][s+Up] & ourPawns))
+            e->passedPawns[Us] |= s;
 
         // Score this pawn
         if (supported | phalanx)
