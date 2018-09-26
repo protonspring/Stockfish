@@ -642,7 +642,7 @@ namespace {
             score -= HinderPassedPawn;
 
         if (pe->pawn_attacks(Us) & s)
-            score += make_score(5,0);
+            score += make_score(0,5);
 
         int r = relative_rank(Us, s);
         int w = PassedDanger[r];
