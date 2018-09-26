@@ -686,6 +686,9 @@ namespace {
                 else if (defendedSquares & blockSq)
                     k += 4;
 
+                if (pe->pawn_attacks(Us) & (s+Up))
+                    k += 4;
+
                 bonus += make_score(k * w, k * w);
             }
             else if (pos.pieces(Us) & blockSq)
