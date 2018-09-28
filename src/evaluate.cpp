@@ -883,7 +883,7 @@ void init() {
   {
     MobilityBonus[QUEEN-2][m] = make_score(51-120*(1-log10(m+2)), 47-270*(1-log10(m+5)));
     //MobilityBonus[ ROOK-2][m] = make_score(29- 80*(1-log10(m+1)),130-290*(1-log10(m+2)));
-    MobilityBonus[BISHOP-2][m] = make_score(80-140*(1-log10(m+1)), 72-130*(1-log10(m+1)));
+    MobilityBonus[BISHOP-2][m] = make_score(80-140*(1-log10(m+1)), 64-130*(1-log10(m+1)));
     MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 31-160*(1-log10(m+2)));
 
   //std::cout << "<" << mg_value(MobilityBonus[QUEEN-2][m]) << ","
