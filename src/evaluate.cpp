@@ -882,7 +882,7 @@ void init() {
   for (int m = 0; m < 32; ++m)
   {
     MobilityBonus[QUEEN-2][m] = make_score(51-120*(1-log10(m+2)), 47-270*(1-log10(m+5)));
-    MobilityBonus[ ROOK-2][m] = make_score(21- 80*(1-log10(m+1)),130-290*(1-log10(m+2)));
+    MobilityBonus[ ROOK-2][m] = make_score(25- 80*(1-log10(m+1)),134-290*(1-log10(m+2)));
 
   //std::cout << "<" << mg_value(MobilityBonus[QUEEN-2][m]) << ","
                    //<< eg_value(MobilityBonus[QUEEN-2][m]) << ">" << std::endl;
