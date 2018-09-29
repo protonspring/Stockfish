@@ -883,8 +883,13 @@ namespace Eval {
 
 void init() {
 
-  for (int m = 0; m < 32; ++m)
-    MobilityBonus[QUEEN-2][m] = make_score(40-150*(1-log10(m+2)),50-300*(1-log10(m+4)));
+   for (int m = 0; m < 32; ++m)
+   {
+      //MobilityBonus[ QUEEN-2][m] = make_score(51-120*(1-log10(m+2)), 47-270*(1-log10(m+5)));
+      MobilityBonus[  ROOK-2][m] = make_score(25- 80*(1-log10(m+1)) + m,130-280*(1-log10(m+2)));
+      //MobilityBonus[BISHOP-2][m] = make_score(71-130*(1-log10(m+1)), 68-130*(1-log10(m+1)));
+      //MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 35-160*(1-log10(m+2)));
+   }
 }
 
 } // namespace
