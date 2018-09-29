@@ -100,6 +100,12 @@ namespace Eval {
 
 #define S(mg, eg) make_score(mg, eg)
 
+  //coefficients for mobility equations (for tuning)
+  int ce[16] = {51,120,47,270,33,80,130,280,72,130,68,130,41,120,35,160};
+
+TUNE(ce,Eval::init);
+UPDATE_ON_LAST();
+
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
   Score MobilityBonus[][32] = {
@@ -878,10 +884,6 @@ namespace Eval {
 
 void init() {
 
-  //coefficients for mobility equations (for tuning)
-  int ce[16] = {51,120,47,270,33,80,130,280,72,130,68,130,41,120,35,160};
-
-TUNE(ce,Eval::init);
 
   for (int m = 0; m < 32; ++m)
   {
