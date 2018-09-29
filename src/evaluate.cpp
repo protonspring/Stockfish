@@ -321,7 +321,8 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
-        mobility[Us] += MobilityBonus[Pt - 2][mob];
+        //ramp up mobilitiy penalties
+        mobility[Us] += MobilityBonus[Pt - 2][mob] / (pos.gamePly < 10 ? 10 - pos.gamePly : 1);
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {

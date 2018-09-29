@@ -161,6 +161,7 @@ public:
   // Position consistency check, for debugging
   bool pos_is_ok() const;
   void flip();
+  int gamePly;
 
 private:
   // Initialization helpers (used while setting up a position)
@@ -185,7 +186,6 @@ private:
   int castlingRightsMask[SQUARE_NB];
   Square castlingRookSquare[CASTLING_RIGHT_NB];
   Bitboard castlingPath[CASTLING_RIGHT_NB];
-  int gamePly;
   Color sideToMove;
   Score psq;
   Thread* thisThread;
