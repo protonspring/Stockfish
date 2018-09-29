@@ -879,7 +879,7 @@ void init() {
 
   for (int m = 0; m < 32; ++m)
   {
-    MobilityBonus[ROOK-2][m] = make_score(28-80*(1-log10(m+1)),130-280*(1-log10(m+2)));
+    MobilityBonus[ROOK-2][m] = make_score(22-80*(1-log10(m+1)),130-280*(1-log10(m+2)));
   }
 }
 
