@@ -878,12 +878,21 @@ namespace Eval {
 
 void init() {
 
+  //coefficients for mobility equations (for tuning)
+  int ce[16] = {51,120,47,270,33,80,130,280,72,130,68,130,41,120,35,160};
+
+TUNE(ce,Eval::init);
+
   for (int m = 0; m < 32; ++m)
   {
-    MobilityBonus[ QUEEN-2][m] = make_score(51-120*(1-log10(m+2)), 47-270*(1-log10(m+5)));
-    MobilityBonus[  ROOK-2][m] = make_score(33- 80*(1-log10(m+1)),130-280*(1-log10(m+2)));
-    MobilityBonus[BISHOP-2][m] = make_score(72-130*(1-log10(m+1)), 68-130*(1-log10(m+1)));
-    MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 35-160*(1-log10(m+2)));
+    MobilityBonus[ QUEEN-2][m] = make_score(ce[0]-ce[1]*(1-log10(m+2)), 
+                                            ce[2]-ce[3]*(1-log10(m+5)));
+    MobilityBonus[  ROOK-2][m] = make_score(ce[4]-ce[5]*(1-log10(m+1)),
+                                            ce[6]-ce[7]*(1-log10(m+2)));
+    MobilityBonus[BISHOP-2][m] = make_score(ce[8]-ce[9]*(1-log10(m+1)),
+                                            ce[10]-ce[11]*(1-log10(m+1)));
+    MobilityBonus[KNIGHT-2][m] = make_score(ce[12]-ce[13]*(1-log10(m+1)),
+                                            ce[14]-ce[15]*(1-log10(m+2)));
   }
 }
 
