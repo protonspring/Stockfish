@@ -316,7 +316,7 @@ namespace {
         {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
-            kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
+            kingAttacksCount[Us] += popcount(b & (attackedBy[Them][KING]));
         }
 
         int mob = popcount(b & mobilityArea[Us]);
@@ -325,13 +325,28 @@ namespace {
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
-            // Bonus if piece is on an outpost square or can reach one
+            // Bonus if piece is on an outpost square
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & s)] * 2;
 
-            else if (bb &= b & ~pos.pieces(Us))
-                score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
+            // bonus if a piece can reach an outpost square in one move
+            else if (bb & b & ~pos.pieces(Us))
+            {
+               //can reach in one move
+               score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb & b & ~pos.pieces(Us))];
+            }
+
+            //Bonus if piece could maybe reach an outpost square in two moves
+            else while(bb)
+            {
+               Square s2 = pop_lsb(&bb);
+               if (pos.attacks_from<Pt>(s2) & b & ~attackedBy[Them][ALL_PIECES])
+               {
+                  score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & s2)] / 2;
+                  break;
+               }
+            }
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
