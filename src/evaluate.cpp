@@ -881,7 +881,7 @@ void init() {
   for (int m = 0; m < 32; ++m)
   {
     //MobilityBonus[ QUEEN-2][m] = make_score(40+pow(m-17,3)/65+2*m,65+pow(m-16,3)/40+4*m);
-    MobilityBonus[  ROOK-2][m] = make_score(-182 -110*(1-log(m+10)),141-220*(1-log10(m+1)));
+    MobilityBonus[  ROOK-2][m] = make_score(-186 -110*(1-log(m+10)),137-220*(1-log10(m+1)));
     //MobilityBonus[BISHOP-2][m] = make_score(72-130*(1-log10(m+1)), 68-130*(1-log10(m+1)));
     //MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 35-160*(1-log10(m+2)));
   }
