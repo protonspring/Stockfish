@@ -885,6 +885,8 @@ void init() {
     //MobilityBonus[BISHOP-2][m] = make_score(72-130*(1-log10(m+1)), 68-130*(1-log10(m+1)));
     //MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 35-160*(1-log10(m+2)));
   }
+
+  MobilityBonus[ROOK-2][0] = make_score(-58,142-220*(1-log10(1)));
 }
 
 } // namespace
