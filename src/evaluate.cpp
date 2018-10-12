@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <cmath>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -71,7 +72,7 @@ namespace Trace {
 
 using namespace Trace;
 
-namespace {
+namespace Eval {
 
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
@@ -101,7 +102,7 @@ namespace {
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
-  constexpr Score MobilityBonus[][32] = {
+  Score MobilityBonus[][32] = {
     { S(-75,-76), S(-57,-54), S( -9,-28), S( -2,-10), S(  6,  5), S( 14, 12), // Knights
       S( 22, 26), S( 29, 29), S( 36, 29) },
     { S(-48,-59), S(-20,-23), S( 16, -3), S( 26, 13), S( 38, 24), S( 51, 42), // Bishops
@@ -870,6 +871,23 @@ namespace {
     return  (pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
            + Eval::Tempo;
   }
+
+/// Eval::init() initializes some tables needed by evaluation. Instead of using
+/// hard-coded tables, when makes sense, we prefer to calculate them with a formula
+/// to reduce independent parameters and to allow easier tuning and better insight.
+
+void init() {
+
+  for (int m = 0; m < 32; ++m)
+  {
+    //MobilityBonus[ QUEEN-2][m] = make_score(40+pow(m-17,3)/65+2*m,65+pow(m-16,3)/40+4*m);
+    //MobilityBonus[  ROOK-2][m] = make_score(6.5*m-31,142-220*(1-log10(m+1)));
+    MobilityBonus[BISHOP-2][m] = make_score(73-110*(1-log10(m+0.8)), 70-145*(1-log10(m+1.3)));
+    //MobilityBonus[KNIGHT-2][m] = make_score(41-120*(1-log10(m+1)), 35-160*(1-log10(m+2)));
+  }
+
+  //MobilityBonus[ROOK-2][0] = make_score(-58, 68-130*(1-log10(1)));
+}
 
 } // namespace
 
