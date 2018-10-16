@@ -352,6 +352,11 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                // Increase mobility bonus if opponent doesn't have a like bishop
+                Bitboard BishopSquares = (DarkSquares & s) ? DarkSquares : ~DarkSquares;
+                if (!(pos.pieces(Them,BISHOP) & BishopSquares))
+                   mobility[Us] += make_score(20,20);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
