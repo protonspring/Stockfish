@@ -139,7 +139,10 @@ namespace {
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
         else if (backward)
+        {
             score -= Backward, e->weakUnopposed[Us] += !opposed;
+            e->backwardPawns[Us] |= s;
+        }
 
         if (doubled && !supported)
             score -= Doubled;
