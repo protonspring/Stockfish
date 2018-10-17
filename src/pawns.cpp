@@ -35,7 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
-  constexpr Score Majority = S( 5,  5);
+  constexpr Score Majority = S( 4,  4);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -145,7 +145,7 @@ namespace {
         if (doubled && !supported)
             score -= Doubled;
 
-        if (popcount(ourPawns   & passed_pawn_mask(Them,s+Up)) >
+        if (popcount(ourPawns   & pawn_attack_span(Them,s+Up)) >
             popcount(theirPawns & passed_pawn_mask(Us, s-Up)))
             score += Majority;
     }
