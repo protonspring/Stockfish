@@ -111,7 +111,8 @@ namespace {
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
         backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
-                  && (stoppers & leverPush);
+                  && (stoppers & leverPush)
+                  && !opposed;
 
         // Passed pawns will be properly scored in evaluation because we need
         // full attack info to evaluate them. Include also not passed pawns
