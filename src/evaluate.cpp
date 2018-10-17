@@ -174,6 +174,7 @@ namespace {
   constexpr Score TrappedRook        = S( 92,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S(  5, 29);
+  constexpr Score WeakPawnAttack     = S( 10,  0);
 
 #undef S
 
@@ -322,6 +323,11 @@ namespace {
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
+
+        // Bonus for attacking weak unopposed pawns
+        if ((Pt == ROOK) || (Pt == KNIGHT) || (Pt == QUEEN))
+            if (b & pe->weak_unopposed(Them))
+               score += WeakPawnAttack;
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
@@ -566,7 +572,7 @@ namespace {
 
     // Bonus for enemy unopposed weak pawns
     if (pos.pieces(Us, ROOK, QUEEN))
-        score += WeakUnopposedPawn * pe->weak_unopposed(Them);
+        score += WeakUnopposedPawn * popcount(pe->weak_unopposed(Them));
 
     // Find squares where our pawns can push on the next move
     b  = shift<Up>(pos.pieces(Us, PAWN)) & ~pos.pieces();
