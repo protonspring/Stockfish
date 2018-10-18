@@ -117,7 +117,7 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (  !(stoppers ^ lever) ||
+        if (  (!(stoppers ^ lever) && phalanx ) ||
              (!(stoppers ^ leverPush) && (popcount(phalanx) >= popcount(leverPush))))
             e->passedPawns[Us] |= s;
         else if (   stoppers == SquareBB[s + Up]
