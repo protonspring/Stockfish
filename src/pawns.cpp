@@ -136,7 +136,7 @@ namespace {
         {
            passedPawns |= s;
 
-           if (neighbours & passedPawns)
+           if ((phalanx | supported) & passedPawns)
               score += ConnectedPassed;
         }
 
