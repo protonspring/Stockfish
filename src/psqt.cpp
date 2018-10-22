@@ -35,7 +35,7 @@ namespace PSQT {
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
 // is defined for files A..D and white side: it is symmetric for black side and
 // second half of the files.
-constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
+Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
   { // Pawn
    { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0) },
@@ -121,6 +121,13 @@ void init() {
           psq[~pc][~s] = -psq[pc][s];
       }
   }
+
+  for (int f = FILE_A; f < FILE_E; f++)
+     for (int r = RANK_1; r <= RANK_8; r++)
+     {
+        Bonus[PAWN][r][f] = make_score (24 - 2.4*pow(f-3.5,2) - 2 * pow(r-2.5,2),
+                                   eg_value(Bonus[PAWN][r][f]));
+     }
 }
 
 } // namespace PSQT
