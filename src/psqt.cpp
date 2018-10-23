@@ -111,7 +111,8 @@ void init() {
   for (int f = FILE_A; f < FILE_E; f++)
      for (int r = RANK_1; r <= RANK_8; r++)
      {
-        Bonus[PAWN][r][f] = make_score (-10 + 4*r + 3*f, -10 + 4*r + 3*f);
+        Bonus[PAWN][r][f] = make_score (24 - 2.4*pow(r-2.7,2) - 2.4*pow(f-3.5,2),
+                                        24 - 2.4*pow(r-5.0,2) - 2.4*pow(f-3.5,2));
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
