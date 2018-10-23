@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 #include "types.h"
 
@@ -40,12 +41,12 @@ Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
   { // Pawn
    { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0) },
-   { S(-11,-3), S(  7, -1), S(  7, 7), S(17, 2) },
-   { S(-16,-2), S( -3,  2), S( 23, 6), S(23,-1) },
-   { S(-14, 7), S( -7, -4), S( 20,-8), S(24, 2) },
-   { S( -5,13), S( -2, 10), S( -1,-1), S(12,-8) },
-   { S(-11,16), S(-12,  6), S( -2, 1), S( 4,16) },
-   { S( -2, 1), S( 20,-12), S(-10, 6), S(-2,25) }
+   { S(-10,-5), S(  7, -1), S(  7, 7), S(17, 2) },
+   { S(-12,-2), S( -3,  2), S( 23, 6), S(23,-1) },
+   { S(-10, 3), S( -7, -4), S( 20,-8), S(24, 2) },
+   { S(-10,18), S( -2, 10), S( -1,-1), S(12,-8) },
+   { S(-10,15), S( -8,  8), S( -2, 1), S( 4,16) },
+   { S(-10, 9), S( -2, 10), S(-10, 6), S(-2,25) }
   },
   { // Knight
    { S(-161,-105), S(-96,-82), S(-80,-46), S(-73,-14) },
@@ -108,12 +109,37 @@ Score psq[PIECE_NB][SQUARE_NB];
 // tables are initialized by flipping and changing the sign of the white scores.
 void init() {
 
-  for (int r = RANK_1; r <= RANK_8; r++)
+/*
+  for (int r = RANK_2; r <= RANK_7; r++)
+  {
+     std::cout << std::endl;
+     for (int f = FILE_A; f < FILE_E; f++)
+     {
+        std::cout << "<" << mg_value(Bonus[PAWN][r][f]) << ","
+                         << eg_value(Bonus[PAWN][r][f]) << ">";
+     }
+  }
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+
+  for (int r = RANK_2; r <= RANK_7; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
         Bonus[PAWN][r][f] = make_score (26 - 2.4*pow(r-2.7,2) - 2.4*pow(f-3.5,2),
                                         -10 + 4*r + 3*f);
      }
+
+  for (int r = RANK_2; r <= RANK_7; r++)
+  {
+     std::cout << std::endl;
+     for (int f = FILE_A; f < FILE_E; f++)
+     {
+        std::cout << "<" << mg_value(Bonus[PAWN][r][f]) << ","
+                         << eg_value(Bonus[PAWN][r][f]) << ">";
+     }
+  }
+*/
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
   {
