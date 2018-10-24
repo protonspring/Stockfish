@@ -108,12 +108,11 @@ Score psq[PIECE_NB][SQUARE_NB];
 // tables are initialized by flipping and changing the sign of the white scores.
 void init() {
 
-  for (int f = FILE_A; f < FILE_E; f++)
-     for (int r = RANK_1; r <= RANK_8; r++)
+  for (int r = RANK_1; r <= RANK_8; r++)
+     for (int f = FILE_A; f < FILE_E; f++)
      {
-        //Bonus[PAWN][r][f]   = make_score (-10 + 3*f + 4*r, -10 + 3*f + 4*r);
-        Bonus[KNIGHT][r][f] = make_score (62-6*pow(f-3.5,2)-9*pow(r-3.9, 2),
-                                          42-6*pow(f-3.5,2)-4*pow(r-3.5, 2));
+        Bonus[KNIGHT][r][f] = make_score (60-6*pow(f-3.5,2)-9*pow(r-3.9, 2),
+                                          eg_value(Bonus[KNIGHT][r][f]));
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
