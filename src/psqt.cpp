@@ -112,8 +112,8 @@ void init() {
      for (int r = RANK_1; r <= RANK_8; r++)
      {
         //Bonus[PAWN][r][f]   = make_score (-10 + 3*f + 4*r, -10 + 3*f + 4*r);
-        Bonus[KNIGHT][r][f] = make_score (60-6*pow(f-3.5,2)-9*pow(r-3.9, 2),
-                                          40-6*pow(f-3.5,2)-4*pow(r-3.5, 2));
+        Bonus[KNIGHT][r][f] = make_score (58-6*pow(f-3.5,2)-9*pow(r-3.9, 2),
+                                          38-6*pow(f-3.5,2)-4*pow(r-3.5, 2));
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
