@@ -111,7 +111,7 @@ void init() {
   for (int r = RANK_1; r <= RANK_8; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
-        Bonus[KNIGHT][r][f] = make_score (60-6*pow(f-3.5,2)-9*pow(r-3.9, 2),
+        Bonus[KNIGHT][r][f] = make_score (60-7*pow(f-3.5,2)-8*pow(r-3.5, 2),
                                           eg_value(Bonus[KNIGHT][r][f]));
      }
 
