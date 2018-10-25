@@ -126,8 +126,8 @@ void init() {
   for (int r = RANK_2; r <= RANK_7; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
-        Bonus[PAWN][r][f] = make_score (26 - 2.4*pow(r-2.7,2) - 2.4*pow(f-3.5,2),
-                                        -10 + 4*r + 3*f);
+        Bonus[PAWN][r][f] = make_score (-16+40*exp(-0.1*(pow(r-2.5,2)+pow(f-3.5))),
+                                        eg_value(Bonus[PAWN][r][f]);
      }
 
   for (int r = RANK_2; r <= RANK_7; r++)
