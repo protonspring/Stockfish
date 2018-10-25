@@ -112,7 +112,7 @@ void init() {
      for (int f = FILE_A; f < FILE_E; f++)
      {
         Bonus[KNIGHT][r][f] = make_score (60-6*pow(f-3.5,2)-8*pow(r-3.9, 2),
-                                          45-10*pow(f-3.5,2)-8*pow(r-3.5,2));
+                                          40- 7*pow(f-3.5,2)-8*pow(r-3.7,2));
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
