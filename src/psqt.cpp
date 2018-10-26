@@ -19,8 +19,6 @@
 */
 
 #include <algorithm>
-#include <cmath>
-#include <iostream>
 
 #include "types.h"
 
@@ -41,12 +39,12 @@ Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
   { // Pawn
    { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0) },
-   { S(-12,-5), S(  5, -1), S( 10, 7), S(15, 2) },
-   { S(-12,-2), S( -5,  2), S( 21, 6), S(21,-1) },
-   { S(-12, 3), S( -9, -4), S( 18,-8), S(22, 2) },
-   { S(-12,18), S( -8,  3), S(  0,-1), S(10,-8) },
-   { S(-12,15), S(-10, 10), S( -4, 1), S( 2,16) },
-   { S(-12, 9), S(-10,  8), S( -8, 6), S(-4,25) }
+   { S(-11,-3), S(  7, -1), S(  7, 7), S(17, 2) },
+   { S(-16,-2), S( -3,  2), S( 23, 6), S(23,-1) },
+   { S(-14, 7), S( -7, -4), S( 20,-8), S(24, 2) },
+   { S( -5,13), S( -2, 10), S( -1,-1), S(12,-8) },
+   { S(-11,16), S(-12,  6), S( -2, 1), S( 4,16) },
+   { S( -2, 1), S( 20,-12), S(-10, 6), S(-2,25) }
   },
   { // Knight
    { S(-161,-105), S(-96,-82), S(-80,-46), S(-73,-14) },
@@ -109,37 +107,12 @@ Score psq[PIECE_NB][SQUARE_NB];
 // tables are initialized by flipping and changing the sign of the white scores.
 void init() {
 
-/*
-  for (int r = RANK_2; r <= RANK_7; r++)
-  {
-     std::cout << std::endl;
-     for (int f = FILE_A; f < FILE_E; f++)
-     {
-        std::cout << "<" << mg_value(Bonus[PAWN][r][f]) << ","
-                         << eg_value(Bonus[PAWN][r][f]) << ">";
-     }
-  }
-
-  std::cout << std::endl;
-  std::cout << std::endl;
-
   for (int r = RANK_2; r <= RANK_7; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
-        Bonus[PAWN][r][f] = make_score (-16+40*exp(-0.1*(pow(r-2.5,2)+pow(f-3.5))),
-                                        eg_value(Bonus[PAWN][r][f]);
+        Bonus[PAWN][r][f] = make_score (-10+40*exp(-0.16*pow(r-2.7,2)-0.5*pow(f-2.5,2)),
+                                            26*exp(-0.3 *pow(r-6  ,2)-0.1*pow(f-2.5,2)));
      }
-
-  for (int r = RANK_2; r <= RANK_7; r++)
-  {
-     std::cout << std::endl;
-     for (int f = FILE_A; f < FILE_E; f++)
-     {
-        std::cout << "<" << mg_value(Bonus[PAWN][r][f]) << ","
-                         << eg_value(Bonus[PAWN][r][f]) << ">";
-     }
-  }
-*/
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
   {
@@ -155,7 +128,6 @@ void init() {
           psq[~pc][~s] = -psq[pc][s];
       }
   }
-
 }
 
 } // namespace PSQT
