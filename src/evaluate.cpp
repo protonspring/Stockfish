@@ -74,9 +74,9 @@ using namespace Trace;
 
 namespace Eval {
 
-  static int   ot[8] = {-68, -222, -31, -78, -37, -75, -76, -122 }; //eq offsets
-  static int   st[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
-  static int   ft[8] = {20,   50,   65,  10,   8,  13,  10,   20 }; //eq floats
+  int   ot[8] = {-68, -222, -31, -78, -37, -75, -76, -122 }; //eq offsets
+  int   st[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
+  int   ft[8] = {20,   50,   65,  10,   8,  13,  10,   20 }; //eq floats
 
   TUNE(ot[4], st[4], ft[4], ot[5], st[5], ft[5], Eval::init);
 
