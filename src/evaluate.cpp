@@ -74,6 +74,12 @@ using namespace Trace;
 
 namespace Eval {
 
+  static int   ot[8] = {-68, -222, -31, -78, -37, -75, -76, -122 }; //eq offsets
+  static int   st[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
+  static int   ft[8] = {20,   50,   65,  10,   8,  13,  10,   20 }; //eq floats
+
+  TUNE(ot[4], st[4], ft[4], ot[5], st[5], ft[5], Eval::init);
+
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
   constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
@@ -856,20 +862,18 @@ namespace Eval {
 /// independent parameters and allows easier tuning.
 void init() {
 
-  static int   o[8] = {-68, -222, -31, -78, -37, -75, -76, -122 }; //eq offsets
-  static int   s[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
-  static float f[8] = {2.0,  5.0, 6.5, 1.0, 0.8, 1.3, 1.0,  2.0 }; //eq floats
-
-  auto log_value  = [](int i, int m) {return o[i] + s[i] * log10(m + f[i]);};
+  auto log_value  = [](int i, int m) {return ot[i] + st[i] * log10(m + ft[i]/10.0);};
 
   for (int m = 0; m < 32; ++m)
   {
     MobilityBonus[ QUEEN-2][m] = make_score( log_value(0,m), log_value(1,m));
-    MobilityBonus[  ROOK-2][m] = make_score( m==0 ? s[2] : f[2]* m + o[2], log_value(3,m));
+    MobilityBonus[  ROOK-2][m] = make_score( m==0 ? st[2] : ft[2]/10.0*m + ot[2], log_value(3,m));
     MobilityBonus[BISHOP-2][m] = make_score( log_value(4,m), log_value(5,m));
     MobilityBonus[KNIGHT-2][m] = make_score( log_value(6,m), log_value(7,m));
   }
+
 }
+
 
 } // namespace
 
