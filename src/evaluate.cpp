@@ -78,7 +78,7 @@ namespace Eval {
   int   st[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
   int   ft[8] = {20,   50,   65,  10,   8,  13,  10,   20 }; //eq floats
 
-  TUNE(ot[4], st[4], ft[4], ot[5], st[5], ft[5], Eval::init);
+  TUNE(ot[6], st[6], ft[6], ot[7], st[7], ft[7], Eval::init);
 
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
