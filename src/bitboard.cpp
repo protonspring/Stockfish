@@ -39,6 +39,7 @@ Bitboard PassedPawnMask[COLOR_NB][SQUARE_NB];
 Bitboard PawnAttackSpan[COLOR_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+Bitboard KingRing[SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -136,6 +137,14 @@ void Bitboards::init() {
                           PseudoAttacks[pt][s] |= to;
                   }
               }
+
+  for (Square s = SQ_A1; s <= SQ_H8; ++s)
+  {
+      Square s2 = s;
+      s2 += FileABB & s2 ? EAST  : FileHBB & s2 ? WEST  : Direction(0);
+      s2 += Rank8BB & s2 ? SOUTH : Rank1BB & s2 ? NORTH : Direction(0);
+      KingRing[s] = PseudoAttacks[KING][s] | PseudoAttacks[KING][s2];
+  }
 
   Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
   Direction BishopDirections[] = { NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST };
