@@ -78,7 +78,7 @@ namespace Eval {
   int   st[8] = {120,  270, -58, 220, 110, 145, 120,  160 }; //eq slopes
   int   ft[8] = {20,   50,   65,  10,   8,  13,  10,   20 }; //eq floats
 
-  TUNE(ot[6], st[6], ft[6], ot[7], st[7], ft[7], Eval::init);
+  TUNE(ot[4], st[4], ft[4], ot[5], st[5], ft[5], Eval::init);
 
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
@@ -109,6 +109,7 @@ namespace Eval {
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
   Score MobilityBonus[PIECE_TYPE_NB - 2][32];
+>>>>>>> master
 
   // Outpost[knight/bishop][supported by pawn] contains bonuses for minor
   // pieces if they occupy or can reach an outpost square, bigger if that
@@ -120,7 +121,7 @@ namespace Eval {
 
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
   // no (friendly) pawn on the rook file.
-  constexpr Score RookOnFile[] = { S(20, 7), S(45, 20) };
+  constexpr Score RookOnFile[] = { S(18, 7), S(44, 20) };
 
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
   // which piece type attacks which one. Attacks on lesser pieces which are
@@ -158,15 +159,15 @@ namespace Eval {
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 13,  6);
   constexpr Score PawnlessFlank      = S( 19, 84);
-  constexpr Score RookOnPawn         = S( 10, 30);
+  constexpr Score RookOnPawn         = S( 10, 29);
   constexpr Score SliderOnQueen      = S( 42, 21);
-  constexpr Score ThreatByKing       = S( 23, 76);
+  constexpr Score ThreatByKing       = S( 22, 78);
   constexpr Score ThreatByPawnPush   = S( 45, 40);
   constexpr Score ThreatByRank       = S( 16,  3);
   constexpr Score ThreatBySafePawn   = S(173,102);
-  constexpr Score TrappedRook        = S( 92,  0);
+  constexpr Score TrappedRook        = S( 96,  5);
   constexpr Score WeakQueen          = S( 50, 10);
-  constexpr Score WeakUnopposedPawn  = S(  5, 29);
+  constexpr Score WeakUnopposedPawn  = S( 15, 19);
 
 #undef S
 
@@ -473,15 +474,12 @@ namespace Eval {
                      +   4 * tropism
                      - 873 * !pos.count<QUEEN>(Them)
                      -   6 * mg_value(score) / 8
+                     +       mg_value(mobility[Them] - mobility[Us])
                      -   30;
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
-        {
-            int mobilityDanger = mg_value(mobility[Them] - mobility[Us]);
-            kingDanger = std::max(0, kingDanger + mobilityDanger);
             score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
-        }
     }
 
     // Penalty when our king is on a pawnless flank
@@ -871,7 +869,6 @@ void init() {
     MobilityBonus[BISHOP-2][m] = make_score( log_value(4,m), log_value(5,m));
     MobilityBonus[KNIGHT-2][m] = make_score( log_value(6,m), log_value(7,m));
   }
-
 }
 
 
