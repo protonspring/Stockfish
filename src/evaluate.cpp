@@ -89,7 +89,9 @@ namespace {
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
-  constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
+  int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 82, 60, 49, 15 };
+
+  TUNE(KingAttackWeights);
 
   // Penalties for enemy's safe checks
   constexpr int QueenSafeCheck  = 780;
@@ -228,13 +230,6 @@ namespace {
     // The weights of the individual piece types are given by the elements in
     // the KingAttackWeights array.
     int kingAttackersWeight[COLOR_NB];
-
-    // kingAttacksCount[color] is the number of attacks by the given color to
-    // squares directly adjacent to the enemy king. Pieces which attack more
-    // than one square are counted multiple times. For instance, if there is
-    // a white knight on g5 and black's king is on g8, this white knight adds 2
-    // to kingAttacksCount[WHITE].
-    int kingAttacksCount[COLOR_NB];
   };
 
 
@@ -275,7 +270,7 @@ namespace {
             kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
-        kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
+        kingAttackersWeight[Them] = 0;
     }
     else
         kingRing[Us] = kingAttackersCount[Them] = 0;
@@ -316,7 +311,6 @@ namespace {
         {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
-            kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
         int mob = popcount(b & mobilityArea[Us]);
@@ -474,7 +468,6 @@ namespace {
         unsafeChecks &= mobilityArea[Them];
 
         kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
-                     +  69 * kingAttacksCount[Them]
                      + 185 * popcount(kingRing[Us] & weak)
                      + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
                      +   4 * tropism
