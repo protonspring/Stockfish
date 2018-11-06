@@ -266,15 +266,11 @@ namespace {
     if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
     {
         kingRing[Us] = attackedBy[Us][KING];
-        if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
-            kingRing[Us] |= shift<Up>(kingRing[Us]);
-        else if (relative_rank(Us, pos.square<KING>(Us)) == RANK_8)
-            kingRing[Us] |= shift<Down>(kingRing[Us]);
-       
-        if (FileHBB & pos.square<KING>(Us))
-            kingRing[Us] |= shift<WEST>(kingRing[Us]);
-        else if (FileABB & pos.square<KING>(Us))
-            kingRing[Us] |= shift<EAST>(kingRing[Us]);
+        kingRing[Us] |= shift<Up>(kingRing[Us]) * bool(relative_rank(Us, pos.square<KING>(Us)) == RANK_1);
+        kingRing[Us] |= shift<Down>(kingRing[Us]) * bool(relative_rank(Us, pos.square<KING>(Us)) == RANK_8);
+
+        kingRing[Us] |= shift<WEST>(kingRing[Us]) * bool(FileHBB & pos.square<KING>(Us));
+        kingRing[Us] |= shift<EAST>(kingRing[Us]) * bool(FileABB & pos.square<KING>(Us));
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
         kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
