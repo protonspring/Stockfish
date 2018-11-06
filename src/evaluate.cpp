@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -267,10 +268,11 @@ namespace {
         kingRing[Us] = attackedBy[Us][KING];
         if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
             kingRing[Us] |= shift<Up>(kingRing[Us]);
-
+        else if (relative_rank(Us, pos.square<KING>(Us)) == RANK_8)
+            kingRing[Us] |= shift<Down>(kingRing[Us]);
+       
         if (FileHBB & pos.square<KING>(Us))
             kingRing[Us] |= shift<WEST>(kingRing[Us]);
-
         else if (FileABB & pos.square<KING>(Us))
             kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
