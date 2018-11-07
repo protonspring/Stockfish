@@ -244,6 +244,7 @@ namespace {
   void Evaluation<T>::initialize() {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
+    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
     constexpr Bitboard LowRanks = (Us == WHITE ? Rank2BB | Rank3BB: Rank7BB | Rank6BB);
 
@@ -265,11 +266,9 @@ namespace {
     {
         Bitboard kr = attackedBy[Us][KING];
         Square ksq = pos.square<KING>(Us);
-        kingRing[Us] = kr
-             | shift<NORTH>(kr) * bool(rank_of(ksq) == RANK_1)
-             | shift<SOUTH>(kr) * bool(rank_of(ksq) == RANK_8)
-             | shift<WEST >(kr) * bool(file_of(ksq) == FILE_H)
-             | shift<EAST >(kr) * bool(file_of(ksq) == FILE_A);
+        kingRing[Us] = kr | shift<Up   >(kr) * bool(relative_rank(Us,ksq) == RANK_1)
+                          | shift<WEST >(kr) * bool(file_of(ksq) == FILE_H)
+                          | shift<EAST >(kr) * bool(file_of(ksq) == FILE_A);
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
         kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
