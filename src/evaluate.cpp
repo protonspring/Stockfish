@@ -265,12 +265,13 @@ namespace {
     // Init our king safety tables only if we are going to use them
     if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
     {
-        kingRing[Us] = attackedBy[Us][KING];
-        kingRing[Us] |= shift<Up>(kingRing[Us]) * bool(relative_rank(Us, pos.square<KING>(Us)) == RANK_1);
-        kingRing[Us] |= shift<Down>(kingRing[Us]) * bool(relative_rank(Us, pos.square<KING>(Us)) == RANK_8);
-
-        kingRing[Us] |= shift<WEST>(kingRing[Us]) * bool(FileHBB & pos.square<KING>(Us));
-        kingRing[Us] |= shift<EAST>(kingRing[Us]) * bool(FileABB & pos.square<KING>(Us));
+        Bitboard kr = attackedBy[Us][KING];
+        Square ksq = pos.square<KING>(Us);
+        kingRing[Us] = kr
+             | shift<Up>(  kr) * bool(relative_rank(Us, ksq) == RANK_1)
+           //| shift<Down>(kr) * bool(relative_rank(Us, ksq) == RANK_8)
+             | shift<WEST>(kr) * bool(FileHBB & ksq)
+             | shift<EAST>(kr) * bool(FileABB & ksq);
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
         kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
