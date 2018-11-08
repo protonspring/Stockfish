@@ -382,7 +382,7 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob < 4)
             {
-               if (distance(s,pos.square<KING>(Us)) < 4))
+               if (distance(s,pos.square<KING>(Us)) < 4)
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
         }
