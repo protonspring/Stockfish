@@ -31,6 +31,8 @@ namespace PSQT {
 
 #define S(mg, eg) make_score(mg, eg)
 
+int p[10] = {26, 30, 14, 5, 2, 26, 25, 10, 60, 2 };
+
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
 // is defined for files A..D and white side: it is symmetric for black side and
@@ -110,8 +112,8 @@ void init() {
   for (int r = RANK_2; r <= RANK_7; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
-        Bonus[PAWN][r][f] = make_score (-10+40*exp(-0.16*pow(r-2.7,2)-0.5*pow(f-2.5,2)),
-                                            26*exp(-0.3 *pow(r-6  ,2)-0.1*pow(f-2.5,2)));
+        Bonus[PAWN][r][f] = make_score (p[0]*exp(-pow(r-p[1]/10.0,2)/p[2]-pow(f-r-p[3]/10.0,2)/p[4]),
+                                        p[5]*exp(-pow(r-p[6]/10.0,2)/p[7]-pow(f-p[8]/10.0  ,2)/p[9]));
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
