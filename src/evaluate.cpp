@@ -85,7 +85,7 @@ namespace {
   };
 
   // Threshold for lazy and space evaluation
-  constexpr Value LazyThreshold  = Value(1500);
+  Value LazyThreshold  = Value(1500);
   constexpr Value SpaceThreshold = Value(12222);
 
 TUNE(LazyThreshold);
