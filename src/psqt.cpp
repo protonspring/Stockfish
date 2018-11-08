@@ -33,6 +33,8 @@ namespace PSQT {
 
 int p[12] = {40, 30, 20, 5, 8, -15, 26, 30, 3, 60, 3, -3 };
 
+TUNE(p,PSQT::init);
+
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
 // is defined for files A..D and white side: it is symmetric for black side and
