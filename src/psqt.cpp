@@ -19,6 +19,7 @@
 */
 
 #include <algorithm>
+#include <cmath>
 
 #include "types.h"
 
@@ -31,23 +32,13 @@ namespace PSQT {
 
 #define S(mg, eg) make_score(mg, eg)
 
-int p[10] = {26, 30, 14, 5, 2, 26, 25, 10, 60, 2 };
-
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
 // is defined for files A..D and white side: it is symmetric for black side and
 // second half of the files.
 Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
-  { // Pawn
-   { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0) },
-   { S(-11,-3), S(  7, -1), S(  7, 7), S(17, 2) },
-   { S(-16,-2), S( -3,  2), S( 23, 6), S(23,-1) },
-   { S(-14, 7), S( -7, -4), S( 20,-8), S(24, 2) },
-   { S( -5,13), S( -2, 10), S( -1,-1), S(12,-8) },
-   { S(-11,16), S(-12,  6), S( -2, 1), S( 4,16) },
-   { S( -2, 1), S( 20,-12), S(-10, 6), S(-2,25) }
-  },
+  { }, // Pawn
   { // Knight
    { S(-169,-105), S(-96,-74), S(-80,-46), S(-79,-18) },
    { S( -79, -70), S(-39,-56), S(-24,-15), S( -9,  6) },
@@ -109,11 +100,13 @@ Score psq[PIECE_NB][SQUARE_NB];
 // tables are initialized by flipping and changing the sign of the white scores.
 void init() {
 
+  int p[12] = {33, 36, 20, 5, 6, -14, 26, 29, 3, 61, 3, -3 };
+
   for (int r = RANK_2; r <= RANK_7; r++)
      for (int f = FILE_A; f < FILE_E; f++)
      {
-        Bonus[PAWN][r][f] = make_score (p[0]*exp(-pow(r-p[1]/10.0,2)/p[2]-pow(f-r-p[3]/10.0,2)/p[4]),
-                                        p[5]*exp(-pow(r-p[6]/10.0,2)/p[7]-pow(f-p[8]/10.0  ,2)/p[9]));
+        Bonus[PAWN][r][f] = make_score (p[0]*exp(-pow(r-p[1]/10.0,2)/p[2]-pow(f-r-p[3]/10.0,2)/p[4]) + p[5],
+                                        p[6]*exp(-pow(r-p[7]/10.0,2)/p[8]-pow(f-p[9]/10.0  ,2)/p[10]) + p[11]);
      }
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
