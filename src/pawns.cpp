@@ -48,19 +48,15 @@ namespace {
     { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
   };
 
-  // Danger of enemy pawns moving toward our king by [distance from edge][rank].
-  // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
-  // is behind our king.
+  // Danger of unblocked enemy pawns moving toward our king by
+  // [distance from edge][rank]. RANK_1 = 0 is used for files where the
+  // enemy has no pawn, or their pawn is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
     { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) },
     { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
     { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
     { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
   };
-
-  // Danger of blocked enemy pawns storming our king, by rank
-  constexpr Value BlockedStorm[RANK_NB] =
-    { V(0), V(0), V(66), V(6), V(5), V(1), V(15) };
 
   #undef S
   #undef V
@@ -218,15 +214,15 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
       b = ourPawns & file_bb(f);
-      int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : 0;
+      int ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
 
       b = theirPawns & file_bb(f);
-      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
+      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? BlockedStorm[theirRank]
-                                                        : UnblockedStorm[d][theirRank];
+      safety -= (!ourRank || (ourRank != theirRank - 1)) ? UnblockedStorm[d][theirRank]
+                : (theirRank == RANK_3) ? Value(60) : Value(0); //blocked
   }
 
   return safety;
