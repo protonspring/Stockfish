@@ -316,6 +316,9 @@ namespace {
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
+        if (b & DistanceRingBB[pos.square<KING>(Them)][3])
+            score += make_score(5,0);
+
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
