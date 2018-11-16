@@ -309,6 +309,10 @@ namespace {
         attackedBy[Us][Pt] |= b;
         attackedBy[Us][ALL_PIECES] |= b;
 
+        //bonus for attacking a square ahead of a passed pawn
+        if (shift<Down>(b) & pe->passed_pawns(Us))
+           score += make_score( 8,  0);
+
         if (b & kingRing[Them])
         {
             kingAttackersCount[Us]++;
