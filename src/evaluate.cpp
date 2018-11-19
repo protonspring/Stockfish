@@ -622,7 +622,7 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        Score bonus = make_score(r*r*r*r/4,r*r*r*r/4);
+        Score bonus = make_score(5+r*r*r*r/5,15+r*r*r*r/5);
 
         if (r > RANK_3)
         {
