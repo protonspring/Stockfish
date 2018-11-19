@@ -287,7 +287,8 @@ namespace {
         attackedBy[Us][Pt] |= b;
         attackedBy[Us][ALL_PIECES] |= b;
 
-        if (b & KingRing[pos.square<KING>(Them)])
+        if ((b & KingRing[pos.square<KING>(Them)]) &&
+            (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg))
         {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
