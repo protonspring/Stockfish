@@ -630,7 +630,8 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        Score bonus = make_score(5+r*r*r*r/5,15+r*r*r*r/5);
+        int v = r < RANK_4 ? 7 * r : 103 * r - 350; //passed pawn rank bonus
+        Score bonus = make_score(v,v);
 
         if (r > RANK_3)
         {
