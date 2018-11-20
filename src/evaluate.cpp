@@ -629,8 +629,7 @@ namespace {
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
         int r = relative_rank(Us, s);
-
-        int v = r < RANK_4 ? 7 * r : 103 * r - 350; //passed pawn rank bonus
+        int v = r < RANK_5 ? 7 * r : 103 * r - 350; //passed pawn rank bonus
         Score bonus = make_score(v,v);
 
         if (r > RANK_3)
