@@ -318,6 +318,10 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
+        //increase mobility if rook is teamed with another rook or queen
+        if ((Pt == ROOK) && (b & (pos.pieces(Us, ROOK) | pos.pieces(Us, QUEEN)))
+            mob = std::min(14, mob + 3);
+
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
