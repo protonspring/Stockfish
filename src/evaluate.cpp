@@ -334,8 +334,8 @@ namespace {
             if (shift<Down>(pos.pieces(PAWN)) & s)
                 score += MinorBehindPawn;
 
-            // Penalty if the piece is far from the king
-            score -= KingProtector * distance(s, pos.square<KING>(Us));
+            // Penalty if the piece doesn't attack our king ring.
+            score -= KingProtector * !bool(b & kingRing[Us]);
 
             if (Pt == BISHOP)
             {
