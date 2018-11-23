@@ -348,8 +348,15 @@ void Thread::search() {
   {
       // Distribute search depths across the helper threads
       if (idx > 0)
+      {
         if ((rootDepth + idx) % int(Options["Threads"]))
+        {
+	   std::cout << "<Thread: " << idx+1 << " skipping depth " << rootDepth << ">" << std::endl;
            continue;
+	}
+        else
+	   std::cout << "<Thread: " << idx+1 << " taking depth " << rootDepth << ">" << std::endl;
+      }
 
       // Age out PV variability metric
       if (mainThread)
