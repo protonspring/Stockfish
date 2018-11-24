@@ -44,7 +44,7 @@ class Thread {
 
   Mutex mutex;
   ConditionVariable cv;
-  size_t idx;
+  size_t threadNum;
   bool exit = false, searching = true; // Set before starting std::thread
   std::thread stdThread;
 

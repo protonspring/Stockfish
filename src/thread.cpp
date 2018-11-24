@@ -34,7 +34,7 @@ ThreadPool Threads; // Global object
 /// Thread constructor launches the thread and waits until it goes to sleep
 /// in idle_loop(). Note that 'searching' and 'exit' should be alredy set.
 
-Thread::Thread(size_t n) : idx(n), stdThread(&Thread::idle_loop, this) {
+Thread::Thread(size_t n) : threadNum(n), stdThread(&Thread::idle_loop, this) {
 
   wait_for_search_finished();
 }
@@ -99,7 +99,7 @@ void Thread::idle_loop() {
   // just check if running threads are below a threshold, in this case all this
   // NUMA machinery is not needed.
   if (Options["Threads"] > 8)
-      WinProcGroup::bindThisThread(idx);
+      WinProcGroup::bindThisThread(threadNum);
 
   while (true)
   {
