@@ -349,7 +349,7 @@ void Thread::search() {
       // Distribute search depths across the helper threads
       if (idx > 0)
       {
-        if ((rootDepth + idx) % (int(Options["Threads"]) - 1))
+        if ((rootDepth + idx) % ((int(Options["Threads"]) - 1)))
            continue;
       }
 
