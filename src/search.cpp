@@ -349,7 +349,7 @@ void Thread::search() {
       // Distribute search depths across the helper threads
       if (idx > 0)
       {
-        if ((rootDepth + idx) & 1) //all threads do 1/2 the depths.
+        if ((rootDepth + idx) % 3) //all threads do 1/2 the depths.
            continue;
       }
 
