@@ -348,7 +348,7 @@ void Thread::search() {
          && !(Limits.depth && mainThread && rootDepth / ONE_PLY > Limits.depth))
   {
       // Primary thread does all depths, helper threads randomize
-      if ((threadNum > 0) && (rand() % 2))
+      if ((threadNum > 0) && (rand()%100 < 38))  //helpers skip 40% of threads
               continue;
 
       // Age out PV variability metric
