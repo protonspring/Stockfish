@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>   // For std::memset
 #include <iostream>
 #include <sstream>
@@ -346,8 +347,8 @@ void Thread::search() {
          && !Threads.stop
          && !(Limits.depth && mainThread && rootDepth / ONE_PLY > Limits.depth))
   {
-      // Primary thread does all depths, helper threads alternate depths
-      if ((threadNum > 0) && ((rootDepth + threadNum) % 2))
+      // Primary thread does all depths, helper threads randomize
+      if ((threadNum > 0) && (rand() % 2))
               continue;
 
       // Age out PV variability metric
