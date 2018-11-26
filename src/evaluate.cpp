@@ -634,7 +634,7 @@ namespace {
 
         if (r > RANK_3)
         {
-            int rankBonus = 5 + 16 * (r - 2) * (r - 2); //rank bonus
+            int rankBonus = 5 + 16 * (r - 2) * (r - 2);
             bonus += make_score(rankBonus, rankBonus);
 
             int w = (r-2) * (r-2) + 2;
