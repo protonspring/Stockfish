@@ -635,7 +635,7 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        Score bonus = PassedRank[r];
+        Score bonus = PassedRank[r] + PassedFile[file_of(s)];
 
         if (r > RANK_3)
         {
@@ -688,7 +688,7 @@ namespace {
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
             bonus = bonus / 2;
 
-        score += bonus + PassedFile[file_of(s)];
+        score += bonus;
     }
 
     if (T)
