@@ -140,15 +140,10 @@ namespace {
     S(0, 0), S(0, 24), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
   };
 
-  // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
-  constexpr Score PassedRank[RANK_NB] = {
-    S(0, 0), S(5, 18), S(12, 23), S(10, 31), S(57, 62), S(163, 167), S(271, 250)
-  };
-
   // PassedFile[File] contains a bonus according to the file of a passed pawn
   constexpr Score PassedFile[FILE_NB] = {
-    S( -1,  7), S( 0,  9), S(-9, -8), S(-30,-14),
-    S(-30,-14), S(-9, -8), S( 0,  9), S( -1,  7)
+    S( -1, 17), S( 0, 19), S(-9,  2), S(-30, -4),
+    S(-30, -4), S(-9,  2), S( 0, 19), S( -1, 17)
   };
 
   // Assorted bonuses and penalties
@@ -635,10 +630,13 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        Score bonus = PassedRank[r];
+        Score bonus = PassedFile[file_of(s)];
 
         if (r > RANK_3)
         {
+            int rankFactor = 5 + 16 * (r - 2) * (r - 2);
+            bonus += make_score(rankFactor,rankFactor);
+
             int w = (r-2) * (r-2) + 2;
             Square blockSq = s + Up;
 
@@ -688,7 +686,7 @@ namespace {
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
             bonus = bonus / 2;
 
-        score += bonus + PassedFile[file_of(s)];
+        score += bonus;
     }
 
     if (T)
