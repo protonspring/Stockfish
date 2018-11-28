@@ -206,6 +206,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
+  Rank kingRank = relative_rank(Us, ksq);
 
   Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
                  Value(374) : Value(5);
@@ -223,6 +224,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
                                                         : UnblockedStorm[d][theirRank];
+
+      if (kingRank == ourRank - 1)
+	 safety += 10;
   }
 
   return safety;
