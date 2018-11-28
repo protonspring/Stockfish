@@ -223,6 +223,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
                                                         : UnblockedStorm[d][theirRank];
+
+      if (relative_rank(Us, ksq) == (ourRank - 1))
+         safety += 15;
   }
 
   return safety;
