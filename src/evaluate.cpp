@@ -386,9 +386,9 @@ namespace {
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
 
-            // Penalty if there is a discovered attack from a bishop
+            // Discovered attacks from a bishop or a queen pinned to rook by a bishop
             Bitboard rookPinners;
-            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners) & pos.pieces(Them))
+            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners) & (pos.pieces(Them) | pos.pieces(Us, QUEEN)))
                 score -= WeakRook;
         }
 
