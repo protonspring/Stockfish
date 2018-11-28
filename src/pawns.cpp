@@ -226,7 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                                         : UnblockedStorm[d][theirRank];
 
       if (kingRank == ourRank - 1)
-	 safety += 10;
+	 safety += 5;
   }
 
   return safety;
