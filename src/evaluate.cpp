@@ -388,7 +388,8 @@ namespace {
 
             // Penalty if there is a discovered attack from a bishop
             Bitboard rookPinners;
-            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners))
+            pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners);
+            if (!more_than_one(rookPinners) && (rookPinners & pos.pieces(Them)))
                 score -= WeakRook;
         }
 
