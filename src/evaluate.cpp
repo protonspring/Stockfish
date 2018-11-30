@@ -386,10 +386,12 @@ namespace {
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
 
-            // Look for two rooks lined up for an enemy bishop
-            Bitboard rookPinners;
-            if (pos.slider_blockers(pos.pieces(Them, BISHOP), s, rookPinners) & (pos.pieces(Us, ROOK)))
-                score -= WeakRook;
+            // Look for two rooks lined up and an enemy bishop on that color
+            if (pos.attacks_from<BISHOP>(s) & pos.pieces(Us, ROOK))
+            {
+               if ((DarkSquares & pos.pieces(Them,BISHOP)) == (DarkSquares & s))
+                  score -= WeakRook;
+            }
         }
 
         if (Pt == QUEEN)
