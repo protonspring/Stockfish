@@ -247,7 +247,7 @@ template<PieceType Pt> inline int Position::count() const {
 }
 
 template<PieceType Pt> inline Square Position::square(Color c, int idx) const {
-  assert(pieceCount[make_piece(c, Pt)] > 0);
+  assert(pieceCount[make_piece(c, Pt)] > idx);
   return pieceList[make_piece(c, Pt)][idx];
 }
 
