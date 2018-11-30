@@ -218,6 +218,12 @@ namespace {
     // which attack a square in the kingRing of the enemy king.
     int kingAttackersCount[COLOR_NB];
 
+    // kingAttackersWeight[color] is the sum of the "weights" of the pieces of
+    // the given color which attack a square in the kingRing of the enemy king.
+    // The weights of the individual piece types are given by the elements in
+    // the KingAttackWeights array.
+    int kingAttackersWeight[COLOR_NB];
+
     // kingAttacksCount[color] is the number of attacks by the given color to
     // squares directly adjacent to the enemy king. Pieces which attack more
     // than one square are counted multiple times. For instance, if there is
@@ -266,7 +272,7 @@ namespace {
             kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
-        kingAttacksCount[Them] = 0;
+        kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
     }
   }
 
@@ -304,6 +310,7 @@ namespace {
         if (b & kingRing[Them])
         {
             kingAttackersCount[Us]++;
+            kingAttackersWeight[Us] += 45;
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
@@ -461,7 +468,7 @@ namespace {
         // the square is in the attacker's mobility area.
         unsafeChecks &= mobilityArea[Them];
 
-        kingDanger +=   45 * kingAttackersCount[Them]
+        kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
                      +  69 * kingAttacksCount[Them]
                      + 185 * popcount(kingRing[Us] & weak)
                      + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
