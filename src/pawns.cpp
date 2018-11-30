@@ -85,9 +85,8 @@ namespace {
     // Loop through all pawns of the current color and score each pawn
     for (int i = 0; i < pos.count<PAWN>(Us); ++i)
     {
-        assert(pos.piece_on(s) == make_piece(Us, PAWN));
-
         Square s = pos.square<PAWN>(Us, i);
+        assert(pos.piece_on(s) == make_piece(Us, PAWN));
         File f = file_of(s);
 
         e->semiopenFiles[Us]   &= ~(1 << f);
