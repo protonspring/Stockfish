@@ -389,7 +389,11 @@ namespace {
             // Look for two rooks lined up and an enemy bishop on that color
             if (pos.attacks_from<BISHOP>(s) & pos.pieces(Us, ROOK))
             {
-               if ((DarkSquares & pos.pieces(Them,BISHOP)) == (DarkSquares & s))
+               if (
+                    (( DarkSquares & s) && (DarkSquares & pos.pieces(Them, BISHOP)))
+                    ||
+                    ((~DarkSquares & s) && (~DarkSquares & pos.pieces(Them, BISHOP)))
+                  )
                   score -= WeakRook;
             }
         }
