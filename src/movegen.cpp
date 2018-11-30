@@ -232,10 +232,9 @@ namespace {
 
     assert(Pt != KING && Pt != PAWN);
 
-    const Square* pl = pos.squares<Pt>(us);
-
-    for (Square from = *pl; from != SQ_NONE; from = *++pl)
+    for (int i = 0; i < pos.count<Pt>(us); ++i)
     {
+        Square from = pos.square<Pt>(us, i);
         if (Checks)
         {
             if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)

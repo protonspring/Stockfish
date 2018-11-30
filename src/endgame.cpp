@@ -539,8 +539,8 @@ ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, RookValueMg, 2));
   assert(verify_material(pos, weakSide,   RookValueMg, 1));
 
-  Square wpsq1 = pos.squares<PAWN>(strongSide)[0];
-  Square wpsq2 = pos.squares<PAWN>(strongSide)[1];
+  Square wpsq1 = pos.square<PAWN>(strongSide, 0);
+  Square wpsq2 = pos.square<PAWN>(strongSide, 1);
   Square bksq = pos.square<KING>(weakSide);
 
   // Does the stronger side have a passed pawn?
@@ -627,8 +627,8 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
       return SCALE_FACTOR_NONE;
 
   Square ksq = pos.square<KING>(weakSide);
-  Square psq1 = pos.squares<PAWN>(strongSide)[0];
-  Square psq2 = pos.squares<PAWN>(strongSide)[1];
+  Square psq1 = pos.square<PAWN>(strongSide,0);
+  Square psq2 = pos.square<PAWN>(strongSide,1);
   Rank r1 = rank_of(psq1);
   Rank r2 = rank_of(psq2);
   Square blockSq1, blockSq2;
