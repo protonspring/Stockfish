@@ -254,7 +254,7 @@ namespace {
     mobilityArea[Us] = ~(b | pos.pieces(Us, KING, QUEEN) | pe->pawn_attacks(Them));
 
     // Initialise attackedBy bitboards for kings and pawns
-    attackedBy[Us][KING] = pos.attacks_from<KING>(pos.square<KING>(Us));
+    attackedBy[Us][KING] = pos.attacks_from<KING>(pos.squares<KING>(Us)[0]);
     attackedBy[Us][PAWN] = pe->pawn_attacks(Us);
     attackedBy[Us][ALL_PIECES] = attackedBy[Us][KING] | attackedBy[Us][PAWN];
     attackedBy2[Us]            = attackedBy[Us][KING] & attackedBy[Us][PAWN];
@@ -265,13 +265,13 @@ namespace {
     if (pos.non_pawn_material(Them) >= RookValueMg + KnightValueMg)
     {
         kingRing[Us] = attackedBy[Us][KING];
-        if (relative_rank(Us, pos.square<KING>(Us)) == RANK_1)
+        if (relative_rank(Us, pos.squares<KING>(Us)[0]) == RANK_1)
             kingRing[Us] |= shift<Up>(kingRing[Us]);
 
-        if (file_of(pos.square<KING>(Us)) == FILE_H)
+        if (file_of(pos.squares<KING>(Us)[0]) == FILE_H)
             kingRing[Us] |= shift<WEST>(kingRing[Us]);
 
-        else if (file_of(pos.square<KING>(Us)) == FILE_A)
+        else if (file_of(pos.squares<KING>(Us)[0]) == FILE_A)
             kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
         kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
@@ -304,7 +304,7 @@ namespace {
                          : pos.attacks_from<Pt>(s);
 
         if (pos.blockers_for_king(Us) & s)
-            b &= LineBB[pos.square<KING>(Us)][s];
+            b &= LineBB[pos.squares<KING>(Us)[0]][s];
 
         attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
         attackedBy[Us][Pt] |= b;
@@ -336,7 +336,7 @@ namespace {
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
-            score -= KingProtector * distance(s, pos.square<KING>(Us));
+            score -= KingProtector * distance(s, pos.squares<KING>(Us)[0]);
 
             if (Pt == BISHOP)
             {
@@ -380,7 +380,7 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
-                File kf = file_of(pos.square<KING>(Us));
+                File kf = file_of(pos.squares<KING>(Us)[0]);
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
@@ -409,7 +409,7 @@ namespace {
     constexpr Bitboard Camp = (Us == WHITE ? AllSquares ^ Rank6BB ^ Rank7BB ^ Rank8BB
                                            : AllSquares ^ Rank1BB ^ Rank2BB ^ Rank3BB);
 
-    const Square ksq = pos.square<KING>(Us);
+    const Square ksq = pos.squares<KING>(Us)[0];
     Bitboard kingFlank, weak, b, b1, b2, safe, unsafeChecks;
 
     // King shelter and enemy pawns storm
@@ -590,7 +590,7 @@ namespace {
     // Bonus for threats on the next moves against enemy queen
     if (pos.count<QUEEN>(Them) == 1)
     {
-        Square s = pos.square<QUEEN>(Them);
+        Square s = pos.squares<QUEEN>(Them)[0];
         safe = mobilityArea[Us] & ~stronglyProtected;
 
         b = attackedBy[Us][KNIGHT] & pos.attacks_from<KNIGHT>(s);
@@ -619,7 +619,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     auto king_proximity = [&](Color c, Square s) {
-      return std::min(distance(pos.square<KING>(c), s), 5);
+      return std::min(distance(pos.squares<KING>(c)[0], s), 5);
     };
 
     Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
@@ -745,8 +745,8 @@ namespace {
   template<Tracing T>
   Score Evaluation<T>::initiative(Value eg) const {
 
-    int outflanking =  distance<File>(pos.square<KING>(WHITE), pos.square<KING>(BLACK))
-                     - distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
+    int outflanking =  distance<File>(pos.squares<KING>(WHITE)[0], pos.squares<KING>(BLACK)[0])
+                     - distance<Rank>(pos.squares<KING>(WHITE)[0], pos.squares<KING>(BLACK)[0]);
 
     bool pawnsOnBothFlanks =   (pos.pieces(PAWN) & QueenSide)
                             && (pos.pieces(PAWN) & KingSide);
