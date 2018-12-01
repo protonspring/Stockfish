@@ -35,7 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
-  constexpr Score KingFlankBonus = S( 1,  1);
+  constexpr Score KingFlankBonus = S( 2,  2);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -142,7 +142,8 @@ namespace {
             score -= Doubled;
 
 	//bonus for advancing in the enemy's king flank
-	if (KingFlank[file_of(pos.square<KING>(Them))] & s)
+	if ((KingFlank[file_of(pos.square<KING>(Them))] & s) &&
+           !(KingFlank[file_of(pos.square<KING>(Us))] & s))
             score += KingFlankBonus * relative_rank(Us, s);
     }
 
