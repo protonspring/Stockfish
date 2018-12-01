@@ -293,8 +293,7 @@ namespace {
 
     attackedBy[Us][Pt] = 0;
 
-    int max = pos.count<Pt>(Us);
-    for (int i = max - 1; i >= 0 ; --i)
+    for (int i = pos.count<Pt>(Us) - 1; i >= 0 ; --i)
     {
 	Square s = pos.square<Pt>(Us, i);
 

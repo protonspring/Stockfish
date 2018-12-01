@@ -82,8 +82,7 @@ namespace {
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
-    int max = pos.count<PAWN>(Us);
-    for(int i = max-1; i >= 0; --i)
+    for(int i = pos.count<PAWN>(Us) -1; i >= 0; --i)
     {
 	Square s = pos.square<PAWN>(Us, i);
         assert(pos.piece_on(s) == make_piece(Us, PAWN));

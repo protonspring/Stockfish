@@ -232,8 +232,7 @@ namespace {
 
     assert(Pt != KING && Pt != PAWN);
 
-    int max = pos.count<Pt>(us);
-    for (int i = max - 1; i >= 0; --i)
+    for (int i = pos.count<Pt>(us) - 1; i >= 0; --i)
     {
 	Square from = pos.square<Pt>(us, i);
         if (Checks)
