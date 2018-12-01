@@ -83,7 +83,7 @@ namespace {
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
-    e->majority[0] = e->majority[1] = false;
+    e->majority[Us][0] = e->majority[Us][1] = false;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -144,9 +144,9 @@ namespace {
 	if (popcount(neighbours) >= popcount(stoppers))
 	{
             if ((FileABB|FileBBB) & s)
-		e->majority[0] = true; //queenside
+		e->majority[Us][0] = true; //queenside
             if ((FileGBB|FileHBB) & s)
-		e->majority[1] = true; //kingside
+		e->majority[Us][1] = true; //kingside
 	}
     }
 

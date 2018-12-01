@@ -386,11 +386,11 @@ namespace {
 
     //score pawn majorities
     if ((QueenSide & pos.square<KING>(Us) & pos.square<KING>(Them))
-	    && (pe->majority[1])) //king side pawn majority
+	    && (pe->majority[Us][1])) //king side pawn majority
 	    score += EdgePawnMajority;
 
     if ((KingSide & pos.square<KING>(Us) & pos.square<KING>(Them))
-	    && (pe->majority[0])) //queen side pawn majority
+	    && (pe->majority[Us][0])) //queen side pawn majority
 	    score += EdgePawnMajority;
 
     if (T)
