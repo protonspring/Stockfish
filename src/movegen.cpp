@@ -232,7 +232,8 @@ namespace {
 
     assert(Pt != KING && Pt != PAWN);
 
-    for (int i = pos.count<Pt>(us) - 1; i >= 0; --i)
+    int n = pos.count<Pt>(us);
+    for (int i = 0; i < n; ++i)
     {
 	Square from = pos.square<Pt>(us, i);
         if (Checks)
