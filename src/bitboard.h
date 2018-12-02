@@ -107,27 +107,27 @@ extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard operator&(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b & (1ULL << s);
+  return b & square_bb(s);
 }
 
 inline Bitboard operator|(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b | (1ULL << s);
+  return b | square_bb(s);
 }
 
 inline Bitboard operator^(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^ (1ULL << s);
+  return b ^ square_bb(s);
 }
 
 inline Bitboard& operator|=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b |= (1ULL << s);
+  return b |= square_bb(s);
 }
 
 inline Bitboard& operator^=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^= (1ULL << s);
+  return b ^= square_bb(s);
 }
 
 constexpr bool more_than_one(Bitboard b) {

@@ -97,6 +97,8 @@ constexpr bool Is64Bit = true;
 constexpr bool Is64Bit = false;
 #endif
 
+#define square_bb(S) (1ULL << S)
+
 typedef uint64_t Key;
 typedef uint64_t Bitboard;
 
