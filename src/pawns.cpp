@@ -45,7 +45,7 @@ namespace {
     { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
     { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
     { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    { V(-35), V(-35), V(-35), V(-35), V(-35), V(-35), V( -35) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
