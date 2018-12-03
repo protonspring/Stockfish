@@ -138,7 +138,7 @@ namespace {
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
         if (doubled)
-            score -= Doubled / (1 + bool(supported));
+            score -= Doubled / (1 + popcount(supported));
     }
 
     return score;
