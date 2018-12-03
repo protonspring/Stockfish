@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -476,7 +477,7 @@ namespace {
                      + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
                      +       tropism * tropism / 4
                      - 873 * !pos.count<QUEEN>(Them)
-                     -   6 * mg_value(score) / 8
+                     -       mg_value(score) / 2
                      +       mg_value(mobility[Them] - mobility[Us])
                      -   30;
 
