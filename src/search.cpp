@@ -347,8 +347,12 @@ void Thread::search() {
          && !(Limits.depth && mainThread && rootDepth / ONE_PLY > Limits.depth))
   {
       // Distribute search depths across the helper threads
-      if ((idx > 0) && (idx == rootDepth))
-              continue;  // each thread skips one depth
+      if (idx > 0)
+      {
+         int numThreads = Options["Threads"] / 2;
+         if ((idx % numThreads) == (rootDepth % numThreads))
+            continue;
+      }
 
       // Age out PV variability metric
       if (mainThread)
