@@ -252,7 +252,7 @@ void MainThread::search() {
   if (    Options["MultiPV"] == 1
       && !Limits.depth
       && !Skill(Options["Skill Level"]).enabled()
-      &&  rootMoves[0].pv[0] != MOVE_NONE)
+      &&  rootMoves[0].pv[0])
   {
       std::map<Move, int> votes;
       Value minScore = this->rootMoves[0].score;
@@ -832,7 +832,7 @@ namespace {
         MovePicker mp(pos, ttMove, rbeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
-        while (  (move = mp.next_move()) != MOVE_NONE
+        while ((move = mp.next_move())
                && probCutCount < 3)
             if (move != excludedMove && pos.legal(move))
             {
@@ -888,7 +888,7 @@ moves_loop: // When in check, search starts from here
 
     // Step 12. Loop through all pseudo-legal moves until no moves remain
     // or a beta cutoff occurs.
-    while ((move = mp.next_move(skipQuiets)) != MOVE_NONE)
+    while ((move = mp.next_move(skipQuiets)))
     {
       assert(is_ok(move));
 
@@ -1112,7 +1112,7 @@ moves_loop: // When in check, search starts from here
 
               assert((ss+1)->pv);
 
-              for (Move* m = (ss+1)->pv; *m != MOVE_NONE; ++m)
+              for (Move* m = (ss+1)->pv; *m; ++m)
                   rm.pv.push_back(*m);
 
               // We record how often the best move has been changed in each
@@ -1332,7 +1332,7 @@ moves_loop: // When in check, search starts from here
                                       to_sq((ss-1)->currentMove));
 
     // Loop through the moves until no moves remain or a beta cutoff occurs
-    while ((move = mp.next_move()) != MOVE_NONE)
+    while ((move = mp.next_move()))
     {
       assert(is_ok(move));
 
@@ -1459,7 +1459,7 @@ moves_loop: // When in check, search starts from here
 
   void update_pv(Move* pv, Move move, Move* childPv) {
 
-    for (*pv++ = move; childPv && *childPv != MOVE_NONE; )
+    for (*pv++ = move; childPv && *childPv; )
         *pv++ = *childPv++;
     *pv = MOVE_NONE;
   }
