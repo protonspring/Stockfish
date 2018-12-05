@@ -349,7 +349,7 @@ void Thread::search() {
       // Distribute search depths across the helper threads
       if (idx > 0)
       {
-         int skipValue = std::max(2, int(Options["Threads"]) / 2);
+         int skipValue = std::max(3, int(Options["Threads"]) / 2);
          if ((idx % skipValue) == (unsigned(rootDepth) % skipValue))
             continue;
       }
