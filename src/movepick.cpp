@@ -193,7 +193,7 @@ top:
 
   case REFUTATION:
       if (select<Next>([&](){ return pos.pseudo_legal(move)
-			         && !pos.capture(move); }))
+                                 && !pos.capture(move); }))
           return move;
       ++stage;
       /* fallthrough */
