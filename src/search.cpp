@@ -347,7 +347,8 @@ void Thread::search() {
          && !(Limits.depth && mainThread && rootDepth / ONE_PLY > Limits.depth))
   {
       // Distribute search depths across the helper threads
-      if (idx > 0)
+      // Every 6th thread does all depths
+      if (idx % 6)
       {
          int skipValue = std::max(2, int(Options["Threads"]) / 2);
          if ((idx % skipValue) == (unsigned(rootDepth) % skipValue))
