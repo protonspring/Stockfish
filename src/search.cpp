@@ -740,7 +740,7 @@ namespace {
     }
     else
     {
-        if ((ss-1)->currentMove != MOVE_NULL)
+        if (is_ok((ss-1)->currentMove))
         {
             int p = (ss-1)->statScore;
             int bonus = p > 0 ? (-p - 2500) / 512 :
@@ -772,7 +772,7 @@ namespace {
 
     // Step 9. Null move search with verification search (~40 Elo)
     if (   !PvNode
-        && (ss-1)->currentMove != MOVE_NULL
+        && is_ok((ss-1)->currentMove)
         && (ss-1)->statScore < 23200
         &&  eval >= beta
         &&  pureStaticEval >= beta - 36 * depth / ONE_PLY + 225
@@ -1296,8 +1296,8 @@ moves_loop: // When in check, search starts from here
         }
         else
             ss->staticEval = bestValue =
-            (ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
-                                             : -(ss-1)->staticEval + 2 * Eval::Tempo;
+            is_ok((ss-1)->currentMove ? evaluate(pos)
+                                      : -(ss-1)->staticEval + 2 * Eval::Tempo;
 
         // Stand pat. Return immediately if static value is at least beta
         if (bestValue >= beta)
