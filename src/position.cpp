@@ -579,33 +579,27 @@ bool Position::legal(Move m) const {
 /// Position::pseudo_legal() takes a random move and tests whether the move is
 /// pseudo legal. It is used to validate moves from TT that can be corrupted
 /// due to SMP concurrent access or hash position key aliasing.
+/// MOVE_NONE is not pseudo_legal.
 
 bool Position::pseudo_legal(const Move m) const {
-
-  if (m == MOVE_NONE)
-      return false;
 
   Color us = sideToMove;
   Square from = from_sq(m);
   Square to = to_sq(m);
   Piece pc = moved_piece(m);
 
+  // If the 'from' square is not occupied by a piece belonging to the side to
+  // move, the move is obviously not legal.
+  // The destination square cannot be occupied by a friendly piece
+  // Is not a promotion, so promotion piece must be empty
+  if ((pc == NO_PIECE || color_of(pc) != us) ||
+      (pieces(us) & to) ||
+      (promotion_type(m) - KNIGHT != NO_PIECE_TYPE))
+      return false;
+
   // Use a slower but simpler function for uncommon cases
   if (type_of(m) != NORMAL)
       return MoveList<LEGAL>(*this).contains(m);
-
-  // Is not a promotion, so promotion piece must be empty
-  if (promotion_type(m) - KNIGHT != NO_PIECE_TYPE)
-      return false;
-
-  // If the 'from' square is not occupied by a piece belonging to the side to
-  // move, the move is obviously not legal.
-  if (pc == NO_PIECE || color_of(pc) != us)
-      return false;
-
-  // The destination square cannot be occupied by a friendly piece
-  if (pieces(us) & to)
-      return false;
 
   // Handle the special case of a pawn move
   if (type_of(pc) == PAWN)
