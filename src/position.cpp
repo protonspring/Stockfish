@@ -507,7 +507,7 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
     Square sniperSq = pop_lsb(&snipers);
     Bitboard b = between_bb(s, sniperSq) & pieces();
 
-    if (b && !more_than_one(b))
+    if (!more_than_one(b))
     {
         blockers |= b;
         if (b & pieces(color_of(piece_on(s))))
