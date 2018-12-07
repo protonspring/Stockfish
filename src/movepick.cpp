@@ -92,7 +92,8 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
   assert(!pos.checkers());
 
   stage = PROBCUT_TT;
-  ttMove =   pos.is_ok(ttm)
+
+  ttMove =   is_ok(ttm)
           && pos.capture(ttm)
           && pos.pseudo_legal(ttm)
           && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
@@ -193,7 +194,7 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    pos.is_ok(move)
+      if (select<Next>([&](){ return    is_ok(move)
                                     && !pos.capture(move)
                                     &&  pos.pseudo_legal(move); }))
           return move;
