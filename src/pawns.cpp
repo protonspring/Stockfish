@@ -80,7 +80,7 @@ namespace {
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->semiopenFiles[Us] = 0xFF;
     e->kingSquares[Us]   = SQ_NONE;
-    e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
+    e->pawnAttacks[Us]   = e->pawnAttacks2[Us]  = 0;
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
@@ -103,6 +103,10 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         supported  = neighbours & rank_bb(s - Up);
+
+        // Update pawn attack bitboards
+        e->pawnAttacks2[Us] |= (e->pawnAttacks[Us] & PawnAttacks[Us][s]);
+        e->pawnAttacks[Us]  |= PawnAttacks[Us][s];
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
