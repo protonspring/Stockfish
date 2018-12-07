@@ -171,6 +171,7 @@ namespace {
   constexpr Score TrappedRook        = S( 98,  5);
   constexpr Score WeakQueen          = S( 51, 10);
   constexpr Score WeakUnopposedPawn  = S( 14, 20);
+  constexpr Score ImminentKnightFork = S( 10,  0);
 
 #undef S
 
@@ -350,6 +351,18 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
+	    else  //KNIGHT
+	    {
+		 //look for knight forks a move ahead
+	         Bitboard moves = b & ~attackedBy[Them][ALL_PIECES];
+		 while(moves)
+		 {
+                      Square s1 = pop_lsb(&moves);
+		      if (more_than_one(
+			  (pos.pieces(Them) & ~pos.pieces(Them,PAWN) & pos.attacks_from<KNIGHT>(s1))))
+			 score += ImminentKnightFork;
+		 }
+	    }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially
