@@ -92,7 +92,6 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
   assert(!pos.checkers());
 
   stage = PROBCUT_TT;
-
   ttMove =   is_ok(ttm)
           && pos.capture(ttm)
           && pos.pseudo_legal(ttm)
