@@ -252,7 +252,7 @@ void MainThread::search() {
   if (    Options["MultiPV"] == 1
       && !Limits.depth
       && !Skill(Options["Skill Level"]).enabled()
-      &&  rootMoves[0].pv[0] != MOVE_NONE)
+      &&  is_ok(rootMoves[0].pv[0]))
   {
       std::map<Move, int> votes;
       Value minScore = this->rootMoves[0].score;
@@ -740,7 +740,7 @@ namespace {
     }
     else
     {
-        if ((ss-1)->currentMove != MOVE_NULL)
+        if (is_ok((ss-1)->currentMove))
         {
             int p = (ss-1)->statScore;
             int bonus = p > 0 ? (-p - 2500) / 512 :
@@ -772,7 +772,7 @@ namespace {
 
     // Step 9. Null move search with verification search (~40 Elo)
     if (   !PvNode
-        && (ss-1)->currentMove != MOVE_NULL
+        && is_ok((ss-1)->currentMove)
         && (ss-1)->statScore < 23200
         &&  eval >= beta
         &&  pureStaticEval >= beta - 36 * depth / ONE_PLY + 225
@@ -830,7 +830,7 @@ namespace {
         MovePicker mp(pos, ttMove, rbeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
-        while (  (move = mp.next_move()) != MOVE_NONE
+        while (  is_ok(move = mp.next_move())
                && probCutCount < 3)
             if (move != excludedMove && pos.legal(move))
             {
@@ -886,7 +886,7 @@ moves_loop: // When in check, search starts from here
 
     // Step 12. Loop through all pseudo-legal moves until no moves remain
     // or a beta cutoff occurs.
-    while ((move = mp.next_move(skipQuiets)) != MOVE_NONE)
+    while (is_ok(move = mp.next_move(skipQuiets)))
     {
       assert(is_ok(move));
 
@@ -1110,7 +1110,7 @@ moves_loop: // When in check, search starts from here
 
               assert((ss+1)->pv);
 
-              for (Move* m = (ss+1)->pv; *m != MOVE_NONE; ++m)
+              for (Move* m = (ss+1)->pv; is_ok(*m); ++m)
                   rm.pv.push_back(*m);
 
               // We record how often the best move has been changed in each
@@ -1296,8 +1296,8 @@ moves_loop: // When in check, search starts from here
         }
         else
             ss->staticEval = bestValue =
-            (ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
-                                             : -(ss-1)->staticEval + 2 * Eval::Tempo;
+            is_ok((ss-1)->currentMove) ? evaluate(pos)
+                                       : -(ss-1)->staticEval + 2 * Eval::Tempo;
 
         // Stand pat. Return immediately if static value is at least beta
         if (bestValue >= beta)
@@ -1327,7 +1327,7 @@ moves_loop: // When in check, search starts from here
                                       to_sq((ss-1)->currentMove));
 
     // Loop through the moves until no moves remain or a beta cutoff occurs
-    while ((move = mp.next_move()) != MOVE_NONE)
+    while (is_ok(move = mp.next_move()))
     {
       assert(is_ok(move));
 
@@ -1454,7 +1454,7 @@ moves_loop: // When in check, search starts from here
 
   void update_pv(Move* pv, Move move, Move* childPv) {
 
-    for (*pv++ = move; childPv && *childPv != MOVE_NONE; )
+    for (*pv++ = move; childPv && is_ok(*childPv); )
         *pv++ = *childPv++;
     *pv = MOVE_NONE;
   }
