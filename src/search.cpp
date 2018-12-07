@@ -1296,8 +1296,8 @@ moves_loop: // When in check, search starts from here
         }
         else
             ss->staticEval = bestValue =
-            is_ok((ss-1)->currentMove ? evaluate(pos)
-                                      : -(ss-1)->staticEval + 2 * Eval::Tempo;
+            is_ok((ss-1)->currentMove) ? evaluate(pos)
+                                       : -(ss-1)->staticEval + 2 * Eval::Tempo;
 
         // Stand pat. Return immediately if static value is at least beta
         if (bestValue >= beta)
