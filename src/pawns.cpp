@@ -81,6 +81,10 @@ namespace {
     e->semiopenFiles[Us] = 0xFF;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
+    e->pawnAttacks2[Us]  = Us == WHITE
+             ? shift<NORTH_WEST>(ourPawns) & shift<NORTH_EAST>(ourPawns)
+             : shift<SOUTH_WEST>(ourPawns) & shift<SOUTH_EAST>(ourPawns);
+
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
 
