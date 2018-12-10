@@ -500,10 +500,11 @@ Bitboard Position::slider_blockers(Square s, Bitboard& pinners) const {
   Color us = color_of(piece_on(s));
   Color them = ~us;
 
-  // Snipers are enemy sliders that attack 's' when a piece is removed
+  // Snipers are enemy pieces that attack 's' when a piece is removed
+  // We don't consider pieces of the same values as the piece on s.
   Bitboard snipers = ((PseudoAttacks[  ROOK][s] & pieces(them, QUEEN, ROOK))
-                    | (PseudoAttacks[BISHOP][s] & pieces(them, QUEEN, BISHOP)));
-
+                    | (PseudoAttacks[BISHOP][s] & pieces(them, QUEEN, BISHOP)))
+                    ^ type_of(piece_on(s));
   while (snipers)
   {
     Square sniperSq = pop_lsb(&snipers);
