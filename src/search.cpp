@@ -63,7 +63,6 @@ namespace {
 
   // Sizes and phases of the skip-blocks, used for distributing search depths across the threads
   constexpr int SkipSize[]  = { 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4 };
-  constexpr int SkipPhase[] = { 0, 1, 0, 1, 2, 3, 0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6, 7 };
 
   // Razor and futility margins
   constexpr int RazorMargin = 600;
@@ -354,7 +353,7 @@ void Thread::search() {
       if (idx > 0)
       {
           int i = (idx - 1) % 20;
-          if (((rootDepth / ONE_PLY + SkipPhase[i]) / SkipSize[i]) % 2)
+          if (((rootDepth / ONE_PLY + idx + 1) / SkipSize[i]) % 2)
               continue;  // Retry with an incremented rootDepth
       }
 
