@@ -64,7 +64,7 @@ namespace {
 
   // Helper used to detect a given material distribution
   bool is_KXK(const Position& pos, Color us) {
-    return  !more_than_one(pos.pieces(~us))
+    return  !more_than_one(pos.pieces(!us))
           && pos.non_pawn_material(us) >= RookValueMg;
   }
 
@@ -78,8 +78,8 @@ namespace {
     return  !pos.count<PAWN>(us)
           && pos.non_pawn_material(us) == QueenValueMg
           && pos.count<QUEEN>(us) == 1
-          && pos.count<ROOK>(~us) == 1
-          && pos.count<PAWN>(~us) >= 1;
+          && pos.count<ROOK>(!us) == 1
+          && pos.count<PAWN>(!us) >= 1;
   }
 
   /// imbalance() calculates the imbalance by comparing the piece count of each
@@ -143,7 +143,7 @@ Entry* probe(const Position& pos) {
   if ((e->evaluationFunction = pos.this_thread()->endgames.probe<Value>(key)) != nullptr)
       return e;
 
-  for (Color c = WHITE; c <= BLACK; ++c)
+  for (Color c : {WHITE, BLACK })
       if (is_KXK(pos, c))
       {
           e->evaluationFunction = &EvaluateKXK[c];
@@ -163,7 +163,7 @@ Entry* probe(const Position& pos) {
   // We didn't find any specialized scaling function, so fall back on generic
   // ones that refer to more than one material distribution. Note that in this
   // case we don't return after setting the function.
-  for (Color c = WHITE; c <= BLACK; ++c)
+  for (Color c : {WHITE, BLACK })
   {
     if (is_KBPsK(pos, c))
         e->scalingFunction[c] = &ScaleKBPsK[c];

@@ -118,7 +118,7 @@ namespace {
 
   inline bool gives_check(const Position& pos, Move move) {
     Color us = pos.side_to_move();
-    return  type_of(move) == NORMAL && !(pos.blockers_for_king(~us) & pos.pieces(us))
+    return  type_of(move) == NORMAL && !(pos.blockers_for_king(!us) & pos.pieces(us))
           ? pos.check_squares(type_of(pos.moved_piece(move))) & to_sq(move)
           : pos.gives_check(move);
   }

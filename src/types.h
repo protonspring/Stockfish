@@ -127,9 +127,10 @@ enum MoveType {
   CASTLING  = 3 << 14
 };
 
-enum Color {
-  WHITE, BLACK, COLOR_NB = 2
-};
+typedef bool Color;
+constexpr bool WHITE = false;
+constexpr bool BLACK = true;
+constexpr int COLOR_NB = 2;
 
 enum CastlingSide {
   KING_SIDE, QUEEN_SIDE, CASTLING_SIDE_NB = 2
@@ -300,7 +301,6 @@ ENABLE_FULL_OPERATORS_ON(Direction)
 
 ENABLE_INCR_OPERATORS_ON(PieceType)
 ENABLE_INCR_OPERATORS_ON(Piece)
-ENABLE_INCR_OPERATORS_ON(Color)
 ENABLE_INCR_OPERATORS_ON(Square)
 ENABLE_INCR_OPERATORS_ON(File)
 ENABLE_INCR_OPERATORS_ON(Rank)
@@ -342,10 +342,6 @@ inline Score operator*(Score s, int i) {
   assert((i == 0) || (result / i) == s);
 
   return result;
-}
-
-constexpr Color operator~(Color c) {
-  return Color(c ^ BLACK); // Toggle color
 }
 
 constexpr Square operator~(Square s) {
