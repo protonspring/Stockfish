@@ -462,7 +462,7 @@ const string Position::fen() const {
           ss << '/';
   }
 
-  ss << (sideToMove == WHITE ? " w " : " b ");
+  ss << (sideToMove ? " b " : " w ");
 
   if (can_castle(WHITE_OO))
       ss << (chess960 ? char('A' + file_of(castling_rook_square(WHITE |  KING_SIDE))) : 'K');

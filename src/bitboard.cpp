@@ -126,7 +126,7 @@ void Bitboards::init() {
           for (Square s = SQ_A1; s <= SQ_H8; ++s)
               for (int i = 0; steps[pt][i]; ++i)
               {
-                  Square to = s + Direction(c == WHITE ? steps[pt][i] : -steps[pt][i]);
+                  Square to = s + Direction(!c ? steps[pt][i] : -steps[pt][i]);
 
                   if (is_ok(to) && distance(s, to) < 3)
                   {

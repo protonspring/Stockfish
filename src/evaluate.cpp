@@ -240,10 +240,10 @@ namespace {
   template<Tracing T> template<Color Us>
   void Evaluation<T>::initialize() {
 
-    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
-    constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-    constexpr Bitboard LowRanks = (Us == WHITE ? Rank2BB | Rank3BB: Rank7BB | Rank6BB);
+    constexpr Color     Them =   !Us;
+    constexpr Direction Up   =    Us ? SOUTH : NORTH;
+    constexpr Direction Down =    Us ? NORTH : SOUTH;
+    constexpr Bitboard LowRanks = Us ? Rank6BB | Rank7BB: Rank2BB | Rank3BB;
 
     // Find our pawns that are blocked or on the first two ranks
     Bitboard b = pos.pieces(Us, PAWN) & (shift<Down>(pos.pieces()) | LowRanks);
@@ -283,10 +283,10 @@ namespace {
   template<Tracing T> template<Color Us, PieceType Pt>
   Score Evaluation<T>::pieces() {
 
-    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-    constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
-                                                   : Rank5BB | Rank4BB | Rank3BB);
+    constexpr Color     Them =        !Us;
+    constexpr Direction Down =         Us ? NORTH : SOUTH;
+    constexpr Bitboard OutpostRanks = (Us ? Rank3BB | Rank4BB | Rank5BB
+                                          : Rank4BB | Rank5BB | Rank6BB);
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -404,9 +404,9 @@ namespace {
   template<Tracing T> template<Color Us>
   Score Evaluation<T>::king() const {
 
-    constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Bitboard Camp = (Us == WHITE ? AllSquares ^ Rank6BB ^ Rank7BB ^ Rank8BB
-                                           : AllSquares ^ Rank1BB ^ Rank2BB ^ Rank3BB);
+    constexpr Color    Them = !Us;
+    constexpr Bitboard Camp =  Us ? AllSquares ^ Rank1BB ^ Rank2BB ^ Rank3BB
+                                  : AllSquares ^ Rank6BB ^ Rank7BB ^ Rank8BB;
 
     const Square ksq = pos.square<KING>(Us);
     Bitboard kingFlank, weak, b, b1, b2, safe, unsafeChecks;
@@ -504,9 +504,9 @@ namespace {
   template<Tracing T> template<Color Us>
   Score Evaluation<T>::threats() const {
 
-    constexpr Color     Them     = (Us == WHITE ? BLACK   : WHITE);
-    constexpr Direction Up       = (Us == WHITE ? NORTH   : SOUTH);
-    constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
+    constexpr Color     Them     = Us ? WHITE   : BLACK;
+    constexpr Direction Up       = Us ? SOUTH   : NORTH;
+    constexpr Bitboard  TRank3BB = Us ? Rank6BB : Rank3BB;
 
     Bitboard b, weak, defended, nonPawnEnemies, stronglyProtected, safe, restricted;
     Score score = SCORE_ZERO;
@@ -613,8 +613,8 @@ namespace {
   template<Tracing T> template<Color Us>
   Score Evaluation<T>::passed() const {
 
-    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
+    constexpr Color     Them = !Us;
+    constexpr Direction Up   =  Us ? SOUTH : NORTH;
 
     auto king_proximity = [&](Color c, Square s) {
       return std::min(distance(pos.square<KING>(c), s), 5);
@@ -709,10 +709,10 @@ namespace {
     if (pos.non_pawn_material() < SpaceThreshold)
         return SCORE_ZERO;
 
-    constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
+    constexpr Color Them = !Us;
     constexpr Bitboard SpaceMask =
-      Us == WHITE ? CenterFiles & (Rank2BB | Rank3BB | Rank4BB)
-                  : CenterFiles & (Rank7BB | Rank6BB | Rank5BB);
+      Us ? CenterFiles & (Rank5BB | Rank6BB | Rank7BB)
+         : CenterFiles & (Rank2BB | Rank3BB | Rank4BB);
 
     // Find the available squares for our pieces inside the area defined by SpaceMask
     Bitboard safe =   SpaceMask
@@ -721,8 +721,8 @@ namespace {
 
     // Find all squares which are at most three squares behind some friendly pawn
     Bitboard behind = pos.pieces(Us, PAWN);
-    behind |= (Us == WHITE ? behind >>  8 : behind <<  8);
-    behind |= (Us == WHITE ? behind >> 16 : behind << 16);
+    behind |= Us ? behind <<  8 : behind >>  8;
+    behind |= Us ? behind << 16 : behind >> 16;
 
     int bonus = popcount(safe) + popcount(behind & safe);
     int weight = pos.count<ALL_PIECES>(Us) - 2 * pe->open_files();
@@ -822,7 +822,7 @@ namespace {
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
     if (abs(v) > LazyThreshold)
-       return pos.side_to_move() == WHITE ? v : -v;
+       return pos.side_to_move() ? -v : v;
 
     // Main evaluation begins here
 
@@ -861,7 +861,7 @@ namespace {
         Trace::add(TOTAL, score);
     }
 
-    return  (pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
+    return  (pos.side_to_move() ? -v : v) // Side to move point of view
            + Eval::Tempo;
   }
 

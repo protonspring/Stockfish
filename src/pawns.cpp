@@ -64,8 +64,8 @@ namespace {
   template<Color Us>
   Score evaluate(const Position& pos, Pawns::Entry* e) {
 
-    constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
+    constexpr Color     Them = !Us;
+    constexpr Direction Up   =  Us ? SOUTH : NORTH;
 
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
     Bitboard lever, leverPush;
@@ -199,9 +199,9 @@ Entry* probe(const Position& pos) {
 template<Color Us>
 Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
-  constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
-  constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-  constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
+  constexpr Color     Them = !Us;
+  constexpr Direction Down =  Us ? NORTH : SOUTH;
+  constexpr Bitboard  BlockRanks = Us ? Rank7BB | Rank8BB : Rank1BB | Rank2BB;
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);

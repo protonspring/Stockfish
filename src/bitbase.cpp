@@ -61,7 +61,7 @@ namespace {
     explicit KPKPosition(unsigned idx);
     operator Result() const { return result; }
     Result classify(const std::vector<KPKPosition>& db)
-    { return us == WHITE ? classify<WHITE>(db) : classify<BLACK>(db); }
+    { return us ? classify<BLACK>(db) : classify<WHITE>(db); }
 
     template<Color Us> Result classify(const std::vector<KPKPosition>& db);
 
@@ -117,11 +117,11 @@ namespace {
     if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
         || ksq[WHITE] == psq
         || ksq[BLACK] == psq
-        || (us == WHITE && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
+        || (!us && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
         result = INVALID;
 
     // Immediate win if a pawn can be promoted without getting captured
-    else if (   us == WHITE
+    else if (   !us
              && rank_of(psq) == RANK_7
              && ksq[us] != psq + NORTH
              && (    distance(ksq[!us], psq + NORTH) > 1
@@ -152,18 +152,18 @@ namespace {
     // as WIN, the position is classified as WIN, otherwise the current position is
     // classified as UNKNOWN.
 
-    constexpr Color  Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Result Good = (Us == WHITE ? WIN   : DRAW);
-    constexpr Result Bad  = (Us == WHITE ? DRAW  : WIN);
+    constexpr Color  Them = (Us ? WHITE : BLACK);
+    constexpr Result Good = (Us ? DRAW  : WIN );
+    constexpr Result Bad  = (Us ? WIN   : DRAW);
 
     Result r = INVALID;
     Bitboard b = PseudoAttacks[KING][ksq[Us]];
 
     while (b)
-        r |= Us == WHITE ? db[index(Them, ksq[Them]  , pop_lsb(&b), psq)]
-                         : db[index(Them, pop_lsb(&b), ksq[Them]  , psq)];
+        r |= Us ? db[index(Them, pop_lsb(&b), ksq[Them]  , psq)]
+                : db[index(Them, ksq[Them]  , pop_lsb(&b), psq)];
 
-    if (Us == WHITE)
+    if (!Us)
     {
         if (rank_of(psq) < RANK_7)      // Single push
             r |= db[index(Them, ksq[Them], ksq[Us], psq + NORTH)];
