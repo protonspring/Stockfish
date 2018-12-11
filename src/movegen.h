@@ -49,7 +49,7 @@ struct ExtMove {
 };
 
 inline bool operator<(const ExtMove& f, const ExtMove& s) {
-  return f.value < s.value;
+  return f.value > s.value;
 }
 
 template<GenType>
