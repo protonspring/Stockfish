@@ -22,6 +22,7 @@
 #define BITBOARD_H_INCLUDED
 
 #include <string>
+#include <bitset>
 
 #include "types.h"
 
@@ -62,7 +63,7 @@ constexpr Bitboard Rank8BB = Rank1BB << (8 * 7);
 
 extern int SquareDistance[SQUARE_NB][SQUARE_NB];
 
-extern Bitboard SquareBB[SQUARE_NB];
+//extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard FileBB[FILE_NB];
 extern Bitboard RankBB[RANK_NB];
 extern Bitboard AdjacentFilesBB[FILE_NB];
@@ -108,27 +109,35 @@ extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard operator&(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b & SquareBB[s];
+  //return b & SquareBB[s];
+  //std::bitset<64> rb;
+  //rb.set(s);
+  //return b & rb.to_ulong();
+  return b & std::bitset<64>().set(s).to_ulong();
 }
 
 inline Bitboard operator|(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b | SquareBB[s];
+  //return b | SquareBB[s];
+  return b | std::bitset<64>().set(s).to_ulong();
 }
 
 inline Bitboard operator^(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^ SquareBB[s];
+  //return b ^ SquareBB[s];
+  return b ^ std::bitset<64>().set(s).to_ulong();
 }
 
 inline Bitboard& operator|=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b |= SquareBB[s];
+  //return b |= SquareBB[s];
+  return b |= std::bitset<64>().set(s).to_ulong();
 }
 
 inline Bitboard& operator^=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^= SquareBB[s];
+  //return b ^= SquareBB[s];
+  return b ^= std::bitset<64>().set(s).to_ulong();
 }
 
 constexpr bool more_than_one(Bitboard b) {
