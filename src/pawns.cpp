@@ -118,7 +118,6 @@ namespace {
             && popcount(phalanx)   >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        //else if (   stoppers == SquareBB[s + Up]
         else if (   stoppers == std::bitset<64>().set(s + Up).to_ulong()
                  && relative_rank(Us, s) >= RANK_5)
         {

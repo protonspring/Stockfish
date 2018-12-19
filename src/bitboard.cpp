@@ -26,7 +26,6 @@
 uint8_t PopCnt16[1 << 16];
 int SquareDistance[SQUARE_NB][SQUARE_NB];
 
-//Bitboard SquareBB[SQUARE_NB];
 Bitboard FileBB[FILE_NB];
 Bitboard RankBB[RANK_NB];
 Bitboard AdjacentFilesBB[FILE_NB];
@@ -87,9 +86,6 @@ void Bitboards::init() {
 
   for (unsigned i = 0; i < (1 << 16); ++i)
       PopCnt16[i] = (uint8_t) popcount16(i);
-
-  //for (Square s = SQ_A1; s <= SQ_H8; ++s)
-      //SquareBB[s] = (1ULL << s);
 
   for (File f = FILE_A; f <= FILE_H; ++f)
       FileBB[f] = f > FILE_A ? FileBB[f - 1] << 1 : FileABB;
