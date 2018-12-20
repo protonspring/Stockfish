@@ -112,7 +112,7 @@ typedef Stats<PieceToHistory, NOT_USED, PIECE_NB, SQUARE_NB> ContinuationHistory
 /// to get a cut-off first.
 class MovePicker {
 
-  enum PickType { Next, Best };
+  enum PickType { Next, Best, BestSEE, NextRefutation, NextQuiet, BestProbCut, BestQCapture };
 
 public:
   MovePicker(const MovePicker&) = delete;
@@ -130,7 +130,7 @@ public:
   Move next_move(bool skipQuiets = false);
 
 private:
-  template<PickType T, typename Pred> Move select(Pred);
+  template<PickType T> Move select();
   template<GenType> void score();
   ExtMove* begin() { return cur; }
   ExtMove* end() { return endMoves; }

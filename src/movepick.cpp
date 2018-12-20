@@ -31,9 +31,6 @@ namespace {
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
-  // Helper filter used with select()
-  const auto Any = [](){ return true; };
-
   // partial_insertion_sort() sorts moves in descending order up to and including
   // a given limit. The order of moves smaller than the limit is left unspecified.
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
@@ -133,17 +130,39 @@ void MovePicker::score() {
 
 /// MovePicker::select() returns the next move satisfying a predicate function.
 /// It never returns the TT move.
-template<MovePicker::PickType T, typename Pred>
-Move MovePicker::select(Pred filter) {
+template<MovePicker::PickType T>
+Move MovePicker::select() {
 
   while (cur < endMoves)
   {
-      if (T == Best)
+      if ((T == Best) || (T == BestSEE) || (T == BestProbCut) || (T == BestQCapture))
           std::swap(*cur, *std::max_element(cur, endMoves));
 
       move = *cur++;
 
-      if (move != ttMove && filter())
+      if (T == BestSEE)
+         if (!(pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))) {
+             *endBadCaptures++ = move;
+             continue;
+         }
+
+      if (T == NextRefutation)
+         if (!(move != MOVE_NONE && !pos.capture(move) &&  pos.pseudo_legal(move)))
+            continue;
+
+      if (T == NextQuiet)
+         if (!(move != refutations[0] && move != refutations[1] && move != refutations[2]))
+            continue;
+
+      if (T == BestProbCut)
+         if (!(pos.see_ge(move, threshold)))
+            continue;
+
+      if (T == BestQCapture)
+         if (!(depth > DEPTH_QS_RECAPTURES || to_sq(move) == recaptureSquare))
+         continue;
+
+      if (move != ttMove) // && filter())
           return move;
   }
   return move = MOVE_NONE;
@@ -175,10 +194,7 @@ top:
       goto top;
 
   case GOOD_CAPTURE:
-      if (select<Best>([&](){
-                       return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)) ?
-                              // Move losing capture to endBadCaptures to be tried later
-                              true : (*endBadCaptures++ = move, false); }))
+      if (select<BestSEE>())
           return move;
 
       // Prepare the pointers to loop over the refutations array
@@ -194,9 +210,7 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    move != MOVE_NONE
-                                    && !pos.capture(move)
-                                    &&  pos.pseudo_legal(move); }))
+      if (select<NextRefutation>())
           return move;
       ++stage;
       /* fallthrough */
@@ -211,10 +225,7 @@ top:
       /* fallthrough */
 
   case QUIET:
-      if (   !skipQuiets
-          && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+      if (   !skipQuiets && select<NextQuiet>())
           return move;
 
       // Prepare the pointers to loop over the bad captures
@@ -225,7 +236,7 @@ top:
       /* fallthrough */
 
   case BAD_CAPTURE:
-      return select<Next>(Any);
+      return select<Next>();
 
   case EVASION_INIT:
       cur = moves;
@@ -236,14 +247,13 @@ top:
       /* fallthrough */
 
   case EVASION:
-      return select<Best>(Any);
+      return select<Best>();
 
   case PROBCUT:
-      return select<Best>([&](){ return pos.see_ge(move, threshold); });
+      return select<BestProbCut>();
 
   case QCAPTURE:
-      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(move) == recaptureSquare; }))
+      if (select<BestQCapture>())
           return move;
 
       // If we did not find any move and we do not try checks, we have finished
@@ -261,7 +271,7 @@ top:
       /* fallthrough */
 
   case QCHECK:
-      return select<Next>(Any);
+      return select<Next>();
   }
 
   assert(false);
