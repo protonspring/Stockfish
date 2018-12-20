@@ -25,7 +25,7 @@
 namespace {
 
   enum Stages {
-    MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
+    MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIETS_SORTED, QUIETS_UNSORTED, BAD_CAPTURE,
     EVASION_TT, EVASION_INIT, EVASION,
     PROBCUT_TT, PROBCUT_INIT, PROBCUT,
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
@@ -36,9 +36,10 @@ namespace {
 
   // partial_insertion_sort() sorts moves in descending order up to and including
   // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
+  ExtMove* partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
+    ExtMove* sortedEnd = begin;
+    for (ExtMove *p = begin + 1; p < end; ++p)
         if (p->value >= limit)
         {
             ExtMove tmp = *p, *q;
@@ -47,6 +48,7 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
         }
+     return sortedEnd;
   }
 
 } // namespace
@@ -204,15 +206,27 @@ top:
   case QUIET_INIT:
       cur = endBadCaptures;
       endMoves = generate<QUIETS>(pos, cur);
-
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+
+      endUnsorted = endMoves;
+      endMoves = partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
       ++stage;
       /* fallthrough */
 
-  case QUIET:
+  case QUIETS_SORTED:
       if (   !skipQuiets
           && select<Next>([&](){return   move != refutations[0]
+                                      && move != refutations[1]
+                                      && move != refutations[2];}))
+          return move;
+
+      endMoves = endUnsorted;
+      ++stage;
+      /* fallthrough */
+
+  case QUIETS_UNSORTED:
+      if (   !skipQuiets
+          && select<Best>([&](){return   move != refutations[0]
                                       && move != refutations[1]
                                       && move != refutations[2];}))
           return move;
