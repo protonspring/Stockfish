@@ -133,25 +133,32 @@ void MovePicker::score() {
 template<MovePicker::PickType T>
 Move MovePicker::select() {
 
+  int SEEValue;
   while (cur < endMoves)
   {
       if ((T == Best) || (T == BestSEE) || (T == BestProbCut) || (T == BestQCapture))
-          std::swap(*cur, *std::max_element(cur, endMoves));
-
-      move = *cur++;
+      {
+          ExtMove* bestMove = std::max_element(cur, endMoves);
+          if (T == BestSEE)
+              SEEValue = bestMove->value;
+          move = *bestMove;
+          *bestMove = *cur++;
+      }
+      else 
+         move = *cur++;
 
       if (T == BestSEE)
-         if (!(pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)))) {
+         if (!(pos.see_ge(move, Value(-55 * SEEValue / 1024)))) {
              *endBadCaptures++ = move;
              continue;
          }
 
       if (T == NextRefutation)
-         if (!(move != MOVE_NONE && !pos.capture(move) &&  pos.pseudo_legal(move)))
+         if ((move == MOVE_NONE || pos.capture(move) || !pos.pseudo_legal(move)))
             continue;
 
       if (T == NextQuiet)
-         if (!(move != refutations[0] && move != refutations[1] && move != refutations[2]))
+         if ((move == refutations[0] || move == refutations[1] || move == refutations[2]))
             continue;
 
       if (T == BestProbCut)
@@ -159,7 +166,7 @@ Move MovePicker::select() {
             continue;
 
       if (T == BestQCapture)
-         if (!(depth > DEPTH_QS_RECAPTURES || to_sq(move) == recaptureSquare))
+         if ((depth <= DEPTH_QS_RECAPTURES && to_sq(move) != recaptureSquare))
          continue;
 
       if (move != ttMove) // && filter())
