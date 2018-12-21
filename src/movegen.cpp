@@ -29,7 +29,6 @@ namespace {
   ExtMove* generate_castling(const Position& pos, ExtMove* moveList) {
 
     constexpr CastlingRight Cr = Us | Cs;
-    constexpr bool KingSide = Cr & (WHITE_OO | BLACK_OO);
 
     if (pos.castling_impeded(Cr) || !pos.can_castle(Cr))
         return moveList;
@@ -38,13 +37,13 @@ namespace {
     // as they would be in standard chess.
     Square kfrom = pos.square<KING>(Us);
     Square rfrom = pos.castling_rook_square(Cr);
-    Square kto = relative_square(Us, KingSide ? SQ_G1 : SQ_C1);
+    Square kto = relative_square(Us, Cs ? SQ_C1 : SQ_G1);
     Bitboard enemies = pos.pieces(~Us);
 
     assert(!pos.checkers());
 
     const Direction step = Chess960 ? kto > kfrom ? WEST : EAST
-                                    : KingSide    ? WEST : EAST;
+                                    : Cs ? EAST : WEST;
 
     for (Square s = kto; s != kfrom; s += step)
         if (pos.attackers_to(s) & enemies)
