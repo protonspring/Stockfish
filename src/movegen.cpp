@@ -25,11 +25,13 @@
 
 namespace {
 
-  template<Color Us, CastlingSide Cs, bool Checks, bool Chess960>
+  template<CastlingRight Cr, bool Checks, bool Chess960>
   ExtMove* generate_castling(const Position& pos, ExtMove* moveList) {
 
-    constexpr CastlingRight Cr = Us | Cs;
-    constexpr bool KingSide = (Cs == KING_SIDE);
+    //constexpr CastlingRight Cr = Us & Cs;
+    //constexpr bool KingSide = (Cs == KING_SIDE);
+    constexpr bool KingSide = (Cr & KING_SIDE);
+    constexpr Color Us = Color(Cr & AllCastling[BLACK]);
 
     if (pos.castling_impeded(Cr) || !pos.can_castle(Cr))
         return moveList;
@@ -282,13 +284,17 @@ namespace {
     {
         if (pos.is_chess960())
         {
-            moveList = generate_castling<Us, KING_SIDE, Checks, true>(pos, moveList);
-            moveList = generate_castling<Us, QUEEN_SIDE, Checks, true>(pos, moveList);
+            //moveList = generate_castling<Us, KING_SIDE, Checks, true>(pos, moveList);
+            moveList = generate_castling<CastlingRight(AllCastling[Us] & KING_SIDE), Checks, true>(pos, moveList);
+            //moveList = generate_castling<Us, QUEEN_SIDE, Checks, true>(pos, moveList);
+            moveList = generate_castling<CastlingRight(AllCastling[Us] & QUEEN_SIDE), Checks, true>(pos, moveList);
         }
         else
         {
-            moveList = generate_castling<Us, KING_SIDE, Checks, false>(pos, moveList);
-            moveList = generate_castling<Us, QUEEN_SIDE, Checks, false>(pos, moveList);
+            //moveList = generate_castling<Us, KING_SIDE, Checks, false>(pos, moveList);
+            moveList = generate_castling<CastlingRight(AllCastling[Us] & KING_SIDE), Checks, false>(pos, moveList);
+            //moveList = generate_castling<Us, QUEEN_SIDE, Checks, false>(pos, moveList);
+            moveList = generate_castling<CastlingRight(AllCastling[Us] & QUEEN_SIDE), Checks, false>(pos, moveList);
         }
     }
 

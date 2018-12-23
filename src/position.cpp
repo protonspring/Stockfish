@@ -331,7 +331,7 @@ void Position::set_castling_right(Color c, Square rfrom) {
 
   Square kfrom = square<KING>(c);
   CastlingSide cs = kfrom < rfrom ? KING_SIDE : QUEEN_SIDE;
-  CastlingRight cr = (c | cs);
+  CastlingRight cr = AllCastling[c] & cs;
 
   st->castlingRights |= cr;
   castlingRightsMask[kfrom] |= cr;
