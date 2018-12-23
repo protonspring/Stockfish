@@ -361,10 +361,6 @@ constexpr Piece operator~(Piece pc) {
   return Piece(pc ^ 8); // Swap color of piece B_KNIGHT -> W_KNIGHT
 }
 
-//constexpr CastlingRight operator|(Color c, CastlingSide s) {
-  //return CastlingRight(WHITE_OO << ((s == QUEEN_SIDE) + 2 * c));
-//}
-
 constexpr Value mate_in(int ply) {
   return VALUE_MATE - ply;
 }
