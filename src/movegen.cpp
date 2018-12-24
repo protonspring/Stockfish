@@ -66,25 +66,13 @@ namespace {
   }
 
 
-  template<GenType Type, Direction D>
-  ExtMove* make_promotions(ExtMove* moveList, Square to, Square ksq) {
+  template<Direction D>
+  ExtMove* make_promotions(ExtMove* moveList, Square to) {
 
-    if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
-        *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
-
-    if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
-    {
-        *moveList++ = make<PROMOTION>(to - D, to, ROOK);
-        *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
-    }
-
-    // Knight promotion is the only promotion that can give a direct check
-    // that's not already included in the queen promotion.
-    if (Type == QUIET_CHECKS && (PseudoAttacks[KNIGHT][to] & ksq))
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
-    else
-        (void)ksq; // Silence a warning under MSVC
+    *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
+    *moveList++ = make<PROMOTION>(to - D, to, ROOK);
+    *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
+    *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
 
     return moveList;
   }
@@ -173,16 +161,14 @@ namespace {
         Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies;
         Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares;
 
-        Square ksq = pos.square<KING>(Them);
-
         while (b1)
-            moveList = make_promotions<Type, UpRight>(moveList, pop_lsb(&b1), ksq);
+            moveList = make_promotions<UpRight>(moveList, pop_lsb(&b1));
 
         while (b2)
-            moveList = make_promotions<Type, UpLeft >(moveList, pop_lsb(&b2), ksq);
+            moveList = make_promotions<UpLeft >(moveList, pop_lsb(&b2));
 
         while (b3)
-            moveList = make_promotions<Type, Up     >(moveList, pop_lsb(&b3), ksq);
+            moveList = make_promotions<Up     >(moveList, pop_lsb(&b3));
     }
 
     // Standard and en-passant captures
