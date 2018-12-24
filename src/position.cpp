@@ -1297,12 +1297,13 @@ bool Position::pos_is_ok() const {
   }
 
   for (Color c = WHITE; c <= BLACK; ++c)
-      for (int s = 0; s <= 1; s++)
+      //for (int s = 0; s <= 1; s++)
+      for (int s = {KING_SIDE, QUEEN_SIDE}) //0; s <= 1; s++)
       {
-          if (!can_castle(AllCastling[c] & s))
+          if (!can_castle(CastlingRight(AllCastling[c] & s))
               continue;
 
-          if (   piece_on(castlingRookSquare[c | s]) != make_piece(c, ROOK)
+          if (   piece_on(castlingRookSquare[AllCastling[c] & s]) != make_piece(c, ROOK)
               || castlingRightsMask[castlingRookSquare[c | s]] != (c | s)
               || (castlingRightsMask[square<KING>(c)] & (c | s)) != (c | s))
               assert(0 && "pos_is_ok: Castling");
