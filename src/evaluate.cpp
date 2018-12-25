@@ -250,11 +250,11 @@ namespace {
 
     // Squares occupied by those pawns, by our king or queen, or controlled by enemy pawns
     // are excluded from the mobility area.
-    mobilityArea[Us] = ~(b | pos.pieces(Us, KING, QUEEN) | pe->pawn_attacks(Them));
+    mobilityArea[Us] = ~(b | pos.pieces(Us, KING, QUEEN) | pawn_attacks_bb<Them>(pos.pieces(Them, PAWN)));
 
     // Initialise attackedBy bitboards for kings and pawns
     attackedBy[Us][KING] = pos.attacks_from<KING>(pos.square<KING>(Us));
-    attackedBy[Us][PAWN] = pe->pawn_attacks(Us);
+    attackedBy[Us][PAWN] = pawn_attacks_bb<Us>(pos.pieces(Us, PAWN));
     attackedBy[Us][ALL_PIECES] = attackedBy[Us][KING] | attackedBy[Us][PAWN];
     attackedBy2[Us]            = attackedBy[Us][KING] & attackedBy[Us][PAWN];
 
@@ -273,7 +273,7 @@ namespace {
         else if (file_of(pos.square<KING>(Us)) == FILE_A)
             kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-        kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
+        kingAttackersCount[Them] = popcount(kingRing[Us] & pawn_attacks_bb<Them>(pos.pieces(Them, PAWN)));
         kingRing[Us] &= ~double_pawn_attacks_bb<Us>(pos.pieces(Us, PAWN));
         kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
     }
