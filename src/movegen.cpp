@@ -29,7 +29,7 @@ namespace {
   ExtMove* generate_castling(const Position& pos, ExtMove* moveList) {
 
     constexpr bool KingSide = (Cr & KING_SIDE);
-    constexpr Color Us = Color(Cr & AllCastling[BLACK]);
+    constexpr Color Us = Color(bool(Cr & AllCastling[BLACK]));
 
     if (pos.castling_impeded(Cr) || !pos.can_castle(Cr))
         return moveList;

@@ -143,8 +143,9 @@ enum CastlingRight {
   CASTLING_RIGHT_NB = 16
 };
 
-constexpr int AllCastling[COLOR_NB] =
-                  {WHITE_OO | WHITE_OOO, BLACK_OO | BLACK_OOO };
+constexpr CastlingRight AllCastling[COLOR_NB] =
+                  {CastlingRight(WHITE_OO | WHITE_OOO),
+                   CastlingRight(BLACK_OO | BLACK_OOO) };
 
 enum Phase {
   PHASE_ENDGAME,

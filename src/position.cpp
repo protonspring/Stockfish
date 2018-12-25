@@ -1296,8 +1296,8 @@ bool Position::pos_is_ok() const {
               assert(0 && "pos_is_ok: Index");
   }
 
+/*
   for (Color c = WHITE; c <= BLACK; ++c)
-      //for (int s = 0; s <= 1; s++)
       for (int s = {KING_SIDE, QUEEN_SIDE}) //0; s <= 1; s++)
       {
           if (!can_castle(CastlingRight(AllCastling[c] & s))
@@ -1308,6 +1308,7 @@ bool Position::pos_is_ok() const {
               || (castlingRightsMask[square<KING>(c)] & (c | s)) != (c | s))
               assert(0 && "pos_is_ok: Castling");
       }
+*/
 
   return true;
 }
