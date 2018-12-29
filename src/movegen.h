@@ -52,6 +52,10 @@ inline bool operator<(const ExtMove& f, const ExtMove& s) {
   return f.value < s.value;
 }
 
+inline bool revSort(const ExtMove& f, const ExtMove& s) {
+  return f.value > s.value;
+}
+
 template<GenType>
 ExtMove* generate(const Position& pos, ExtMove* moveList);
 
