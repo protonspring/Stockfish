@@ -39,7 +39,8 @@ namespace {
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
     ExtMove *pSortEnd = begin, *pEnd = end-1;
-    while (pSortEnd < pEnd) {
+    while (pSortEnd < pEnd)
+    {
       if (pSortEnd->value > limit) pSortEnd++;
       else if (pEnd->value < limit) pEnd--;
       else std::swap(*pSortEnd++,*pEnd--);
