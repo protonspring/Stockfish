@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+//#include <iostream>
 
 #include "movepick.h"
 
@@ -38,15 +39,35 @@ namespace {
   // a given limit. The order of moves smaller than the limit is left unspecified.
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
+    //std::cout << "<before: " << limit << ">";
+    //for (ExtMove *p = begin; p < end; ++p)
+       //std::cout << "<" << p->value << ">";
+    //std::cout << std::endl;
+
+    ExtMove *pEnd = end - 1;
+    while ((pEnd->value < limit) && pEnd > begin)
+       pEnd--;
+
+    for (ExtMove *p = begin + 1; p <= pEnd; ++p)
+    {
+        if (p->value < limit)
         {
-            ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
-                *q = *(q - 1);
-            *q = tmp;
+           std::swap(*p,*pEnd);
+           while ((pEnd->value < limit) && pEnd > begin)
+              pEnd--;
         }
+
+        ExtMove tmp = *p, *q;
+        for (q = p; q != begin && *(q - 1) < tmp; --q)
+            *q = *(q - 1);
+        *q = tmp;
+    }
+
+    //std::cout << "<after sorting>";
+    //for (ExtMove *p = begin; p < end; ++p)
+       //std::cout << "<" << p->value << ">";
+    //std::cout << std::endl;
+    //std::cout << std::endl;
   }
 
 } // namespace
