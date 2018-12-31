@@ -25,8 +25,8 @@
 
 namespace {
 
-  template<Color Us, CastlingSide Cs, bool Checks, bool Chess960>
-  ExtMove* generate_castling(const Position& pos, ExtMove* moveList) {
+  template<Color Us, CastlingSide Cs, bool Checks>
+  ExtMove* generate_castling(const Position& pos, ExtMove* moveList, bool Chess960) {
 
     constexpr CastlingRight Cr = Us | Cs;
     constexpr bool KingSide = (Cs == KING_SIDE);
@@ -280,16 +280,8 @@ namespace {
 
     if (Type != CAPTURES && Type != EVASIONS && pos.castling_rights(Us))
     {
-        if (pos.is_chess960())
-        {
-            moveList = generate_castling<Us, KING_SIDE, Checks, true>(pos, moveList);
-            moveList = generate_castling<Us, QUEEN_SIDE, Checks, true>(pos, moveList);
-        }
-        else
-        {
-            moveList = generate_castling<Us, KING_SIDE, Checks, false>(pos, moveList);
-            moveList = generate_castling<Us, QUEEN_SIDE, Checks, false>(pos, moveList);
-        }
+        moveList = generate_castling<Us,  KING_SIDE, Checks>(pos, moveList, pos.is_chess960());
+        moveList = generate_castling<Us, QUEEN_SIDE, Checks>(pos, moveList, pos.is_chess960());
     }
 
     return moveList;
