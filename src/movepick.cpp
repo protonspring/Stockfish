@@ -34,21 +34,6 @@ namespace {
   // Helper filter used with select()
   const auto Any = [](){ return true; };
 
-  // partial_insertion_sort() sorts moves in descending order up to and including
-  // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
-
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
-        {
-            ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
-                *q = *(q - 1);
-            *q = tmp;
-        }
-  }
-
 } // namespace
 
 
@@ -154,6 +139,8 @@ Move MovePicker::select(Pred filter) {
 /// moves left, picking the move with the highest score from a list of generated moves.
 Move MovePicker::next_move(bool skipQuiets) {
 
+  auto limit = -4000 * this->depth / ONE_PLY;
+
 top:
   switch (stage) {
 
@@ -206,7 +193,9 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      std::sort(cur, endMoves, [limit](const ExtMove& a, const ExtMove& b ) {
+          return (a.value < limit) ? false : a.value > b.value;  } );
+
       ++stage;
       /* fallthrough */
 
