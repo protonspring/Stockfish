@@ -152,23 +152,13 @@ Move MovePicker::select(Pred filter) {
   return move = MOVE_NONE;
 }
 
-Move MovePicker::next_move(bool skipQuiets)
-{
-   if (mainStage == STAGE_MAIN)
-      return next_move_main(skipQuiets);
-
-   if (mainStage == STAGE_EVASION)
-      return next_move_ev();
-
-   if (mainStage == STAGE_PROBCUT)
-      return next_move_pc();
-
-   return next_move_qs(); //STAGE_QSEARCH
+Move MovePicker::next_move(bool skipQuiets) {
+   return (this->*fptrs[mainStage])(skipQuiets);
 }
 
 /// MovePicker::next_move_pc() returns a highest scored pseudo legal moves every time it is
 /// called until there are no more moves (then returns MOVE_NONE).
-Move MovePicker::next_move_pc() {
+Move MovePicker::next_move_pc(bool skipQuiets) {
 
   if (stage == PROBCUT_TT) {
       ++stage;
@@ -186,7 +176,7 @@ Move MovePicker::next_move_pc() {
   return select<Best>([&](){ return pos.see_ge(move, threshold); });
 }
 
-Move MovePicker::next_move_ev() {
+Move MovePicker::next_move_ev(bool skipQuiets) {
 
   if (stage == EVASION_TT) {
       ++stage;
@@ -205,7 +195,7 @@ Move MovePicker::next_move_ev() {
 }
 
 
-Move MovePicker::next_move_qs() {
+Move MovePicker::next_move_qs(bool skipQuiets) {
 
   switch (stage) {
 
