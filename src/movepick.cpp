@@ -66,6 +66,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > DEPTH_ZERO);
 
+  mainStage = pos.checkers() ? STAGE_EVASION : STAGE_MAIN;
   stage = pos.checkers() ? EVASION_TT : MAIN_TT;
   ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
@@ -79,6 +80,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   assert(d <= DEPTH_ZERO);
 
   stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
+  mainStage = pos.checkers() ? STAGE_EVASION : STAGE_QSEARCH;
   ttMove =    ttm
            && pos.pseudo_legal(ttm)
            && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare) ? ttm : MOVE_NONE;
@@ -98,6 +100,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
           && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
 
   stage = PROBCUT_TT + (ttMove == MOVE_NONE);
+  mainStage = STAGE_PROBCUT;
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -149,6 +152,20 @@ Move MovePicker::select(Pred filter) {
   return move = MOVE_NONE;
 }
 
+Move MovePicker::next_move(bool skipQuiets)
+{
+   if (mainStage == STAGE_MAIN)
+      return next_move_main(skipQuiets);
+
+   if (mainStage == STAGE_EVASION)
+      return next_move_ev();
+
+   if (mainStage == STAGE_PROBCUT)
+      return next_move_pc();
+
+   return next_move_qs(); //STAGE_QSEARCH
+}
+
 /// MovePicker::next_move_pc() returns a highest scored pseudo legal moves every time it is
 /// called until there are no more moves (then returns MOVE_NONE).
 Move MovePicker::next_move_pc() {
@@ -169,28 +186,85 @@ Move MovePicker::next_move_pc() {
   return select<Best>([&](){ return pos.see_ge(move, threshold); });
 }
 
-/// MovePicker::next_move() is the most important method of the MovePicker class. It
-/// returns a new pseudo legal move every time it is called until there are no more
-/// moves left, picking the move with the highest score from a list of generated moves.
-Move MovePicker::next_move(bool skipQuiets) {
+Move MovePicker::next_move_ev() {
 
-top:
+  if (stage == EVASION_TT) {
+      ++stage;
+      return ttMove;
+  }
+
+  if (stage == EVASION_INIT) {
+      cur = moves;
+      endMoves = generate<EVASIONS>(pos, cur);
+
+      score<EVASIONS>();
+      ++stage;
+  }
+
+  return select<Best>(Any);
+}
+
+
+Move MovePicker::next_move_qs() {
+
   switch (stage) {
 
-  case MAIN_TT:
-  case EVASION_TT:
   case QSEARCH_TT:
       ++stage;
       return ttMove;
 
-  case CAPTURE_INIT:
   case QCAPTURE_INIT:
       cur = endBadCaptures = moves;
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
       ++stage;
-      goto top;
+
+  case QCAPTURE:
+      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
+                                    || to_sq(move) == recaptureSquare; }))
+          return move;
+
+      // If we did not find any move and we do not try checks, we have finished
+      if (depth != DEPTH_QS_CHECKS)
+          return MOVE_NONE;
+
+      ++stage;
+      /* fallthrough */
+
+  case QCHECK_INIT:
+      cur = moves;
+      endMoves = generate<QUIET_CHECKS>(pos, cur);
+
+      ++stage;
+      /* fallthrough */
+
+  case QCHECK:
+      return select<Next>(Any);
+  }
+
+  assert(false);
+  return MOVE_NONE; // Silence warning
+}
+
+
+/// MovePicker::next_move() is the most important method of the MovePicker class. It
+/// returns a new pseudo legal move every time it is called until there are no more
+/// moves left, picking the move with the highest score from a list of generated moves.
+Move MovePicker::next_move_main(bool skipQuiets) {
+
+  switch (stage) {
+
+  case MAIN_TT:
+      ++stage;
+      return ttMove;
+
+  case CAPTURE_INIT:
+      cur = endBadCaptures = moves;
+      endMoves = generate<CAPTURES>(pos, cur);
+
+      score<CAPTURES>();
+      ++stage;
 
   case GOOD_CAPTURE:
       if (select<Best>([&](){
@@ -245,38 +319,6 @@ top:
   case BAD_CAPTURE:
       return select<Next>(Any);
 
-  case EVASION_INIT:
-      cur = moves;
-      endMoves = generate<EVASIONS>(pos, cur);
-
-      score<EVASIONS>();
-      ++stage;
-      /* fallthrough */
-
-  case EVASION:
-      return select<Best>(Any);
-
-  case QCAPTURE:
-      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(move) == recaptureSquare; }))
-          return move;
-
-      // If we did not find any move and we do not try checks, we have finished
-      if (depth != DEPTH_QS_CHECKS)
-          return MOVE_NONE;
-
-      ++stage;
-      /* fallthrough */
-
-  case QCHECK_INIT:
-      cur = moves;
-      endMoves = generate<QUIET_CHECKS>(pos, cur);
-
-      ++stage;
-      /* fallthrough */
-
-  case QCHECK:
-      return select<Next>(Any);
   }
 
   assert(false);

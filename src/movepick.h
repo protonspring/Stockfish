@@ -81,6 +81,8 @@ struct Stats<T, D, Size> : public std::array<StatsEntry<T, D>, Size> {};
 /// In stats table, D=0 means that the template parameter is not used
 enum StatsParams { NOT_USED = 0 };
 
+enum MainStages {STAGE_MAIN, STAGE_PROBCUT, STAGE_EVASION, STAGE_QSEARCH };
+
 
 /// ButterflyHistory records how often quiet moves have been successful or
 /// unsuccessful during the current search, and is used for reduction and move
@@ -127,8 +129,12 @@ public:
                                            const PieceToHistory**,
                                            Move,
                                            Move*);
+
   Move next_move(bool skipQuiets = false);
+  Move next_move_main(bool skipQuiets = false);
+  Move next_move_ev();
   Move next_move_pc();
+  Move next_move_qs();
 
 private:
   template<PickType T, typename Pred> Move select(Pred);
@@ -143,6 +149,7 @@ private:
   Move ttMove;
   ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
   int stage;
+  MainStages mainStage;
   Move move;
   Square recaptureSquare;
   Value threshold;
