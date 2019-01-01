@@ -135,7 +135,7 @@ private:
   ExtMove* begin() { return cur; }
   ExtMove* end() { return endMoves; }
 template<GenType>
-  void inline generate_score();
+  void inline generate_score(ExtMove* m);
 
   const Position& pos;
   const ButterflyHistory* mainHistory;
