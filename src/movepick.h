@@ -132,16 +132,9 @@ public:
 
   Move next_move(bool skipQuiets = false);
   Move next_move_main(bool skipQuiets = false);
-  Move next_move_ev(bool skipQuiets = false);
-  Move next_move_pc(bool skipQuiets = false);
-  Move next_move_qs(bool skipQuiets = false);
-
-  Move (MovePicker::*fptrs[4])(bool skipQuiets) = {
-     &MovePicker::next_move_main,
-     &MovePicker::next_move_pc, 
-     &MovePicker::next_move_ev, 
-     &MovePicker::next_move_qs 
-  };
+  Move next_move_ev();
+  Move next_move_pc();
+  Move next_move_qs();
 
 private:
   template<PickType T, typename Pred> Move select(Pred);

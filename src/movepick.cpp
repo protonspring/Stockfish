@@ -153,12 +153,20 @@ Move MovePicker::select(Pred filter) {
 }
 
 Move MovePicker::next_move(bool skipQuiets) {
-   return (this->*fptrs[mainStage])(skipQuiets);
+
+   if (mainStage == STAGE_MAIN)
+      return next_move_main(skipQuiets);
+   if (mainStage == STAGE_EVASION)
+      return next_move_ev();
+   if (mainStage == STAGE_PROBCUT)
+      return next_move_pc();
+
+   return next_move_qs();  //QSEARCH
 }
 
 /// MovePicker::next_move_pc() returns a highest scored pseudo legal moves every time it is
 /// called until there are no more moves (then returns MOVE_NONE).
-Move MovePicker::next_move_pc(bool skipQuiets) {
+Move MovePicker::next_move_pc() {
 
   if (stage == PROBCUT_TT) {
       ++stage;
@@ -176,7 +184,7 @@ Move MovePicker::next_move_pc(bool skipQuiets) {
   return select<Best>([&](){ return pos.see_ge(move, threshold); });
 }
 
-Move MovePicker::next_move_ev(bool skipQuiets) {
+Move MovePicker::next_move_ev() {
 
   if (stage == EVASION_TT) {
       ++stage;
@@ -195,7 +203,7 @@ Move MovePicker::next_move_ev(bool skipQuiets) {
 }
 
 
-Move MovePicker::next_move_qs(bool skipQuiets) {
+Move MovePicker::next_move_qs() {
 
   switch (stage) {
 
@@ -227,14 +235,9 @@ Move MovePicker::next_move_qs(bool skipQuiets) {
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;
-      /* fallthrough */
-
-  case QCHECK:
-      return select<Next>(Any);
   }
 
-  assert(false);
-  return MOVE_NONE; // Silence warning
+  return select<Next>(Any);
 }
 
 
@@ -304,13 +307,7 @@ Move MovePicker::next_move_main(bool skipQuiets) {
       endMoves = endBadCaptures;
 
       ++stage;
-      /* fallthrough */
-
-  case BAD_CAPTURE:
-      return select<Next>(Any);
-
   }
 
-  assert(false);
-  return MOVE_NONE; // Silence warning
+  return select<Next>(Any);
 }
