@@ -365,9 +365,8 @@ inline bool Position::capture_or_promotion(Move m) const {
   return type_of(m) != NORMAL ? type_of(m) != CASTLING : !empty(to_sq(m));
 }
 
+// MOVE_NONE is not a capture. Castling is encoded as "king captures rook"
 inline bool Position::capture(Move m) const {
-  assert(is_ok(m));
-  // Castling is encoded as "king captures rook"
   return (!empty(to_sq(m)) && type_of(m) != CASTLING) || type_of(m) == ENPASSANT;
 }
 
