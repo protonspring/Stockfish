@@ -582,6 +582,9 @@ bool Position::legal(Move m) const {
 
 bool Position::pseudo_legal(const Move m) const {
 
+  if ((m == MOVE_NONE) || (m == MOVE_NULL))
+     return false;
+
   Color us = sideToMove;
   Square from = from_sq(m);
   Square to = to_sq(m);
