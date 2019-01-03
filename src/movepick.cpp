@@ -167,10 +167,14 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
-      endMoves = generate<CAPTURES>(pos, cur);
+      cur = endBadCaptures = endMoves = moves;
 
-      score<CAPTURES>();
+      //don't generate and score captures if we're going to skip them.
+      if ((stage != QCAPTURE_INIT) || (depth >= DEPTH_QS_RECAPTURES))
+      {
+         endMoves = generate<CAPTURES>(pos, cur);
+         score<CAPTURES>();
+      }
       ++stage;
       goto top;
 
