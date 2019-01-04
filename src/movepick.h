@@ -140,13 +140,13 @@ private:
   const CapturePieceToHistory* captureHistory;
   const PieceToHistory** continuationHistory;
   Move ttMove;
-  ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
+  ExtMove *moves, *cur, *endMoves, *endBadCaptures;
   int stage;
   Move move;
   Square recaptureSquare;
   Value threshold;
   Depth depth;
-  ExtMove moves[MAX_MOVES];
+  ExtMove movesBase[MAX_MOVES];
 };
 
 #endif // #ifndef MOVEPICK_H_INCLUDED

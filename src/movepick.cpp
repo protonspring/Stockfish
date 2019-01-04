@@ -59,11 +59,12 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
            : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) {
+             moves(&movesBase[3]), stage(MAIN_TT), depth(d), movesBase{{killers[0], 0}, {killers[1], 0}, {cm, 0}} {
 
   assert(d > DEPTH_ZERO);
 
-  stage = pos.checkers() ? EVASION_TT : MAIN_TT;
+  if (pos.checkers())
+      stage = EVASION_TT;
   ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
 }
@@ -71,11 +72,12 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for quiescence search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
+           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), moves(&movesBase[3]), stage(QSEARCH_TT), recaptureSquare(rs), depth(d) {
 
   assert(d <= DEPTH_ZERO);
 
-  stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
+  if (pos.checkers())
+     stage = EVASION_TT;
   ttMove =    ttm
            && pos.pseudo_legal(ttm)
            && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare) ? ttm : MOVE_NONE;
@@ -85,11 +87,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
 /// than or equal to the given threshold.
 MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePieceToHistory* cph)
-           : pos(p), captureHistory(cph), threshold(th) {
+           : pos(p), captureHistory(cph), moves(&movesBase[3]), stage(PROBCUT_TT), threshold(th) {
 
   assert(!pos.checkers());
 
-  stage = PROBCUT_TT;
   ttMove =   ttm
           && pos.pseudo_legal(ttm)
           && pos.capture(ttm)
@@ -179,12 +180,12 @@ top:
           return move;
 
       // Prepare the pointers to loop over the refutations array
-      cur = std::begin(refutations);
-      endMoves = std::end(refutations);
+      cur = movesBase;
+      endMoves = &movesBase[3];
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
+      if (   movesBase[0].move == movesBase[2].move
+          || movesBase[1].move == movesBase[2].move)
           --endMoves;
 
       ++stage;
@@ -209,9 +210,9 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+          && select<Next>([&](){return   move != movesBase[0]
+                                      && move != movesBase[1]
+                                      && move != movesBase[2];}))
           return move;
 
       // Prepare the pointers to loop over the bad captures
