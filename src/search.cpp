@@ -836,11 +836,24 @@ namespace {
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
         Value raisedBeta = std::min(beta + 216 - 48 * improving, VALUE_INFINITE);
-        MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
+        MovePicker *mp = NULL;
+
+        move = ttMove
+          && pos.pseudo_legal(ttMove)
+          && pos.capture(ttMove)
+          && pos.see_ge(ttMove, raisedBeta - ss->staticEval) ? ttMove : MOVE_NONE;
+
+        if (move == MOVE_NONE)
+        {
+           mp = new MovePicker(pos, raisedBeta - ss->staticEval, &thisThread->captureHistory);
+           move = mp->next_move_pc();
+        }
+
         int probCutCount = 0;
 
-        while (  (move = mp.next_move()) != MOVE_NONE
+        while (  (move != MOVE_NONE)
                && probCutCount < 3)
+        {
             if (move != excludedMove && pos.legal(move))
             {
                 probCutCount++;
@@ -864,6 +877,12 @@ namespace {
                 if (value >= raisedBeta)
                     return value;
             }
+
+            if (mp == NULL)
+               mp = new MovePicker(pos, raisedBeta - ss->staticEval, &thisThread->captureHistory);
+
+            move = mp->next_move_pc();
+        } //while moves
     }
 
     // Step 11. Internal iterative deepening (~2 Elo)

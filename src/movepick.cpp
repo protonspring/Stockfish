@@ -27,7 +27,6 @@ namespace {
   enum Stages {
     MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
     EVASION_TT, EVASION_INIT, EVASION,
-    PROBCUT_TT, PROBCUT_INIT, PROBCUT,
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
@@ -84,17 +83,14 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
 /// than or equal to the given threshold.
-MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePieceToHistory* cph)
+MovePicker::MovePicker(const Position& p, Value th, const CapturePieceToHistory* cph)
            : pos(p), captureHistory(cph), threshold(th) {
 
   assert(!pos.checkers());
 
-  stage = PROBCUT_TT;
-  ttMove =   ttm
-          && pos.pseudo_legal(ttm)
-          && pos.capture(ttm)
-          && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  cur = moves;
+  endMoves = generate<CAPTURES>(pos, cur);
+  score<CAPTURES>();
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -146,6 +142,19 @@ Move MovePicker::select(Pred filter) {
   return move = MOVE_NONE;
 }
 
+
+Move MovePicker::next_move_pc() {
+
+  while (cur < endMoves)
+  {
+      std::swap(*cur, *std::max_element(cur, endMoves));
+
+      if (pos.see_ge(move = *cur++, threshold))
+         return move;
+  }
+  return MOVE_NONE;
+}
+
 /// MovePicker::next_move() is the most important method of the MovePicker class. It
 /// returns a new pseudo legal move every time it is called until there are no more
 /// moves left, picking the move with the highest score from a list of generated moves.
@@ -157,12 +166,10 @@ top:
   case MAIN_TT:
   case EVASION_TT:
   case QSEARCH_TT:
-  case PROBCUT_TT:
       ++stage;
       return ttMove;
 
   case CAPTURE_INIT:
-  case PROBCUT_INIT:
   case QCAPTURE_INIT:
       cur = endBadCaptures = moves;
       endMoves = generate<CAPTURES>(pos, cur);
@@ -234,9 +241,6 @@ top:
 
   case EVASION:
       return select<Best>([](){ return true; });
-
-  case PROBCUT:
-      return select<Best>([&](){ return pos.see_ge(move, threshold); });
 
   case QCAPTURE:
       if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
