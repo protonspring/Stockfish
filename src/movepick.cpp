@@ -70,8 +70,8 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
 /// MovePicker constructor for quiescence search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
-                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
+                       const CapturePieceToHistory* cph, const PieceToHistory** ch)
+           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), depth(d) {
 
   assert(d <= DEPTH_ZERO);
 
@@ -164,10 +164,12 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
-      endMoves = generate<CAPTURES>(pos, cur);
-
-      score<CAPTURES>();
+      cur = endMoves = endBadCaptures = moves;
+      if ((stage != QCAPTURE_INIT) || (depth > DEPTH_QS_RECAPTURES))
+      {
+          endMoves = generate<CAPTURES>(pos, cur);
+          score<CAPTURES>();
+      }
       ++stage;
       goto top;
 
@@ -239,8 +241,7 @@ top:
       return select<Best>([&](){ return pos.see_ge(move, threshold); });
 
   case QCAPTURE:
-      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(move) == recaptureSquare; }))
+      if (select<Best>([&](){ return true; }))
           return move;
 
       // If we did not find any move and we do not try checks, we have finished
