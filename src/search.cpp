@@ -883,7 +883,10 @@ namespace {
 
             move = mp->next_move_pc();
         } //while moves
+
+        delete(mp);
     }
+
 
     // Step 11. Internal iterative deepening (~2 Elo)
     if (    depth >= 8 * ONE_PLY
