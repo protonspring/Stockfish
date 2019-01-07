@@ -1040,7 +1040,7 @@ bool Position::see_ge(Move m, Value threshold) const {
 
   // Only deal with normal moves, assume others pass a simple see
   if (type_of(m) != NORMAL)
-      return VALUE_ZERO >= threshold;
+      return VALUE_ZERO >= -threshold;
 
   Bitboard stmAttackers;
   Square from = from_sq(m), to = to_sq(m);
@@ -1051,7 +1051,7 @@ bool Position::see_ge(Move m, Value threshold) const {
 
   // The opponent may be able to recapture so this is the best result
   // we can hope for.
-  balance = PieceValue[MG][piece_on(to)] - threshold;
+  balance = PieceValue[MG][piece_on(to)] + threshold;
 
   if (balance < VALUE_ZERO)
       return false;
