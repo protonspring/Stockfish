@@ -31,20 +31,6 @@ namespace {
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
-  // partial_insertion_sort() sorts moves in descending order up to and including
-  // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
-
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
-        {
-            ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
-                *q = *(q - 1);
-            *q = tmp;
-        }
-  }
 
 } // namespace
 
@@ -95,6 +81,33 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
           && pos.capture(ttm)
           && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
+}
+
+// partial_insertion_sort() sorts moves in descending order up to and including
+// a given limit. The order of moves smaller than the limit is left unspecified.
+//void MovePicker::sort_quiets(ExtMove* begin, ExtMove* end, int limit) {
+void MovePicker::sort_quiets(int limit) {
+
+  for (ExtMove *sortedEnd = cur, *p = cur + 1; p < endMoves; ++p)
+  {
+      // If the move is a refutation, delete it.
+      if ((p->move == refutations[0]) ||
+          (p->move == refutations[1]) ||
+          (p->move == refutations[2]))
+      {
+          *p = *(endMoves - 1);
+          endMoves--;
+      }
+
+      if (p->value >= limit)
+      {
+          ExtMove tmp = *p, *q;
+          *p = *++sortedEnd;
+          for (q = sortedEnd; q != cur && *(q - 1) < tmp; --q)
+              *q = *(q - 1);
+          *q = tmp;
+      }
+  }
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -203,15 +216,12 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      sort_quiets(-4000 * depth / ONE_PLY);
       ++stage;
       /* fallthrough */
 
   case QUIET:
-      if (   !skipQuiets
-          && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+      if (   !skipQuiets && select<Next>([&](){return true;}))
           return move;
 
       // Prepare the pointers to loop over the bad captures

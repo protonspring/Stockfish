@@ -128,6 +128,7 @@ public:
                                            Move,
                                            Move*);
   Move next_move(bool skipQuiets = false);
+  void sort_quiets(int limit);
 
 private:
   template<PickType T, typename Pred> Move select(Pred);
