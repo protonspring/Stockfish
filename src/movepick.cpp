@@ -167,7 +167,7 @@ top:
       cur = endBadCaptures = endMoves = moves;
 
       //don't generate and score captures if we're going to skip them.
-      if ((stage != QCAPTURE_INIT) || (depth >= DEPTH_QS_RECAPTURES))
+      if ((stage != QCAPTURE_INIT) || (depth > DEPTH_QS_RECAPTURES))
       {
          endMoves = generate<CAPTURES>(pos, cur);
          score<CAPTURES>();
@@ -243,7 +243,7 @@ top:
       return select<Best>([&](){ return pos.see_ge(move, threshold); });
 
   case QCAPTURE:
-      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES; }))
+      if (select<Best>([&](){ return true; }))
           return move;
 
       // If we did not find any move and we do not try checks, we have finished
