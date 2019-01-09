@@ -113,8 +113,8 @@ namespace {
   Value value_from_tt(Value v, int ply);
   void update_pv(Move* pv, Move move, Move* childPv);
   void update_continuation_histories(Stack* ss, Piece pc, Square to, int bonus);
-  void update_quiet_stats(const Position& pos, Stack* ss, Move move, Move* quiets, int quietsCnt, int bonus);
-  void update_capture_stats(const Position& pos, Move move, Move* captures, int captureCnt, int bonus);
+  void update_quiet_stats(const Position& pos, Stack* ss, Move move, Move* quiets, int quietCount, int bonus);
+  void update_capture_stats(const Position& pos, Move move, Move* captures, int captureCount, int bonus);
 
   inline bool gives_check(const Position& pos, Move move) {
     Color us = pos.side_to_move();
@@ -498,32 +498,32 @@ void Thread::search() {
       if (    Limits.use_time_management()
           && !Threads.stop
           && !Threads.stopOnPonderhit)
+      {
+          double fallingEval = (306 + 119 * failedLow + 6 * (mainThread->previousScore - bestValue)) / 581.0;
+          fallingEval        = std::max(0.5, std::min(1.5, fallingEval));
+
+          // If the bestMove is stable over several iterations, reduce time accordingly
+          timeReduction = 1.0;
+          for (int i : {3, 4, 5})
+              if (lastBestMoveDepth * i < completedDepth)
+                  timeReduction *= 1.25;
+
+          // Use part of the gained time from a previous stable move for the current move
+          double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
+          bestMoveInstability *= std::pow(mainThread->previousTimeReduction, 0.528) / timeReduction;
+
+          // Stop the search if we have only one legal move, or if available time elapsed
+          if (   rootMoves.size() == 1
+              || Time.elapsed() > Time.optimum() * bestMoveInstability * fallingEval)
           {
-              double fallingEval = (306 + 119 * failedLow + 6 * (mainThread->previousScore - bestValue)) / 581.0;
-              fallingEval        = std::max(0.5, std::min(1.5, fallingEval));
-
-              // If the bestMove is stable over several iterations, reduce time accordingly
-              timeReduction = 1.0;
-              for (int i : {3, 4, 5})
-                  if (lastBestMoveDepth * i < completedDepth)
-                     timeReduction *= 1.25;
-
-              // Use part of the gained time from a previous stable move for the current move
-              double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
-              bestMoveInstability *= std::pow(mainThread->previousTimeReduction, 0.528) / timeReduction;
-
-              // Stop the search if we have only one legal move, or if available time elapsed
-              if (   rootMoves.size() == 1
-                  || Time.elapsed() > Time.optimum() * bestMoveInstability * fallingEval)
-              {
-                  // If we are allowed to ponder do not stop the search now but
-                  // keep pondering until the GUI sends "ponderhit" or "stop".
-                  if (Threads.ponder)
-                      Threads.stopOnPonderhit = true;
-                  else
-                      Threads.stop = true;
-              }
+              // If we are allowed to ponder do not stop the search now but
+              // keep pondering until the GUI sends "ponderhit" or "stop".
+              if (Threads.ponder)
+                  Threads.stopOnPonderhit = true;
+              else
+                  Threads.stop = true;
           }
+      }
   }
 
   if (!mainThread)
@@ -943,13 +943,21 @@ moves_loop: // When in check, search starts from here
           &&  tte->depth() >= depth - 3 * ONE_PLY
           &&  pos.legal(move))
       {
-          Value reducedBeta = std::max(ttValue - 2 * depth / ONE_PLY, -VALUE_MATE);
+          Value singularBeta = std::max(ttValue - 2 * depth / ONE_PLY, -VALUE_MATE);
           ss->excludedMove = move;
-          value = search<NonPV>(pos, ss, reducedBeta - 1, reducedBeta, depth / 2, cutNode);
+          value = search<NonPV>(pos, ss, singularBeta - 1, singularBeta, depth / 2, cutNode);
           ss->excludedMove = MOVE_NONE;
 
-          if (value < reducedBeta)
+          if (value < singularBeta)
               extension = ONE_PLY;
+
+          // Multi-cut pruning
+          // Our ttMove is assumed to fail high, and now we failed high also on a reduced
+          // search without the ttMove. So we assume this expected Cut-node is not singular,
+          // that is multiple moves fail high, and we can prune the whole subtree by returning
+          // the hard beta bound.
+          else if (cutNode && singularBeta > beta)
+              return beta;
       }
       else if (    givesCheck // Check extension (~2 Elo)
                &&  pos.see_ge(move))
@@ -1480,7 +1488,7 @@ moves_loop: // When in check, search starts from here
   // update_capture_stats() updates move sorting heuristics when a new capture best move is found
 
   void update_capture_stats(const Position& pos, Move move,
-                            Move* captures, int captureCnt, int bonus) {
+                            Move* captures, int captureCount, int bonus) {
 
       CapturePieceToHistory& captureHistory =  pos.this_thread()->captureHistory;
       Piece moved_piece = pos.moved_piece(move);
@@ -1490,7 +1498,7 @@ moves_loop: // When in check, search starts from here
           captureHistory[moved_piece][to_sq(move)][captured] << bonus;
 
       // Decrease all the other played capture moves
-      for (int i = 0; i < captureCnt; ++i)
+      for (int i = 0; i < captureCount; ++i)
       {
           moved_piece = pos.moved_piece(captures[i]);
           captured = type_of(pos.piece_on(to_sq(captures[i])));
@@ -1502,7 +1510,7 @@ moves_loop: // When in check, search starts from here
   // update_quiet_stats() updates move sorting heuristics when a new quiet best move is found
 
   void update_quiet_stats(const Position& pos, Stack* ss, Move move,
-                          Move* quiets, int quietsCnt, int bonus) {
+                          Move* quiets, int quietCount, int bonus) {
 
     if (ss->killers[0] != move)
     {
@@ -1522,7 +1530,7 @@ moves_loop: // When in check, search starts from here
     }
 
     // Decrease all the other played quiet moves
-    for (int i = 0; i < quietsCnt; ++i)
+    for (int i = 0; i < quietCount; ++i)
     {
         thisThread->mainHistory[us][from_to(quiets[i])] << -bonus;
         update_continuation_histories(ss, pos.moved_piece(quiets[i]), to_sq(quiets[i]), -bonus);
@@ -1665,7 +1673,7 @@ bool RootMove::extract_ponder_from_tt(Position& pos) {
 
     assert(pv.size() == 1);
 
-    if (!pv[0])
+    if (pv[0] == MOVE_NONE)
         return false;
 
     pos.do_move(pv[0], st);
