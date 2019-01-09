@@ -78,7 +78,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
   ttMove =    ttm
            && pos.pseudo_legal(ttm)
-           && (depth > DEPTH_QS_RECAPTURES) ? ttm : MOVE_NONE;
+           && (depth > DEPTH_QS_MIN) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
 }
 
@@ -167,7 +167,7 @@ top:
       cur = endBadCaptures = endMoves = moves;
 
       //don't generate and score captures if we're going to skip them.
-      if ((stage != QCAPTURE_INIT) || (depth > DEPTH_QS_RECAPTURES))
+      if ((stage != QCAPTURE_INIT) || (depth > DEPTH_QS_MIN))
       {
          endMoves = generate<CAPTURES>(pos, cur);
          score<CAPTURES>();
