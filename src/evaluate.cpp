@@ -171,6 +171,7 @@ namespace {
   constexpr Score TrappedRook        = S( 96,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  constexpr Score DominatesKnight    = S( 10, 10);
 
 #undef S
 
@@ -345,6 +346,10 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                // Bonus for bishop dominating an opponent's knight
+                if (popcount (attackedBy[Them][KNIGHT] & b) > 3)
+                    score += DominatesKnight;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
