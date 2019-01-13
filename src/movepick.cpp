@@ -63,6 +63,11 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > DEPTH_ZERO);
 
+  if      ((refutations[0] == MOVE_NONE) && (refutations[2] != MOVE_NONE))
+            refutations[0] = refutations[2];
+  else if ((refutations[1] == MOVE_NONE) && (refutations[2] != MOVE_NONE))
+            refutations[1] = refutations[2];
+
   stage = pos.checkers() ? EVASION_TT : MAIN_TT;
   ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
   stage += (ttMove == MOVE_NONE);
@@ -183,9 +188,9 @@ top:
       endMoves = std::end(refutations);
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
-          --endMoves;
+      //if (   refutations[0].move == refutations[2].move
+          //|| refutations[1].move == refutations[2].move)
+          //--endMoves;
 
       ++stage;
       /* fallthrough */
@@ -210,8 +215,7 @@ top:
   case QUIET:
       if (   !skipQuiets
           && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+                                      && move != refutations[1];}))
           return move;
 
       // Prepare the pointers to loop over the bad captures
