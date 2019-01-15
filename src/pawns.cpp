@@ -97,8 +97,8 @@ namespace {
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
         stoppers   = theirPawns & passed_pawn_mask(Us, s);
-        lever      = theirPawns & pawn_attacks_bb<Us>(SquareBB[s]);
-        leverPush  = theirPawns & pawn_attacks_bb<Us>(SquareBB[s + Up]);
+        lever      = theirPawns & pawn_attacks_bb<Us>(s);
+        leverPush  = theirPawns & pawn_attacks_bb<Us>(s + Up);
         doubled    = ourPawns   & (s - Up);
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
@@ -123,7 +123,7 @@ namespace {
         {
             b = shift<Up>(support) & ~theirPawns;
             while (b)
-                if (!more_than_one(theirPawns & pawn_attacks_bb<Us>(SquareBB[pop_lsb(&b)])))
+                if (!more_than_one(theirPawns & pawn_attacks_bb<Us>(pop_lsb(&b))))
                     e->passedPawns[Us] |= s;
         }
 

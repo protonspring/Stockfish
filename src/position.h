@@ -286,8 +286,8 @@ inline Bitboard Position::attacks_from(Square s) const {
 
 template<>
 inline Bitboard Position::attacks_from<PAWN>(Square s, Color c) const {
-  return (c == WHITE) ? pawn_attacks_bb<WHITE>(SquareBB[s])
-                      : pawn_attacks_bb<BLACK>(SquareBB[s]);
+  return (c == WHITE) ? pawn_attacks_bb<WHITE>(s)
+                      : pawn_attacks_bb<BLACK>(s);
 }
 
 inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
