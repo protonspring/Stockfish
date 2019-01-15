@@ -25,23 +25,23 @@
 
 namespace {
 
-  template<GenType Type, Direction D>
-  ExtMove* make_promotions(ExtMove* moveList, Square to, Square ksq) {
+  template<GenType Type>
+  ExtMove* make_promotions(ExtMove* moveList, Square from, Square to, Square ksq) {
 
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
-        *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
+        *moveList++ = make<PROMOTION>(from, to, QUEEN);
 
     if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
     {
-        *moveList++ = make<PROMOTION>(to - D, to, ROOK);
-        *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        *moveList++ = make<PROMOTION>(from, to, ROOK);
+        *moveList++ = make<PROMOTION>(from, to, BISHOP);
+        *moveList++ = make<PROMOTION>(from, to, KNIGHT);
     }
 
     // Knight promotion is the only promotion that can give a direct check
     // that's not already included in the queen promotion.
     if (Type == QUIET_CHECKS && (PseudoAttacks[KNIGHT][to] & ksq))
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        *moveList++ = make<PROMOTION>(from, to, KNIGHT);
     else
         (void)ksq; // Silence a warning under MSVC
 
@@ -126,20 +126,21 @@ namespace {
         if (Type == EVASIONS)
             emptySquares &= target;
 
-        Bitboard b1 = shift<UpRight>(pawnsOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies;
-        Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares;
-
         Square ksq = pos.square<KING>(Them);
+        Bitboard pawns7 = pawnsOn7;
 
-        while (b1)
-            moveList = make_promotions<Type, UpRight>(moveList, pop_lsb(&b1), ksq);
+        while(pawns7)
+        {
+            Square from = pop_lsb(&pawns7);
+            if (enemies & (shift<UpRight>(SquareBB[from])))
+                    moveList = make_promotions<Type>(moveList, from, from + UpRight, ksq);
 
-        while (b2)
-            moveList = make_promotions<Type, UpLeft >(moveList, pop_lsb(&b2), ksq);
+            if (enemies & (shift<UpLeft>(SquareBB[from])))
+                    moveList = make_promotions<Type>(moveList, from, from + UpLeft, ksq);
 
-        while (b3)
-            moveList = make_promotions<Type, Up     >(moveList, pop_lsb(&b3), ksq);
+            if (emptySquares & (from + Up))
+                    moveList = make_promotions<Type>(moveList, from, from + Up, ksq);
+        }
     }
 
     // Standard and en-passant captures
