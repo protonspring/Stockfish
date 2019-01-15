@@ -38,7 +38,6 @@ Bitboard ForwardFileBB[COLOR_NB][SQUARE_NB];
 Bitboard PassedPawnMask[COLOR_NB][SQUARE_NB];
 Bitboard PawnAttackSpan[COLOR_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
-Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -122,19 +121,14 @@ void Bitboards::init() {
   int steps[][5] = { {}, { 7, 9 }, { 6, 10, 15, 17 }, {}, {}, {}, { 1, 7, 8, 9 } };
 
   for (Color c = WHITE; c <= BLACK; ++c)
-      for (PieceType pt : { PAWN, KNIGHT, KING })
+      for (PieceType pt : { KNIGHT, KING })
           for (Square s = SQ_A1; s <= SQ_H8; ++s)
               for (int i = 0; steps[pt][i]; ++i)
               {
                   Square to = s + Direction(c == WHITE ? steps[pt][i] : -steps[pt][i]);
 
                   if (is_ok(to) && distance(s, to) < 3)
-                  {
-                      if (pt == PAWN)
-                          PawnAttacks[c][s] |= to;
-                      else
-                          PseudoAttacks[pt][s] |= to;
-                  }
+                      PseudoAttacks[pt][s] |= to;
               }
 
   Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
