@@ -979,8 +979,7 @@ moves_loop: // When in check, search starts from here
           && bestValue > VALUE_MATED_IN_MAX_PLY)
       {
           if (   !captureOrPromotion
-              && !givesCheck
-              && !pos.advanced_pawn_push(move))
+              && !givesCheck)
           {
               // Move count based pruning (~30 Elo)
               if (moveCountPruning)
@@ -1357,11 +1356,8 @@ moves_loop: // When in check, search starts from here
       // Futility pruning
       if (   !inCheck
           && !givesCheck
-          &&  futilityBase > -VALUE_KNOWN_WIN
-          && !pos.advanced_pawn_push(move))
+          &&  futilityBase > -VALUE_KNOWN_WIN)
       {
-          assert(type_of(move) != ENPASSANT); // Due to !pos.advanced_pawn_push
-
           futilityValue = futilityBase + PieceValue[EG][pos.piece_on(to_sq(move))];
 
           if (futilityValue <= alpha)
