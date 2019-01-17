@@ -164,7 +164,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
+      cur = moves;
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
@@ -173,9 +173,8 @@ top:
 
   case GOOD_CAPTURE:
       if (select<Best>([&](){
-                       return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)) ?
-                              // Move losing capture to endBadCaptures to be tried later
-                              true : (*endBadCaptures++ = move, false); }))
+                       return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024
+)) ; }))
           return move;
 
       // Prepare the pointers to loop over the refutations array
@@ -199,7 +198,7 @@ top:
       /* fallthrough */
 
   case QUIET_INIT:
-      cur = endBadCaptures;
+      cur = moves;
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
@@ -214,15 +213,7 @@ top:
                                       && move != refutations[2];}))
           return move;
 
-      // Prepare the pointers to loop over the bad captures
-      cur = moves;
-      endMoves = endBadCaptures;
-
-      ++stage;
-      /* fallthrough */
-
-  case BAD_CAPTURE:
-      return select<Next>([](){ return true; });
+      return MOVE_NONE;
 
   case EVASION_INIT:
       cur = moves;
