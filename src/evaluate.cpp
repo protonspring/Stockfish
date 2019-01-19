@@ -372,14 +372,9 @@ namespace {
             if (pe->semiopen_file(Us, file_of(s)))
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
-            // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
-            {
-                if ((relative_rank(Us, s) == RANK_1) && ((FileABB | FileHBB) & s))
-                   //decrease mobility penalty if we can castle
-                   if (pos.castling_rights(Us))
-                       score += make_score(50, 0);
-            }
+            // Blindly revert some mobility penalty if king can still castle
+            else if ((mob <= 3) && (pos.castling_rights(Us)))
+                    score += make_score(50, 0);
         }
 
         if (Pt == QUEEN)
