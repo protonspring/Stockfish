@@ -69,7 +69,6 @@ extern Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
 extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
-extern Bitboard ForwardFileBB[COLOR_NB][SQUARE_NB];
 extern Bitboard PassedPawnMask[COLOR_NB][SQUARE_NB];
 extern Bitboard PawnAttackSpan[COLOR_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
@@ -222,7 +221,7 @@ inline Bitboard forward_ranks_bb(Color c, Square s) {
 ///      ForwardFileBB[c][s] = forward_ranks_bb(c, s) & file_bb(s)
 
 inline Bitboard forward_file_bb(Color c, Square s) {
-  return ForwardFileBB[c][s];
+  return ForwardRanksBB[c][rank_of(s)] & file_bb(s);
 }
 
 
