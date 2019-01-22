@@ -30,6 +30,9 @@ TimeManagement Time; // Our global time management object
 
 namespace {
 
+  int sVals[2] = {95, 28};
+TUNE(sVals);
+
   enum TimeType { OptimumTime, MaxTime };
 
   constexpr int MoveHorizon   = 50;   // Plan time management at most this many moves ahead
@@ -44,7 +47,7 @@ namespace {
 
   double move_importance(int ply) {
 
-    double mid = (ply - 95.0) / 28.0;
+    double mid = (ply - double(sVals[0])) / double(sVals[1]);
     return 0.5 - (mid / std::sqrt(1.0 + mid * mid)) / 2.0;
   }
 
