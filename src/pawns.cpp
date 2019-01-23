@@ -118,7 +118,7 @@ namespace {
             && popcount(phalanx) >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (stoppers == SquareBB[s + Up])
+        else if (opposed && !more_than_one(stoppers))
         {
             b = ourPawns & pawn_attack_span(Them, s + Up);
             while (b)
