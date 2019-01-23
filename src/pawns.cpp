@@ -118,13 +118,11 @@ namespace {
             && popcount(phalanx) >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (   stoppers == SquareBB[s + Up]
-                 && relative_rank(Us, s) >= RANK_5)
+        else if (stoppers == SquareBB[s + Up])
         {
             b = ourPawns & pawn_attack_span(Them, s + Up);
             while (b)
-               if (!more_than_one(theirPawns & passed_pawn_mask(Us, pop_lsb(&b))))
-               {
+               if (!more_than_one(theirPawns & passed_pawn_mask(Us, pop_lsb(&b)))) {
                    e->passedPawns[Us] |= s;
                    break;
                }
