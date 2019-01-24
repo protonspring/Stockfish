@@ -44,7 +44,7 @@ namespace {
 
   double move_importance(int ply) {
 
-    double mid = (ply - 95.0) / 28.0;
+    double mid = (ply - 99.0) / 44.0;
     return 0.5 - (mid / std::sqrt(1.0 + mid * mid)) / 2.0;
   }
 
