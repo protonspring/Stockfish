@@ -224,7 +224,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                                         : UnblockedStorm[d][theirRank];
 
       //more dangerous pawn storming if the opponent king is not on this flank
-      if (!(KingFlank[pos.square<KING>(Us)] & pos.square<KING>(Them)))
+      if (!(KingFlank[file_of(pos.square<KING>(Us))] & pos.square<KING>(Them)))
           safety -= ((ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
                                                             : UnblockedStorm[d][theirRank]) / 2;
 
