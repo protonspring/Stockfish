@@ -139,6 +139,11 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        // a simple rank based bonus if we've castled and this pawn is
+        // NOT on the king's flank.
+        if (!pos.castling_rights(Us) && !(KingFlank[file_of(pos.square<KING>(Us))] & s))
+            score += make_score(5,5) * relative_rank(Us, s);
     }
 
     return score;
