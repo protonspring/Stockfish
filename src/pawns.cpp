@@ -52,9 +52,9 @@ namespace {
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) },
-    { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
-    { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
+    { V( 89), V(107), V(123), V(93), V(57), V( 30), V( 10) },
+    { V( 44), V(-18), V(123), V(46), V(39), V( 10), V(  0) },
+    { V(  4), V( 52), V(162), V(37), V( 7), V(-10), V(-20) },
     { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
   };
 
@@ -222,6 +222,12 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
                                                         : UnblockedStorm[d][theirRank];
+
+      //more dangerous pawn storming if the opponent king is not on this flank
+      if (!(KingFlank[pos.square<KING>(Us)] & pos.square<KING>(Them)))
+          safety -= ((ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
+                                                            : UnblockedStorm[d][theirRank]) / 2;
+
   }
 
   return safety;
