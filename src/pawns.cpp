@@ -129,8 +129,14 @@ namespace {
 
         // Score this pawn
         if (support | phalanx)
+        {
             score += Connected[opposed][bool(phalanx)][popcount(support)][relative_rank(Us, s)];
 
+            // more bonus if we've castled and this pawn is NOT on the king's flank.
+            if (!pos.castling_rights(Us) && !(KingFlank[file_of(pos.square<KING>(Us))] & s))
+                score += Connected[opposed][bool(phalanx)][popcount(support)][relative_rank(Us, s)] / 4;
+
+        }
         else if (!neighbours)
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
