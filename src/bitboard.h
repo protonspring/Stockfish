@@ -391,7 +391,7 @@ inline Square pop_lsb(Bitboard* b) {
 /// frontmost_sq() and backmost_sq() return the square corresponding to the
 /// most/least advanced bit relative to the given color.
 
-inline Square frontmost_sq(Color c, Bitboard b) { return c == WHITE ? msb(b) : lsb(b); }
-inline Square  backmost_sq(Color c, Bitboard b) { return c == WHITE ? lsb(b) : msb(b); }
+template<Color C> inline Square frontmost_sq(Bitboard b) { return C == WHITE ? msb(b) : lsb(b); }
+template<Color C> inline Square backmost_sq(Bitboard b) { return C == WHITE ? lsb(b) : msb(b); }
 
 #endif // #ifndef BITBOARD_H_INCLUDED

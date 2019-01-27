@@ -326,8 +326,8 @@ ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
       && pos.count<PAWN>(weakSide) >= 1)
   {
       // Get weakSide pawn that is closest to the home rank
-      Square weakPawnSq = backmost_sq(weakSide, pos.pieces(weakSide, PAWN));
-
+      Square weakPawnSq = (weakSide == WHITE ? backmost_sq<WHITE>(pos.pieces(weakSide, PAWN))
+                                             : backmost_sq<BLACK>(pos.pieces(weakSide, PAWN)));
       Square strongKingSq = pos.square<KING>(strongSide);
       Square weakKingSq = pos.square<KING>(weakSide);
       Square bishopSq = pos.square<BISHOP>(strongSide);
