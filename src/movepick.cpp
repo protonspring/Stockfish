@@ -25,7 +25,7 @@
 namespace {
 
   enum Stages {
-    MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
+    MAIN_TT, REFUTATION_INIT, REFUTATION, CAPTURE_INIT, GOOD_CAPTURE, QUIET_INIT, QUIET, BAD_CAPTURE,
     EVASION_TT, EVASION_INIT, EVASION,
     PROBCUT_TT, PROBCUT_INIT, PROBCUT,
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
@@ -161,22 +161,7 @@ top:
       ++stage;
       return ttMove;
 
-  case CAPTURE_INIT:
-  case PROBCUT_INIT:
-  case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
-      endMoves = generate<CAPTURES>(pos, cur);
-
-      score<CAPTURES>();
-      ++stage;
-      goto top;
-
-  case GOOD_CAPTURE:
-      if (select<Best>([&](){
-                       return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)) ?
-                              // Move losing capture to endBadCaptures to be tried later
-                              true : (*endBadCaptures++ = move, false); }))
-          return move;
+  case REFUTATION_INIT:
 
       // Prepare the pointers to loop over the refutations array
       cur = std::begin(refutations);
@@ -195,6 +180,27 @@ top:
                                     && !pos.capture(move)
                                     &&  pos.pseudo_legal(move); }))
           return move;
+
+      ++stage;
+      /* fallthrough */
+
+  case CAPTURE_INIT:
+  case PROBCUT_INIT:
+  case QCAPTURE_INIT:
+      cur = endBadCaptures = moves;
+      endMoves = generate<CAPTURES>(pos, cur);
+
+      score<CAPTURES>();
+      ++stage;
+      goto top;
+
+  case GOOD_CAPTURE:
+      if (select<Best>([&](){
+                       return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)) ?
+                              // Move losing capture to endBadCaptures to be tried later
+                              true : (*endBadCaptures++ = move, false); }))
+          return move;
+
       ++stage;
       /* fallthrough */
 
