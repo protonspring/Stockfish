@@ -60,7 +60,6 @@ constexpr Bitboard Rank6BB = Rank1BB << (8 * 5);
 constexpr Bitboard Rank7BB = Rank1BB << (8 * 6);
 constexpr Bitboard Rank8BB = Rank1BB << (8 * 7);
 
-extern int SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard FileBB[FILE_NB];
@@ -258,7 +257,7 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 constexpr int distance(int x, int y) { return x < y ? y - x : x - y; }
 constexpr int file_distance(Square x, Square y) { return distance(file_of(x), file_of(y)); }
 constexpr int rank_distance(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
-inline int distance(Square x, Square y) { return SquareDistance[x][y]; }
+inline int distance(Square x, Square y) { return std::max(file_distance(x,y), rank_distance(x,y)); }
 
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
