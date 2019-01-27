@@ -63,7 +63,6 @@ constexpr Bitboard Rank8BB = Rank1BB << (8 * 7);
 extern int SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
-extern Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
 extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
@@ -136,19 +135,19 @@ inline bool opposite_colors(Square s1, Square s2) {
 /// rank_bb() and file_bb() return a bitboard representing all the squares on
 /// the given file or rank.
 
-inline Bitboard rank_bb(Rank r) {
+constexpr Bitboard rank_bb(Rank r) {
   return Rank1BB << (8 * r);
 }
 
-inline Bitboard rank_bb(Square s) {
+constexpr Bitboard rank_bb(Square s) {
   return rank_bb(rank_of(s));
 }
 
-inline Bitboard file_bb(File f) {
+constexpr Bitboard file_bb(File f) {
   return FileABB << f;
 }
 
-inline Bitboard file_bb(Square s) {
+constexpr Bitboard file_bb(Square s) {
   return file_bb(file_of(s));
 }
 
@@ -188,7 +187,7 @@ constexpr Bitboard double_pawn_attacks_bb(Bitboard b) {
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
 /// adjacent files of the given one.
 
-inline Bitboard adjacent_files_bb(File f) {
+constexpr Bitboard adjacent_files_bb(File f) {
   return shift<EAST>(file_bb(f)) | shift<WEST>(file_bb(f));
 }
 
@@ -206,8 +205,9 @@ inline Bitboard between_bb(Square s1, Square s2) {
 /// in front of the given one, from the point of view of the given color. For instance,
 /// forward_ranks_bb(BLACK, SQ_D3) will return the 16 squares on ranks 1 and 2.
 
-inline Bitboard forward_ranks_bb(Color c, Square s) {
-  return ForwardRanksBB[c][rank_of(s)];
+constexpr Bitboard forward_ranks_bb(Color c, Square s) {
+  return (c == WHITE) ? shift<NORTH>(AllSquares) << 8 * rank_of(s)
+                      : shift<SOUTH>(AllSquares) >> 8 * (7 - rank_of(s));
 }
 
 
@@ -215,8 +215,8 @@ inline Bitboard forward_ranks_bb(Color c, Square s) {
 /// in front of the given one, from the point of view of the given color:
 ///      ForwardFileBB[c][s] = forward_ranks_bb(c, s) & file_bb(s)
 
-inline Bitboard forward_file_bb(Color c, Square s) {
-  return ForwardRanksBB[c][rank_of(s)] & file_bb(s);
+constexpr Bitboard forward_file_bb(Color c, Square s) {
+  return forward_ranks_bb(c,s) & file_bb(s);
 }
 
 
@@ -224,7 +224,7 @@ inline Bitboard forward_file_bb(Color c, Square s) {
 /// attacked by a pawn of the given color when it moves along its file, starting
 /// from the given square:
 
-inline Bitboard pawn_attack_span(Color c, Square s) {
+constexpr Bitboard pawn_attack_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & adjacent_files_bb(file_of(s));
 }
 
@@ -232,7 +232,7 @@ inline Bitboard pawn_attack_span(Color c, Square s) {
 /// passed_pawn_mask() returns a bitboard mask which can be used to test if a
 /// pawn of the given color and on the given square is a passed pawn:
 
-inline Bitboard passed_pawn_mask(Color c, Square s) {
+constexpr Bitboard passed_pawn_mask(Color c, Square s) {
   return pawn_attack_span(c, s) | forward_file_bb(c, s);
 }
 
