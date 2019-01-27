@@ -247,13 +247,10 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 
 /// distance() functions return the distance between x and y, defined as the
 /// number of steps for a king in x to reach y. Works with squares, ranks, files.
-
-template<typename T> inline int distance(T x, T y) { return x < y ? y - x : x - y; }
-template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
-
-template<typename T1, typename T2> inline int distance(T2 x, T2 y);
-template<> inline int distance<File>(Square x, Square y) { return distance(file_of(x), file_of(y)); }
-template<> inline int distance<Rank>(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
+constexpr int distance(int x, int y) { return x < y ? y - x : x - y; }
+constexpr int file_distance(Square x, Square y) { return distance(file_of(x), file_of(y)); }
+constexpr int rank_distance(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
+inline int distance(Square x, Square y) { return SquareDistance[x][y]; }
 
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
