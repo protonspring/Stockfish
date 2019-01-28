@@ -627,7 +627,7 @@ namespace {
 
         Score bonus = PassedRank[r];
 
-        if (r > RANK_3)
+        if (pos.pawn_passed(Us, s + Up) || !(pos.pieces(PAWN) & forward_file_bb(Us, s)))
         {
             int w = (r-2) * (r-2) + 2;
             Square blockSq = s + Up;
@@ -670,13 +670,7 @@ namespace {
 
                 bonus += make_score(k * w, k * w);
             }
-        } // rank > RANK_3
-
-        // Scale down bonus for candidate passers which need more than one
-        // pawn push to become passed, or have a pawn in front of them.
-        if (   !pos.pawn_passed(Us, s + Up)
-            || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
-            bonus = bonus / 2;
+        }
 
         score += bonus + PassedFile[file_of(s)];
     }
