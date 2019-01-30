@@ -88,8 +88,7 @@ namespace {
   // Add a small random component to draw evaluations to keep search dynamic
   // and to avoid 3fold-blindness.
   Value value_draw(Depth depth, Thread* thisThread) {
-    return depth < 4 ? VALUE_DRAW
-                     : VALUE_DRAW + Value(2 * (thisThread->nodes.load(std::memory_order_relaxed) % 2) - 1);
+    return VALUE_DRAW + (depth > 3) * Value(1 - int(thisThread->nodes) % 3);
   }
 
   // Skill structure is used to implement strength limit
