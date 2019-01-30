@@ -160,20 +160,20 @@ void Search::init() {
       for (int d = 1; d < 64; ++d)
           for (int mc = 1; mc < 64; ++mc)
           {
-              double r = log(d) * log(mc) / 1.95;
+              int r = int(66 * log(d) * log(mc)) / 128;
 
-              Reductions[NonPV][imp][d][mc] = int(std::round(r));
-              Reductions[PV][imp][d][mc] = std::max(Reductions[NonPV][imp][d][mc] - 1, 0);
+              Reductions[NonPV][imp][d][mc] = r;
+              Reductions[PV][imp][d][mc] = std::max(r - 1, 0);
 
               // Increase reduction for non-PV nodes when eval is not improving
-              if (!imp && r > 1.0)
+              if (!imp && r > 0)
                 Reductions[NonPV][imp][d][mc]++;
           }
 
   for (int d = 0; d < 16; ++d)
   {
-      FutilityMoveCounts[0][d] = int(2.4 + 0.74 * pow(d, 1.78));
-      FutilityMoveCounts[1][d] = int(5.0 + 1.00 * pow(d, 2.00));
+      FutilityMoveCounts[0][d] = d * d / 2;
+      FutilityMoveCounts[1][d] = 5 + d * d;
   }
 }
 
