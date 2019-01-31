@@ -57,9 +57,9 @@ namespace {
 
 /// MovePicker constructor for the main search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
-                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
+                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm)
            : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) {
+             counterMove({cm, 0}), depth(d) {
 
   assert(d > DEPTH_ZERO);
 
@@ -178,23 +178,18 @@ top:
                               true : (*endBadCaptures++ = move, false); }))
           return move;
 
-      // Prepare the pointers to loop over the refutations array
-      cur = std::begin(refutations);
-      endMoves = std::end(refutations);
-
-      // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
-          --endMoves;
-
       ++stage;
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    move != MOVE_NONE
-                                    && !pos.capture(move)
-                                    &&  pos.pseudo_legal(move); }))
-          return move;
+        if ((counterMove != MOVE_NONE) && !pos.capture(counterMove)
+                                       && pos.pseudo_legal(counterMove))
+        {
+            move = counterMove;
+            counterMove = MOVE_NONE;
+            return move;
+        }
+
       ++stage;
       /* fallthrough */
 
@@ -209,9 +204,7 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+          && select<Next>([&](){return   move != counterMove;}))
           return move;
 
       // Prepare the pointers to loop over the bad captures
