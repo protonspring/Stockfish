@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -36,10 +37,8 @@ namespace {
   constexpr double MaxRatio   = 7.3;  // When in trouble, we can step over reserved time with this ratio
   constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
 
-  double move_importance(int ply) {
-
-    const double mid = double(ply - 85) / 22.0;
-    return 0.6 - (mid / std::sqrt(1.0 + mid * mid)) / 2.5;
+constexpr double move_importance(int ply) {
+    return 1 - (ply - 85) / std::hypot(22, ply - 85);
   }
 
   template<TimeType T>
