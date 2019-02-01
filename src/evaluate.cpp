@@ -636,10 +636,11 @@ namespace {
             bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
                                     - king_proximity(Us,   blockSq) * 2) * w);
 
-            // Bonus if we have a Bishop that attacks the queening Square
+            // Bonus if we have a Bishop on the same color as a queening Sq
             Square queenSq = (Us == WHITE) ? make_square(file_of(s), RANK_8)
                                            : make_square(file_of(s), RANK_1);
-            if (attackedBy[Us][BISHOP] & queenSq)
+
+            if (attackedBy[Us][BISHOP] & PseudoAttacks[BISHOP][queenSq])
                 bonus += make_score(0, 10);
 
             // If blockSq is not the queening square then consider also a second push
