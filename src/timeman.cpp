@@ -38,7 +38,7 @@ namespace {
   constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
 
 constexpr double move_importance(int ply) {
-    return 1 - 0.8 * (ply - 85) / std::hypot(22, ply - 85);
+    return 1 - (ply - 90) / std::hypot(45, ply - 90);
   }
 
   template<TimeType T>
