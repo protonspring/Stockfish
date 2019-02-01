@@ -36,19 +36,10 @@ namespace {
   constexpr double MaxRatio   = 7.3;  // When in trouble, we can step over reserved time with this ratio
   constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
 
-
-  // move_importance() is a skew-logistic function based on naive statistical
-  // analysis of "how many games are still undecided after n half-moves". Game
-  // is considered "undecided" as long as neither side has >275cp advantage.
-  // Data was extracted from the CCRL game database with some simple filtering criteria.
-
   double move_importance(int ply) {
 
-    constexpr double XScale = 6.85;
-    constexpr double XShift = 64.5;
-    constexpr double Skew   = 0.171;
-
-    return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
+    const double mid = double(ply - 85) / 22.0;
+    return 0.6 - (mid / std::sqrt(1.0 + mid * mid)) / 2.5;
   }
 
   template<TimeType T>
