@@ -330,7 +330,7 @@ namespace {
             else if (bb &= b & ~pos.pieces(Us))
             {
                 score += Outpost[Pt == BISHOP][bool(attackedBy[Us][PAWN] & bb)];
-                if (relative_rank(Us, s) > RANK_5)
+                if (bb & (Rank6BB | Rank3BB))
                     score += make_score(5, 5);
             }
 
