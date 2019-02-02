@@ -148,7 +148,7 @@ Move MovePicker::select(Pred filter) {
       }
       cur++;
   }
-  return move = MOVE_NONE;
+  return MOVE_NONE;
 }
 
 /// MovePicker::next_move() is the most important method of the MovePicker class. It
