@@ -63,7 +63,7 @@ namespace {
     for (int i = 1; i < movesToGo; ++i)
         otherMovesImportance += move_importance(ply + 2 * i);
 
-    otherMovesImportance *= 1.2;
+    otherMovesImportance *= 0.8;
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
