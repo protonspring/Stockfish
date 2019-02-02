@@ -139,9 +139,8 @@ Move MovePicker::select(Pred filter) {
           std::swap(*cur, *std::max_element(cur, endMoves));
 
       if (cur->move != ttMove && filter())
-      {
-          return (cur)->move;
-      }
+          return cur->move;
+
       cur++;
   }
   *cur = MOVE_NONE;
@@ -175,9 +174,9 @@ top:
 
   case GOOD_CAPTURE:
       if (select<Best>([&](){
-                       return pos.see_ge((cur)->move, Value(-55 * (cur)->value / 1024)) ?
+                       return pos.see_ge(cur->move, Value(-55 * cur->value / 1024)) ?
                               // Move losing capture to endBadCaptures to be tried later
-                              true : (*endBadCaptures++ = (cur)->move, false); }))
+                              true : (*endBadCaptures++ = cur->move, false); }))
           return (cur++)->move;
 
       // Prepare the pointers to loop over the refutations array
@@ -193,9 +192,9 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    (cur)->move != MOVE_NONE
-                                    && !pos.capture((cur)->move)
-                                    &&  pos.pseudo_legal((cur)->move); }))
+      if (select<Next>([&](){ return    cur->move != MOVE_NONE
+                                    && !pos.capture(cur->move)
+                                    &&  pos.pseudo_legal(cur->move); }))
           return (cur++)->move;
       ++stage;
       /* fallthrough */
@@ -211,9 +210,9 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   (cur)->move != refutations[0]
-                                      && (cur)->move != refutations[1]
-                                      && (cur)->move != refutations[2];}))
+          && select<Next>([&](){return   cur->move != refutations[0]
+                                      && cur->move != refutations[1]
+                                      && cur->move != refutations[2];}))
           return (cur++)->move;
 
       // Prepare the pointers to loop over the bad captures
@@ -240,12 +239,12 @@ top:
       return (cur++)->move;
 
   case PROBCUT:
-      select<Best>([&](){ return pos.see_ge((cur)->move, threshold); });
+      select<Best>([&](){ return pos.see_ge(cur->move, threshold); });
       return (cur++)->move;
 
   case QCAPTURE:
       if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq((cur)->move) == recaptureSquare; }))
+                                    || to_sq(cur->move) == recaptureSquare; }))
           return (cur++)->move;
 
       // If we did not find any move and we do not try checks, we have finished
