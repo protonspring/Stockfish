@@ -143,7 +143,8 @@ Move MovePicker::select(Pred filter) {
 
       cur++;
   }
-  return *cur = MOVE_NONE;
+  *cur = MOVE_NONE;
+  return cur->move;
 }
 
 /// MovePicker::next_move() is the most important method of the MovePicker class. It
@@ -173,7 +174,7 @@ top:
 
   case GOOD_CAPTURE:
       if (select<Best>([&](){
-                       return pos.see_ge(cur->move, Value(-55 * cur->value / 1024)) ?
+                       return pos.see_ge(cur->move, Value(-(cur->value) / 8)) ?
                               // Move losing capture to endBadCaptures to be tried later
                               true : (*endBadCaptures++ = cur->move, false); }))
           return (cur++)->move;
