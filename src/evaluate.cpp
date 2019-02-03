@@ -644,7 +644,7 @@ namespace {
 
         // More bonus if opponent king is not on this flank.
         if (!(KingFlank[file_of(pos.square<KING>(Them))] & s))
-            bonus += make_score(0, 4) * r;
+            bonus += make_score(0, 2) * r;
 
         if (r > RANK_3)
         {
