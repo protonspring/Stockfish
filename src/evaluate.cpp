@@ -642,6 +642,13 @@ namespace {
 
         Score bonus = PassedRank[r];
 
+        // More bonus if pawn is closer to queening than opponent king
+        Square queeningSq = Us == WHITE ? make_square(file_of(s), RANK_8)
+                                        : make_square(file_of(s), RANK_1);
+
+        if (distance(s,queeningSq) < distance(pos.square<KING>(Them),queeningSq))
+            bonus += make_score(0, 10);
+
         if (r > RANK_3)
         {
             int w = (r-2) * (r-2) + 2;
