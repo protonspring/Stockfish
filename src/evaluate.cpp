@@ -642,6 +642,10 @@ namespace {
 
         Score bonus = PassedRank[r];
 
+        // More bonus if opponent king is not on this flank.
+        if (!(KingFlank[file_of(pos.square<KING>(Them))] & s))
+            bonus += make_score(0, 10);
+
         if (r > RANK_3)
         {
             int w = (r-2) * (r-2) + 2;
