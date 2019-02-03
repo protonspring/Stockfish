@@ -647,7 +647,7 @@ namespace {
                                         : make_square(file_of(s), RANK_1);
 
         if (distance(s,queeningSq) < distance(pos.square<KING>(Them),queeningSq))
-            bonus += make_score(0, 10);
+            bonus += make_score(10, 10);
 
         if (r > RANK_3)
         {
