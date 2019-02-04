@@ -172,7 +172,7 @@ void Search::init() {
 
   for (int d = 0; d < 16; ++d)
   {
-      FutilityMoveCounts[0][d] = (d + 2) * (d + 2) / 3;
+      FutilityMoveCounts[0][d] = int(d * d / 2.7 + d);
       FutilityMoveCounts[1][d] = d * d + 5;
   }
 }
