@@ -35,6 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score PawnPassedKing = S(0, 10);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -139,6 +140,14 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (e->passedPawns[Us] & s)
+        {
+            Square queeningSq = Us == WHITE ? make_square(file_of(s), RANK_8)
+                                            : make_square(file_of(s), RANK_1);
+            if (distance(s, queeningSq) < distance(pos.square<KING>(Them), queeningSq))
+                score += PawnPassedKing;
+        }
     }
 
     return score;
