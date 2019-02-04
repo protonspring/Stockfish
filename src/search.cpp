@@ -166,13 +166,13 @@ void Search::init() {
               Reductions[PV][imp][d][mc] = std::max(r - 1, 0);
 
               // Increase reduction for non-PV nodes when eval is not improving
-              if (!imp && r > 0)
+              if (!imp && r)
                 Reductions[NonPV][imp][d][mc]++;
           }
 
   for (int d = 0; d < 16; ++d)
   {
-      FutilityMoveCounts[0][d] = int(d * d / 2.7 + d);
+      FutilityMoveCounts[0][d] = (d + 2) * (d + 2) / 3;
       FutilityMoveCounts[1][d] = d * d + 5;
   }
 }
