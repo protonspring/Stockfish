@@ -496,7 +496,7 @@ void Thread::search() {
           && !Threads.stop
           && !mainThread->stopOnPonderhit)
       {
-          double fallingEval = 0.5 + double(mainThread->previousScore > bestValue);
+          double fallingEval = 0.5 + double(mainThread->previousScore - bestValue > 50);
 
           // If the bestMove is stable over several iterations, reduce time accordingly
           timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1.95 : 1.0;
