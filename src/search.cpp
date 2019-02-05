@@ -496,8 +496,8 @@ void Thread::search() {
           && !Threads.stop
           && !mainThread->stopOnPonderhit)
       {
-          int mid = (mainThread->previousScore - bestValue - 32) / 16;
-          double fallingEval = 1.0 + (mid / std::sqrt(1 + mid * mid)) / 2;
+          double fallingEval = 0.5 + 164 * (mainThread->previousScore - bestValue) / 1024;
+          fallingEval = std::max(0.5, std::min(1.5, fallingEval));
 
           // If the bestMove is stable over several iterations, reduce time accordingly
           timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1.95 : 1.0;
