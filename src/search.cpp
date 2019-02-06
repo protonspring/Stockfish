@@ -496,7 +496,7 @@ void Thread::search() {
           && !Threads.stop
           && !mainThread->stopOnPonderhit)
       {
-          double mid = double(mainThread->previousScore - bestValue - 32) / 16.0;
+          double mid = double(mainThread->previousScore - bestValue - 30) / 24.0;
           double fallingEval = 1.0 + (mid / std::sqrt(1 + mid * mid)) / 2;
 
           // If the bestMove is stable over several iterations, reduce time accordingly
