@@ -35,6 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score PassingWidth = S(2, 2);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
@@ -83,6 +84,9 @@ namespace {
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
+
+    File minPassingFile = FILE_H;
+    File maxPassingFile = FILE_A;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -139,7 +143,17 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (e->passedPawns[Us] & s)
+        {
+            if (file_of(s) < minPassingFile) minPassingFile = file_of(s);
+            if (file_of(s) > maxPassingFile) maxPassingFile = file_of(s);
+        }
     }
+
+    // Bonus for distance between passing pawns
+    if (minPassingFile < maxPassingFile)
+       score += PassingWidth * (maxPassingFile - minPassingFile);
 
     return score;
   }
