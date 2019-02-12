@@ -234,14 +234,15 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 template<Color Us>
 Score Entry::do_king_safety(const Position& pos) {
 
-  Square ksq = pos.square<KING>(Us);
+  Square s, ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
-  int minKingPawnDistance = 0;
+  const Square* pl = pos.squares<PAWN>(Us);
+  int minKingPawnDistance = *pl != SQ_NONE ? 8 : 0;
 
-  Bitboard pawns = pos.pieces(Us, PAWN);
-  if (pawns)
-      while (!(DistanceRingBB[ksq][++minKingPawnDistance] & pawns)) {}
+  while (((s = *pl++) != SQ_NONE) && (minKingPawnDistance > 2))
+      if (distance(ksq,s) < minKingPawnDistance)
+           minKingPawnDistance = distance(ksq,s);
 
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
