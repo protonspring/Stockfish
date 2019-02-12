@@ -161,7 +161,7 @@ void Search::init() {
           for (int mc = 1; mc < 64; ++mc)
           {
               double r = log(d) * log(mc) / 1.95;
-              Reductions[imp][d][mc] = int(std::round(r));
+              Reductions[imp][d][mc] = std::max(int(std::round(r)), 1);
 
               // Increase reduction for non-PV nodes when eval is not improving
               if (!imp && r > 1.0)
