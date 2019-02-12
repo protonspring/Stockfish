@@ -240,7 +240,7 @@ Score Entry::do_king_safety(const Position& pos) {
   const Square* pl = pos.squares<PAWN>(Us);
   int minKingPawnDistance = *pl != SQ_NONE ? 8 : 0;
 
-  while (((s = *pl++) != SQ_NONE) && (minKingPawnDistance > 2))
+  while ((s = *pl++) != SQ_NONE)
       if (distance(ksq,s) < minKingPawnDistance)
            minKingPawnDistance = distance(ksq,s);
 
