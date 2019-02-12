@@ -72,7 +72,7 @@ namespace {
   }
 
   // Futility and reductions lookup tables, initialized at startup
-  int FutilityMoveCounts[2][16]; // [improving][depth]
+  int FutilityMoveCounts[16]; // [depth]
   int Reductions[2][2][64][64];  // [pv][improving][depth][moveNumber]
 
   template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
@@ -171,10 +171,7 @@ void Search::init() {
           }
 
   for (int d = 0; d < 16; ++d)
-  {
-      FutilityMoveCounts[0][d] = int(2.4 + 0.74 * pow(d, 1.78));
-      FutilityMoveCounts[1][d] = int(5.0 + 1.00 * pow(d, 2.00));
-  }
+      FutilityMoveCounts[d] = (int(2.4 + 0.74 * pow(d, 1.78)) + int(5.0 + 1.00 * pow(d, 2.00))) / 2;
 }
 
 
@@ -915,7 +912,7 @@ moves_loop: // When in check, search starts from here
       givesCheck = gives_check(pos, move);
 
       moveCountPruning =   depth < 16 * ONE_PLY
-                        && moveCount >= FutilityMoveCounts[improving][depth / ONE_PLY];
+                        && moveCount >= FutilityMoveCounts[depth / ONE_PLY];
 
       // Step 13. Extensions (~70 Elo)
 
