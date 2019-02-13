@@ -71,12 +71,15 @@ namespace {
     return Value((175 - 50 * improving) * d / ONE_PLY);
   }
 
-  // Futility and reductions lookup tables, initialized at startup
-  int FutilityMoveCounts[2][16]; // [improving][depth]
+  // Reductions lookup tables, initialized at startup
   int Reductions[2][2][64][64];  // [pv][improving][depth][moveNumber]
 
-  template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
+  template <bool PvNode> inline Depth reduction(bool i, Depth d, int mn) {
     return Reductions[PvNode][i][std::min(d / ONE_PLY, 63)][std::min(mn, 63)] * ONE_PLY;
+  }
+
+  inline Depth futility_mc(bool improving, int d) {
+    return Depth((d * d + 5) / (1 + 1.4 * !improving));
   }
 
   // History and stats update bonus, based on depth
@@ -169,12 +172,6 @@ void Search::init() {
               if (!imp && r > 1.0)
                 Reductions[NonPV][imp][d][mc]++;
           }
-
-  for (int d = 0; d < 16; ++d)
-  {
-      FutilityMoveCounts[0][d] = int(2.4 + 0.74 * pow(d, 1.78));
-      FutilityMoveCounts[1][d] = int(5.0 + 1.00 * pow(d, 2.00));
-  }
 }
 
 
@@ -914,8 +911,7 @@ moves_loop: // When in check, search starts from here
       movedPiece = pos.moved_piece(move);
       givesCheck = gives_check(pos, move);
 
-      moveCountPruning =   depth < 16 * ONE_PLY
-                        && moveCount >= FutilityMoveCounts[improving][depth / ONE_PLY];
+      moveCountPruning = depth < 16 * ONE_PLY && moveCount >= futility_mc(improving, depth);
 
       // Step 13. Extensions (~70 Elo)
 
