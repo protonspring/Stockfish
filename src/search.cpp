@@ -76,7 +76,7 @@ namespace {
   int Reductions[2][64][64];  // [improving][depth][moveNumber]
 
   template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
-    return Reductions[i][std::min(d / ONE_PLY, 63)][std::min(mn, 63)] * ONE_PLY - Depth(PvNode);
+    return std::max(Reductions[i][std::min(d / ONE_PLY, 63)][std::min(mn, 63)] * ONE_PLY - Depth(PvNode), Depth(0));
   }
 
   // History and stats update bonus, based on depth
@@ -161,7 +161,7 @@ void Search::init() {
           for (int mc = 1; mc < 64; ++mc)
           {
               double r = log(d) * log(mc) / 1.95;
-              Reductions[imp][d][mc] = std::max(int(std::round(r)), 1);
+              Reductions[imp][d][mc] = int(std::round(r));
 
               // Increase reduction for non-PV nodes when eval is not improving
               if (!imp && r > 1.0)
