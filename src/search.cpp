@@ -79,7 +79,7 @@ namespace {
   }
 
   inline Depth futility_mc(bool improving, int d) {
-    return improving ? d * d + 5 : ((d + 2.3) * (d + 2.3) * 0.3125;
+    return Depth(improving ? d * d + 5 : (d + 2.3) * (d + 2.3) * 0.3125);
   }
 
   // History and stats update bonus, based on depth
