@@ -28,15 +28,9 @@ namespace {
   template<GenType Type, Direction D>
   ExtMove* make_promotions(ExtMove* moveList, Square to, Square ksq) {
 
-    if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
-        *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
-
-    if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
-    {
-        *moveList++ = make<PROMOTION>(to - D, to, ROOK);
-        *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
-    }
+    if (Type == QUIETS || Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
+        for (PieceType Pt : {QUEEN, ROOK, BISHOP, KNIGHT })
+            *moveList++ = make<PROMOTION>(to - D, to, Pt);
 
     // Knight promotion is the only promotion that can give a direct check
     // that's not already included in the queen promotion.
