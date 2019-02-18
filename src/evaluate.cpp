@@ -498,7 +498,7 @@ namespace {
         Bitboard noFlankPawns = pos.pieces(Us, PAWN) & ~(KingFlank[file_of(pos.square<KING>(Them))] | KingFlank[file_of(pos.square<KING>(Us))]);
 
         while(noFlankPawns)
-            score += make_score(1,1) * rank_of(pop_lsb(&noFlankPawns));
+            score += make_score(1,1) * relative_rank(Us, pop_lsb(&noFlankPawns));
     }
 
     // Penalty if king flank is under attack, potentially moving toward the king
