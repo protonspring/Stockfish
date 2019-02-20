@@ -368,11 +368,14 @@ namespace {
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
+            {
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
-            // More bonus if there is only one open file
-            if (popcount(pe->semiopenFiles[Us] & pe->semiopenFiles[Them]) == 1)
-                score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
+                // More bonus if we're on the one and only open file
+               if (pe->semiopen_file(Them, file_of(s)))
+                  if (popcount(pe->semiopenFiles[Us] & pe->semiopenFiles[Them]) == 1)
+                      score += RookOnFile[0];
+            }
 
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
