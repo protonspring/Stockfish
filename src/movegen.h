@@ -42,15 +42,13 @@ struct ExtMove {
 
   operator Move() const { return move; }
   void operator=(Move m) { move = m; }
+  bool operator==(ExtMove const& rhs) { return rhs.move == move; }
+  bool operator<(ExtMove const& rhs) { return value < rhs.value; }
 
   // Inhibit unwanted implicit conversions to Move
   // with an ambiguity that yields to a compile error.
   operator float() const = delete;
 };
-
-inline bool operator<(const ExtMove& f, const ExtMove& s) {
-  return f.value < s.value;
-}
 
 template<GenType>
 ExtMove* generate(const Position& pos, ExtMove* moveList);

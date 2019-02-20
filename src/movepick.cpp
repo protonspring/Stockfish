@@ -183,8 +183,8 @@ top:
       endMoves = std::end(refutations);
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
+      if (   refutations[0] == refutations[2]
+          || refutations[1] == refutations[2])
           --endMoves;
 
       ++stage;
