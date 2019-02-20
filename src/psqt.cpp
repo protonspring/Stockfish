@@ -68,16 +68,7 @@ constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
    { S( -8,  1), S(  6, 2), S(10, 17), S(12,-8) },
    { S(-22, 12), S(-24,-6), S(-6, 13), S( 4, 7) }
   },
-  { // Queen
-   { S( 3,-69), S(-5,-57), S(-5,-47), S( 4,-26) },
-   { S(-3,-55), S( 5,-31), S( 8,-22), S(12, -4) },
-   { S(-3,-39), S( 6,-18), S(13, -9), S( 7,  3) },
-   { S( 4,-23), S( 5, -3), S( 9, 13), S( 8, 24) },
-   { S( 0,-29), S(14, -6), S(12,  9), S( 5, 21) },
-   { S(-4,-38), S(10,-18), S( 6,-12), S( 8,  1) },
-   { S(-5,-50), S( 6,-27), S(10,-24), S( 8, -8) },
-   { S(-2,-75), S(-2,-52), S( 1,-43), S(-2,-36) }
-  },
+  { }, // Queen
   { // King
    { S(272,  0), S(325, 41), S(273, 80), S(190, 93) },
    { S(277, 57), S(305, 98), S(241,138), S(183,131) },
@@ -120,8 +111,18 @@ void init() {
       for (Square s = SQ_A1; s <= SQ_H8; ++s)
       {
           File f = std::min(file_of(s), ~file_of(s));
-          psq[ pc][ s] = score + (type_of(pc) == PAWN ? PBonus[rank_of(s)][file_of(s)]
-                                                      : Bonus[pc][rank_of(s)][f]);
+          Rank r = rank_of(s);
+          double fmid = f - 3.5;
+          double rmid = r - 3.5;
+
+          if (type_of(pc) == PAWN)
+              psq[ pc][ s] = score + PBonus[r][file_of(s)];
+          else if (type_of(pc) == QUEEN)
+              psq[ pc][ s] = score + make_score(10 - fmid * fmid / 2 - rmid * rmid / 2,
+                                                23 - fmid * fmid * 4 - rmid * rmid * 4);
+          else
+              psq[ pc][ s] = score + Bonus[pc][r][f];
+
           psq[~pc][~s] = -psq[pc][s];
       }
   }
