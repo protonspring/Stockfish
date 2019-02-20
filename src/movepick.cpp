@@ -31,21 +31,6 @@ namespace {
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
-  // partial_insertion_sort() sorts moves in descending order up to and including
-  // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
-
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
-        {
-            ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
-                *q = *(q - 1);
-            *q = tmp;
-        }
-  }
-
 } // namespace
 
 
@@ -203,7 +188,9 @@ top:
       endMoves = generate<QUIETS>(pos, cur);
 
       score<QUIETS>();
-      partial_insertion_sort(cur, endMoves, -4000 * depth / ONE_PLY);
+      for (int i = 0; i < 5*depth; ++i)
+          if (cur+i < endMoves)
+              std::swap(*(cur+i), *std::max_element(cur+i, endMoves));
       ++stage;
       /* fallthrough */
 
