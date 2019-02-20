@@ -32,7 +32,7 @@ namespace {
         *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
 
     if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
-        for (Piecetype Pt : {ROOK, BISHOP, KNIGHT})
+        for (PieceType Pt : {ROOK, BISHOP, KNIGHT})
             *moveList++ = make<PROMOTION>(to - D, to, Pt);
 
     // Knight promotion is the only promotion that can give a direct check
