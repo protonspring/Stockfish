@@ -388,7 +388,7 @@ namespace {
 
             // Bonus for being on an semi-open file and BEHIND a rook
             if (pe->semiopen_file(Us, file_of(s)) && (forward_file_bb(Us, s) & pos.pieces(Us, ROOK)))
-                score += RookOnFile[0];
+                score += make_score(10,0);
         }
     }
     if (T)
