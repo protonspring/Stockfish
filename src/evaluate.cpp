@@ -386,8 +386,8 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
 
-            // Bonus for being on an semi-open file and BEHIND a rook
-            if (pe->semiopen_file(Us, file_of(s)) && (forward_file_bb(Us, s) & pos.pieces(Us, ROOK)))
+            // Bonus for being on an semi-open file and BEHIND two rooks
+            if (pe->semiopen_file(Us, file_of(s)) && (more_than_one(forward_file_bb(Us, s) & pos.pieces(Us, ROOK))))
                 score += make_score(10,0);
         }
     }
