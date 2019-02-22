@@ -164,6 +164,9 @@ namespace {
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
   constexpr Score Outpost            = S(  9,  3);
+  constexpr Score QueenOnOpenFile    = S( 18,  7);
+
+TUNE(QueenOnOpenFile);
 
 #undef S
 
@@ -386,9 +389,9 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
 
-            // Bonus for being on an semi-open file and BEHIND two rooks
-            if (pe->semiopen_file(Us, file_of(s)) && (more_than_one(forward_file_bb(Us, s) & pos.pieces(Us, ROOK))))
-                score += make_score(10,0);
+            // Bonus for being on a semi-open file and behind a rook
+            if (pe->semiopen_file(Us, file_of(s)) && (forward_file_bb(Us, s) & pos.pieces(Us, ROOK)))
+                score += QueenOnOpenFile;
         }
     }
     if (T)
