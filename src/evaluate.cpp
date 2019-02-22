@@ -164,7 +164,7 @@ namespace {
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
   constexpr Score Outpost            = S(  9,  3);
-  constexpr Score QueenOnOpenFile    = S( 18,  7);
+  Score QueenOnOpenFile    = S( 18,  7);
 
 TUNE(QueenOnOpenFile);
 
