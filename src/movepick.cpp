@@ -210,8 +210,7 @@ top:
   case QUIET:
       if (   !skipQuiets
           && select<Next>([&](){return   move != refutations[0]
-                                      && move != refutations[1]
-                                      && move != refutations[2];}))
+                                      && move != refutations[1];}))
           return move;
 
       // Prepare the pointers to loop over the bad captures
