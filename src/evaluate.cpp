@@ -629,8 +629,8 @@ namespace {
         assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
 
         int r = relative_rank(Us, s);
-
-        Score bonus = make_score(10 + 5*r*r*r, 20 + 5*r*r*r);
+        int v = 5 * (r-2) * (r-2) * (r-2);
+        Score bonus = make_score(v + 10, v + 20);
 
         if (r > RANK_3)
         {
