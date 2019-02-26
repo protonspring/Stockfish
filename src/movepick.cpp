@@ -192,9 +192,8 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    move != MOVE_NONE
-                                    && !pos.capture(move)
-                                    &&  pos.pseudo_legal(move); }))
+      if (select<Next>([&](){ return !pos.capture(move)
+                                   && pos.pseudo_legal(move); }))
           return move;
       ++stage;
       /* fallthrough */
@@ -211,7 +210,8 @@ top:
   case QUIET:
       if (   !skipQuiets && select<Next>([&](){
               for (ExtMove* em=refutations;em<endRefutations ; ++em)
-                  if (move == *em) return false; return true;}))
+                  if (move == *em) return false;
+              return true;}))
           return move;
 
       // Prepare the pointers to loop over the bad captures
