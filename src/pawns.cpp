@@ -155,7 +155,7 @@ namespace Pawns {
 
 void init() {
 
-  auto seed = [&](int r) { return int(6 * std::pow(1.76, r)); };
+  auto seed = [&](int r) { return int(6 * std::pow(1.78, r)); };
 
   for (int opposed = 0; opposed <= 1; ++opposed)
       for (int phalanx = 0; phalanx <= 1; ++phalanx)
