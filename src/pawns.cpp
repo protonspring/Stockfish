@@ -19,7 +19,6 @@
 */
 
 #include <algorithm>
-#include <cmath>
 #include <cassert>
 
 #include "bitboard.h"
@@ -155,7 +154,7 @@ namespace Pawns {
 
 void init() {
 
-  auto seed = [&](int r) { return 15 + 10 * r * r; };
+  auto seed = [&](int r) { return 15 + 10 * (r - 2) * (r - 2); };
 
   for (int opposed = 0; opposed <= 1; ++opposed)
       for (int phalanx = 0; phalanx <= 1; ++phalanx)
