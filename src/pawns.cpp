@@ -154,16 +154,13 @@ namespace Pawns {
 
 void init() {
 
-  auto seed = [&](int r) { return 15 + 10 * (r - 2) * (r - 2); };
-
   for (int opposed = 0; opposed <= 1; ++opposed)
       for (int phalanx = 0; phalanx <= 1; ++phalanx)
           for (int support = 0; support <= 2; ++support)
               for (Rank r = RANK_2; r < RANK_8; ++r)
   {
       int v = 17 * support;
-      v += (seed(r) + (phalanx ? (seed(r + 1) - seed(r)) / 2 : 0)) >> opposed;
-
+      v += ((10 * r * r - 40 * r + 55) + (phalanx * (10 * r - 15))) >> opposed;
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
   }
 }
