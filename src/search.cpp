@@ -76,8 +76,8 @@ namespace {
   double log_value[256];
 
   Depth reduction(bool i, Depth d, int mn, bool PvNode) {
-    int r = int(log_value[d] * log_value[mn]) / 2;
-    return Depth(r + (!i && r > 0) - PvNode);
+    double r = 0.5 + log_value[d] * log_value[mn] / 1.95;
+    return Depth(int(r) + (!i && r > 1.5) - PvNode);
   }
 
   // History and stats update bonus, based on depth
