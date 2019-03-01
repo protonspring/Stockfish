@@ -76,7 +76,7 @@ namespace {
   double log_value[256];
 
   Depth reduction(bool i, Depth d, int mn, bool PvNode) {
-    double r = 0.5 + log_value[d] * log_value[mn];
+    double r = log_value[d] * log_value[mn];
     return Depth(int(r) + (!i && r > 1.5) - PvNode);
   }
 
@@ -158,7 +158,7 @@ namespace {
 void Search::init() {
 
   for (int d = 1; d < 256 ; d++)
-      log_value[d] = std::log(d) / std::sqrt(1.95);
+      log_value[d] = 1.2 * std::log(d) / std::sqrt(1.95);
 
   for (int d = 0; d < 16; ++d)
   {
