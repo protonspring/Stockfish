@@ -76,8 +76,8 @@ namespace {
   int log_value[256];
 
   Depth reduction(bool i, Depth d, int mn, bool PvNode) {
-    double r = 512 + log_value[d] * log_value[mn];
-    return Depth(int(r/1024) + (!i && r > 1536) - PvNode);
+    int r = 16384 + log_value[d] * log_value[mn];
+    return Depth(int(r/32768) + (!i && r > (49152)) - PvNode);
   }
 
   // History and stats update bonus, based on depth
@@ -158,7 +158,7 @@ namespace {
 void Search::init() {
 
   for (int d = 1; d < 256 ; d++)
-      log_value[d] = 22.915 * std::log(d); //scale value to avoid fp operations
+      log_value[d] = sqrt(32768) * std::log(d) / std::sqrt(1.95);
 
   for (int d = 0; d < 16; ++d)
   {
