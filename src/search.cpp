@@ -73,10 +73,10 @@ namespace {
 
   // Futility and reductions lookup tables, initialized at startup
   int FutilityMoveCounts[2][16]; // [improving][depth]
-  int Reductions[2][64][64];  // [improving][depth][moveNumber]
+  int8_t Reductions[2][256][256];  // [improving][depth][moveNumber]
 
   template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
-    return (Reductions[i][std::min(d / ONE_PLY, 63)][std::min(mn, 63)] - PvNode) * ONE_PLY;
+    return (Reductions[i][d][mn] - PvNode) * ONE_PLY;
   }
 
   // History and stats update bonus, based on depth
@@ -157,8 +157,8 @@ namespace {
 void Search::init() {
 
   for (int imp = 0; imp <= 1; ++imp)
-      for (int d = 1; d < 64; ++d)
-          for (int mc = 1; mc < 64; ++mc)
+      for (int d = 1; d < 256; ++d)
+          for (int mc = 1; mc < 256; ++mc)
           {
               double r = log(d) * log(mc) / 1.95;
 
