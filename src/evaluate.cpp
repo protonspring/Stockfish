@@ -377,6 +377,16 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Penalty for lining up with king when bishops are around
+            if (PseudoAttacks[BISHOP][s] & pos.square<KING>(Us))
+            {
+                 Square bs;
+                 const Square *pl2 = pos.squares<BISHOP>(Them);
+                 while ((bs = *pl2++) != SQ_NONE)
+                     if (!opposite_colors(bs, s))
+                         score -= make_score(10, 0);
+            }
         }
 
         if (Pt == QUEEN)
