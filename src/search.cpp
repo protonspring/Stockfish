@@ -72,11 +72,12 @@ namespace {
   }
 
   // Futility and reductions lookup tables, initialized at startup
+  double log_value[256];
   int FutilityMoveCounts[2][16]; // [improving][depth]
 
-  Depth reduction(bool i, Depth d, int mn, bool PvNode) {
-    int r = std::max(int(5 - 144/(d * mn)),0);
-    return Depth(r + (!i && r > 0) - PvNode);
+  template<bool PvNode> Depth reduction(bool i, Depth d, int mn) {
+    double r = 0.5 + log_value[d] * log_value[mn];
+    return Depth(int(r) + (!i && r > 1.5) - PvNode);
   }
 
   // History and stats update bonus, based on depth
@@ -155,6 +156,9 @@ namespace {
 /// Search::init() is called at startup to initialize various lookup tables
 
 void Search::init() {
+
+  for (int d = 1; d < 256 ; d++)
+      log_value[d] = std::log(d) / std::sqrt(1.95);
 
   for (int d = 0; d < 16; ++d)
   {
@@ -963,7 +967,7 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Reduced depth of the next LMR search
-              int lmrDepth = std::max(newDepth - reduction(improving, depth, moveCount, PvNode), DEPTH_ZERO) / ONE_PLY;
+              int lmrDepth = std::max(newDepth - reduction<PvNode>(improving, depth, moveCount), DEPTH_ZERO) / ONE_PLY;
 
               // Countermoves based pruning (~20 Elo)
               if (   lmrDepth < 3 + ((ss-1)->statScore > 0 || (ss-1)->moveCount == 1)
@@ -1009,7 +1013,7 @@ moves_loop: // When in check, search starts from here
           &&  moveCount > 1
           && (!captureOrPromotion || moveCountPruning))
       {
-          Depth r = reduction(improving, depth, moveCount, PvNode);
+          Depth r = reduction<PvNode>(improving, depth, moveCount);
 
           // Decrease reduction if position is or has been on the PV
           if (ttPv)
