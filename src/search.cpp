@@ -82,7 +82,7 @@ namespace {
   // History and stats update bonus, based on depth
   int stat_bonus(Depth depth) {
     int d = depth / ONE_PLY;
-    return d > 17 ? 0 : 590 * d - 700;
+    return d > 17 ? 0 : 610 * d - 700;
   }
 
   // Add a small random component to draw evaluations to keep search dynamic
