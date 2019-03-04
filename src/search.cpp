@@ -73,10 +73,10 @@ namespace {
 
   // Futility and reductions lookup tables, initialized at startup
   int FutilityMoveCounts[2][16]; // [improving][depth]
-  int Reductions[256];  // [improving][depth][moveNumber]
+  int rFactor[256];  // Reduction Factor as used below
 
   template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
-    int r = 512 + Reductions[d] * Reductions[mn] / 1024;
+    int r = 512 + rFactor[d] * rFactor[mn] / 1024;
     return Depth(r / 1024 + (!i && r > 1536) - PvNode);
   }
 
@@ -158,7 +158,7 @@ namespace {
 void Search::init() {
 
   for (int d = 1; d < 256 ; ++d)
-      Reductions[d] = 1024 * log(d) / sqrt(1.95);
+      rFactor[d] = 1024 * log(d) / sqrt(1.95);
 
   for (int d = 0; d < 16; ++d)
   {
