@@ -80,8 +80,8 @@ namespace {
   }
 
   // History and stats update bonus, based on depth
-  constexpr int stat_bonus(Depth depth) {
-    return 610 * (depth / ONE_PLY) - 700;
+  inline int stat_bonus(Depth depth) {
+    return std::min(610 * (depth / ONE_PLY) - 700, 29952);
   }
 
   // Add a small random component to draw evaluations to keep search dynamic
