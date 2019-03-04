@@ -76,8 +76,8 @@ namespace {
   int rFactor[256];  // Reduction Factor as used below
 
   template <bool PvNode> Depth reduction(bool i, Depth d, int mn) {
-    int r = 512 + rFactor[d] * rFactor[mn] / 1024;
-    return Depth(r / 1024 + (!i && r > 1536) - PvNode);
+    int r = rFactor[d] * rFactor[mn] / (128*128);
+    return Depth(r / 16384 + (!i && r > 16384) - PvNode);
   }
 
   // History and stats update bonus, based on depth
@@ -158,7 +158,7 @@ namespace {
 void Search::init() {
 
   for (int d = 1; d < 256 ; ++d)
-      rFactor[d] = 1024 * log(d) / sqrt(1.95);
+      rFactor[d] = 16384* log(d) / sqrt(1.95);
 
   for (int d = 0; d < 16; ++d)
   {
