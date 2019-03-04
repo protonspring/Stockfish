@@ -229,7 +229,7 @@ void MainThread::search() {
   // until the GUI sends one of those commands.
 
   while (!Threads.stop && (ponder || Limits.infinite))
-  {} // Busy wait for a stop or a ponder reset
+  {std::chrono::milliseconds(10);} // Wait for a stop or a ponder reset
 
   // Stop the threads if not already stopped (also raise the stop if
   // "ponderhit" just reset Threads.ponder).
