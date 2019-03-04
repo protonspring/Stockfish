@@ -166,7 +166,10 @@ void Search::init() {
       for (int d = 1; d < 64; ++d)
           for (int mc = 1; mc < 64; ++mc)
           {
-              double r = 0.5 * 1024 + ((32 * log(d) / sqrt(1.95)) * (32 * log(mc) / sqrt(1.95)));
+              //double r = 0.5 * 1024 + ((32 * log(d) / sqrt(1.95)) * (32 * log(mc) / sqrt(1.95)));
+              int v1 = 32 * 32 * log(d) / sqrt(1.95);
+              int v2 = 32 * 32 * log(mc) / sqrt(1.95);
+              int r = 0.5 * (32*32) + v1 * v2 / 1024; //((32 * log(d) / sqrt(1.95)) * (32 * log(mc) / sqrt(1.95)));
 
               Reductions[d][mc] = r;
           }
