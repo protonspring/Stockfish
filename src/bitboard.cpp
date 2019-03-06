@@ -24,7 +24,6 @@
 #include "misc.h"
 
 uint8_t PopCnt16[1 << 16];
-uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 Bitboard SquareBB[SQUARE_NB];
 Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
@@ -92,10 +91,7 @@ void Bitboards::init() {
 
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
       for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
-          {
-              SquareDistance[s1][s2] = std::max(distance<File>(s1, s2), distance<Rank>(s1, s2));
-              DistanceRingBB[s1][SquareDistance[s1][s2]] |= s2;
-          }
+              DistanceRingBB[s1][distance<Square>(s1, s2)] |= s2;
 
   int steps[][5] = { {}, { 7, 9 }, { 6, 10, 15, 17 }, {}, {}, {}, { 1, 7, 8, 9 } };
 
@@ -106,7 +102,7 @@ void Bitboards::init() {
               {
                   Square to = s + Direction(c == WHITE ? steps[pt][i] : -steps[pt][i]);
 
-                  if (is_ok(to) && distance(s, to) < 3)
+                  if (is_ok(to) && distance<Square>(s, to) < 3)
                   {
                       if (pt == PAWN)
                           PawnAttacks[c][s] |= to;
@@ -145,7 +141,7 @@ namespace {
 
     for (int i = 0; i < 4; ++i)
         for (Square s = sq + directions[i];
-             is_ok(s) && distance(s, s - directions[i]) == 1;
+             is_ok(s) && distance<Square>(s, s - directions[i]) == 1;
              s += directions[i])
         {
             attack |= s;

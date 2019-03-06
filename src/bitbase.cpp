@@ -114,7 +114,7 @@ namespace {
     psq        = make_square(File((idx >> 13) & 0x3), Rank(RANK_7 - ((idx >> 15) & 0x7)));
 
     // Check if two pieces are on the same square or if a king can be captured
-    if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
+    if (   distance<Square>(ksq[WHITE], ksq[BLACK]) <= 1
         || ksq[WHITE] == psq
         || ksq[BLACK] == psq
         || (us == WHITE && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
@@ -124,7 +124,7 @@ namespace {
     else if (   us == WHITE
              && rank_of(psq) == RANK_7
              && ksq[us] != psq + NORTH
-             && (    distance(ksq[~us], psq + NORTH) > 1
+             && (    distance<Square>(ksq[~us], psq + NORTH) > 1
                  || (PseudoAttacks[KING][ksq[us]] & (psq + NORTH))))
         result = WIN;
 

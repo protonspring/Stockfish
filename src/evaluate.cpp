@@ -318,7 +318,7 @@ namespace {
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
-            score -= KingProtector * distance(s, pos.square<KING>(Us));
+            score -= KingProtector * distance<Square>(s, pos.square<KING>(Us));
 
             if (Pt == BISHOP)
             {
@@ -608,7 +608,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     auto king_proximity = [&](Color c, Square s) {
-      return std::min(distance(pos.square<KING>(c), s), 5);
+      return std::min(distance<Square>(pos.square<KING>(c), s), 5);
     };
 
     Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
