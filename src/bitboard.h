@@ -66,7 +66,6 @@ constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
 constexpr Bitboard Center      = (FileDBB | FileEBB) & (Rank4BB | Rank5BB);
 
 extern uint8_t PopCnt16[1 << 16];
-extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
@@ -257,7 +256,9 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 /// number of steps for a king in x to reach y. Works with squares, ranks, files.
 
 template<typename T> inline int distance(T x, T y) { return std::abs(x - y); }
-template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
+template<> inline int distance<Square>(Square x, Square y) {
+  return std::max(std::abs(file_of(x)-file_of(y)),std::abs(rank_of(x) - rank_of(y)));
+}
 
 template<typename T1, typename T2> inline int distance(T2 x, T2 y);
 template<> inline int distance<File>(Square x, Square y) { return distance(file_of(x), file_of(y)); }
