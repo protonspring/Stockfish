@@ -234,16 +234,17 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 template<Color Us>
 Score Entry::do_king_safety(const Position& pos) {
 
-  Square s, ksq = pos.square<KING>(Us);
+  Square ksq = pos.square<KING>(Us);
   Bitboard pawns = pos.pieces(Us, PAWN);
-  int d, minKingPawnDistance = pawns ? 8 : 0;
-  const Square* pl = pos.squares<PAWN>(Us);
+  int minKingPawnDistance = 0;
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
 
-  while (((s = *pl++) != SQ_NONE) && (minKingPawnDistance > 1))
-      if ((d = distance(s, ksq)) < minKingPawnDistance)
-          minKingPawnDistance = d;
+  if (pawns)
+      for (Bitboard b = SquareBB[ksq]; ! (b & pawns); ++minKingPawnDistance) {
+          b |= shift<NORTH>(b) | shift<SOUTH>(b);
+          b |= shift<WEST>(b) | shift<EAST>(b);
+      }
 
   // If we can castle, use the shelter bonus for the best king location
   Value bonus = evaluate_shelter<Us>(pos, ksq);
