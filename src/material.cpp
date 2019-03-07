@@ -42,17 +42,6 @@ namespace {
     {-189,   24, 117,   133,  -134, -6  }  // Queen
   };
 
-  constexpr int QuadraticTheirs[][PIECE_TYPE_NB] = {
-    //           THEIR PIECES
-    // pair pawn knight bishop rook queen
-    {   0                               }, // Bishop pair
-    {  36,    0                         }, // Pawn
-    {   9,   63,   0                    }, // Knight      OUR PIECES
-    {  59,   65,  42,     0             }, // Bishop
-    {  46,   39,  24,   -24,    0       }, // Rook
-    {  97,  100, -42,   137,  268,    0 }  // Queen
-  };
-
   // Endgame evaluation and scaling functions are accessed directly and not through
   // the function maps because they correspond to more than one material hash key.
   Endgame<KXK>    EvaluateKXK[] = { Endgame<KXK>(WHITE),    Endgame<KXK>(BLACK) };
@@ -87,8 +76,6 @@ namespace {
   template<Color Us>
   int imbalance(const int pieceCount[][PIECE_TYPE_NB]) {
 
-    constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
-
     int bonus = 0;
 
     // Second-degree polynomial material imbalance, by Tord Romstad
@@ -100,8 +87,7 @@ namespace {
         int v = 0;
 
         for (int pt2 = NO_PIECE_TYPE; pt2 <= pt1; ++pt2)
-            v +=  QuadraticOurs[pt1][pt2] * pieceCount[Us][pt2]
-                + QuadraticTheirs[pt1][pt2] * pieceCount[Them][pt2];
+            v +=  QuadraticOurs[pt1][pt2] * pieceCount[Us][pt2];
 
         bonus += pieceCount[Us][pt1] * v;
     }
