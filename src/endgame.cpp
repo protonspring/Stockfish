@@ -434,7 +434,7 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   if (   r == RANK_6
       && distance(bksq, queeningSq) <= 1
       && rank_of(wksq) + tempo <= RANK_6
-      && (rank_of(brsq) == RANK_1 || (!tempo && distance<File>(brsq, wpsq) >= 3)))
+      && (rank_of(brsq) == RANK_1 || (!tempo && distance_file(brsq, wpsq) >= 3)))
       return SCALE_FACTOR_DRAW;
 
   if (   r >= RANK_6
@@ -490,7 +490,7 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   {
       if (file_of(bksq) == file_of(wpsq))
           return ScaleFactor(10);
-      if (   distance<File>(bksq, wpsq) == 1
+      if (   distance_file(bksq, wpsq) == 1
           && distance(wksq, bksq) > 2)
           return ScaleFactor(24 - 2 * distance(wksq, bksq));
   }
@@ -534,7 +534,7 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
       if (   rk == RANK_6
           && distance(psq + 2 * push, ksq) <= 1
           && (PseudoAttacks[BISHOP][bsq] & (psq + push))
-          && distance<File>(bsq, psq) >= 2)
+          && distance_file(bsq, psq) >= 2)
           return ScaleFactor(8);
   }
 
@@ -559,8 +559,8 @@ ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
 
   Rank r = std::max(relative_rank(strongSide, wpsq1), relative_rank(strongSide, wpsq2));
 
-  if (   distance<File>(bksq, wpsq1) <= 1
-      && distance<File>(bksq, wpsq2) <= 1
+  if (   distance_file(bksq, wpsq1) <= 1
+      && distance_file(bksq, wpsq2) <= 1
       && relative_rank(strongSide, bksq) > r)
   {
       assert(r > RANK_1 && r < RANK_7);
@@ -586,7 +586,7 @@ ScaleFactor Endgame<KPsK>::operator()(const Position& pos) const {
   // the king is within one file of the pawns, it's a draw.
   if (   !(pawns & ~forward_ranks_bb(weakSide, ksq))
       && !((pawns & ~FileABB) && (pawns & ~FileHBB))
-      &&  distance<File>(ksq, lsb(pawns)) <= 1)
+      &&  distance_file(ksq, lsb(pawns)) <= 1)
       return SCALE_FACTOR_DRAW;
 
   return SCALE_FACTOR_NONE;
@@ -654,7 +654,7 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
       blockSq2 = make_square(file_of(psq1), rank_of(psq2));
   }
 
-  switch (distance<File>(psq1, psq2))
+  switch (distance_file(psq1, psq2))
   {
   case 0:
     // Both pawns are on the same file. It's an easy draw if the defender firmly
