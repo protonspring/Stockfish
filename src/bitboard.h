@@ -258,9 +258,7 @@ constexpr int max_value(int x, int y) { return x < y ? y : x; }
 constexpr int  distance(int x, int y) { return x < y ? y - x : x - y; }
 constexpr int distance_file(Square x, Square y) { return distance(file_of(x), file_of(y)); }
 constexpr int distance_rank(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
-constexpr int distance(Square x, Square y) { 
- return max_value(distance_file(x,y), distance_rank(x,y));
-}
+constexpr int distance(Square x, Square y) { return max_value(distance_file(x,y), distance_rank(x,y)); }
 
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
