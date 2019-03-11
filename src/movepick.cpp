@@ -180,13 +180,10 @@ top:
           return move;
 
       // Prepare the pointers to loop over the refutations array
+      // If the countermove is the same as a killer move, skip it.
       cur = std::begin(refutations);
-      endMoves = std::end(refutations);
-
-      // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
-          --endMoves;
+      endMoves = std::end(refutations) - ((refutations[0].move == refutations[2].move)
+                                       || (refutations[1].move == refutations[2].move));
 
       ++stage;
       /* fallthrough */
