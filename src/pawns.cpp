@@ -92,7 +92,7 @@ namespace {
         File f = file_of(s);
 
         e->semiopenFiles[Us]   &= ~(1 << f);
-        e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
+        e->pawnAttacksSpan[Us] |= pawn_attack_span<Us>(s);
 
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
@@ -106,7 +106,7 @@ namespace {
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
-        backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
+        backward =  !(ourPawns & pawn_attack_span<Them>(s + Up))
                   && (stoppers & (leverPush | (s + Up)));
 
         // Passed pawns will be properly scored in evaluation because we need
