@@ -348,7 +348,7 @@ void Thread::search() {
 
       // Age out PV variability metric
       if (mainThread)
-          mainThread->bestMoveChanges *= 0.517;
+          mainThread->bestMoveChanges = 2167 * mainThread->bestMoveChanges / 4192;
 
       // Save the last iteration's scores before first PV line is searched and
       // all the move scores except the (new) PV are set to -VALUE_INFINITE.
@@ -480,18 +480,18 @@ void Thread::search() {
           && !mainThread->stopOnPonderhit)
       {
           int diff = mainThread->previousScore - bestValue;
-          int fallingEval = diff < -1 ? 1024 : diff < 62 ? 1079 + 32 * diff : 3072;
+          int fallingEval = diff < -1 ? 2048 : diff < 62 ? 2158 + 64 * diff : 6144;
 
           // If the bestMove is stable over several iterations, reduce time accordingly
           timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1.95 : 1.0;
           double reduction = std::pow(mainThread->previousTimeReduction, 0.528) / timeReduction;
 
           // Use part of the gained time from a previous stable move for the current move
-          double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
+          int bestMoveInstability = 4192 + mainThread->bestMoveChanges;
 
           // Stop the search if we have only one legal move, or if available time elapsed
           if (   rootMoves.size() == 1
-              || Time.elapsed() > Time.optimum() * fallingEval * reduction * bestMoveInstability / 2048)
+              || Time.elapsed() > Time.optimum() * fallingEval * reduction * bestMoveInstability / (4192 * 4192))
           {
               // If we are allowed to ponder do not stop the search now but
               // keep pondering until the GUI sends "ponderhit" or "stop".
