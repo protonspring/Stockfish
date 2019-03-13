@@ -348,7 +348,7 @@ void Thread::search() {
 
       // Age out PV variability metric
       if (mainThread)
-          mainThread->bestMoveChanges /= 2;
+          mainThread->bestMoveChanges *= 0.517;
 
       // Save the last iteration's scores before first PV line is searched and
       // all the move scores except the (new) PV are set to -VALUE_INFINITE.
@@ -487,7 +487,7 @@ void Thread::search() {
           double reduction = std::pow(mainThread->previousTimeReduction, 0.528) / timeReduction;
 
           // Use part of the gained time from a previous stable move for the current move
-          int bestMoveInstability = 1 + mainThread->bestMoveChanges;
+          double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
 
           // Stop the search if we have only one legal move, or if available time elapsed
           if (   rootMoves.size() == 1
