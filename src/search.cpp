@@ -1111,7 +1111,7 @@ moves_loop: // When in check, search starts from here
               // iteration. This information is used for time management: When
               // the best move changes frequently, we allocate some more time.
               if (moveCount > 1 && thisThread == Threads.main())
-                  ++static_cast<MainThread*>(thisThread)->bestMoveChanges;
+                  static_cast<MainThread*>(thisThread)->bestMoveChanges += 1024;
           }
           else
               // All other moves but the PV are set to the lowest value: this
