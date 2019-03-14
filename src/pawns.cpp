@@ -68,7 +68,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
-    Bitboard lever, leverPush;
+    Bitboard lever, leverPush, unblockedPawns, hardPassedPawns;
     Square s;
     bool opposed, backward;
     Score score = SCORE_ZERO;
@@ -83,6 +83,7 @@ namespace {
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
     e->pawnsOnSquares[Us][BLACK] = popcount(ourPawns & DarkSquares);
     e->pawnsOnSquares[Us][WHITE] = pos.count<PAWN>(Us) - e->pawnsOnSquares[Us][BLACK];
+    unblockedPawns = hardPassedPawns = 0;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -103,6 +104,9 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(f);
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
+
+        if (!stoppers) hardPassedPawns |= s;
+        if (!opposed) unblockedPawns |= s;
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
@@ -139,11 +143,11 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
-
-        // Bonus if this pawn is known-passed and is supported
-        if (!stoppers && (e->pawnAttacks[Us] & s))
-            score += make_score(8,0);
     }
+
+    //bonus for fully passed pawns being supported by unblocked pawns
+    Bitboard unblockedAttacks = pawn_attacks_bb<Us>(unblockedPawns);
+    score += make_score(4,0) * popcount(unblockedAttacks & hardPassedPawns);
 
     return score;
   }
