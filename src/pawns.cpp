@@ -139,6 +139,10 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        // Bonus if this pawn is known-passed and is supported
+        if (!stoppers && (e->pawnAttacks[Us] & s))
+            score += make_score(8,0);
     }
 
     return score;
