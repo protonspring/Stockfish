@@ -295,7 +295,7 @@ void Thread::search() {
   Move  lastBestMove = MOVE_NONE;
   Depth lastBestMoveDepth = DEPTH_ZERO;
   MainThread* mainThread = (this == Threads.main() ? Threads.main() : nullptr);
-  int timeReduction = 512;
+  int timeReduction = 256;
   Color us = rootPos.side_to_move();
 
   std::memset(ss-7, 0, 10 * sizeof(Stack));
@@ -348,7 +348,7 @@ void Thread::search() {
 
       // Age out PV variability metric
       if (mainThread)
-          mainThread->bestMoveChanges *= 0.517;
+          mainThread->bestMoveChanges = 1059 * mainThread->bestMoveChanges / 2048;
 
       // Save the last iteration's scores before first PV line is searched and
       // all the move scores except the (new) PV are set to -VALUE_INFINITE.
@@ -480,18 +480,18 @@ void Thread::search() {
           && !mainThread->stopOnPonderhit)
       {
           int diff = mainThread->previousScore - bestValue;
-          int fallingEval = diff < -1 ? 2048 : diff < 62 ? 2158 + 63 * diff : 6288;
+          int fallingEval = diff < -1 ? 1024 : diff < 62 ? 1080 + 32 * diff : 3072;
 
           // If the bestMove is stable over several iterations, reduce time accordingly
-          timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1015 : 512;
-          int reduction = 512 * std::pow(512 * mainThread->previousTimeReduction, 0.528) / timeReduction;
+          timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 505 : 256;
+          int reduction = 256 * std::pow(256 * mainThread->previousTimeReduction, 0.528) / timeReduction;
 
           // Use part of the gained time from a previous stable move for the current move
-          double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
+          int bestMoveInstability = 2048 + mainThread->bestMoveChanges;
 
           // Stop the search if we have only one legal move, or if available time elapsed
           if (   rootMoves.size() == 1
-              || Time.elapsed() > Time.optimum() * fallingEval * reduction * bestMoveInstability / (512 * 4192))
+              || Time.elapsed() > Time.optimum() * fallingEval * reduction * bestMoveInstability / (256 * 2048 * 2048))
           {
               // If we are allowed to ponder do not stop the search now but
               // keep pondering until the GUI sends "ponderhit" or "stop".
@@ -1111,7 +1111,7 @@ moves_loop: // When in check, search starts from here
               // iteration. This information is used for time management: When
               // the best move changes frequently, we allocate some more time.
               if (moveCount > 1 && thisThread == Threads.main())
-                  ++static_cast<MainThread*>(thisThread)->bestMoveChanges;
+                  static_cast<MainThread*>(thisThread)->bestMoveChanges += 2048;
           }
           else
               // All other moves but the PV are set to the lowest value: this
