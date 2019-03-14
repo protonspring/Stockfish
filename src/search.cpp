@@ -295,7 +295,7 @@ void Thread::search() {
   Move  lastBestMove = MOVE_NONE;
   Depth lastBestMoveDepth = DEPTH_ZERO;
   MainThread* mainThread = (this == Threads.main() ? Threads.main() : nullptr);
-  double timeReduction = 512;
+  int timeReduction = 512;
   Color us = rootPos.side_to_move();
 
   std::memset(ss-7, 0, 10 * sizeof(Stack));
@@ -484,7 +484,7 @@ void Thread::search() {
 
           // If the bestMove is stable over several iterations, reduce time accordingly
           timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1015 : 512;
-          double reduction = 512 * std::pow(512 * mainThread->previousTimeReduction, 0.528) / timeReduction;
+          int reduction = 512 * std::pow(512 * mainThread->previousTimeReduction, 0.528) / timeReduction;
 
           // Use part of the gained time from a previous stable move for the current move
           double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
