@@ -295,7 +295,7 @@ void Thread::search() {
   Move  lastBestMove = MOVE_NONE;
   Depth lastBestMoveDepth = DEPTH_ZERO;
   MainThread* mainThread = (this == Threads.main() ? Threads.main() : nullptr);
-  double timeReduction = 1.0;
+  bool timeReduction = false;
   Color us = rootPos.side_to_move();
 
   std::memset(ss-7, 0, 10 * sizeof(Stack));
@@ -483,8 +483,8 @@ void Thread::search() {
           fallingEval        = std::max(0.5, std::min(1.5, fallingEval));
 
           // If the bestMove is stable over several iterations, reduce time accordingly
-          timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth ? 1.95 : 1.0;
-          double reduction = (1 + 0.423*mainThread->previousTimeReduction) / timeReduction;
+          timeReduction = lastBestMoveDepth + 10 * ONE_PLY < completedDepth;
+          double reduction = (1 + 0.41*mainThread->previousTimeReduction) / (1 + 0.95*timeReduction);
 
           // Use part of the gained time from a previous stable move for the current move
           double bestMoveInstability = 1.0 + mainThread->bestMoveChanges;
@@ -506,7 +506,7 @@ void Thread::search() {
   if (!mainThread)
       return;
 
-  mainThread->previousTimeReduction = bool(timeReduction != 1.0);
+  mainThread->previousTimeReduction = timeReduction;
 
   // If skill level is enabled, swap best PV line with the sub-optimal one
   if (skill.enabled())
