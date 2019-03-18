@@ -137,7 +137,7 @@ namespace {
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
-        if (doubled && !support)
+        if (doubled && !support && !lever) //a lever can fix doubled?
             score -= Doubled;
     }
 
