@@ -139,6 +139,9 @@ inline bool opposite_colors(Square s1, Square s2) {
   return bool(DarkSquares & s1) != bool(DarkSquares & s2);
 }
 
+inline Bitboard color_squares(Square s) {
+  return DarkSquares & s ? DarkSquares : ~DarkSquares;
+}
 
 /// rank_bb() and file_bb() return a bitboard representing all the squares on
 /// the given file or rank.
