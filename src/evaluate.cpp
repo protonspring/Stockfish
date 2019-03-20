@@ -480,6 +480,15 @@ namespace {
     if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
         score -= PawnlessFlank;
 
+    // Bonus for advancing pawns not on our king flank
+    if (!pos.can_castle(Us | KING_SIDE) && !pos.can_castle(Us | QUEEN_SIDE))
+    {
+        Bitboard noFlankPawns = pos.pieces(Us, PAWN) & ~KingFlank[file_of(ksq)];
+
+        while (noFlankPawns)
+            score += make_score(1,1) * relative_rank(Us, pop_lsb(&noFlankPawns));
+    }
+
     // Penalty if king flank is under attack, potentially moving toward the king
     score -= FlankAttacks * kingFlankAttacks;
 
