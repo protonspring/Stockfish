@@ -222,6 +222,10 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
                                                         : UnblockedStorm[d][theirRank];
+
+      //increase storm penalty if enemy king is not on this flank.
+      if (!(KingFlank[file_of(pos.square<KING>(Them))] & file_bb(f)))
+          safety -= make_score(2,2) * (8 - theirRank);
   }
 
   return safety;
