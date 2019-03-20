@@ -356,8 +356,8 @@ namespace {
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
-            if (pe->semiopen_file(Us, file_of(s)))
-                score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
+            if (pos.semiopen_file(Us, file_of(s)))
+                score += RookOnFile[bool(pos.semiopen_file(Them, file_of(s)))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
@@ -717,8 +717,10 @@ namespace {
     behind |= shift<Down>(shift<Down>(behind));
 
     int bonus = popcount(safe) + popcount(behind & safe);
-    int weight =  pos.count<ALL_PIECES>(Us)
-                - 2 * popcount(pe->semiopenFiles[WHITE] & pe->semiopenFiles[BLACK]);
+    int weight =  pos.count<ALL_PIECES>(Us);
+    for (int f = 0; f < 8; ++f)
+        if (pos.semiopen_file(WHITE,File(f)) & pos.semiopen_file(BLACK,File(f)))
+            weight -= 2;
 
     Score score = make_score(bonus * weight * weight / 16, 0);
 
