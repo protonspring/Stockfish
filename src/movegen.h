@@ -48,7 +48,7 @@ struct ExtMove {
   operator float() const = delete;
 };
 
-inline bool operator<(const ExtMove& f, const ExtMove& s) {
+constexpr bool operator<(const ExtMove& f, const ExtMove& s) {
   return f.value < s.value;
 }
 

@@ -160,7 +160,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
 /// adjacent files of the given one.
-inline Bitboard adjacent_files_bb(File f) {
+constexpr Bitboard adjacent_files_bb(File f) {
   return shift<EAST>(fbb(f)) | shift<WEST>(fbb(f));
 }
 
@@ -177,27 +177,27 @@ inline Bitboard between_bb(Square s1, Square s2) {
 /// forward_ranks_bb() returns a bitboard representing the squares on the ranks
 /// in front of the given one, from the point of view of the given color. For instance,
 /// forward_ranks_bb(BLACK, SQ_D3) will return the 16 squares on ranks 1 and 2.
-inline Bitboard forward_ranks_bb(Color c, Square s) {
+constexpr Bitboard forward_ranks_bb(Color c, Square s) {
   return c == WHITE ? ~rbb(RANK_1) << 8 * (rank_of(s) - RANK_1)
                     : ~rbb(RANK_8) >> 8 * (RANK_8 - rank_of(s));
 }
 
 /// forward_file_bb() returns a bitboard representing all the squares along the
 /// line in front of the given one, from the point of view of the given color.
-inline Bitboard forward_file_bb(Color c, Square s) {
+constexpr Bitboard forward_file_bb(Color c, Square s) {
   return forward_ranks_bb(c, s) & fbb(s);
 }
 
 /// pawn_attack_span() returns a bitboard representing all the squares that can
 /// be attacked by a pawn of the given color when it moves along its file,
 /// starting from the given square.
-inline Bitboard pawn_attack_span(Color c, Square s) {
+constexpr Bitboard pawn_attack_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & adjacent_files_bb(file_of(s));
 }
 
 /// passed_pawn_span() returns a bitboard which can be used to test if a pawn of
 /// the given color and on the given square is a passed pawn.
-inline Bitboard passed_pawn_span(Color c, Square s) {
+constexpr Bitboard passed_pawn_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | fbb(s));
 }
 
@@ -210,12 +210,12 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 /// distance() functions return the distance between x and y, defined as the
 /// number of steps for a king in x to reach y. Works with squares, ranks, files.
 
-template<typename T> inline int distance(T x, T y) { return std::abs(x - y); }
+template<typename T> constexpr int distance(T x, T y) { return std::abs(x - y); }
 template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
 
-template<typename T1, typename T2> inline int distance(T2 x, T2 y);
-template<> inline int distance<File>(Square x, Square y) { return distance(file_of(x), file_of(y)); }
-template<> inline int distance<Rank>(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
+template<typename T1, typename T2> constexpr int distance(T2 x, T2 y);
+template<> constexpr int distance<File>(Square x, Square y) { return distance(file_of(x), file_of(y)); }
+template<> constexpr int distance<Rank>(Square x, Square y) { return distance(rank_of(x), rank_of(y)); }
 
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
