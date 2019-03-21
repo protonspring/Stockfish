@@ -128,6 +128,7 @@ public:
   // Piece specific
   bool pawn_passed(Color c, Square s) const;
   bool opposite_bishops() const;
+  inline bool semiopen_file(Color c, File f) const;
 
   // Doing and undoing moves
   void do_move(Move m, StateInfo& newSt);
@@ -311,6 +312,10 @@ inline Bitboard Position::check_squares(PieceType pt) const {
 
 inline bool Position::pawn_passed(Color c, Square s) const {
   return !(pieces(~c, PAWN) & passed_pawn_span(c, s));
+}
+
+inline bool Position::semiopen_file(Color c, File f) const {
+  return !(pieces(c, PAWN) & file_bb(f));
 }
 
 inline bool Position::advanced_pawn_push(Move m) const {
