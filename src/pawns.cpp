@@ -200,13 +200,13 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-  constexpr Bitboard  BlockRanks = (Us == WHITE ? Rank1BB | Rank2BB : Rank8BB | Rank7BB);
+  constexpr Bitboard  BlockRanks = (Us == WHITE ? rank_bb(RANK_1) | rank_bb(RANK_2) : rank_bb(RANK_8) | rank_bb(RANK_7));
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
+  Value safety = (shift<Down>(theirPawns) & (file_bb(FILE_A) | file_bb(FILE_H)) & BlockRanks & ksq) ?
                  Value(374) : Value(5);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));

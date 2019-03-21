@@ -257,7 +257,7 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
 
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
-      || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
+      || !((file_bb(FILE_A) | file_bb(FILE_C) | file_bb(FILE_F) | file_bb(FILE_H)) & pawnSq))
       result += QueenValueEg - PawnValueEg;
 
   return strongSide == pos.side_to_move() ? result : -result;
@@ -504,7 +504,7 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
   // Test for a rook pawn
-  if (pos.pieces(PAWN) & (FileABB | FileHBB))
+  if (pos.pieces(PAWN) & (file_bb(FILE_A) | file_bb(FILE_H)))
   {
       Square ksq = pos.square<KING>(weakSide);
       Square bsq = pos.square<BISHOP>(weakSide);
@@ -585,7 +585,7 @@ ScaleFactor Endgame<KPsK>::operator()(const Position& pos) const {
   // If all pawns are ahead of the king, on a single rook file and
   // the king is within one file of the pawns, it's a draw.
   if (   !(pawns & ~forward_ranks_bb(weakSide, ksq))
-      && !((pawns & ~FileABB) && (pawns & ~FileHBB))
+      && !((pawns & ~file_bb(FILE_A)) && (pawns & ~file_bb(FILE_H)))
       &&  distance<File>(ksq, lsb(pawns)) <= 1)
       return SCALE_FACTOR_DRAW;
 

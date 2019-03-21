@@ -54,8 +54,8 @@ namespace {
 
     // Compute some compile time parameters relative to the white side
     constexpr Color     Them     = (Us == WHITE ? BLACK      : WHITE);
-    constexpr Bitboard  TRank7BB = (Us == WHITE ? Rank7BB    : Rank2BB);
-    constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB    : Rank6BB);
+    constexpr Bitboard  TRank7BB = (Us == WHITE ? rank_bb(RANK_7): rank_bb(RANK_2));
+    constexpr Bitboard  TRank3BB = (Us == WHITE ? rank_bb(RANK_3) : rank_bb(RANK_6));
     constexpr Direction Up       = (Us == WHITE ? NORTH      : SOUTH);
     constexpr Direction UpRight  = (Us == WHITE ? NORTH_EAST : SOUTH_WEST);
     constexpr Direction UpLeft   = (Us == WHITE ? NORTH_WEST : SOUTH_EAST);

@@ -36,9 +36,9 @@ Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
 Bitboard KingFlank[FILE_NB] = {
-  QueenSide ^ FileDBB, QueenSide, QueenSide,
+  QueenSide ^ file_bb(FILE_D), QueenSide, QueenSide,
   CenterFiles, CenterFiles,
-  KingSide, KingSide, KingSide ^ FileEBB
+  KingSide, KingSide, KingSide ^ file_bb(FILE_E)
 };
 
 Magic RookMagics[SQUARE_NB];
@@ -168,7 +168,8 @@ namespace {
     for (Square s = SQ_A1; s <= SQ_H8; ++s)
     {
         // Board edges are not considered in the relevant occupancies
-        edges = ((Rank1BB | Rank8BB) & ~rank_bb(s)) | ((FileABB | FileHBB) & ~file_bb(s));
+        edges = ((rank_bb(RANK_1) | rank_bb(RANK_8)) & ~rank_bb(s)) |
+                ((file_bb(FILE_A) | file_bb(FILE_H)) & ~file_bb(s));
 
         // Given a square 's', the mask is the bitboard of sliding attacks from
         // 's' computed on an empty board. The index must be big enough to contain
