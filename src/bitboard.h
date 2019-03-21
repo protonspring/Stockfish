@@ -39,32 +39,10 @@ const std::string pretty(Bitboard b);
 
 }
 
-constexpr Bitboard AllSquares = ~Bitboard(0);
+constexpr Bitboard  AllSquares = ~Bitboard(0);
 constexpr Bitboard DarkSquares = 0xAA55AA55AA55AA55ULL;
-
-constexpr Bitboard FileABB = 0x0101010101010101ULL;
-constexpr Bitboard Rank1BB = 0xFF;
-
-/// rbb() and fbb() return a bitboard representing squares on the given file or rank.
-constexpr Bitboard rbb(  Rank r) { return Rank1BB << (8 * r);  }
-constexpr Bitboard fbb(  File f) { return FileABB << f;        }
-constexpr Bitboard fbb(Square s) { return fbb(file_of(s)); }
-constexpr Bitboard rbb(Square s) { return rbb(rank_of(s)); }
-
-constexpr Bitboard QueenSide   = fbb(FILE_A) | fbb(FILE_B) | fbb(FILE_C) | fbb(FILE_D);
-constexpr Bitboard CenterFiles = fbb(FILE_C) | fbb(FILE_D) | fbb(FILE_E) | fbb(FILE_F);
-constexpr Bitboard KingSide    = fbb(FILE_E) | fbb(FILE_F) | fbb(FILE_G) | fbb(FILE_H);
-constexpr Bitboard Center      = (fbb(FILE_D)| fbb(FILE_E)) & (rbb(RANK_4) | rbb(RANK_5));
-
-/// shift() moves a bitboard one step along direction D
-template<Direction D>
-constexpr Bitboard shift(Bitboard b) {
-  return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == EAST       ? (b & ~fbb(FILE_H)) << 1 : D == WEST       ? (b & ~fbb(FILE_A)) >> 1
-        : D == NORTH_EAST ? (b & ~fbb(FILE_H)) << 9 : D == NORTH_WEST ? (b & ~fbb(FILE_A)) << 7
-        : D == SOUTH_EAST ? (b & ~fbb(FILE_H)) >> 7 : D == SOUTH_WEST ? (b & ~fbb(FILE_A)) >> 9
-        : 0;
-}
+constexpr Bitboard     FileABB = 0x0101010101010101ULL;
+constexpr Bitboard     Rank1BB = 0xFF;
 
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
@@ -76,6 +54,27 @@ extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 extern Bitboard KingFlank[FILE_NB];
+
+/// rbb() and fbb() return a bitboard representing squares on the given file or rank.
+constexpr Bitboard rbb(  Rank r) { return Rank1BB << (8 * r); }
+constexpr Bitboard fbb(  File f) { return FileABB << f;       }
+constexpr Bitboard fbb(Square s) { return fbb(file_of(s));    }
+constexpr Bitboard rbb(Square s) { return rbb(rank_of(s));    }
+
+/// shift() moves a bitboard one step along direction D
+template<Direction D>
+constexpr Bitboard shift(Bitboard b) {
+  return  D == NORTH      ?  b                 << 8 : D == SOUTH      ?  b                 >> 8
+        : D == EAST       ? (b & ~fbb(FILE_H)) << 1 : D == WEST       ? (b & ~fbb(FILE_A)) >> 1
+        : D == NORTH_EAST ? (b & ~fbb(FILE_H)) << 9 : D == NORTH_WEST ? (b & ~fbb(FILE_A)) << 7
+        : D == SOUTH_EAST ? (b & ~fbb(FILE_H)) >> 7 : D == SOUTH_WEST ? (b & ~fbb(FILE_A)) >> 9
+        : 0;
+}
+
+constexpr Bitboard QueenSide   =  fbb(FILE_A) | fbb(FILE_B)  |  fbb(FILE_C) | fbb(FILE_D);
+constexpr Bitboard CenterFiles =  fbb(FILE_C) | fbb(FILE_D)  |  fbb(FILE_E) | fbb(FILE_F);
+constexpr Bitboard KingSide    =  fbb(FILE_E) | fbb(FILE_F)  |  fbb(FILE_G) | fbb(FILE_H);
+constexpr Bitboard Center      = (fbb(FILE_D) | fbb(FILE_E)) & (rbb(RANK_4) | rbb(RANK_5));
 
 
 /// Magic holds all magic bitboards relevant data for a single square
