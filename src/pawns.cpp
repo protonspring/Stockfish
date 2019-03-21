@@ -101,8 +101,8 @@ namespace {
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         doubled    = ourPawns   & (s - Up);
         neighbours = ourPawns   & adjacent_files_bb(f);
-        phalanx    = neighbours & rank_bb(s);
-        support    = neighbours & rank_bb(s - Up);
+        phalanx    = neighbours & rbb(s);
+        support    = neighbours & rbb(s - Up);
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
@@ -200,22 +200,22 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-  constexpr Bitboard  BlockRanks = (Us == WHITE ? rank_bb(RANK_1) | rank_bb(RANK_2) : rank_bb(RANK_8) | rank_bb(RANK_7));
+  constexpr Bitboard  BlockRanks = (Us == WHITE ? rbb(RANK_1) | rbb(RANK_2) : rbb(RANK_8) | rbb(RANK_7));
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (shift<Down>(theirPawns) & (file_bb(FILE_A) | file_bb(FILE_H)) & BlockRanks & ksq) ?
+  Value safety = (shift<Down>(theirPawns) & (fbb(FILE_A) | fbb(FILE_H)) & BlockRanks & ksq) ?
                  Value(374) : Value(5);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
+      b = ourPawns & fbb(f);
       Rank ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
 
-      b = theirPawns & file_bb(f);
+      b = theirPawns & fbb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);

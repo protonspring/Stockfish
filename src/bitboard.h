@@ -45,28 +45,24 @@ constexpr Bitboard DarkSquares = 0xAA55AA55AA55AA55ULL;
 constexpr Bitboard FileABB = 0x0101010101010101ULL;
 constexpr Bitboard Rank1BB = 0xFF;
 
-/// rank_bb() and file_bb() return a bitboard representing all the squares on
-/// the given file or rank.
-constexpr Bitboard rank_bb(  Rank r) { return Rank1BB << (8 * r);  }
-constexpr Bitboard file_bb(  File f) { return FileABB << f;        }
+/// rbb() and fbb() return a bitboard representing squares on the given file or rank.
+constexpr Bitboard rbb(  Rank r) { return Rank1BB << (8 * r);  }
+constexpr Bitboard fbb(  File f) { return FileABB << f;        }
+constexpr Bitboard fbb(Square s) { return fbb(file_of(s)); }
+constexpr Bitboard rbb(Square s) { return rbb(rank_of(s)); }
 
-#define F(file) file_bb(file)
-#define R(rank) rank_bb(rank)
-constexpr Bitboard file_bb(Square s) { return file_bb(file_of(s)); }
-constexpr Bitboard rank_bb(Square s) { return rank_bb(rank_of(s)); }
-
-constexpr Bitboard QueenSide   = F(FILE_A) | F(FILE_B) | F(FILE_C) | F(FILE_D);
-constexpr Bitboard CenterFiles = F(FILE_C) | F(FILE_D) | F(FILE_E) | F(FILE_F);
-constexpr Bitboard KingSide    = F(FILE_E) | F(FILE_F) | F(FILE_G) | F(FILE_H);
-constexpr Bitboard Center      = (F(FILE_D)| F(FILE_E)) & (R(RANK_4) | R(RANK_5));
+constexpr Bitboard QueenSide   = fbb(FILE_A) | fbb(FILE_B) | fbb(FILE_C) | fbb(FILE_D);
+constexpr Bitboard CenterFiles = fbb(FILE_C) | fbb(FILE_D) | fbb(FILE_E) | fbb(FILE_F);
+constexpr Bitboard KingSide    = fbb(FILE_E) | fbb(FILE_F) | fbb(FILE_G) | fbb(FILE_H);
+constexpr Bitboard Center      = (fbb(FILE_D)| fbb(FILE_E)) & (rbb(RANK_4) | rbb(RANK_5));
 
 /// shift() moves a bitboard one step along direction D
 template<Direction D>
 constexpr Bitboard shift(Bitboard b) {
   return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == EAST       ? (b & ~F(FILE_H)) << 1 : D == WEST       ? (b & ~F(FILE_A)) >> 1
-        : D == NORTH_EAST ? (b & ~F(FILE_H)) << 9 : D == NORTH_WEST ? (b & ~F(FILE_A)) << 7
-        : D == SOUTH_EAST ? (b & ~F(FILE_H)) >> 7 : D == SOUTH_WEST ? (b & ~F(FILE_A)) >> 9
+        : D == EAST       ? (b & ~fbb(FILE_H)) << 1 : D == WEST       ? (b & ~fbb(FILE_A)) >> 1
+        : D == NORTH_EAST ? (b & ~fbb(FILE_H)) << 9 : D == NORTH_WEST ? (b & ~fbb(FILE_A)) << 7
+        : D == SOUTH_EAST ? (b & ~fbb(FILE_H)) >> 7 : D == SOUTH_WEST ? (b & ~fbb(FILE_A)) >> 9
         : 0;
 }
 
@@ -166,7 +162,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
 /// adjacent files of the given one.
 inline Bitboard adjacent_files_bb(File f) {
-  return shift<EAST>(F(f)) | shift<WEST>(FBB(f));
+  return shift<EAST>(fbb(f)) | shift<WEST>(fbb(f));
 }
 
 
@@ -183,14 +179,14 @@ inline Bitboard between_bb(Square s1, Square s2) {
 /// in front of the given one, from the point of view of the given color. For instance,
 /// forward_ranks_bb(BLACK, SQ_D3) will return the 16 squares on ranks 1 and 2.
 inline Bitboard forward_ranks_bb(Color c, Square s) {
-  return c == WHITE ? ~rank_bb(RANK_1) << 8 * (rank_of(s) - RANK_1)
-                    : ~rank_bb(RANK_8) >> 8 * (RANK_8 - rank_of(s));
+  return c == WHITE ? ~rbb(RANK_1) << 8 * (rank_of(s) - RANK_1)
+                    : ~rbb(RANK_8) >> 8 * (RANK_8 - rank_of(s));
 }
 
 /// forward_file_bb() returns a bitboard representing all the squares along the
 /// line in front of the given one, from the point of view of the given color.
 inline Bitboard forward_file_bb(Color c, Square s) {
-  return forward_ranks_bb(c, s) & file_bb(s);
+  return forward_ranks_bb(c, s) & fbb(s);
 }
 
 /// pawn_attack_span() returns a bitboard representing all the squares that can
@@ -203,7 +199,7 @@ inline Bitboard pawn_attack_span(Color c, Square s) {
 /// passed_pawn_span() returns a bitboard which can be used to test if a pawn of
 /// the given color and on the given square is a passed pawn.
 inline Bitboard passed_pawn_span(Color c, Square s) {
-  return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | file_bb(s));
+  return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | fbb(s));
 }
 
 /// aligned() returns true if the squares s1, s2 and s3 are aligned either on a

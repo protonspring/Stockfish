@@ -1285,7 +1285,7 @@ bool Position::pos_is_ok() const {
       || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove))
       assert(0 && "pos_is_ok: Kings");
 
-  if (   (pieces(PAWN) & (rank_bb(RANK_1) | rank_bb(RANK_8)))
+  if (   (pieces(PAWN) & (rbb(RANK_1) | rbb(RANK_8)))
       || pieceCount[W_PAWN] > 8
       || pieceCount[B_PAWN] > 8)
       assert(0 && "pos_is_ok: Pawns");

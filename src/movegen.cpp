@@ -54,8 +54,8 @@ namespace {
 
     // Compute some compile time parameters relative to the white side
     constexpr Color     Them     = (Us == WHITE ? BLACK      : WHITE);
-    constexpr Bitboard  TRank7BB = (Us == WHITE ? rank_bb(RANK_7): rank_bb(RANK_2));
-    constexpr Bitboard  TRank3BB = (Us == WHITE ? rank_bb(RANK_3) : rank_bb(RANK_6));
+    constexpr Bitboard  TRank7BB = (Us == WHITE ? rbb(RANK_7): rbb(RANK_2));
+    constexpr Bitboard  TRank3BB = (Us == WHITE ? rbb(RANK_3): rbb(RANK_6));
     constexpr Direction Up       = (Us == WHITE ? NORTH      : SOUTH);
     constexpr Direction UpRight  = (Us == WHITE ? NORTH_EAST : SOUTH_WEST);
     constexpr Direction UpLeft   = (Us == WHITE ? NORTH_WEST : SOUTH_EAST);
@@ -96,7 +96,7 @@ namespace {
             Bitboard dcCandidateQuiets = pos.blockers_for_king(Them) & pawnsNotOn7;
             if (dcCandidateQuiets)
             {
-                Bitboard dc1 = shift<Up>(dcCandidateQuiets) & emptySquares & ~file_bb(ksq);
+                Bitboard dc1 = shift<Up>(dcCandidateQuiets) & emptySquares & ~fbb(ksq);
                 Bitboard dc2 = shift<Up>(dc1 & TRank3BB) & emptySquares;
 
                 b1 |= dc1;
