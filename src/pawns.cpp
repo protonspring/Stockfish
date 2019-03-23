@@ -246,9 +246,9 @@ Score Entry::do_king_safety(const Position& pos) {
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
   if (~FileABB & ksq)
-      bonus = std::max(bonus, evaluate_shelter<Us>(pos, ksq-1);
+      bonus = std::max(bonus, evaluate_shelter<Us>(pos, Square(ksq-1)));
   if (~FileHBB & ksq)
-      bonus = std::max(bonus, evaluate_shelter<Us>(pos, ksq+1);
+      bonus = std::max(bonus, evaluate_shelter<Us>(pos, Square(ksq+1)));
 
   return make_score(bonus, -16 * minKingPawnDistance);
 }
