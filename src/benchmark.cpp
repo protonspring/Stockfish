@@ -107,11 +107,11 @@ vector<string> setup_bench(const Position& current, istream& is) {
   string go, token;
 
   // Assign default values to missing arguments
-  string ttSize    = (is >> token) ? token : "16";
-  string threads   = (is >> token) ? token : "1";
-  string limit     = (is >> token) ? token : "13";
-  string fenFile   = (is >> token) ? token : "default";
-  string limitType = (is >> token) ? token : "depth";
+  const string ttSize    = (is >> token) ? token : "16";
+  const string threads   = (is >> token) ? token : "1";
+  const string limit     = (is >> token) ? token : "13";
+  const string fenFile   = (is >> token) ? token : "default";
+  const string limitType = (is >> token) ? token : "depth";
 
   go = "go " + limitType + " " + limit;
 

@@ -33,7 +33,7 @@ TranspositionTable TT; // Our global transposition table
 /// TTEntry::save populates the TTEntry with a new node's data, possibly
 /// overwriting an old position. Update is not atomic and can be racy.
 
-void TTEntry::save(Key k, Value v, bool pv, Bound b, Depth d, Move m, Value ev) {
+void TTEntry::save(const Key k, const Value v, bool pv, const Bound b, const Depth d, const Move m, const Value ev) {
 
   assert(d / ONE_PLY * ONE_PLY == d);
 
@@ -59,7 +59,7 @@ void TTEntry::save(Key k, Value v, bool pv, Bound b, Depth d, Move m, Value ev) 
 /// measured in megabytes. Transposition table consists of a power of 2 number
 /// of clusters and each cluster consists of ClusterSize number of TTEntry.
 
-void TranspositionTable::resize(size_t mbSize) {
+void TranspositionTable::resize(const size_t mbSize) {
 
   Threads.main()->wait_for_search_finished();
 

@@ -42,13 +42,9 @@ namespace {
   // is considered "undecided" as long as neither side has >275cp advantage.
   // Data was extracted from the CCRL game database with some simple filtering criteria.
 
-  double move_importance(int ply) {
+  constexpr double move_importance(int ply) {
 
-    constexpr double XScale = 6.85;
-    constexpr double XShift = 64.5;
-    constexpr double Skew   = 0.171;
-
-    return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
+    return pow((1 + exp((ply - 64.5) / 6.85)), -0.171) + DBL_MIN; // Ensure non-zero
   }
 
   template<TimeType T>
@@ -57,7 +53,7 @@ namespace {
     constexpr double TMaxRatio   = (T == OptimumTime ? 1.0 : MaxRatio);
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
-    double moveImportance = (move_importance(ply) * slowMover) / 100.0;
+    const double moveImportance = (move_importance(ply) * slowMover) / 100.0;
     double otherMovesImportance = 0.0;
 
     for (int i = 1; i < movesToGo; ++i)
@@ -83,10 +79,10 @@ namespace {
 
 void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
-  TimePoint minThinkingTime = Options["Minimum Thinking Time"];
-  TimePoint moveOverhead    = Options["Move Overhead"];
-  TimePoint slowMover       = Options["Slow Mover"];
-  TimePoint npmsec          = Options["nodestime"];
+  const TimePoint minThinkingTime = Options["Minimum Thinking Time"];
+  const TimePoint moveOverhead    = Options["Move Overhead"];
+  const TimePoint slowMover       = Options["Slow Mover"];
+  const TimePoint npmsec          = Options["nodestime"];
   TimePoint hypMyTime;
 
   // If we have to play in 'nodes as time' mode, then convert from time

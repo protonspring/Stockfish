@@ -33,18 +33,18 @@ namespace Pawns {
 
 struct Entry {
 
-  Score pawn_score(Color c) const { return scores[c]; }
-  Bitboard pawn_attacks(Color c) const { return pawnAttacks[c]; }
-  Bitboard passed_pawns(Color c) const { return passedPawns[c]; }
-  Bitboard pawn_attacks_span(Color c) const { return pawnAttacksSpan[c]; }
-  int weak_unopposed(Color c) const { return weakUnopposed[c]; }
-  int pawn_asymmetry() const { return asymmetry; }
+  constexpr Score pawn_score(Color c) const { return scores[c]; }
+  constexpr Bitboard pawn_attacks(Color c) const { return pawnAttacks[c]; }
+  constexpr Bitboard passed_pawns(Color c) const { return passedPawns[c]; }
+  constexpr Bitboard pawn_attacks_span(Color c) const { return pawnAttacksSpan[c]; }
+  constexpr int weak_unopposed(Color c) const { return weakUnopposed[c]; }
+  constexpr int pawn_asymmetry() const { return asymmetry; }
 
-  int semiopen_file(Color c, File f) const {
+  constexpr int semiopen_file(Color c, File f) const {
     return semiopenFiles[c] & (1 << f);
   }
 
-  int pawns_on_same_color_squares(Color c, Square s) const {
+  inline int pawns_on_same_color_squares(Color c, Square s) const {
     return pawnsOnSquares[c][bool(DarkSquares & s)];
   }
 

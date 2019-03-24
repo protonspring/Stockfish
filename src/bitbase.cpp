@@ -43,7 +43,7 @@ namespace {
   // bit    12: side to move (WHITE or BLACK)
   // bit 13-14: white pawn file (from FILE_A to FILE_D)
   // bit 15-17: white pawn RANK_7 - rank (from RANK_7 - RANK_7 to RANK_7 - RANK_2)
-  unsigned index(Color us, Square bksq, Square wksq, Square psq) {
+  constexpr unsigned index(Color us, Square bksq, Square wksq, Square psq) {
     return wksq | (bksq << 6) | (us << 12) | (file_of(psq) << 13) | ((RANK_7 - rank_of(psq)) << 15);
   }
 
@@ -59,7 +59,7 @@ namespace {
   struct KPKPosition {
     KPKPosition() = default;
     explicit KPKPosition(unsigned idx);
-    operator Result() const { return result; }
+    constexpr operator Result() const { return result; }
     Result classify(const std::vector<KPKPosition>& db)
     { return us == WHITE ? classify<WHITE>(db) : classify<BLACK>(db); }
 
@@ -77,7 +77,7 @@ bool Bitbases::probe(Square wksq, Square wpsq, Square bksq, Color us) {
 
   assert(file_of(wpsq) <= FILE_D);
 
-  unsigned idx = index(us, bksq, wksq, wpsq);
+  const unsigned idx = index(us, bksq, wksq, wpsq);
   return KPKBitbase[idx / 32] & (1 << (idx & 0x1F));
 }
 

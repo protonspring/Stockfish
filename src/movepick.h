@@ -42,7 +42,7 @@ public:
   void operator=(const T& v) { entry = v; }
   T* operator&() { return &entry; }
   T* operator->() { return &entry; }
-  operator const T&() const { return entry; }
+  constexpr operator const T&() const { return entry; }
 
   void operator<<(int bonus) {
     assert(abs(bonus) <= D); // Ensure range is [-D, D]
