@@ -349,7 +349,7 @@ inline Score operator*(Score s, int i) {
 }
 
 constexpr Color operator~(Color c) {
-  return Color(c ^ BLACK); // Toggle color
+  return Color(!c);
 }
 
 constexpr Square operator~(Square s) {
@@ -390,7 +390,7 @@ constexpr PieceType type_of(Piece pc) {
 
 inline Color color_of(Piece pc) {
   assert(pc != NO_PIECE);
-  return Color(pc >> 3);
+  return Color(bool(pc & 8));
 }
 
 constexpr bool is_ok(Square s) {
