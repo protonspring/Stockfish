@@ -128,9 +128,8 @@ namespace {
         if (support | phalanx)
         {
             int r = relative_rank(Us, rank_of(s)) - 2;
-            int v = 17 * popcount(support)
-                  + ((bool(phalanx) * (10 * r + 5)
-                  + (15 + 10 * r * r)) >> opposed);
+            int v = (((10 * r + 5) * bool(phalanx) + 15 + 10 * r * r) >> opposed)
+                  + 17 * popcount(support);
             score += make_score(v, v * r / 4);
         }
 
