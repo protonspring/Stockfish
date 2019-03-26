@@ -35,28 +35,48 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  Value edgeBlock = V(374);
+
+TUNE(edgeBlock);
 
   // Connected pawn bonus by opposed, phalanx, #support and rank
   Score Connected[2][2][3][RANK_NB];
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+  Value ShelterStrength[FILE_NB][RANK_NB] = {
     { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
     { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
     { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) },
+    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) },
+    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
+    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
+    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) }
   };
+
+TUNE(ShelterStrength);
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king.
-  constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
+  Value UnblockedStorm[FILE_NB][RANK_NB] = {
     { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) },
     { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
     { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
-    { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
+    { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) },
+    { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) },
+    { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
+    { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
+    { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) }
   };
+
+TUNE(UnblockedStorm);
+
+  Value BlockedStorm[FILE_NB] =
+     { V(0),  V(10), V(66), V(10), V(10), V(10), V(10) };
+
+TUNE(BlockedStorm);
 
   #undef S
   #undef V
@@ -206,7 +226,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard theirPawns = b & pos.pieces(Them);
 
   Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
-                 Value(374) : Value(5);
+                 edgeBlock : Value(5);
 
   File center = std::max(FILE_B, std::min(FILE_G, file_of(ksq)));
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -217,10 +237,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       b = theirPawns & file_bb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      int d = std::min(f, ~f);
-      safety += ShelterStrength[d][ourRank];
-      safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
-                                                        : UnblockedStorm[d][theirRank];
+      safety += ShelterStrength[f][ourRank];
+      safety -= (ourRank && (ourRank == theirRank - 1))
+                 ? BlockedStorm[theirRank] : UnblockedStorm[f][theirRank];
   }
 
   return safety;
