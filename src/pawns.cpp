@@ -162,7 +162,7 @@ void init() {
               for (Rank r = RANK_2; r < RANK_8; ++r)
   {
       int v = 17 * support;
-      v += (Seed[r] + (phalanx * 9 * Seed[r] / 25)) >> opposed;
+      v += (Seed[r] + (phalanx * 11 * Seed[r] / 25)) >> opposed;
 
       Connected[opposed][phalanx][support][r] = make_score(v, v * (r - 2) / 4);
   }
