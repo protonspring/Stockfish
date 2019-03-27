@@ -69,7 +69,6 @@ extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
-extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
@@ -203,9 +202,14 @@ inline Bitboard adjacent_files_bb(File f) {
 /// given ones. For instance, between_bb(SQ_C4, SQ_F7) returns a bitboard with
 /// the bits for square d5 and e6 set. If s1 and s2 are not on the same rank,
 /// file or diagonal, 0 is returned.
+inline Bitboard line_bb(Square s1, Square s2) {
+    return (PseudoAttacks[ROOK][s1] & s2) ? (PseudoAttacks[ROOK][s1] & PseudoAttacks[ROOK][s2]) | s1 | s2
+         : (PseudoAttacks[BISHOP][s1] & s2) ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2]) | s1 | s2 : 0;
+}
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  return BetweenBB[s1][s2];
+  return line_bb(s1, s2) & (s1 < s2 ? AllSquares << (s1+1) & ~(AllSquares << s2)
+                                    : AllSquares << (s2+1) & ~(AllSquares << s1));
 }
 
 
@@ -246,10 +250,6 @@ inline Bitboard passed_pawn_span(Color c, Square s) {
 
 /// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
 /// straight or on a diagonal line.
-inline Bitboard line_bb(Square s1, Square s2) {
-    return (PseudoAttacks[BISHOP][s1] & s2) ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2]) | s1 | s2
-         : (PseudoAttacks[  ROOK][s1] & s2) ? (PseudoAttacks[  ROOK][s1] & PseudoAttacks[  ROOK][s2]) | s1 | s2 : 0;
-}
 
 inline bool aligned(Square s1, Square s2, Square s3) {
   return line_bb(s1, s2) & s3;
