@@ -107,7 +107,7 @@ extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return DistanceRingBB[s][0];
+  return DistanceRingBB[0][s];
 }
 
 inline Bitboard operator&(  Bitboard  b, Square s) { return b &  square_bb(s); }
