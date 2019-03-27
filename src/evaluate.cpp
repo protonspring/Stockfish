@@ -154,10 +154,9 @@ namespace {
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
   Score FreePawn           = S( 10, 10);
+#undef S
 
 TUNE(FreePawn);
-
-#undef S
 
   // Evaluation class computes and stores attacks tables and other working data
   template<Tracing T>
