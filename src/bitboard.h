@@ -248,7 +248,7 @@ inline Bitboard passed_pawn_span(Color c, Square s) {
 /// straight or on a diagonal line.
 inline Bitboard line_bb(Square s1, Square s2) {
     return (PseudoAttacks[BISHOP][s1] & s2) ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2]) | s1 | s2
-         : (PseudoAttacks[ROOK][s1] & s2) ? (PseudoAttacks[ROOK][s1] & PseudoAttacks[ROOK][s2]) | s1 | s2 : 0;
+         : (PseudoAttacks[  ROOK][s1] & s2) ? (PseudoAttacks[  ROOK][s1] & PseudoAttacks[  ROOK][s2]) | s1 | s2 : 0;
 }
 
 inline bool aligned(Square s1, Square s2, Square s3) {
