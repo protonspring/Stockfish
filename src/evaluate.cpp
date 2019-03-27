@@ -633,7 +633,7 @@ TUNE(FreePawn);
                                         : make_square(file_of(s), RANK_1);
 
         if (distance(s,queeningSq) < distance(pos.square<KING>(Them),queeningSq))
-            bonus += make_score(0, 14);
+            bonus += FreePawn;
 
         if (r > RANK_3)
         {
