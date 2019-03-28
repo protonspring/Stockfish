@@ -68,10 +68,9 @@ constexpr Bitboard Center      = (FileDBB | FileEBB) & (Rank4BB | Rank5BB);
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
-extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
-extern Bitboard DistanceRingBB[SQUARE_NB][8];
+extern Bitboard DistanceRingBB[8][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 extern Bitboard KingFlank[FILE_NB];
@@ -105,30 +104,33 @@ extern Magic BishopMagics[SQUARE_NB];
 
 /// Overloads of bitwise operators between a Bitboard and a Square for testing
 /// whether a given bit is set in a bitboard, and for setting and clearing bits.
+inline Bitboard square_bb(Square s) {
+  return DistanceRingBB[0][s];
+}
 
 inline Bitboard operator&(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b & SquareBB[s];
+  return b & square_bb(s);
 }
 
 inline Bitboard operator|(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b | SquareBB[s];
+  return b | square_bb(s);
 }
 
 inline Bitboard operator^(Bitboard b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^ SquareBB[s];
+  return b ^ square_bb(s);
 }
 
 inline Bitboard& operator|=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b |= SquareBB[s];
+  return b |= square_bb(s);
 }
 
 inline Bitboard& operator^=(Bitboard& b, Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return b ^= SquareBB[s];
+  return b ^= square_bb(s);
 }
 
 constexpr bool more_than_one(Bitboard b) {
