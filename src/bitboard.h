@@ -245,8 +245,7 @@ inline Bitboard line_bb(Square s1, Square s2) {
 }
 
 inline Bitboard between_bb(Square s1, Square s2) {
-    return get_line(s1, s2) & (s1 < s2 ? (AllSquares << s1) & ~(AllSquares << s2)
-                                       : (AllSquares << s2) & ~(AllSquares << s1));
+    return get_line(s1, s2) & ((AllSquares << s1) ^ (AllSquares << s2));
 }
 
 inline bool aligned(Square s1, Square s2, Square s3) {
