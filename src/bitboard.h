@@ -233,23 +233,23 @@ inline Bitboard passed_pawn_span(Color c, Square s) {
 }
 
 
-/// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
-/// straight or on a diagonal line.
-inline Bitboard get_line(Square s1, Square s2) {
-    return (PseudoAttacks[BISHOP][s1] & SquareBB[s2]) ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2])
-         : (PseudoAttacks[  ROOK][s1] & SquareBB[s2]) ? (PseudoAttacks[  ROOK][s1] & PseudoAttacks[  ROOK][s2]) : 0;
+inline Bitboard make_line(Square s1, Square s2) {
+    return bool(PseudoAttacks[BISHOP][s1] & SquareBB[s2]) * (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2]) +
+         bool(PseudoAttacks[  ROOK][s1] & SquareBB[s2]) * (PseudoAttacks[  ROOK][s1] & PseudoAttacks[  ROOK][s2]);
 }
 
 inline Bitboard line_bb(Square s1, Square s2) {
-    return get_line(s1, s2) | SquareBB[s1] | SquareBB[s2];
+    return make_line(s1, s2) | SquareBB[s1] | SquareBB[s2];
 }
 
 inline Bitboard between_bb(Square s1, Square s2) {
-    return get_line(s1, s2) & ((AllSquares << s1) ^ (AllSquares << s2));
+    return make_line(s1, s2) & ((AllSquares << s1) ^ (AllSquares << s2));
 }
 
+/// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
+/// straight or on a diagonal line.
 inline bool aligned(Square s1, Square s2, Square s3) {
-  return get_line(s1, s2) & s3;
+  return make_line(s1, s2) & s3;
 }
 
 
