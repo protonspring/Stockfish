@@ -74,7 +74,6 @@ extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
-extern Bitboard KingFlank[FILE_NB];
 
 
 /// Magic holds all magic bitboards relevant data for a single square
@@ -151,11 +150,11 @@ inline Bitboard rank_bb(Square s) {
   return rank_bb(rank_of(s));
 }
 
-inline Bitboard file_bb(File f) {
+constexpr Bitboard file_bb(File f) {
   return FileABB << f;
 }
 
-inline Bitboard file_bb(Square s) {
+constexpr Bitboard file_bb(Square s) {
   return file_bb(file_of(s));
 }
 
@@ -195,7 +194,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
 /// adjacent files of the given one.
 
-inline Bitboard adjacent_files_bb(File f) {
+constexpr Bitboard adjacent_files_bb(File f) {
   return shift<EAST>(file_bb(f)) | shift<WEST>(file_bb(f));
 }
 
@@ -242,6 +241,11 @@ inline Bitboard pawn_attack_span(Color c, Square s) {
 
 inline Bitboard passed_pawn_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | file_bb(s));
+}
+
+
+constexpr Bitboard king_flank(Square s) {
+  return (adjacent_files_bb(file_of(s)) | file_bb(s));
 }
 
 
