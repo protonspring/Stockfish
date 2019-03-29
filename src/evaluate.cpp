@@ -153,6 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  constexpr Score FreePawn           = S(  7, 14);
 
 #undef S
 
@@ -630,6 +631,12 @@ namespace {
         {
             int w = (r-2) * (r-2) + 2;
             Square blockSq = s + Up;
+
+            // More bonus if pawn is closer to queening than opponent king
+            Square queeningSq = Us == WHITE ? make_square(file_of(s), RANK_8)
+                                            : make_square(file_of(s), RANK_1);
+            if (distance(s,queeningSq) < distance(pos.square<KING>(Them),queeningSq))
+                bonus += FreePawn;
 
             // Adjust bonus based on the king's proximity
             bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
