@@ -243,11 +243,10 @@ inline Bitboard passed_pawn_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | file_bb(s));
 }
 
-
-constexpr Bitboard king_flank(Square s) {
-  return (adjacent_files_bb(file_of(s)) | file_bb(s));
+inline Bitboard king_flank(Square s) {
+  Bitboard block = (adjacent_files_bb(file_of(s)) | file_bb(s));
+  return file_of(s) < FILE_E ? block |= shift<EAST>(block) : block |= shift<WEST>(block);
 }
-
 
 /// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
 /// straight or on a diagonal line.
