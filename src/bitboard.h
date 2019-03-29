@@ -69,7 +69,6 @@ extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
-extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
@@ -200,15 +199,6 @@ inline Bitboard adjacent_files_bb(File f) {
 }
 
 
-/// between_bb() returns a bitboard representing all the squares between the two
-/// given ones. For instance, between_bb(SQ_C4, SQ_F7) returns a bitboard with
-/// the bits for square d5 and e6 set. If s1 and s2 are not on the same rank,
-/// file or diagonal, 0 is returned.
-
-inline Bitboard between_bb(Square s1, Square s2) {
-  return BetweenBB[s1][s2];
-}
-
 
 /// forward_ranks_bb() returns a bitboard representing the squares on the ranks
 /// in front of the given one, from the point of view of the given color. For instance,
@@ -285,6 +275,18 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
   default    : return PseudoAttacks[pt][s];
   }
+}
+
+/// between_bb() returns a bitboard representing all the squares between the two
+/// given ones. For instance, between_bb(SQ_C4, SQ_F7) returns a bitboard with
+/// the bits for square d5 and e6 set. If s1 and s2 are not on the same rank,
+/// file or diagonal, 0 is returned.
+
+inline Bitboard between_bb(Square s1, Square s2) {
+   return (PseudoAttacks[BISHOP][s1] & s2) ?
+               attacks_bb<BISHOP>(s1, SquareBB[s2]) & attacks_bb<BISHOP>(s2, SquareBB[s1])
+        : (PseudoAttacks[  ROOK][s1] & s2) ?
+               attacks_bb<  ROOK>(s1, SquareBB[s2]) & attacks_bb<ROOK>(s2, SquareBB[s1]) : 0;
 }
 
 

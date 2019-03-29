@@ -29,7 +29,6 @@ uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 Bitboard SquareBB[SQUARE_NB];
 Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
-Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard DistanceRingBB[SQUARE_NB][8];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
@@ -124,7 +123,6 @@ void Bitboards::init() {
               if (PseudoAttacks[pt][s1] & s2)
               {
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
-                  BetweenBB[s1][s2] = attacks_bb(pt, s1, SquareBB[s2]) & attacks_bb(pt, s2, SquareBB[s1]);
               }
   }
 }
