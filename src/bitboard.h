@@ -218,15 +218,17 @@ inline Bitboard passed_pawn_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & (adjacent_files_bb(file_of(s)) | file_bb(s));
 }
 
-/// line_bb() returns a bitboard for a line between two pieces including the pieces
+/// line_bb() returns a bitboard for a line between two given squares including
+/// the given squares.
+/// Return 0 if the given squares are not on the same rank, file, or diagonal.
+
 inline Bitboard line_bb(Square s1, Square s2) {
    return LineBB[s1][s2] | s1 | s2;
 }
 
-/// between_bb() returns a bitboard representing all the squares between the two
-/// given ones. For instance, between_bb(SQ_C4, SQ_F7) returns a bitboard with
-/// the bits for square d5 and e6 set. If s1 and s2 are not on the same rank,
-/// file or diagonal, 0 is returned.
+/// between_bb() returns a bitboard representing all the squares between two
+/// given squares excluding the given squares.
+/// If the squares are not on the same rank, file, or diagonal, return 0;
 
 inline Bitboard between_bb(Square s1, Square s2) {
    return LineBB[s1][s2] & ((AllSquares << s1) ^ (AllSquares << s2));
