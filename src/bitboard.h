@@ -60,9 +60,7 @@ constexpr Bitboard Rank6BB = Rank1BB << (8 * 5);
 constexpr Bitboard Rank7BB = Rank1BB << (8 * 6);
 constexpr Bitboard Rank8BB = Rank1BB << (8 * 7);
 
-constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
 constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
-constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
 constexpr Bitboard Center      = (FileDBB | FileEBB) & (Rank4BB | Rank5BB);
 
 extern uint8_t PopCnt16[1 << 16];
@@ -73,7 +71,6 @@ extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
-extern Bitboard KingFlank[FILE_NB];
 extern Bitboard SquareBB[SQUARE_NB];
 
 
@@ -237,6 +234,11 @@ inline bool aligned(Square s1, Square s2, Square s3) {
   return LineBB[s1][s2] & s3;
 }
 
+inline Bitboard king_flank(File f) {
+    Bitboard flank = f < FILE_D ? CenterFiles >> 2 :
+                     f > FILE_E ? CenterFiles << 2 : CenterFiles;
+    return f == FILE_A ? shift<WEST>(flank) : f == FILE_H ? shift<EAST>(flank) : flank;
+}
 
 /// distance() functions return the distance between x and y, defined as the
 /// number of steps for a king in x to reach y. Works with squares, ranks, files.

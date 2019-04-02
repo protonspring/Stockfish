@@ -22,6 +22,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -455,7 +456,7 @@ namespace {
 
     // Find the squares that opponent attacks in our king flank, and the squares
     // which are attacked twice in that flank.
-    b1 = attackedBy[Them][ALL_PIECES] & KingFlank[file_of(ksq)] & Camp;
+    b1 = attackedBy[Them][ALL_PIECES] & king_flank(file_of(ksq)) & Camp;
     b2 = b1 & attackedBy2[Them];
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
@@ -476,7 +477,7 @@ namespace {
         score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
 
     // Penalty when our king is on a pawnless flank
-    if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
+    if (!(pos.pieces(PAWN) & king_flank(file_of(ksq))))
         score -= PawnlessFlank;
 
     // Penalty if king flank is under attack, potentially moving toward the king
@@ -738,8 +739,8 @@ namespace {
     int outflanking =  distance<File>(pos.square<KING>(WHITE), pos.square<KING>(BLACK))
                      - distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
 
-    bool pawnsOnBothFlanks =   (pos.pieces(PAWN) & QueenSide)
-                            && (pos.pieces(PAWN) & KingSide);
+    bool pawnsOnBothFlanks =   (pos.pieces(PAWN) & king_flank(FILE_B))
+                            && (pos.pieces(PAWN) & king_flank(FILE_G));
 
     // Compute the initiative bonus for the attacking side
     int complexity =   9 * pe->passed_count()
