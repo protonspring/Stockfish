@@ -18,8 +18,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <algorithm>
 #include <bitset>
+#include <algorithm>
 
 #include "bitboard.h"
 #include "misc.h"
@@ -27,11 +27,11 @@
 uint8_t PopCnt16[1 << 16];
 uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
-Bitboard SquareBB[SQUARE_NB];
-Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
+Bitboard PseudoLineBB[SQUARE_NB][SQUARE_NB];
 Bitboard DistanceRingBB[SQUARE_NB][8];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+Bitboard SquareBB[SQUARE_NB];
 
 Bitboard KingFlank[FILE_NB] = {
   QueenSide ^ FileDBB, QueenSide, QueenSide,
@@ -116,6 +116,15 @@ void Bitboards::init() {
   {
       PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb<BISHOP>(s1, 0);
       PseudoAttacks[QUEEN][s1] |= PseudoAttacks[  ROOK][s1] = attacks_bb<  ROOK>(s1, 0);
+  }
+
+
+  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+  {
+      for (PieceType pt : { BISHOP, ROOK })
+          for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
+              if (PseudoAttacks[pt][s1] & s2)
+                  PseudoLineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0));
   }
 }
 
