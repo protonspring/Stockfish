@@ -139,12 +139,11 @@ Move MovePicker::select(Pred filter) {
       if (T == Best)
           std::swap(*cur, *std::max_element(cur, endMoves));
 
-      Move move = *cur++;
+      if (*cur != ttMove && filter())
+          return *cur++;
 
-      if (move != ttMove && filter())
-          return move;
+      cur++;
   }
-  //return move = MOVE_NONE;
   return MOVE_NONE;
 }
 
@@ -153,7 +152,6 @@ Move MovePicker::select(Pred filter) {
 /// moves left, picking the move with the highest score from a list of generated moves.
 Move MovePicker::next_move(bool skipQuiets) {
 
-  Move move2;
 top:
   switch (stage) {
 
@@ -175,13 +173,11 @@ top:
       goto top;
 
   case GOOD_CAPTURE:
-      if (move2 = select<Best>([&](){
-                       //return pos.see_ge(move, Value(-55 * (cur-1)->value / 1024)) ?
-                       return pos.see_ge(*(cur-1), Value(-55 * (cur-1)->value / 1024)) ?
+      if (select<Best>([&](){
+                       return pos.see_ge(*cur, Value(-55 * cur->value / 1024)) ?
                               // Move losing capture to endBadCaptures to be tried later
-                              //true : (*endBadCaptures++ = move, false); }))
-                              true : (*endBadCaptures++ = *(cur-1), false); }))
-          return move2;
+                              true : (*endBadCaptures++ = *cur, false); }))
+          return *(cur-1);
 
       // Prepare the pointers to loop over the refutations array
       cur = std::begin(refutations);
@@ -196,10 +192,10 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (move2 = select<Next>([&](){ return    *(cur-1) != MOVE_NONE
-                                    && !pos.capture(*(cur-1))
-                                    &&  pos.pseudo_legal(*(cur-1)); }))
-          return move2;
+      if (select<Next>([&](){ return    *cur != MOVE_NONE
+                                    && !pos.capture(*cur)
+                                    &&  pos.pseudo_legal(*cur); }))
+          return *(cur-1);
       ++stage;
       /* fallthrough */
 
@@ -214,10 +210,10 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && (move2 = select<Next>([&](){return   *(cur-1) != refutations[0].move
-                                      && *(cur-1) != refutations[1].move
-                                      && *(cur-1) != refutations[2].move;})))
-          return move2;
+          && (select<Next>([&](){return   *cur != refutations[0].move
+                                       && *cur != refutations[1].move
+                                       && *cur != refutations[2].move;})))
+          return *(cur-1);
 
       // Prepare the pointers to loop over the bad captures
       cur = moves;
@@ -241,12 +237,12 @@ top:
       return select<Best>([](){ return true; });
 
   case PROBCUT:
-      return select<Best>([&](){ return pos.see_ge(*(cur-1), threshold); });
+      return select<Best>([&](){ return pos.see_ge(*(cur), threshold); });
 
   case QCAPTURE:
-      if (move2 = select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(*(cur-1)) == recaptureSquare; }))
-          return move2;
+      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
+                                    || to_sq(*cur) == recaptureSquare; }))
+          return *(cur-1);
 
       // If we did not find any move and we do not try checks, we have finished
       if (depth != DEPTH_QS_CHECKS)
