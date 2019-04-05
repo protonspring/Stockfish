@@ -144,6 +144,7 @@ Move MovePicker::select(Pred filter) {
 
       movePtr++;
   }
+  *movePtr = MOVE_NONE;
   return MOVE_NONE;
 }
 
@@ -223,9 +224,8 @@ top:
       /* fallthrough */
 
   case BAD_CAPTURE:
-      if(select<Next>([](){ return true; }))
-          return *(movePtr++);
-      return MOVE_NONE;
+      select<Next>([](){ return true; });
+      return *(movePtr++);
 
   case EVASION_INIT:
       movePtr = moves;
@@ -236,14 +236,12 @@ top:
       /* fallthrough */
 
   case EVASION:
-      if (select<Best>([](){ return true; }))
-         return *(movePtr++);
-      return MOVE_NONE;
+      select<Best>([](){ return true; });
+      return *(movePtr++);
 
   case PROBCUT:
-      if (select<Best>([&](){ return pos.see_ge(*(movePtr), threshold); }))
-          return *(movePtr++);
-      return MOVE_NONE;
+      select<Best>([&](){ return pos.see_ge(*(movePtr), threshold); });
+      return *(movePtr++);
 
   case QCAPTURE:
       if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
@@ -265,9 +263,8 @@ top:
       /* fallthrough */
 
   case QCHECK:
-      if (select<Next>([](){ return true; }))
-          return *(movePtr++);
-      return MOVE_NONE;
+      select<Next>([](){ return true; });
+      return *(movePtr++);
   }
 
   assert(false);
