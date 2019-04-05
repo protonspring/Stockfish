@@ -368,6 +368,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Rook is overloaded if it attacks 3 or more friendly pieces
+            Bitboard rookSupport = attacks_bb<ROOK>(s, pos.pieces(Us));
+            if (popcount(rookSupport) >= 3)
+                score -= make_score(0,10);
         }
 
         if (Pt == QUEEN)
