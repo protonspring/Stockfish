@@ -370,13 +370,13 @@ namespace {
             }
 
             // Rook is overloaded if it attacks 3 or more friendly pieces
-            if ((pos.count<ROOK>(Us) + pos.count<BISHOP>(Us) +
-                 pos.count<KNIGHT>(Us)) < 4)
-            {
-                Bitboard rookSupport = attacks_bb<ROOK>(s, pos.pieces(Us));
-                if (popcount(rookSupport) > 2)
-                    score -= make_score(0,15);
-            }
+            //if ((pos.count<ROOK>(Us) + pos.count<BISHOP>(Us) +
+                 //pos.count<KNIGHT>(Us)) < 4)
+            //{
+                //Bitboard rookSupport = b & pos.pieces(Us);
+                if (popcount(b & pos.pieces(Us)) > 2)
+                    score -= make_score(0,10);
+            //}
         }
 
         if (Pt == QUEEN)
