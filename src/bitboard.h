@@ -147,13 +147,14 @@ inline Bitboard file_bb(Square s) {
 
 /// shift() moves a bitboard one step along direction D
 
-template<Direction D>
-constexpr Bitboard shift(Bitboard b) {
-  return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == EAST       ? (b & ~FileHBB) << 1 : D == WEST       ? (b & ~FileABB) >> 1
-        : D == NORTH_EAST ? (b & ~FileHBB) << 9 : D == NORTH_WEST ? (b & ~FileABB) << 7
-        : D == SOUTH_EAST ? (b & ~FileHBB) >> 7 : D == SOUTH_WEST ? (b & ~FileABB) >> 9
-        : 0;
+inline Bitboard shift(Direction D, Bitboard b2) {
+  Bitboard b = b2;
+  if ((D == EAST) || (D == NORTH_EAST) || (D == SOUTH_EAST))
+     b &= ~FileHBB;
+  else if ((D == WEST) || (D == NORTH_WEST) || (D == SOUTH_WEST))
+     b &= ~FileABB;
+
+  return D < 0 ? b >> -D : b << D;
 }
 
 
@@ -162,8 +163,8 @@ constexpr Bitboard shift(Bitboard b) {
 
 template<Color C>
 constexpr Bitboard pawn_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
+  return C == WHITE ? shift(NORTH_WEST, b) | shift(NORTH_EAST, b)
+                    : shift(SOUTH_WEST, b) | shift(SOUTH_EAST, b);
 }
 
 
@@ -172,8 +173,8 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
 
 template<Color C>
 constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) & shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
+  return C == WHITE ? shift(NORTH_WEST, b) & shift(NORTH_EAST, b)
+                    : shift(SOUTH_WEST, b) & shift(SOUTH_EAST, b);
 }
 
 
@@ -181,7 +182,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 /// adjacent files of the given one.
 
 inline Bitboard adjacent_files_bb(File f) {
-  return shift<EAST>(file_bb(f)) | shift<WEST>(file_bb(f));
+  return shift(EAST, file_bb(f)) | shift(WEST, file_bb(f));
 }
 
 

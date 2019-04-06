@@ -120,7 +120,7 @@ namespace {
         else if (   stoppers == square_bb(s + Up)
                  && relative_rank(Us, s) >= RANK_5)
         {
-            b = shift<Up>(support) & ~theirPawns;
+            b = shift(Up, support) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
@@ -187,7 +187,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value safety = (shift<Down>(theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
+  Value safety = (shift(Down, theirPawns) & (FileABB | FileHBB) & BlockRanks & ksq) ?
                  Value(374) : Value(5);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);

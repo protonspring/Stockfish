@@ -73,8 +73,8 @@ namespace {
     {
         emptySquares = (Type == QUIETS || Type == QUIET_CHECKS ? target : ~pos.pieces());
 
-        Bitboard b1 = shift<Up>(pawnsNotOn7)   & emptySquares;
-        Bitboard b2 = shift<Up>(b1 & TRank3BB) & emptySquares;
+        Bitboard b1 = shift(Up, pawnsNotOn7)   & emptySquares;
+        Bitboard b2 = shift(Up, b1 & TRank3BB) & emptySquares;
 
         if (Type == EVASIONS) // Consider only blocking squares
         {
@@ -96,8 +96,8 @@ namespace {
             Bitboard dcCandidateQuiets = pos.blockers_for_king(Them) & pawnsNotOn7;
             if (dcCandidateQuiets)
             {
-                Bitboard dc1 = shift<Up>(dcCandidateQuiets) & emptySquares & ~file_bb(ksq);
-                Bitboard dc2 = shift<Up>(dc1 & TRank3BB) & emptySquares;
+                Bitboard dc1 = shift(Up, dcCandidateQuiets) & emptySquares & ~file_bb(ksq);
+                Bitboard dc2 = shift(Up, dc1 & TRank3BB) & emptySquares;
 
                 b1 |= dc1;
                 b2 |= dc2;
@@ -126,9 +126,9 @@ namespace {
         if (Type == EVASIONS)
             emptySquares &= target;
 
-        Bitboard b1 = shift<UpRight>(pawnsOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies;
-        Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares;
+        Bitboard b1 = shift(UpRight, pawnsOn7) & enemies;
+        Bitboard b2 = shift(UpLeft , pawnsOn7) & enemies;
+        Bitboard b3 = shift(Up     , pawnsOn7) & emptySquares;
 
         Square ksq = pos.square<KING>(Them);
 
@@ -145,8 +145,8 @@ namespace {
     // Standard and en-passant captures
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
     {
-        Bitboard b1 = shift<UpRight>(pawnsNotOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsNotOn7) & enemies;
+        Bitboard b1 = shift(UpRight, pawnsNotOn7) & enemies;
+        Bitboard b2 = shift(UpLeft , pawnsNotOn7) & enemies;
 
         while (b1)
         {
