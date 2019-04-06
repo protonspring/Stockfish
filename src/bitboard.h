@@ -369,13 +369,9 @@ inline Square pop_lsb(Bitboard* b) {
 /// file or diagonal, 0 is returned.
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  Bitboard b = LineBB[s1][s2] & ((AllSquares << s1) ^ (AllSquares << s2));
-  pop_lsb(&b);
-  return b;
+  return LineBB[s1][s2] & (s1 < s2 ? ((AllSquares << (s1+1)) ^ (AllSquares << s2))
+                                    : ((AllSquares << s1) ^ (AllSquares << (s2+1))));
 }
-
-
-
 
 /// frontmost_sq() and backmost_sq() return the square corresponding to the
 /// most/least advanced bit relative to the given color.
