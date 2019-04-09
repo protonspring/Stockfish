@@ -360,9 +360,9 @@ void Position::set_check_info(StateInfo* si) const {
   Square ksq = square<KING>(~sideToMove);
 
   si->checkSquares[PAWN]   = attacks_from<PAWN>(ksq, ~sideToMove);
-  si->checkSquares[KNIGHT] = attacks_from<KNIGHT>(ksq);
-  si->checkSquares[BISHOP] = attacks_from<BISHOP>(ksq);
-  si->checkSquares[ROOK]   = attacks_from<ROOK>(ksq);
+  si->checkSquares[KNIGHT] = attacks_from(KNIGHT, ksq);
+  si->checkSquares[BISHOP] = attacks_from(BISHOP, ksq);
+  si->checkSquares[ROOK]   = attacks_from(ROOK, ksq);
   si->checkSquares[QUEEN]  = si->checkSquares[BISHOP] | si->checkSquares[ROOK];
   si->checkSquares[KING]   = 0;
 }
@@ -525,10 +525,10 @@ Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
 
   return  (attacks_from<PAWN>(s, BLACK)    & pieces(WHITE, PAWN))
         | (attacks_from<PAWN>(s, WHITE)    & pieces(BLACK, PAWN))
-        | (attacks_from<KNIGHT>(s)         & pieces(KNIGHT))
+        | (attacks_from(KNIGHT, s)         & pieces(KNIGHT))
         | (attacks_bb(  ROOK, s, occupied) & pieces(  ROOK, QUEEN))
         | (attacks_bb(BISHOP, s, occupied) & pieces(BISHOP, QUEEN))
-        | (attacks_from<KING>(s)           & pieces(KING));
+        | (attacks_from(KING, s)           & pieces(KING));
 }
 
 
