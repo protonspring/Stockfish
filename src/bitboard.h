@@ -253,26 +253,23 @@ template<class T> constexpr const T& clamp(const T& v, const T& lo, const T&  hi
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
 /// piece of type Pt (bishop or rook) placed on 's'.
 
-template<PieceType Pt>
-inline Bitboard attacks_bb(Square s, Bitboard occupied) {
-
-  const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
-  return m.attacks[m.index(occupied)];
-}
-
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
 
   assert(pt != PAWN);
 
   switch (pt)
   {
-  case BISHOP: return attacks_bb<BISHOP>(s, occupied);
-  case ROOK  : return attacks_bb<  ROOK>(s, occupied);
-  case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[pt][s];
+      case BISHOP:
+          return BishopMagics[s].attacks[BishopMagics[s].index(occupied)];
+      case ROOK:
+          return   RookMagics[s].attacks[  RookMagics[s].index(occupied)];
+      case QUEEN:
+          return BishopMagics[s].attacks[BishopMagics[s].index(occupied)]
+               |   RookMagics[s].attacks[  RookMagics[s].index(occupied)];
+      default:
+          return PseudoAttacks[pt][s];
   }
 }
-
 
 /// popcount() counts the number of non-zero bits in a bitboard
 

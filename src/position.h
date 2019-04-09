@@ -279,8 +279,7 @@ inline Square Position::castling_rook_square(CastlingRight cr) const {
 template<PieceType Pt>
 inline Bitboard Position::attacks_from(Square s) const {
   assert(Pt != PAWN);
-  return  Pt == BISHOP || Pt == ROOK ? attacks_bb<Pt>(s, byTypeBB[ALL_PIECES])
-        : Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
+  return  Pt == BISHOP || Pt == ROOK || Pt == QUEEN ? attacks_bb(Pt, s, byTypeBB[ALL_PIECES])
         : PseudoAttacks[Pt][s];
 }
 
