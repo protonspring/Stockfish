@@ -130,7 +130,7 @@ namespace {
         {
             int r = relative_rank(Us, s);
             int v = support ? Connected[r] + Connected[r + 1] : 2 * Connected[r];
-            v = 11 * popcount(support) + (v >> (opposed + 1));
+            v = 14 * popcount(support) + (v >> (opposed + 1));
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
