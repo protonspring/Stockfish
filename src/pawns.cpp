@@ -66,7 +66,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard b, neighbours, stoppers, doubled, support, phalanx;
+    Bitboard b, neighbours, stoppers, doubled, support;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
@@ -100,8 +100,7 @@ namespace {
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         doubled    = ourPawns   & (s - Up);
         neighbours = ourPawns   & adjacent_files_bb(f);
-        phalanx    = neighbours & rank_bb(s);
-        support    = neighbours & rank_bb(s - Up);
+        support    = neighbours & (rank_bb(s - Up) | rank_bb(s));
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
@@ -114,7 +113,7 @@ namespace {
         // not attacked more times than defended.
         if (   !(stoppers ^ lever ^ leverPush)
             && (support || !more_than_one(lever))
-            && popcount(phalanx) >= popcount(leverPush))
+            && popcount(support) >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
         else if (   stoppers == square_bb(s + Up)
@@ -127,11 +126,11 @@ namespace {
         }
 
         // Score this pawn
-        if (support | phalanx)
+        if (support)
         {
             int r = relative_rank(Us, s);
-            int v = phalanx ? Connected[r] + Connected[r + 1] : 2 * Connected[r];
-            v = 17 * popcount(support) + (v >> (opposed + 1));
+            int v = support ? Connected[r] + Connected[r + 1] : 2 * Connected[r];
+            v = 11 * popcount(support) + (v >> (opposed + 1));
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
