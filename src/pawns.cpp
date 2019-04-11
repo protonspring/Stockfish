@@ -126,6 +126,16 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // If only one stopper and a neighbor also has only one stopper
+        // we should be able to pass this pawn
+        else if (!more_than_one(stoppers) && neighbours)
+        {
+            Bitboard n = neighbours;
+            while (n) 
+                if (!more_than_one(theirPawns & passed_pawn_span(Us, pop_lsb(&n))))
+                    e->passedPawns[Us] |= s;
+        }
+
         // Score this pawn
         if (support | phalanx)
         {
