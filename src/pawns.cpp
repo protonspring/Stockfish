@@ -31,9 +31,9 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
-  constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score Backward[RANK_NB] = { S(0, 0), S(18, 48), S(9, 24), S(6, 18), S(2, 8), S(0,0), S(0,0)};
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 13, 24, 18, 65, 100, 175, 330 };
@@ -138,7 +138,7 @@ namespace {
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
         else if (backward)
-            score -= Backward, e->weakUnopposed[Us] += !opposed;
+            score -= Backward[relative_rank(Us, s)], e->weakUnopposed[Us] += !opposed;
 
         if (doubled && !support)
             score -= Doubled;
