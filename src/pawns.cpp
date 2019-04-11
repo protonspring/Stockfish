@@ -67,9 +67,9 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
-    Bitboard lever, leverPush;
+    Bitboard lever, leverPush, opposed;
     Square s;
-    bool opposed, backward;
+    bool backward;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -131,7 +131,7 @@ namespace {
         {
             int r = relative_rank(Us, s);
             int v = phalanx ? Connected[r] + Connected[r + 1] : 2 * Connected[r];
-            v = 17 * popcount(support) + (v >> (opposed + 1));
+            v = 17 * popcount(support) + (v >> (bool(opposed) + 1));
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
@@ -142,6 +142,9 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (popcount(more_than_one(opposed)))
+            score += make_score(10,0);
     }
 
     return score;
