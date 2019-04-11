@@ -144,7 +144,7 @@ namespace {
             score -= Doubled;
 
         if (!neighbours && more_than_one(leverPush))  //useless pawn
-            score -= make_score(10, 0);
+            score -= make_score(0, 10);
     }
 
     return score;
