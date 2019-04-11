@@ -142,6 +142,9 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (!neighbours && more_than_one(leverPush))  //useless pawn
+            score -= make_score(10, 0);
     }
 
     return score;
