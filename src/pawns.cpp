@@ -69,7 +69,7 @@ namespace {
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
     Bitboard lever, leverPush;
     Square s;
-    bool opposed, backward;
+    bool opposed, backward, multiPassed;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -142,6 +142,13 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (!stoppers)
+        {
+            if (multiPassed)
+                score += make_score(15,0);
+            multiPassed = true;
+        }
     }
 
     return score;
