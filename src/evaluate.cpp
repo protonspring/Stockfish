@@ -677,7 +677,7 @@ namespace {
                  (pos.count<KNIGHT>(Us) + pos.count<BISHOP>(Us)) >= //our count
                  (pos.count<KNIGHT>(Them) + pos.count<BISHOP>(Them))) //their count
 
-                     bonus += PassedRank[r] / 2;
+                     bonus += PassedRank[r] / 8;
 
         } // rank > RANK_3
 
