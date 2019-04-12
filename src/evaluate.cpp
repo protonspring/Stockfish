@@ -676,8 +676,7 @@ namespace {
             if ((r > RANK_5) &&
                  (pos.count<KNIGHT>(Us) + pos.count<BISHOP>(Us)) >= //our count
                  (pos.count<KNIGHT>(Them) + pos.count<BISHOP>(Them))) //their count
-
-                     bonus += PassedRank[r] / 16;
+                     bonus += make_score(10,0);
 
         } // rank > RANK_3
 
