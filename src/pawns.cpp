@@ -105,8 +105,17 @@ namespace {
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
-        backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
-                  && (stoppers & (leverPush | (s + Up)));
+        // Determine "backwardness" based on most advanced square
+        Square backSq = s;
+        Bitboard theirAttacks = pawn_attacks_bb<Them>(theirPawns);
+        while (relative_rank(Us, backSq) < RANK_8)
+        {
+            if ((theirAttacks | theirPawns) & (backSq + Up)) break;
+            backSq += Up;
+        }
+        backward =  !(ourPawns & pawn_attack_span(Them, backSq + Up))
+                  //&& (stoppers & (leverPush | (backSq + Up)));
+                    && (relative_rank(Us, backSq) < RANK_7);
 
         // Passed pawns will be properly scored in evaluation because we need
         // full attack info to evaluate them. Include also not passed pawns
