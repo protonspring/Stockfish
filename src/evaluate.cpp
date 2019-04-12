@@ -674,8 +674,8 @@ namespace {
             //more bonus if we're rank6 or further, and
             //we have the same or more minor pieces.
             if ((r > RANK_5) &&
-                 (pos.count<KNIGHT>(Us) + pos.count<BISHOP>(Us) + pos.count<ROOK>(Us)) >= //our count
-                 (pos.count<KNIGHT>(Them) + pos.count<BISHOP>(Them) + pos.count<ROOK>(Them))) //their count
+                 (pos.count<KNIGHT>(Us) + pos.count<BISHOP>(Us)) >= //our count
+                 (pos.count<KNIGHT>(Them) + pos.count<BISHOP>(Them))) //their count
 
                      bonus += PassedRank[r] / 2;
 
