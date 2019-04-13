@@ -35,9 +35,6 @@ namespace {
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
 
-  // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 13, 17, 24, 59, 96, 171 };
-
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
@@ -129,7 +126,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v = (phalanx ? 3 : 2) * Connected[r];
+            int v = (phalanx ? 3 : 2) * (12 + 10 * r * r * r / 15);
             v = 17 * popcount(support) + (v >> (opposed + 1));
             score += make_score(v, v * (r - 2) / 4);
         }
