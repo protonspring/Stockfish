@@ -133,10 +133,11 @@ namespace {
             v = 17 * popcount(support) + (v >> (opposed + 1));
             score += make_score(v, v / 2);
         }
-        else if (!neighbours)
+
+        if (!neighbours)
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
-        else if (backward)
+        if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
         if (doubled && !support)
