@@ -109,6 +109,10 @@ namespace {
         backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
                   && (stoppers & (leverPush | (s + Up)));
 
+        if (!backward && (relative_rank(Us, s) < RANK_6))
+            backward = !(ourPawns & pawn_attack_span(Them, s + Up + Up))
+                      && (stoppers & (leverPush | (s + Up + Up)));
+
         // Passed pawns will be properly scored in evaluation because we need
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
