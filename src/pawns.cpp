@@ -126,7 +126,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v = (phalanx ? 3 : 2) * (12 + r * r * r * r / 8);
+            int v = (phalanx ? 3 : 2) * (8 * r * r - 27 * r + 36);
             v = 17 * popcount(support) + (v >> (opposed + 1));
             score += make_score(v, v * (r - 2) / 4);
         }
