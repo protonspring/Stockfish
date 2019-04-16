@@ -19,7 +19,6 @@
 */
 
 #include <cassert>
-#include <numeric>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -215,17 +214,12 @@ Score Entry::do_king_safety(const Position& pos) {
   Square ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
-  int aveKingPawnDistance = 0;
 
   Bitboard pawns = pos.pieces(Us, PAWN);
-  if (pawns)
-  {
-      std::vector<int> d;
-      while(pawns)
-          d.push_back(distance(ksq, pop_lsb(&pawns)));
-
-      aveKingPawnDistance = std::accumulate(d.begin(), d.end(), 0) / d.size();
-  }
+  int d, minKingPawnDistance = pawns ? 8 : 0;
+  while(pawns)
+      if (minKingPawnDistance > (d = distance(pop_lsb(&pawns),ksq)))
+          minKingPawnDistance = d;
 
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
@@ -236,7 +230,7 @@ Score Entry::do_king_safety(const Position& pos) {
   if (pos.can_castle(Us | QUEEN_SIDE))
       bonus = std::max(bonus, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)));
 
-  return make_score(bonus, -18 * aveKingPawnDistance);
+  return make_score(bonus, -18 * minKingPawnDistance);
 }
 
 // Explicit template instantiation
