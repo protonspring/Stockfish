@@ -548,7 +548,7 @@ ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
   Square bksq = pos.square<KING>(weakSide);
   Bitboard b = pos.pieces(strongSide, PAWN);
   Square wpsq1 = pop_lsb(&b);
-  Square wpsq2 = pop_lsb(&b);
+  Square wpsq2 = lsb(b);
 
   // Does the stronger side have a passed pawn?
   if (pos.pawn_passed(strongSide, wpsq1) || pos.pawn_passed(strongSide, wpsq2))
@@ -636,7 +636,7 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
   Square ksq = pos.square<KING>(weakSide);
   Bitboard b = pos.pieces(strongSide, PAWN);
   Square psq1 = pop_lsb(&b);
-  Square psq2 = pop_lsb(&b);
+  Square psq2 = lsb(b);
   Rank r1 = rank_of(psq1);
   Rank r2 = rank_of(psq2);
   Square blockSq1, blockSq2;

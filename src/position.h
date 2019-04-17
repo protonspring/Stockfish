@@ -248,8 +248,7 @@ template<PieceType Pt> inline int Position::count() const {
 
 template<PieceType Pt> inline Square Position::square(Color c) const {
   assert(pieceCount[make_piece(c, Pt)] == 1);
-  Bitboard b = pieces(c, Pt);
-  return pop_lsb(&b);
+  return lsb(pieces(c, Pt));
 }
 
 inline Square Position::ep_square() const {
