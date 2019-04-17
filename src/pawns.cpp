@@ -68,10 +68,8 @@ namespace {
 
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
     Bitboard lever, leverPush;
-    Square s;
     bool opposed, backward;
     Score score = SCORE_ZERO;
-    const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -81,12 +79,13 @@ namespace {
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
-    while ((s = *pl++) != SQ_NONE)
+    Bitboard pawns = ourPawns;
+    while(pawns)
     {
-        assert(pos.piece_on(s) == make_piece(Us, PAWN));
-
+        Square s = pop_lsb(&pawns);
         File f = file_of(s);
         Rank r = relative_rank(Us, s);
+        assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 

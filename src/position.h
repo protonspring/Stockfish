@@ -93,7 +93,6 @@ public:
   bool empty(Square s) const;
   template<PieceType Pt> int count(Color c) const;
   template<PieceType Pt> int count() const;
-  template<PieceType Pt> const Square* squares(Color c) const;
   template<PieceType Pt> Square square(Color c) const;
   int semiopen_file(Color c, File f) const;
 
@@ -182,7 +181,6 @@ private:
   Bitboard byTypeBB[PIECE_TYPE_NB];
   Bitboard byColorBB[COLOR_NB];
   int pieceCount[PIECE_NB];
-  Square pieceList[PIECE_NB][16];
   int index[SQUARE_NB];
   int castlingRightsMask[SQUARE_NB];
   Square castlingRookSquare[CASTLING_RIGHT_NB];
@@ -249,13 +247,10 @@ template<PieceType Pt> inline int Position::count() const {
   return pieceCount[make_piece(WHITE, Pt)] + pieceCount[make_piece(BLACK, Pt)];
 }
 
-template<PieceType Pt> inline const Square* Position::squares(Color c) const {
-  return pieceList[make_piece(c, Pt)];
-}
-
 template<PieceType Pt> inline Square Position::square(Color c) const {
   assert(pieceCount[make_piece(c, Pt)] == 1);
-  return pieceList[make_piece(c, Pt)][0];
+  Bitboard b = pieces(c, Pt);
+  return pop_lsb(&b);
 }
 
 inline Square Position::ep_square() const {
@@ -396,7 +391,6 @@ inline void Position::put_piece(Piece pc, Square s) {
   byTypeBB[type_of(pc)] |= s;
   byColorBB[color_of(pc)] |= s;
   index[s] = pieceCount[pc]++;
-  pieceList[pc][index[s]] = s;
   pieceCount[make_piece(color_of(pc), ALL_PIECES)]++;
   psq += PSQT::psq[pc][s];
 }
@@ -411,10 +405,7 @@ inline void Position::remove_piece(Piece pc, Square s) {
   byTypeBB[type_of(pc)] ^= s;
   byColorBB[color_of(pc)] ^= s;
   /* board[s] = NO_PIECE;  Not needed, overwritten by the capturing one */
-  Square lastSquare = pieceList[pc][--pieceCount[pc]];
-  index[lastSquare] = index[s];
-  pieceList[pc][index[lastSquare]] = lastSquare;
-  pieceList[pc][pieceCount[pc]] = SQ_NONE;
+  pieceCount[pc]--;
   pieceCount[make_piece(color_of(pc), ALL_PIECES)]--;
   psq -= PSQT::psq[pc][s];
 }
@@ -430,7 +421,6 @@ inline void Position::move_piece(Piece pc, Square from, Square to) {
   board[from] = NO_PIECE;
   board[to] = pc;
   index[to] = index[from];
-  pieceList[pc][index[to]] = to;
   psq += PSQT::psq[pc][to] - PSQT::psq[pc][from];
 }
 
