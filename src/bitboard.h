@@ -72,7 +72,6 @@ extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard DistanceRingBB[SQUARE_NB][8];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
-extern Bitboard KingFlank[FILE_NB];
 extern Bitboard SquareBB[SQUARE_NB];
 
 
@@ -190,6 +189,11 @@ inline Bitboard adjacent_files_bb(File f) {
 inline Bitboard between_bb(Square s1, Square s2) {
   return LineBB[s1][s2] & ( (AllSquares << (s1 +  (s1 < s2)))
                            ^(AllSquares << (s2 + !(s1 < s2))));
+}
+
+constexpr Bitboard king_flank(File f) {
+    return f == FILE_A ? QueenSide ^ FileDBB :
+           f == FILE_H ?  KingSide ^ FileEBB : QueenSide << (((f - 1)/2)*2);
 }
 
 
