@@ -371,6 +371,12 @@ inline Square pop_lsb(Bitboard* b) {
   return s;
 }
 
+inline Square pop_msb(Bitboard* b) {
+  const Square s = msb(*b);
+  *b &= *b - 1;
+  return s;
+}
+
 
 /// frontmost_sq() and backmost_sq() return the square corresponding to the
 /// most/least advanced bit relative to the given color.

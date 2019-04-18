@@ -215,9 +215,12 @@ Score Entry::do_king_safety(const Position& pos) {
 
   Bitboard pawns = pos.pieces(Us, PAWN);
   int d, minKingPawnDistance = pawns ? 8 : 0;
-  while(pawns)
-      if ((d = distance(pop_lsb(&pawns), ksq)) < minKingPawnDistance)
+  while((pawns) && (minKingPawnDistance > 1))
+  {
+      Square s = Us == WHITE ? pop_lsb(&pawns) : pop_msb(&pawns);
+      if ((d = distance(s, ksq)) < minKingPawnDistance)
           minKingPawnDistance = d;
+  }
 
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
