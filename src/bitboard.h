@@ -373,7 +373,7 @@ inline Square pop_lsb(Bitboard* b) {
 
 inline Square pop_msb(Bitboard* b) {
   const Square s = msb(*b);
-  *b &= *b - 1;
+  *b &= ~(square_bb(s));
   return s;
 }
 
