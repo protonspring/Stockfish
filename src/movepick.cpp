@@ -63,9 +63,9 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > DEPTH_ZERO);
 
-  stage = pos.checkers() ? EVASION_TT : MAIN_TT;
-  ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  moves[0] = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
+
+  stage = (pos.checkers() ? EVASION_TT : MAIN_TT) + (moves[0] == MOVE_NONE);
 }
 
 /// MovePicker constructor for quiescence search
@@ -75,11 +75,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d <= DEPTH_ZERO);
 
-  stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
-  ttMove =   ttm
-          && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
-          && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  moves[0] = ttm && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
+                 && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
+
+  stage = (pos.checkers() ? EVASION_TT : QSEARCH_TT) + (moves[0] == MOVE_NONE);
 }
 
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
@@ -89,12 +88,11 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 
   assert(!pos.checkers());
 
-  stage = PROBCUT_TT;
-  ttMove =   ttm
-          && pos.capture(ttm)
-          && pos.pseudo_legal(ttm)
-          && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  moves[0] = ttm && pos.capture(ttm)
+                 && pos.pseudo_legal(ttm)
+                 && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
+
+  stage = PROBCUT_TT + (moves[0] == MOVE_NONE);
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -139,7 +137,7 @@ Move MovePicker::select(Pred filter) {
       if (T == Best)
           std::swap(*cur, *std::max_element(cur, endMoves));
 
-      if (*cur != ttMove && filter())
+      if (*cur != moves[0].move && filter())
           return *cur++;
 
       cur++;
@@ -160,12 +158,12 @@ top:
   case QSEARCH_TT:
   case PROBCUT_TT:
       ++stage;
-      return ttMove;
+      return moves[0];
 
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
+      cur = endBadCaptures = &moves[1];
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
@@ -216,7 +214,7 @@ top:
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
-      cur = moves;
+      cur = &moves[1];
       endMoves = endBadCaptures;
 
       ++stage;
@@ -226,7 +224,7 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      cur = moves;
+      cur = &moves[1];
       endMoves = generate<EVASIONS>(pos, cur);
 
       score<EVASIONS>();
@@ -252,7 +250,7 @@ top:
       /* fallthrough */
 
   case QCHECK_INIT:
-      cur = moves;
+      cur = &moves[1];
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;
