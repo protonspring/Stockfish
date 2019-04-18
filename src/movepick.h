@@ -139,7 +139,7 @@ private:
   const ButterflyHistory* mainHistory;
   const CapturePieceToHistory* captureHistory;
   const PieceToHistory** continuationHistory;
-  ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
+  ExtMove special[4], *cur, *endMoves, *endBadCaptures;
   int stage;
   Square recaptureSquare;
   Value threshold;
