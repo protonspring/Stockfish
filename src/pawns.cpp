@@ -125,9 +125,9 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v = (phalanx ? 3 : 2) * Connected[r];
-            v = 17 * popcount(support) + (v >> (opposed + 1));
-            score += make_score(v, v * (r - 2) / 4);
+            int v = 17 * popcount(support) +
+                    (phalanx ? 3 : 2) * Connected[r] / (opposed ? 4 : 2);
+            score += make_score(v, 3 * r * r);
         }
         else if (!neighbours)
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
