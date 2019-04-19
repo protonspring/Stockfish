@@ -599,7 +599,7 @@ namespace {
     Bitboard singleSupport = attackedBy[Us][ALL_PIECES] ^ attackedBy2[Us];
 
     if (more_than_one(attackedBy[Us][QUEEN] & singleSupport))
-        score -= make_score(0,10);
+        score -= make_score(10,0);
 
     if (T)
         Trace::add(THREAT, Us, score);
