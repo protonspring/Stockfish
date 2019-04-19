@@ -594,6 +594,13 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Identify overloaded pieces
+    // Pieces that are supported only once by our pieces
+    Bitboard singleSupport = attackedBy[Us][ALL_PIECES] ^ attackedBy2[Us];
+
+    if (more_than_one(attackedBy[Us][QUEEN] & singleSupport))
+        score -= make_score(0,10);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
