@@ -598,8 +598,8 @@ namespace {
     // Pieces that are supported only once by our pieces
     Bitboard singleSupport = attackedBy[Us][ALL_PIECES] ^ attackedBy2[Us];
 
-    if (more_than_one(attackedBy[Us][QUEEN] & singleSupport))
-        score -= make_score(10,0);
+    if (more_than_one(attackedBy[Us][ROOK] & singleSupport))
+        score -= make_score(5,0);
 
     if (T)
         Trace::add(THREAT, Us, score);
