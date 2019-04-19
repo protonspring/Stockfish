@@ -600,9 +600,9 @@ namespace {
                            & ~attackedBy2[Us]
                            & pos.pieces(Us);
 
-    if ((pos.count<QUEEN>(Us) == 1) &&
-        (more_than_one(attackedBy[Us][QUEEN] & singleSupport)))
-            score -= make_score(0,10);
+    if ((pos.count<ROOK>(Us) == 1) &&
+        (more_than_one(attackedBy[Us][ROOK] & singleSupport)))
+            score -= make_score(0,5);
 
     if (T)
         Trace::add(THREAT, Us, score);
