@@ -843,8 +843,7 @@ moves_loop: // When in check, search starts from here
 
     Move countermove = thisThread->counterMoves[pos.piece_on(prevSq)][prevSq];
 
-    MovePicker mp(pos, ttMove, depth, &thisThread->mainHistory,
-                                      &thisThread->captureHistory,
+    MovePicker mp(pos, ttMove, depth, &thisThread->captureHistory,
                                       contHist,
                                       countermove,
                                       ss->killers);
@@ -1305,8 +1304,7 @@ moves_loop: // When in check, search starts from here
     // to search the moves. Because the depth is <= 0 here, only captures,
     // queen promotions and checks (only if depth >= DEPTH_QS_CHECKS) will
     // be generated.
-    MovePicker mp(pos, ttMove, depth, &thisThread->mainHistory,
-                                      &thisThread->captureHistory,
+    MovePicker mp(pos, ttMove, depth, &thisThread->captureHistory,
                                       contHist,
                                       to_sq((ss-1)->currentMove));
 

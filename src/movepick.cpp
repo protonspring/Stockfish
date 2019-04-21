@@ -56,9 +56,9 @@ namespace {
 /// ordering is at the current node.
 
 /// MovePicker constructor for the main search
-MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
+MovePicker::MovePicker(const Position& p, Move ttm, Depth d,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
+           : pos(p), captureHistory(cph), continuationHistory(ch),
              refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) {
 
   assert(d > DEPTH_ZERO);
@@ -69,9 +69,9 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 }
 
 /// MovePicker constructor for quiescence search
-MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
+MovePicker::MovePicker(const Position& p, Move ttm, Depth d,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
+           : pos(p), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
 
   assert(d <= DEPTH_ZERO);
 
@@ -111,8 +111,7 @@ void MovePicker::score() {
                    + (*captureHistory)[pos.moved_piece(m)][to_sq(m)][type_of(pos.piece_on(to_sq(m)))] / 8;
 
       else if (Type == QUIETS)
-          m.value =  (*mainHistory)[pos.side_to_move()][from_to(m)]
-                   + (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
+          m.value =  (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
                    + (*continuationHistory[1])[pos.moved_piece(m)][to_sq(m)]
                    + (*continuationHistory[3])[pos.moved_piece(m)][to_sq(m)]
                    + (*continuationHistory[5])[pos.moved_piece(m)][to_sq(m)] / 2;
@@ -123,8 +122,7 @@ void MovePicker::score() {
               m.value =  PieceValue[MG][pos.piece_on(to_sq(m))]
                        - Value(type_of(pos.moved_piece(m)));
           else
-              m.value =  (*mainHistory)[pos.side_to_move()][from_to(m)]
-                       + (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
+              m.value =  (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
                        - (1 << 28);
       }
 }
