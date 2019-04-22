@@ -96,12 +96,10 @@ void TranspositionTable::clear() {
               WinProcGroup::bindThisThread(idx);
 
           // Each thread will zero its part of the hash table
-          const size_t stride = clusterCount / Options["Threads"],
-                       start  = stride * idx,
-                       len    = idx != Options["Threads"] - 1 ?
-                                stride : clusterCount - start;
+          const size_t width = clusterCount / Options["Threads"],
+                       start  = width * idx;
 
-          std::memset(&table[start], 0, len * sizeof(Cluster));
+          std::memset(&table[start], 0, width * sizeof(Cluster));
       });
   }
 
