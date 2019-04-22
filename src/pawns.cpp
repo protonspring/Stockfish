@@ -143,7 +143,7 @@ namespace {
         while(neighbours)
         {
             Bitboard nStoppers = theirPawns & passed_pawn_span(Us, pop_lsb(&neighbours));
-            if ((nStoppers == stoppers) && popcount(nStoppers == 1))
+            if ((nStoppers == stoppers) && popcount(nStoppers) == 1)
                 score += make_score(0,10);
         }
     }
