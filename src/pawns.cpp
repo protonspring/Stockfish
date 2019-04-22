@@ -137,6 +137,15 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        // Quazi passed if neighbors stoppers are the same as ours
+        // (and there is only one)
+        while(neighbours)
+        {
+            Bitboard nStoppers = theirPawns & passed_pawn_span(Us, pop_lsb(&neighbours));
+            if ((nStoppers == stoppers) && popcount(nStoppers == 1))
+                score += make_score(10,0);
+        }
     }
 
     return score;
