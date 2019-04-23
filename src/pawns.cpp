@@ -115,7 +115,7 @@ namespace {
             e->passedPawns[Us] |= s;
 
         // Passed if a neighbour has the same stoppers as us
-        else if (opposed && (popcount(stoppers) == 1) && (b = neighbours))
+        else if (opposed && (popcount(stoppers) == 1) && (b = (support | phalanx)))
             while (b)
                 if (stoppers == (theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
                     e->passedPawns[Us] |= s;
