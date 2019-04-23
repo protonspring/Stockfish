@@ -380,7 +380,7 @@ namespace {
     }
 
     //Bonus for multiple attacks on F2 square
-    if (KingFlank[pos.square<KING>(Them)] & attackedBy2[Us] & relative_square(Us, SQ_F2))
+    if (KingFlank[file_of(pos.square<KING>(Them))] & attackedBy2[Us] & relative_square(Us, SQ_F2))
         score += make_score(10,0);
 
     if (T)
