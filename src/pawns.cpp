@@ -114,13 +114,11 @@ namespace {
             && popcount(phalanx) >= popcount(leverPush))
             e->passedPawns[Us] |= s;
 
-        else if (stoppers == square_bb(s + Up) && r >= RANK_5)
-        {
-            b = shift<Up>(support) & ~theirPawns;
+        // Passed if a neighbour has the same stoppers as us
+        else if (stoppers == square_bb(s + Up) && (b = neighbours))
             while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
+                if (stoppers == (theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
                     e->passedPawns[Us] |= s;
-        }
 
         // Score this pawn
         if (support | phalanx)
