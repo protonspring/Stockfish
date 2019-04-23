@@ -377,6 +377,10 @@ namespace {
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
         }
+
+        //bonus for attacking the (relative) F2 pawn.
+        if (b & relative_square(Us, SQ_F2))
+            score += make_score(5,0);
     }
     if (T)
         Trace::add(Pt, Us, score);
