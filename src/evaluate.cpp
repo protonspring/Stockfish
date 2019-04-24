@@ -22,6 +22,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -463,8 +464,11 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
+    //std::cout << "<" << kingAttackersCount[Them] << ","
+                     //<< kingAttacksCount[Them] << ">";
+
     kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
-                 +  69 * kingAttacksCount[Them]
+                 +  69 * (1 + kingAttackersCount[Them])
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
