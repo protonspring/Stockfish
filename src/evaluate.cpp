@@ -199,7 +199,7 @@ namespace {
 
     // kingAttackersCount[color] is the number of pieces of the given color
     // which attack a square in the kingRing of the enemy king.
-    int kingAttackersCount[COLOR_NB];
+    //int kingAttackersCount[COLOR_NB];
 
     // kingAttackersWeight[color] is the sum of the "weights" of the pieces of
     // the given color which attack a square in the kingRing of the enemy king.
@@ -255,7 +255,7 @@ namespace {
     else if (file_of(ksq) == FILE_A)
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-    kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    //kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
 
     // Remove from kingRing[] the squares defended by two pawns
@@ -294,7 +294,7 @@ namespace {
 
         if (b & kingRing[Them])
         {
-            kingAttackersCount[Us]++;
+            //kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
@@ -463,7 +463,8 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
+    //kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
+    kingDanger +=        (6 * kingAttacksCount[Them] / 8) * kingAttackersWeight[Them]
                  +  69 * kingAttacksCount[Them]
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
