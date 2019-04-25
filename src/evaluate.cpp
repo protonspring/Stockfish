@@ -469,7 +469,7 @@ namespace {
                      //<< kingAttacksCount[Them] << ">";
 
     kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
-                 +  65 * (1 + kingAttackersCount[Them])
+                 +  74 * (1 + kingAttackersCount[Them])
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
