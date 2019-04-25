@@ -1416,8 +1416,7 @@ moves_loop: // When in check, search starts from here
 
     assert(v != VALUE_NONE);
 
-    return  v >= VALUE_MATE_IN_MAX_PLY  ? v + ply
-          : v <= VALUE_MATED_IN_MAX_PLY ? v - ply : v;
+    return clamp(v, VALUE_MATED_IN_MAX_PLY - ply, VALUE_MATE_IN_MAX_PLY + ply);
   }
 
 
