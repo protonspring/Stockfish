@@ -190,6 +190,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       b = ourPawns & file_bb(f);
       Rank ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
 
+      if (more_than_one(b))
+          safety += Value(10);
+
       b = theirPawns & file_bb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
