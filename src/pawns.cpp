@@ -200,7 +200,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                                         : UnblockedStorm[d][theirRank];
       //Penalize levers in the shelter
       if ((ourSquare != SQ_NONE) && (PawnAttacks[Us][ourSquare] & theirPawns))
-              safety -= Value(15);
+              safety -= Value(25);
   }
   return safety;
 }
