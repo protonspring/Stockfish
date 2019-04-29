@@ -189,9 +189,17 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
   {
       b = ourPawns & file_bb(f);
       Rank ourRank = b ? relative_rank(Us, backmost_sq(Us, b)) : RANK_1;
+      Rank theirRank = RANK_1;
 
-      b = theirPawns & file_bb(f);
-      Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      if (b = theirPawns & file_bb(f))
+      {
+          Square s2 = frontmost_sq(Them, b);
+          Bitboard stoppers = ourPawns & passed_pawn_span(Them, s2);
+          if (stoppers == square_bb(s2 + Down))
+              safety -= 40; //thorned pawn here is no bueno
+
+          theirRank = relative_rank(Us, frontmost_sq(Them, b));
+      }
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
