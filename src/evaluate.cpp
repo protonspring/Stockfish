@@ -683,7 +683,7 @@ namespace {
 
                 // Scale up bonus if there are no minors to sacrifice for pawn
                 if (!pos.pieces(Them, BISHOP) || !pos.pieces(Them, KNIGHT))
-                    bonus += bonus / 4;
+                    bonus += bonus / 8;
 
             }
         } // rank > RANK_3
