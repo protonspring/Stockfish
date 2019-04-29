@@ -116,7 +116,7 @@ namespace {
 
         else if (stoppers == square_bb(s + Up) && r >= RANK_5)
         {
-            score += make_score(10,0);
+            score += make_score(15,0);
             b = shift<Up>(support) & ~theirPawns;
             while (b)
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
