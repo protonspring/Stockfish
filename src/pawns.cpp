@@ -139,6 +139,12 @@ namespace {
             score -= Doubled;
     }
 
+    //bonus for having a most-advanced pawn
+    Rank ourRank = ourPawns ? relative_rank(Us, frontmost_sq(Us, ourPawns)) : RANK_8;
+    Rank theirRank = theirPawns ? relative_rank(Them, frontmost_sq(Them, theirPawns)) : RANK_8;
+    if (ourRank > theirRank)
+        score += make_score(10,10);
+
     return score;
   }
 
