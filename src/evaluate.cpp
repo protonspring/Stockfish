@@ -680,6 +680,11 @@ namespace {
                     k += 4;
 
                 bonus += make_score(k * w, k * w);
+
+                // Scale up bonus if there are no minors to sacrifice for pawn
+                if (!pos.pieces(Them, BISHOP) || !pos.pieces(Them, KNIGHT))
+                    bonus += bonus / 4;
+
             }
         } // rank > RANK_3
 
