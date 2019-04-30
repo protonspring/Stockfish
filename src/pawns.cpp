@@ -139,11 +139,14 @@ namespace {
             score -= Doubled;
     }
 
-    //bonus for having a most-advanced pawn
-    Rank ourRank = ourPawns ? relative_rank(Us, frontmost_sq(Us, ourPawns)) : RANK_1;
-    Rank theirRank = theirPawns ? relative_rank(Them, frontmost_sq(Them, theirPawns)) : RANK_1;
+    //bonus for having a most-advanced supported pawn
+    Bitboard ourSupported = ourPawns & pawn_attacks_bb<Us>(ourPawns);
+    Rank ourRank = ourSupported ? relative_rank(Us, frontmost_sq(Us, ourSupported)) : RANK_1;
+
+    Bitboard theirSupported = theirPawns & pawn_attacks_bb<Them>(theirPawns);
+    Rank theirRank = theirSupported ? relative_rank(Them, frontmost_sq(Them, theirSupported)) : RANK_1;
     if (ourRank > theirRank)
-        score += make_score( 0,15);
+        score += make_score( 0,10);
 
     return score;
   }
