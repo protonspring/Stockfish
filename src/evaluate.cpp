@@ -708,7 +708,7 @@ namespace {
                   : CenterFiles & (Rank7BB | Rank6BB | Rank5BB);
 
     Bitboard area = (AllSquares ^ pe->battle_front(Us)) & SpaceMask;
-    int bonus = popcount(area);
+    int bonus = 2 * popcount(area);
     int weight =  pos.count<ALL_PIECES>(Us)
                - (16 - pos.count<PAWN>()) / 4;
 
