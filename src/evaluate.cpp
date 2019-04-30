@@ -370,6 +370,12 @@ namespace {
             }
         }
 
+        if ((Pt == ROOK) || (Pt == QUEEN))
+        {
+            if (pe->closed[Us])
+                score -= make_score(10, 0);
+        }
+
         if (Pt == QUEEN)
         {
             // Penalty if any relative pin or discovered attack against the queen

@@ -75,10 +75,24 @@ namespace {
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
+    Bitboard theirSupported = theirPawns & pawn_attacks_bb<Them>(theirPawns);
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
+    e->closed[Us] = true;
+
+    //check for a completely closed position
+    // also if we don't have a pawn, but enemy has a support pawn, also closed
+    e->closed[Us] = true;
+    for(File f = FILE_A; f <= FILE_H; f=File(f+FILE_B))
+    {
+       if (!(file_bb(f) & (ourPawns | theirSupported)))
+       {
+           e->closed[Us] = false; 
+           break;
+       }
+    }
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)

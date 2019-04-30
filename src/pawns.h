@@ -62,6 +62,7 @@ struct Entry {
   int weakUnopposed[COLOR_NB];
   int castlingRights[COLOR_NB];
   int pawnsOnSquares[COLOR_NB][COLOR_NB]; // [color][light/dark squares]
+  bool closed[COLOR_NB];
 };
 
 typedef HashTable<Entry, 16384> Table;
