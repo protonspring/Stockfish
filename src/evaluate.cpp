@@ -373,7 +373,7 @@ namespace {
         if ((Pt == ROOK) || (Pt == QUEEN))
         {
             if (pe->closed[Us])
-                score -= make_score(10, 0);
+                score -= make_score( 0,10);
         }
 
         if (Pt == QUEEN)
