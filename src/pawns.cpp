@@ -76,6 +76,11 @@ namespace {
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
+    // Bonus for multiple advanced pawns
+    Rank adv = ourPawns ? relative_rank(Us, frontmost_sq(Us, ourPawns)) : RANK_1;
+    if (more_than_one(rank_bb(adv)) && (adv > RANK_4))
+        score += make_score(adv * adv / 2, 0);
+
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = e->weakUnopposed[Us] = 0;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
