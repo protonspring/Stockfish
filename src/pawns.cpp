@@ -126,7 +126,7 @@ namespace {
         if ((stoppers == square_bb(s + Up)) && (b = pawn_attack_span(Them, s + Up)))
             while (b)
                 if (stoppers == (theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
-                    score += make_score(10, 0);
+                    score += make_score( 0,10);
 
         // Score this pawn
         if (support | phalanx)
