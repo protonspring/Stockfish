@@ -334,6 +334,12 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                // Bonus for fianchettoed bishop
+                Bitboard fSquares = (Rank1BB | Rank8BB) & (FileBBB | FileGBB);
+                Square ksq = pos.square<KING>(Us);
+                if ((ksq & fSquares) && ((ksq - Down) == s))
+                    score += make_score(10,0);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
