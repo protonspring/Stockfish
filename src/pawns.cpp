@@ -146,7 +146,7 @@ namespace {
     Bitboard theirSupported = theirPawns & pawn_attacks_bb<Them>(theirPawns);
     Rank theirRank = theirSupported ? relative_rank(Them, frontmost_sq(Them, theirSupported)) : RANK_1;
     if (ourRank > theirRank)
-        score += make_score( 2,10);
+        score += make_score( 0,11);
 
     return score;
   }
