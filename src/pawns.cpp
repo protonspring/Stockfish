@@ -193,6 +193,9 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       b = theirPawns & file_bb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
+      if (more_than_one(b))
+          safety -= Value(10);
+
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
       safety -= (ourRank && (ourRank == theirRank - 1)) ? 66 * (theirRank == RANK_3)
