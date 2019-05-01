@@ -137,6 +137,9 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (!support)
+            score -= make_score(5,0);
     }
 
     return score;
