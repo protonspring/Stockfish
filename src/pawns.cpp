@@ -194,7 +194,7 @@ Value Entry::evaluate_shelter(const Position& pos, Square ksq) {
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       if (more_than_one(b))
-          safety -= Value(10);
+          safety -= Value(15);
 
       int d = std::min(f, ~f);
       safety += ShelterStrength[d][ourRank];
