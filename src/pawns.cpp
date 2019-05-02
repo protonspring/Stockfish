@@ -123,7 +123,7 @@ namespace {
         }
 
         // bonus for supported, unattackable pawns, past rank_4
-        if (!(theirPawns & pawn_attack_span(Us, s)) && support)
+        if (!(theirPawns & pawn_attack_span(Us, s)) && support && r >= RANK_5)
             make_score(10,0);
 
         // Score this pawn
