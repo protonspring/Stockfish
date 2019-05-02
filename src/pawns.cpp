@@ -122,6 +122,10 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // bonus for supported, unattackable pawns, past rank_4
+        if (!(theirPawns & pawn_attack_span(Us, s)) && support)
+            make_score(10,0);
+
         // Score this pawn
         if (support | phalanx)
         {
