@@ -61,7 +61,6 @@ namespace {
   enum NodeType { NonPV, PV };
 
   // Razor and futility margins
-  constexpr int RazorMargin = 600;
   Value futility_margin(Depth d, bool improving) {
     return Value((175 - 50 * improving) * d / ONE_PLY);
   }
@@ -733,7 +732,7 @@ namespace {
     // Step 7. Razoring (~2 Elo)
     if (   !rootNode // The required rootNode PV handling is not available in qsearch
         &&  depth < 2 * ONE_PLY
-        &&  eval <= alpha - RazorMargin)
+        &&  eval <= alpha)
         return qsearch<NT>(pos, ss, alpha, beta);
 
     improving =   ss->staticEval >= (ss-2)->staticEval
