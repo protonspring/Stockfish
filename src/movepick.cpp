@@ -209,7 +209,7 @@ top:
       /* fallthrough */
 
   case QUIET:
-      if (select<Next>([&](){return (!skipQuiets || (cur < endBadCaptures + 3))
+      if (select<Next>([&](){return (!skipQuiets || (cur < endBadCaptures + 4))
                                    && *cur != refutations[0].move
                                    && *cur != refutations[1].move
                                    && *cur != refutations[2].move;}))
