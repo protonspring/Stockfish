@@ -210,7 +210,8 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
+          && select<Next>([&](){return cur->value > -40000
+                                      && *cur != refutations[0].move
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
           return *(cur - 1);
