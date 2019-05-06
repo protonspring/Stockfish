@@ -239,12 +239,11 @@ void MainThread::search() {
       for (Thread* th : Threads)
       {
           Move m = th->rootMoves[0].pv[0];
-          if (votes[m]) votes[m] *= th->completedDepth;
-          else votes[m] = 1;
+          votes[m] += th->completedDepth;
 
           if (votes[m] > mostVotes)
           {
-              mostVotes = votes[th->rootMoves[0].pv[0]];
+              mostVotes = votes[m];
               bestThread = th;
           }
       }
