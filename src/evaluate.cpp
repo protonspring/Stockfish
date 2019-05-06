@@ -257,7 +257,7 @@ namespace {
 
     //kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
     //kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
-    kingPressure[Them] = 69 * popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    kingPressure[Us] = 69 * popcount(kingRing[Us] & pe->pawn_attacks(Them));
 
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~dblAttackByPawn;
@@ -298,7 +298,7 @@ namespace {
             //kingAttackersCount[Us]++;
             //kingAttackersWeight[Us] += KingAttackWeights[Pt];
             //kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
-            kingPressure[Us] += KingAttackWeights[Pt] * popcount(b & attackedBy[Them][KING]);
+            kingPressure[Them] += KingAttackWeights[Pt] * popcount(b & attackedBy[Them][KING]);
         }
 
         int mob = popcount(b & mobilityArea[Us]);
@@ -465,7 +465,7 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    kingDanger +=        kingPressure[Them]
+    kingDanger +=        kingPressure[Us]
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  -  35 * bool(attackedBy[Us][BISHOP] & attackedBy[Us][KING])
