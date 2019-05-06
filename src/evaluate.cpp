@@ -197,22 +197,6 @@ namespace {
     // and h6.
     Bitboard kingRing[COLOR_NB];
 
-    // kingAttackersCount[color] is the number of pieces of the given color
-    // which attack a square in the kingRing of the enemy king.
-    //int kingAttackersCount[COLOR_NB];
-
-    // kingAttackersWeight[color] is the sum of the "weights" of the pieces of
-    // the given color which attack a square in the kingRing of the enemy king.
-    // The weights of the individual piece types are given by the elements in
-    // the KingAttackWeights array.
-    //int kingAttackersWeight[COLOR_NB];
-
-    // kingAttacksCount[color] is the number of attacks by the given color to
-    // squares directly adjacent to the enemy king. Pieces which attack more
-    // than one square are counted multiple times. For instance, if there is
-    // a white knight on g5 and black's king is on g8, this white knight adds 2
-    // to kingAttacksCount[WHITE].
-    //int kingAttacksCount[COLOR_NB];
     int kingPressure[COLOR_NB];
   };
 
@@ -255,8 +239,6 @@ namespace {
     else if (file_of(ksq) == FILE_A)
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-    //kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
-    //kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
     kingPressure[Us] = 69 * popcount(kingRing[Us] & pe->pawn_attacks(Them));
 
     // Remove from kingRing[] the squares defended by two pawns
@@ -294,12 +276,7 @@ namespace {
         attackedBy[Us][ALL_PIECES] |= b;
 
         if (b & kingRing[Them])
-        {
-            //kingAttackersCount[Us]++;
-            //kingAttackersWeight[Us] += KingAttackWeights[Pt];
-            //kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
             kingPressure[Them] += 3 * KingAttackWeights[Pt] * (1 + popcount(b & attackedBy[Them][KING]));
-        }
 
         int mob = popcount(b & mobilityArea[Us]);
 
