@@ -375,6 +375,10 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            // bonus for being behind a rook
+            if (forward_file_bb(Us, s) & pos.pieces(Us, ROOK))
+                score += make_score(8,0);
         }
     }
     if (T)
