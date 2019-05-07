@@ -321,6 +321,11 @@ namespace {
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
+            // Penalty for being on the first rank, if there are rooks there
+            Bitboard rank1 = rank_bb(relative_rank(Us, RANK_1));
+            if ((rank1 & s) && (rank1 & pos.pieces(Us, ROOK)))
+                score -= make_score(5,0);
+
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
