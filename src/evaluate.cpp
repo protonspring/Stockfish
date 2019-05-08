@@ -472,7 +472,7 @@ namespace {
                  -   6 * mg_value(score) / 8
                  +       mg_value(mobility[Them] - mobility[Us])
                  +   5 * kingFlankAttacks * kingFlankAttacks / 16
-                 -  10 * popcount(kingRing[Us] & pos.pieces(Us, PAWN))
+                 -  10 * (popcount(kingRing[Us] & PseudoAttacks[KING][pos.square<KING>(Us)]))
                  -   7;
 
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
