@@ -78,7 +78,7 @@ namespace {
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
-  constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 69, 186, 124, 95, 20 };
+  constexpr int KingAttackWeights[PIECE_TYPE_NB] = {71,  0, 183, 124, 89, 20 };
 
   // Penalties for enemy's safe checks
   constexpr int QueenSafeCheck  = 780;
@@ -240,7 +240,7 @@ namespace {
     else if (file_of(ksq) == FILE_A)
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-    kingPressure[Us] = KingAttackWeights[PAWN] * popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    kingPressure[Us] = KingAttackWeights[0] * popcount(kingRing[Us] & pe->pawn_attacks(Them));
 
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~dblAttackByPawn;
@@ -278,7 +278,7 @@ namespace {
 
         if (b & kingRing[Them])
             kingPressure[Them] += KingAttackWeights[Pt]
-               + KingAttackWeights[PAWN] * popcount(b & attackedBy[Them][KING]);
+               + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);
 
         int mob = popcount(b & mobilityArea[Us]);
 
