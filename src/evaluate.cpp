@@ -164,7 +164,11 @@ TUNE(KingAttackWeights);
 
   public:
     Evaluation() = delete;
-    explicit Evaluation(const Position& p) : pos(p) {}
+    explicit Evaluation(const Position& p) : pos(p)
+    {
+        kingPressure[0] = 0;
+        kingPressure[1] = 0;
+    }
     Evaluation& operator=(const Evaluation&) = delete;
     Value value();
 
