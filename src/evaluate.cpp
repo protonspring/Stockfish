@@ -164,11 +164,7 @@ TUNE(KingAttackWeights);
 
   public:
     Evaluation() = delete;
-    explicit Evaluation(const Position& p) : pos(p)
-    {
-        kingPressure[0] = 0;
-        kingPressure[1] = 0;
-    }
+    explicit Evaluation(const Position& p) : pos(p) {}
     Evaluation& operator=(const Evaluation&) = delete;
     Value value();
 
@@ -814,10 +810,14 @@ TUNE(KingAttackWeights);
     initialize<BLACK>();
 
     // Pieces should be evaluated first (populate attack tables)
-    score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
-            + pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>()
-            + pieces<WHITE, ROOK  >() - pieces<BLACK, ROOK  >()
-            + pieces<WHITE, QUEEN >() - pieces<BLACK, QUEEN >();
+    score += pieces<WHITE, KNIGHT>();
+    score -= pieces<BLACK, KNIGHT>();
+    score += pieces<WHITE, BISHOP>();
+    score -= pieces<BLACK, BISHOP>();
+    score += pieces<WHITE, ROOK  >();
+    score -= pieces<BLACK, ROOK  >();
+    score += pieces<WHITE, QUEEN >();
+    score -= pieces<BLACK, QUEEN >();
 
     score += mobility[WHITE] - mobility[BLACK];
 
