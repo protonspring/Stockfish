@@ -199,7 +199,7 @@ TUNE(KingAttackWeights);
     // and h6.
     Bitboard kingRing[COLOR_NB];
 
-    // kingPressure is a combined value of attacking pieces and their weights.
+    // kingPressure (opponent king) is a combined value of attacking pieces and their weights.
     int kingPressure[COLOR_NB];
   };
 
@@ -242,7 +242,7 @@ TUNE(KingAttackWeights);
     else if (file_of(ksq) == FILE_A)
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-    kingPressure[Us] = KingAttackWeights[0] * popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    kingPressure[Them] = KingAttackWeights[0] * popcount(kingRing[Us] & pe->pawn_attacks(Them));
 
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~dblAttackByPawn;
@@ -280,8 +280,8 @@ TUNE(KingAttackWeights);
 
         if (b & kingRing[Them])
         {
-            kingPressure[Them] += kingPressure[Them] / 2;  //multi-attack bonus
-            kingPressure[Them] += KingAttackWeights[Pt]    //attacking piece bonus
+            kingPressure[Us] += kingPressure[Us] / 2;  //multi-attack bonus
+            kingPressure[Us] += KingAttackWeights[Pt]    //attacking piece bonus
                + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of square bonus
         }
 
@@ -449,7 +449,7 @@ TUNE(KingAttackWeights);
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    kingDanger +=        kingPressure[Us]
+    kingDanger +=        kingPressure[Them]
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  -  35 * bool(attackedBy[Us][BISHOP] & attackedBy[Us][KING])
