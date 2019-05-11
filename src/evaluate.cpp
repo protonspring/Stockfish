@@ -78,7 +78,7 @@ namespace {
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
-  constexpr int KingAttackWeights[PIECE_TYPE_NB] = {55,  0, 133, 84, 64, 15 };
+  constexpr int KingAttackWeights[PIECE_TYPE_NB] = {56,  0, 140, 85, 65, 15 };
 
   // Penalties for enemy's safe checks
   constexpr int QueenSafeCheck  = 780;
@@ -278,9 +278,9 @@ namespace {
 
         if (b & kingRing[Them])
         {
-            kingPressure[Them] += kingPressure[Them] / 4;  //multi-attack bonus
+            kingPressure[Them] += 3 * kingPressure[Them] / 8;  //multi-attack bonus
             kingPressure[Them] += KingAttackWeights[Pt]    //attacking piece bonus
-               + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of square bonus
+               + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of attacked squares bonus
         }
 
         int mob = popcount(b & mobilityArea[Us]);
@@ -807,11 +807,11 @@ namespace {
     initialize<WHITE>();
     initialize<BLACK>();
 
-    // Pieces should be evaluated first (populate attack tables)
-    score += (pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>())
-          +  (pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>())
-          +  (pieces<WHITE, ROOK  >() - pieces<BLACK, ROOK  >())
-          +  (pieces<WHITE, QUEEN >() - pieces<BLACK, QUEEN >());
+    // Pieces should be evaluated first (populate attack tables, force order)
+    score += (pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>());
+    score += (pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>());
+    score += (pieces<WHITE, ROOK  >() - pieces<BLACK, ROOK  >());
+    score += (pieces<WHITE, QUEEN >() - pieces<BLACK, QUEEN >());
 
     score += mobility[WHITE] - mobility[BLACK];
 
