@@ -278,7 +278,7 @@ namespace {
 
         if (b & kingRing[Them])
         {
-            kingPressure[Them] += kingPressure[Them] / 2;  //multi-attack bonus
+            kingPressure[Them] += 3 * kingPressure[Them] / 8;  //multi-attack bonus
             kingPressure[Them] += KingAttackWeights[Pt]    //attacking piece bonus
                + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of square bonus
         }
