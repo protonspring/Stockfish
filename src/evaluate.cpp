@@ -336,8 +336,8 @@ namespace {
             }
             else //Pt == KNIGHT
             {
-                //bonus for attacking two center squares
-                if (more_than_one(b & Center))
+                //blocked pawns in center
+                if (more_than_one(shift<Down>(pos.pieces(Them, PAWN)) & pos.pieces(Us, PAWN) & Center))
                     score += make_score(7,0);
             }
 
