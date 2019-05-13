@@ -338,7 +338,7 @@ namespace {
             {
                 //blocks a passed pawn
                 if (more_than_one(shift<Down>(pos.pieces(Them, PAWN)) & pos.pieces(Us, PAWN) & Center))
-                    score += make_score(15,0);
+                    score += make_score(0,15);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
