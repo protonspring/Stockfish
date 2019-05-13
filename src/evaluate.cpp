@@ -336,9 +336,9 @@ namespace {
             }
             else //Pt == KNIGHT
             {
-                //blocked pawns in center
-                if (more_than_one(shift<Down>(pos.pieces(Them, PAWN)) & pos.pieces(Us, PAWN) & Center))
-                    score += make_score(7,0);
+                //blocks a passed pawn
+                if (shift<Down>(pe->passed_pawns(Them)) & s)
+                  score += make_score(7,7);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
