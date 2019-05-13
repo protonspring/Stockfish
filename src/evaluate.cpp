@@ -334,6 +334,12 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
+            else //Pt == KNIGHT
+            {
+                //bonus for attacking two center squares
+                if (more_than_one(b & Center))
+                    score += make_score(7,0);
+            }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially
