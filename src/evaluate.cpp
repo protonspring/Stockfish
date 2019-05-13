@@ -307,12 +307,52 @@ namespace {
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
+            {
                 score += Outpost * (Pt == KNIGHT ? 4 : 2)
                                  * ((attackedBy[Us][PAWN] & s) ? 2 : 1);
 
+                //more bonus if opponent cannot easily remove the outpost piece
+                bool safeOutpost = true;
+
+                //can any bishops remove?
+                Bitboard theirBishops = pos.pieces(Them, BISHOP);
+                while(theirBishops)
+                    if (!opposite_colors(s, pop_lsb(&theirBishops)))
+                        safeOutpost = false;
+
+                //forward ranks & knight attacks not attacked by our pawn
+                if (bool(pos.pieces(Them, KNIGHT)) &&
+                        forward_ranks_bb(Us, s) & PseudoAttacks[KNIGHT][s]
+                        & ~attackedBy[Us][PAWN])
+                           safeOutpost = false;
+
+                if (safeOutpost)
+                    score += Outpost / 4;
+            }
+
             else if (bb &= b & ~pos.pieces(Us))
+            {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1)
                                  * ((attackedBy[Us][PAWN] & bb) ? 2 : 1);
+
+                //more bonus if opponent cannot easily remove the outpost piece
+                bool safeOutpost = true;
+
+                //can any bishops remove?
+                Bitboard theirBishops = pos.pieces(Them, BISHOP);
+                while(theirBishops)
+                    if (!opposite_colors(s, pop_lsb(&theirBishops)))
+                        safeOutpost = false;
+
+                //forward ranks & knight attacks not attacked by our pawn
+                if (bool(pos.pieces(Them, KNIGHT)) &&
+                        forward_ranks_bb(Us, s) & PseudoAttacks[KNIGHT][s]
+                        & ~attackedBy[Us][PAWN])
+                           safeOutpost = false;
+
+                if (safeOutpost)
+                    score += Outpost / 4;
+            }
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
