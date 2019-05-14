@@ -226,7 +226,7 @@ Score Entry::do_king_safety(const Position& pos) {
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
   if (pos.can_castle(Us | KING_SIDE) || pos.can_castle(Us | QUEEN_SIDE))
-      bonus += Value(40);
+      bonus += Value(60);
 
   return make_score(bonus, -16 * minPawnDist);
 }
