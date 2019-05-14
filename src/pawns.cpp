@@ -123,6 +123,13 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // Bonus for an edge majority
+        Bitboard stoppers2 = theirPawns & passed_pawn_span(Us, s-Up);
+        if ((phalanx | support) && (popcount(stoppers) == 1)
+                                && (stoppers == stoppers2)
+                                && (stoppers & adjacent_files_bb(f)))
+            score += make_score(10,0);
+
         // Score this pawn
         if (support | phalanx)
         {
