@@ -140,6 +140,8 @@ namespace {
             score -= Doubled;
     }
 
+    score += make_score(5,0) * popcount(pe->passedPawns[Us]);
+
     return score;
   }
 
