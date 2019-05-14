@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -226,9 +225,8 @@ Score Entry::do_king_safety(const Position& pos) {
 
   Value bonus = evaluate_shelter<Us>(pos, ksq);
 
-  for (CastlingSide cs : {KING_SIDE, QUEEN_SIDE})
-      if (pos.can_castle(Us | cs))
-          bonus += Value(50);
+  if (pos.can_castle(Us | KING_SIDE) || pos.can_castle(Us | QUEEN_SIDE))
+      bonus += Value(50);
 
   return make_score(bonus, -16 * minPawnDist);
 }
