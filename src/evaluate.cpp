@@ -304,6 +304,17 @@ namespace {
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
+
+            // Bonus for blocking an isolated pawn (can't be forced out)
+            Bitboard blockedPawn = shift<Down>(pos.pieces(Them, PAWN)) & s;
+            if (blockedPawn)
+            {
+                //check if this pawn is isolated
+                Square bPawn = pop_lsb(&blockedPawn);
+                if (!(pos.pieces(Them, PAWN) & adjacent_files_bb(file_of(bPawn))))
+                   score += make_score(10,0);
+            }
+
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
