@@ -124,8 +124,7 @@ namespace {
         }
 
         // Look for an edge majority (board edges or pawn island edges)
-        if ((stoppers == square_bb(s + Up)) && (b = pawn_attack_span(Them, s + Up))
-                                            && (r > RANK_4))
+        if (!more_than_one(stoppers) && (b = neighbours))
             while (b)
                 if (stoppers == (theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
                     score += make_score(10, 0);
