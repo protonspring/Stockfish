@@ -139,6 +139,9 @@ Move MovePicker::select(Pred filter) {
       if (T == Best)
           std::swap(*cur, *std::max_element(cur, endMoves));
 
+      if (T == Worst)
+          std::swap(*cur, *std::min_element(cur, endMoves));
+
       if (*cur != ttMove && filter())
           return *cur++;
 
@@ -223,7 +226,7 @@ top:
       /* fallthrough */
 
   case BAD_CAPTURE:
-      return select<Next>([](){ return true; });
+      return select<Worst>([](){ return true; });
 
   case EVASION_INIT:
       cur = moves;
