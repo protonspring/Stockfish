@@ -315,9 +315,9 @@ namespace {
                 opBonus = Outpost * (Pt == KNIGHT ? 2 : 1)
                                   * ((attackedBy[Us][PAWN] & bb) ? 2 : 1);
 
-            // Decrease outpost bonus if we not on enemy king flank
-            if (!(KingFlank[file_of(pos.square<KING>(Them))] & s))
-                opBonus -= Outpost;
+            // Increase outpost bonus if we are on enemy king flank
+            if (KingFlank[file_of(pos.square<KING>(Them))] & s)
+                opBonus += Outpost;
 
             score += opBonus;
 
