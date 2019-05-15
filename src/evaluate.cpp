@@ -307,8 +307,20 @@ namespace {
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & ~pe->pawn_attacks_span(Them);
             if (bb & s)
+            {
                 score += Outpost * (Pt == KNIGHT ? 4 : 2)
                                  * ((attackedBy[Us][PAWN] & s) ? 2 : 1);
+
+                // Increase bonus if opponent has no minor pieces to kill
+                if (!pos.count<KNIGHT>(Them))
+                {
+                    if (pos.count<BISHOP>(Them) == 0)
+                        score += Outpost /2;
+                    else if ((pos.count<BISHOP>(Them) == 1) &&
+                      (opposite_colors(s, pos.square<BISHOP>(Them))))
+                       score += Outpost / 2;
+                }
+            }
 
             else if (bb &= b & ~pos.pieces(Us))
                 score += Outpost * (Pt == KNIGHT ? 2 : 1)
