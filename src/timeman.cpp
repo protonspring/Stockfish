@@ -59,7 +59,7 @@ namespace {
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
 
-    double otherMovesImportance2 = ((move_importance(ply) + move_importance(ply + movesToGo)) / 2) * movesToGo;
+    double otherMovesImportance = ((move_importance(ply) + move_importance(ply + movesToGo)) / 2) * movesToGo;
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
