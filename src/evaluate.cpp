@@ -270,6 +270,7 @@ namespace {
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
+    constexpr Bitboard seventhRank = Us == WHITE ? Rank7BB : Rank2BB;
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -367,6 +368,10 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Bonus if two rooks on 7th rank
+            if (more_than_one(pos.pieces(Us, ROOK) & seventhRank))
+                score += make_score(20,0);
         }
 
         if (Pt == QUEEN)
