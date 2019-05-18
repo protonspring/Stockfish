@@ -270,6 +270,8 @@ namespace {
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
+    constexpr Bitboard HomeRanks = (Us == WHITE ? Rank1BB | Rank2BB
+                                                : Rank7BB | Rank8BB);
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -367,6 +369,10 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // mg penalty if the rook can't retreat to ranks1 or 2.
+            if (!(HomeRanks & b))
+                score -= make_score(10,0);
         }
 
         if (Pt == QUEEN)
