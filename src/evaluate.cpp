@@ -613,7 +613,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
+    Bitboard b;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -644,32 +644,18 @@ namespace {
             // If the pawn is free to advance, then increase the bonus
             if (pos.empty(blockSq))
             {
-                // If there is a rook or queen attacking/defending the pawn from behind,
-                // consider all the squaresToQueen. Otherwise consider only the squares
-                // in the pawn's path attacked or occupied by the enemy.
-                defendedSquares = unsafeSquares = squaresToQueen = forward_file_bb(Us, s);
+                int ourAttacks = bool(attackedBy[Us][ALL_PIECES] & blockSq)
+                               + bool(attackedBy2[Us] & blockSq)
+                               + bool(forward_file_bb(Them, s) & pos.pieces(Us, ROOK, QUEEN));
+                int theirAttacks = bool(attackedBy[Them][ALL_PIECES] & blockSq)
+                                 + bool(attackedBy2[Them] & blockSq)
+                                 + bool(forward_file_bb(Them, s) & pos.pieces(Them, ROOK, QUEEN));
 
-                bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
-
-                if (!(pos.pieces(Us) & bb))
-                    defendedSquares &= attackedBy[Us][ALL_PIECES];
-
-                if (!(pos.pieces(Them) & bb))
-                    unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
-
-                // If there aren't any enemy attacks, assign a big bonus. Otherwise
-                // assign a smaller bonus if the block square isn't attacked.
-                int k = !unsafeSquares ? 20 : !(unsafeSquares & blockSq) ? 9 : 0;
-
-                // If the path to the queen is fully defended, assign a big bonus.
-                // Otherwise assign a smaller bonus if the block square is defended.
-                if (defendedSquares == squaresToQueen)
-                    k += 6;
-
-                else if (defendedSquares & blockSq)
-                    k += 4;
-
-                bonus += make_score(k * w, k * w);
+                if (ourAttacks >= theirAttacks)
+                {
+                    int k = 4 + 10 * (ourAttacks - theirAttacks);
+                    bonus += make_score(k * w, k * w);
+                }
             }
         } // r > RANK_3
 
