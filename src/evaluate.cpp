@@ -654,9 +654,9 @@ namespace {
                 if (!(pos.pieces(Us) & bb))
                     defendedSquares &= attackedBy[Us][ALL_PIECES];
 
-                // Limit defended quares if our own rook or queen blocks promotion.
+                // Limit defended squares if our own rook blocks promotion.
                 if (forward_file_bb(Us, s) & pos.pieces(Us, ROOK))
-                    defendedSquares = attackedBy[Us][BISHOP] | attackedBy[Us][KNIGHT];
+                    defendedSquares &= attackedBy[Us][BISHOP] | attackedBy[Us][KNIGHT];
 
                 if (!(pos.pieces(Them) & bb))
                     unsafeSquares &= attackedBy[Them][ALL_PIECES] | pos.pieces(Them);
