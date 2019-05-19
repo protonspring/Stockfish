@@ -86,6 +86,10 @@ namespace {
   constexpr int BishopSafeCheck = 635;
   constexpr int KnightSafeCheck = 790;
 
+  int pobf = 18;
+
+TUNE(pobf);
+
 #define S(mg, eg) make_score(mg, eg)
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
@@ -746,7 +750,7 @@ namespace {
     int complexity =   9 * pe->passed_count()
                     + 11 * pos.count<PAWN>()
                     +  9 * outflanking
-                    + 18 * pawnsOnBothFlanks
+                    + pobf * pawnsOnBothFlanks
                     + 49 * !pos.non_pawn_material()
                     -103 ;
 
