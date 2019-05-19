@@ -641,6 +641,14 @@ namespace {
             if (r != RANK_7)
                 bonus -= make_score(0, king_proximity(Us, blockSq + Up) * w);
 
+            // If we're on the 7th rank, with rook in front, but opponent
+            // king is checkable, we can check king, then promote.
+            if ((r == RANK_7) && (pos.pieces(Us, ROOK) & blockSq))
+            {
+                if (!(pos.pieces() & forward_file_bb(Us, pos.square<KING>(Them))))
+                    bonus += make_score(0, 20);
+            }
+
             // If the pawn is free to advance, then increase the bonus
             if (pos.empty(blockSq))
             {
