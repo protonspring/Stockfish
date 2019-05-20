@@ -173,10 +173,8 @@ top:
       goto top;
 
   case GOOD_CAPTURE:
-      if (select<Best>([&](){
-                       return pos.see_ge(*cur, Value(-55 * cur->value / 1024)) ?
-                              // Move losing capture to endBadCaptures to be tried later
-                              true : (*endBadCaptures++ = *cur, false); }))
+      if (select<Best>([&](){ return cur->value > 0 ? true :
+                                  (*endBadCaptures++ = *cur, false); }))
           return *(cur - 1);
 
       // Prepare the pointers to loop over the refutations array
