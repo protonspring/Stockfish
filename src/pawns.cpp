@@ -126,7 +126,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v =  Connected[r] * ((support|phalanx) ? 3 : 1) / (opposed ? 2 : 1);
+            int v =  Connected[r] * (support ? 2: 1) * (phalanx ? 2 : 1) / (opposed ? 2 : 1);
 
             score += make_score(v, v * (r - 2) / 4);
         }
