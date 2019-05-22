@@ -626,7 +626,10 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        Score bonus = PassedRank[r];
+        // Scale down bonus for candidate passers which need more than one
+        // pawn push to become passed, or have a pawn in front of them.
+        Score bonus = PassedRank[r] / ((!pos.pawn_passed(Us, s + Up)
+                                      || (pos.pieces(PAWN) & forward_file_bb(Us, s))) ? 2 : 1);
 
         if (r > RANK_3)
         {
@@ -672,12 +675,6 @@ namespace {
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
-
-        // Scale down bonus for candidate passers which need more than one
-        // pawn push to become passed, or have a pawn in front of them.
-        if (   !pos.pawn_passed(Us, s + Up)
-            || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
-            bonus = bonus / 2;
 
         score += bonus + PassedFile[file_of(s)];
     }
