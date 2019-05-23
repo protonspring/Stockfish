@@ -123,6 +123,12 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        // Look for an edge majority (board edges or pawn island edges)
+        Bitboard stoppers2 = theirPawns & pawn_attack_span(Us, s);
+        if ((stoppers == stoppers2) && (popcount(stoppers) == 1)
+                                    && (ourPawns & pawn_attack_span(Them, s + Up)))
+            e->passedPawns[Us] |= s;
+
         // Score this pawn
         if (support | phalanx)
         {
