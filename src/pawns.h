@@ -40,6 +40,10 @@ struct Entry {
   int weak_unopposed(Color c) const { return weakUnopposed[c]; }
   int passed_count() const { return popcount(passedPawns[WHITE] | passedPawns[BLACK]); }
 
+  int semiopen_file(Color c, File f) const {
+      return semiopenFiles[c] & (1 << f);
+  }
+
   template<Color Us>
   Score king_safety(const Position& pos) {
     return  kingSquares[Us] == pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us)
@@ -61,6 +65,7 @@ struct Entry {
   Score kingSafety[COLOR_NB];
   int weakUnopposed[COLOR_NB];
   int castlingRights[COLOR_NB];
+  int semiopenFiles[COLOR_NB];
   int pawnsOnSquares[COLOR_NB][COLOR_NB]; // [color][light/dark squares]
 };
 

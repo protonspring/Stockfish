@@ -81,6 +81,12 @@ namespace {
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
 
+    // not semiopen if opponent pawns are supported
+    e->semiopenFiles[Us] = 0xFF;
+    Bitboard theirSupported = theirPawns & pawn_attacks_bb<Them>(theirPawns);
+    while(theirSupported)
+        e->semiopenFiles[Us] &= ~(1 << file_of(pop_lsb(&theirSupported)));
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
@@ -89,6 +95,7 @@ namespace {
         File f = file_of(s);
         Rank r = relative_rank(Us, s);
 
+        e->semiopenFiles[Us] &= ~(1 << f);
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
         // Flag the pawn
