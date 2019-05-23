@@ -127,7 +127,7 @@ namespace {
         Bitboard stoppers2 = theirPawns & pawn_attack_span(Us, s);
         if ((stoppers == stoppers2) && (popcount(stoppers) == 1)
                                     && (ourPawns & pawn_attack_span(Them, s + Up)))
-            e->passedPawns[Us] |= s;
+            score += make_score(10,0);
 
         // Score this pawn
         if (support | phalanx)
