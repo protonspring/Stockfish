@@ -113,7 +113,7 @@ namespace {
   void update_pv(Move* pv, Move move, Move* childPv);
   void update_continuation_histories(Stack* ss, Piece pc, Square to, int bonus);
   void update_quiet_stats(const Position& pos, Stack* ss, Move move, Move* quiets, int quietCount, int bonus);
-  void update_capture_stats(const Position& pos, Move move, Move* captures, int captureCount, int bonus);
+  void update_capture_stats(const Position& pos, Move move, int bonus);
 
   // perft() is our utility to verify move generation. All the leaf nodes up
   // to the given depth are generated and counted, and the sum is returned.
@@ -528,7 +528,7 @@ namespace {
     assert(!(PvNode && cutNode));
     assert(depth / ONE_PLY * ONE_PLY == depth);
 
-    Move pv[MAX_PLY+1], capturesSearched[32], quietsSearched[64];
+    Move pv[MAX_PLY+1], quietsSearched[64];
     StateInfo st;
     TTEntry* tte;
     Key posKey;
@@ -1148,13 +1148,8 @@ moves_loop: // When in check, search starts from here
       }
 
       if (move != bestMove)
-      {
-          if (captureOrPromotion && captureCount < 32)
-              capturesSearched[captureCount++] = move;
-
-          else if (!captureOrPromotion && quietCount < 64)
+          if (!captureOrPromotion && quietCount < 64)
               quietsSearched[quietCount++] = move;
-      }
     }
 
     // The following condition would detect a stop only after move loop has been
@@ -1182,7 +1177,7 @@ moves_loop: // When in check, search starts from here
             update_quiet_stats(pos, ss, bestMove, quietsSearched, quietCount,
                                stat_bonus(depth + (bestValue > beta + PawnValueMg ? ONE_PLY : DEPTH_ZERO)));
 
-        update_capture_stats(pos, bestMove, capturesSearched, captureCount, stat_bonus(depth + ONE_PLY));
+        update_capture_stats(pos, bestMove, stat_bonus(depth + ONE_PLY));
 
         // Extra penalty for a quiet TT or main killer move in previous ply when it gets refuted
         if (   ((ss-1)->moveCount == 1 || ((ss-1)->currentMove == (ss-1)->killers[0]))
@@ -1472,8 +1467,7 @@ moves_loop: // When in check, search starts from here
 
   // update_capture_stats() updates move sorting heuristics when a new capture best move is found
 
-  void update_capture_stats(const Position& pos, Move move,
-                            Move* captures, int captureCount, int bonus) {
+  void update_capture_stats(const Position& pos, Move move, int bonus) {
 
       CapturePieceToHistory& captureHistory =  pos.this_thread()->captureHistory;
       Piece moved_piece = pos.moved_piece(move);
