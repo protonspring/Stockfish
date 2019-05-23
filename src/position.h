@@ -25,6 +25,7 @@
 #include <deque>
 #include <memory> // For std::unique_ptr
 #include <string>
+#include <iostream>
 
 #include "bitboard.h"
 #include "types.h"
@@ -266,9 +267,23 @@ inline Square Position::ep_square() const {
 // not semi-open if opposing pawn is supported
 inline bool Position::is_semiopen_file(Color c, File f) const {
   Bitboard theirPawns = pieces(~c, PAWN);
-  Bitboard theirSupported = c == WHITE ? theirPawns & pawn_attacks_bb<WHITE>(theirPawns)
-                                       : theirPawns & pawn_attacks_bb<BLACK>(theirPawns);
+  Bitboard theirSupported = c == WHITE ? theirPawns & pawn_attacks_bb<BLACK>(theirPawns)
+                                       : theirPawns & pawn_attacks_bb<WHITE>(theirPawns);
+
+  //bool semiopen = !((pieces(c, PAWN) | theirSupported) & file_bb(f));
   return !((pieces(c, PAWN) | theirSupported) & file_bb(f));
+
+  //if (semiopen)
+  //{
+      //std::cout << "file: " << f << std::endl;
+      //std::cout << "us:" << Bitboards::pretty(pieces(c, PAWN)) << std::endl;
+      //std::cout << "them: " << Bitboards::pretty(pieces(~c, PAWN)) << std::endl;
+      //std::cout << "supp: " << Bitboards::pretty(theirSupported) << std::endl;
+      //std::cout << "return: " << semiopen << std::endl;
+      //std::cout << std::endl;
+  //}
+
+  //return semiopen;
 }
 
 inline bool Position::can_castle(CastlingRight cr) const {
