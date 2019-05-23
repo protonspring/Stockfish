@@ -263,8 +263,12 @@ inline Square Position::ep_square() const {
   return st->epSquare;
 }
 
+// not semi-open if opposing pawn is supported
 inline bool Position::is_semiopen_file(Color c, File f) const {
-  return !(pieces(c, PAWN) & file_bb(f));
+  Bitboard theirPawns = pieces(~c, PAWN);
+  Bitboard theirSupported = c == WHITE ? theirPawns & pawn_attacks_bb<WHITE>(theirPawns)
+                                       : theirPawns & pawn_attacks_bb<BLACK>(theirPawns);
+  return !((pieces(c, PAWN) | theirSupported) & file_bb(f));
 }
 
 inline bool Position::can_castle(CastlingRight cr) const {
