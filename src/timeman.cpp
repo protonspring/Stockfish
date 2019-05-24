@@ -43,12 +43,7 @@ namespace {
   // Data was extracted from the CCRL game database with some simple filtering criteria.
 
   double move_importance(int ply) {
-
-    constexpr double XScale = 6.85;
-    constexpr double XShift = 64.5;
-    constexpr double Skew   = 0.171;
-
-    return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
+    return 1 - (ply - 88) / std::hypot(44, ply - 88);
   }
 
   template<TimeType T>
@@ -58,10 +53,7 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
-
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    double otherMovesImportance = 6 * (((move_importance(ply) + move_importance(ply + movesToGo)) / 2) * (movesToGo - 1)) / 8;
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
