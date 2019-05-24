@@ -153,6 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  constexpr Score WidePawns          = S( 10,  0);
 
 #undef S
 
@@ -338,7 +339,7 @@ namespace {
             {
                 //If there are no bishops, penalize for opponent pawn width
                 if (!pos.pieces(Us, BISHOP) && pe->pawnWidth[Them] > 4)
-                    score -= make_score(10,0);
+                    score -= WidePawns;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
