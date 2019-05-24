@@ -43,6 +43,9 @@ namespace {
             for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
                 *q = *(q - 1);
             *q = tmp;
+
+            if ((sortedEnd < p) && ((sortedEnd+1)->value < sortedEnd->value))
+                sortedEnd++;
         }
   }
 
