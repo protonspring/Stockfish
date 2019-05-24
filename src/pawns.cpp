@@ -35,6 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score UselessPawn = S( 10, 0);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -132,8 +133,12 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
+        {
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
+            if (leverPush)
+                score -= UselessPawn;
+        }
         else if (backward)
             score -= Backward, e->weakUnopposed[Us] += !opposed;
 
