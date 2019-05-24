@@ -337,7 +337,7 @@ namespace {
             else //KNIGHT
             {
                 //If there are no bishops, penalize for opponent pawn width
-                if (!pos.pieces(Us, BISHOP) && pe->pawnWidth[Them] > 5)
+                if (!pos.pieces(Us, BISHOP) && pe->pawnWidth[Them] > 4)
                     score -= make_score(10,0);
             }
 
