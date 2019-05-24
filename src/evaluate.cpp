@@ -334,6 +334,12 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
+            else //KNIGHT
+            {
+                //If there are no bishops, penalize for opponent pawn width
+                if (!pos.pieces(Us, BISHOP) && pe->pawnWidth[Them] > 5)
+                    score -= make_score(0,10);
+            }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
             // pawn diagonally in front of it is a very serious problem, especially

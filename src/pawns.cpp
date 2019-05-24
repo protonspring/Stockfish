@@ -73,6 +73,7 @@ namespace {
     bool opposed, backward;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
+    File minFile = FILE_H, maxFile = FILE_A;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -88,6 +89,9 @@ namespace {
 
         File f = file_of(s);
         Rank r = relative_rank(Us, s);
+
+        if (f < minFile) minFile = f;
+        if (f > maxFile) maxFile = f;
 
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
@@ -140,6 +144,8 @@ namespace {
         if (doubled && !support)
             score -= Doubled;
     }
+
+    e->pawnWidth[Us] = maxFile > minFile ? maxFile - minFile : 0;
 
     return score;
   }
