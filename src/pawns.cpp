@@ -127,7 +127,7 @@ namespace {
         Bitboard us3 = phalanx & s;
         if ((r == RANK_5) && (popcount(us3) == 3) &&
             (shift<Up>(shift<Up>(us3))) == stoppers)
-            score += make_score( 0, 10);
+            score += make_score( 20, 0);
 
         // Score this pawn
         if (support | phalanx)
