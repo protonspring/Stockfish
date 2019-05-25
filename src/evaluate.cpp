@@ -338,7 +338,7 @@ namespace {
             {
                 //If there are no bishops, penalize for opponent pawn width
                 if (!pos.pieces(Us, BISHOP) && pe->pawnWidth[Them] > 4)
-                    score -= make_score(10,0);
+                    score -= make_score(13,0);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
