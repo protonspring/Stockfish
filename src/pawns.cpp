@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -124,7 +123,9 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v =  std::pow(1.9, r + 1) * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
+            auto connected = [&](Rank r2) { return int(7 + r2 * r2 * r2); };
+
+            int v =  connected(r) * (phalanx ? 3 : 2) / (opposed ? 6 : 3)
                    + 17 * popcount(support);
 
             score += make_score(v, v * (r - 2) / 4);
