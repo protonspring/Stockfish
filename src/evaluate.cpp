@@ -377,8 +377,9 @@ namespace {
                 score -= WeakQueen;
 
             // Bonus for being on an open file if opponent has no rooks
-            if (!pos.pieces(Them, ROOK))
-                score += RookOnFile / 2;
+            if (!pos.pieces(Them, ROOK) && pos.is_semiopen_file(Us, file_of(s))
+                                        && pos.is_semiopen_file(Them, file_of(s)))
+                score += RookOnFile[0] / 2;
         }
     }
     if (T)
