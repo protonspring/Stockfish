@@ -375,6 +375,10 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            // Bonus for being on an open file if opponent has no rooks
+            if (!pos.pieces(Them, ROOK))
+                score += RookOnFile / 2;
         }
     }
     if (T)
