@@ -153,6 +153,7 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  constexpr Score FileOpenness       = S( 20,  9);
 
 #undef S
 
@@ -356,17 +357,15 @@ namespace {
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
-            // Bonus for rook on an open or semi-open file
-            if (pos.is_semiopen_file(Us, file_of(s)))
-                score += RookOnFile[bool(pos.is_semiopen_file(Them, file_of(s)))];
-
             // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
+            if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+            else // Bonus for rook on an open or semi-open file
+                score += FileOpenness * pos.file_openness(s);
         }
 
         if (Pt == QUEEN)
