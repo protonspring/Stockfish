@@ -153,6 +153,9 @@ namespace {
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
   constexpr Score WeakUnopposedPawn  = S( 12, 23);
+  Score PasserSupport                = S(  6,  6);
+
+TUNE(PasserSupport);
 
 #undef S
 
@@ -630,7 +633,7 @@ namespace {
 
         // Bonus if currently protected
         if (attackedBy[Us][ALL_PIECES] & s)
-            bonus += make_score(4,4);
+            bonus += PasserSupport;
 
         if (r > RANK_3)
         {
