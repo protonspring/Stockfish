@@ -96,7 +96,7 @@ public:
   template<PieceType Pt> int count() const;
   template<PieceType Pt> const Square* squares(Color c) const;
   template<PieceType Pt> Square square(Color c) const;
-  int file_openness(Square s) const;
+  int file_openness(Color c, Square s) const;
 
   // Castling
   int castling_rights(Color c) const;
@@ -263,9 +263,9 @@ inline Square Position::ep_square() const {
   return st->epSquare;
 }
 
-inline int Position::file_openness(Square s) const {
-  return bool(pieces(WHITE, PAWN) & file_bb(s)) +
-         bool(pieces(BLACK, PAWN) & file_bb(s));
+inline int Position::file_openness(Color c, Square s) const {
+  return (pieces(c, PAWN) & file_bb(s))  ? 0 :
+         (pieces(~c, PAWN) & file_bb(s)) ? 1 : 2;
 }
 
 inline bool Position::can_castle(CastlingRight cr) const {
