@@ -35,6 +35,7 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score EdgeMajority = S( 4, 5);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -122,6 +123,12 @@ namespace {
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
+
+        // Look for an edge majority (which can usually pass an edge pawn)
+        if (!more_than_one(stoppers) && (b = neighbours))
+            while  (b)
+                if (stoppers == (theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
+                    score += EdgeMajority;
 
         // Score this pawn
         if (support | phalanx)
