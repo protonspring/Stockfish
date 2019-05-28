@@ -628,6 +628,10 @@ namespace {
 
         Score bonus = PassedRank[r];
 
+        // Bonus if currently protected
+        if (attackedBy[Us][ALL_PIECES] & s)
+            bonus += make_score(3,7);
+
         if (r > RANK_3)
         {
             int w = (r-2) * (r-2) + 2;
