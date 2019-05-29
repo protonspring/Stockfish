@@ -634,12 +634,10 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            //bonus += make_score(0, (  king_proximity(Them, blockSq) * 5 //- king_proximity(Us,   blockSq) * 2) * w);
             bonus.add_eg(Value((king_proximity(Them, blockSq) * 5 - king_proximity(Us,   blockSq) * 2) * w));
 
             // If blockSq is not the queening square then consider also a second push
             if (r != RANK_7)
-                //bonus -= make_score(0, king_proximity(Us, blockSq + Up) * w);
                 bonus.add_eg(Value(-king_proximity(Us, blockSq + Up) * w));
 
             // If the pawn is free to advance, then increase the bonus
@@ -670,9 +668,7 @@ namespace {
                 else if (defendedSquares & blockSq)
                     k += 4;
 
-                //bonus += make_score(k * w, k * w);
-                bonus.add_mg(Value(k * w));
-                bonus.add_eg(Value(k * w));
+                bonus += Score2(Value(k * w), Value(k * w));
             }
         } // r > RANK_3
 
@@ -680,7 +676,6 @@ namespace {
         // pawn push to become passed, or have a pawn in front of them.
         if (   !pos.pawn_passed(Us, s + Up)
             || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
-            //bonus = bonus / 2;
             bonus /= 2;
 
         score += bonus + PassedFile[file_of(s)];
@@ -704,7 +699,7 @@ namespace {
   Score2 Evaluation<T>::space() const {
 
     if (pos.non_pawn_material() < SpaceThreshold)
-        return Score2(VALUE_ZERO, VALUE_ZERO);
+        return SCORE_ZERO2;
 
     constexpr Color Them     = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
@@ -809,9 +804,7 @@ namespace {
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
     // imbalance. Score2 is computed internally from the white point of view.
-    Score2 score = pos.psq_score();
-    score += me->imbalance();
-    score += pos.this_thread()->contempt;
+    Score2 score = pos.psq_score() + me->imbalance() + pos.this_thread()->contempt;
 
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
