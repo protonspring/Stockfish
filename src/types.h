@@ -254,10 +254,29 @@ enum Rank : int {
 };
 
 
-/// Score enum stores a middlegame and an endgame value in a single integer (enum).
-/// The least significant 16 bits are used to store the middlegame value and the
-/// upper 16 bits are used to store the endgame value. We have to take care to
-/// avoid left-shifting a signed int to avoid undefined behavior.
+/// Score enum stores a middlegame and an endgame value
+struct Score2 {
+  Value mg_value;
+  Value eg_value;
+
+  Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
+  void add_mg(Value v) { mg_value = Value(mg_value + v); }
+  void add_eg(Value v) { eg_value = Value(eg_value + v); }
+  Value get_mg() { return mg_value; }
+  Value get_eg() { return eg_value; }
+
+  Score2 operator+=(const Score2& rhs) {add_mg(rhs.mg_value); add_eg(rhs.eg_value); return *this; }
+  Score2 operator-=(const Score2& rhs) {add_mg(Value(-rhs.mg_value)); add_eg(Value(-rhs.eg_value)); return *this; }
+  Score2 operator/=(int i) { mg_value = Value(mg_value/i); eg_value = Value(eg_value/i); return *this; }
+  Score2 operator*=(int i) {
+     Value mg_result = Value(mg_value * i); assert(mg_value*i == mg_result);
+     Value eg_result = Value(eg_value * i); assert(eg_value*i == eg_result);
+     mg_value = mg_result;
+     eg_value = eg_result;
+     return *this;
+  }
+};
+  
 enum Score : int { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {

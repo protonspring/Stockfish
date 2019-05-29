@@ -32,9 +32,9 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
-  constexpr Score Backward = S( 9, 24);
-  constexpr Score Doubled  = S(11, 56);
-  constexpr Score Isolated = S( 5, 15);
+  const Score2 Backward(V(9), V(24));
+  const Score2 Doubled(V(11), V(56));
+  const Score2 Isolated(V(5), V(15));
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -71,7 +71,7 @@ namespace {
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
-    Score score = SCORE_ZERO;
+    Score2 score(Value(0), Value(0)); // = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -123,18 +123,14 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
-        // Edge Majority
-        if (((theirPawns & pawn_attack_span(Us, s)) == stoppers) &&
-             (popcount(stoppers) == 1) && (phalanx | support) && (r >= RANK_4))
-           score += make_score ( 6, 6);
-
         // Score this pawn
         if (support | phalanx)
         {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
-            score += make_score(v, v * (r - 2) / 4);
+            //score += make_score(v, v * (r - 2) / 4);
+            score += Score2(Value(v), Value(v * (r - 2) / 4));
         }
         else if (!neighbours)
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
@@ -146,7 +142,7 @@ namespace {
             score -= Doubled;
     }
 
-    return score;
+    return make_score(score.mg_value,score.eg_value);
   }
 
 } // namespace
