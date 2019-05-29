@@ -314,8 +314,8 @@ struct Score2 {
   void add_mg(Value v) { mg_value += v; }
   void add_eg(Value v) { eg_value += v; }
 
-  Score2 operator+(Score2 s) { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
-  Score2 operator-(Score2 s) { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
+  Score2 operator+(const Score2& s) { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
+  Score2 operator-(const Score2& s) { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
 
   void operator+=(const Score2& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
   void operator-=(const Score2& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }

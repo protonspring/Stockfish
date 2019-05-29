@@ -46,7 +46,7 @@ namespace Trace {
     scores[idx][c] = s;
   }
 
-  void add(int idx, Score2 w, Score2 b = Score2(VALUE_ZERO, VALUE_ZERO)) {
+  void add(int idx, Score2 w, Score2 b = SCORE_ZERO2) {
     scores[idx][WHITE] = w;
     scores[idx][BLACK] = b;
   }
@@ -668,7 +668,9 @@ namespace {
                 else if (defendedSquares & blockSq)
                     k += 4;
 
-                bonus += Score2(Value(k * w), Value(k * w));
+                //bonus += Score2(Value(k * w), Value(k * w));
+                bonus.add_mg(Value(k * w));
+                bonus.add_eg(Value(k * w));
             }
         } // r > RANK_3
 
