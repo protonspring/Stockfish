@@ -266,6 +266,10 @@ struct Score2 {
   Value get_mg() { return mg_value; }
   Value get_eg() { return eg_value; }
 
+  Score2 operator+(Score2 s) { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
+  Score2 operator-(Score2 s) { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
+  //Score2 operator*(int i) { return Score2(Value(mg_value * i), Value(eg_value * i));}
+
   Score2 operator+=(const Score2& rhs) {add_mg(rhs.mg_value); add_eg(rhs.eg_value); return *this; }
   Score2 operator+=(int v) {add_mg(Value(v)); add_eg(Value(v)); return *this; }
   Score2 operator-=(const Score2& rhs) {add_mg(Value(-rhs.mg_value)); add_eg(Value(-rhs.eg_value)); return *this; }
@@ -278,6 +282,8 @@ struct Score2 {
      return *this;
   }
 };
+
+const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
   
 enum Score : int { SCORE_ZERO };
 
@@ -358,6 +364,13 @@ inline Score operator/(Score s, int i) {
 }
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
+inline Score2 operator*(const Score2 s, int i) {
+  return Score2(s.mg_value * i, s.eg_value*i);
+}
+//inline Score2 operator-(const Score2 s1, const Score2 s2) {
+  //return Score2(s1.mg_value - s2.mg_value, s1.eg_value - s2.eg_value);
+//}
+
 inline Score operator*(Score s, int i) {
 
   Score result = Score(int(s) * i);
