@@ -157,7 +157,7 @@ public:
   bool has_game_cycle(int ply) const;
   bool has_repeated() const;
   int rule50_count() const;
-  Score psq_score() const;
+  Score2 psq_score() const;
   Value non_pawn_material(Color c) const;
   Value non_pawn_material() const;
 
@@ -190,14 +190,14 @@ private:
   Bitboard castlingPath[CASTLING_RIGHT_NB];
   int gamePly;
   Color sideToMove;
-  Score psq;
+  Score2 psq;
   Thread* thisThread;
   StateInfo* st;
   bool chess960;
 };
 
 namespace PSQT {
-  extern Score psq[PIECE_NB][SQUARE_NB];
+  extern Score2 psq[PIECE_NB][SQUARE_NB];
 }
 
 extern std::ostream& operator<<(std::ostream& os, const Position& pos);
@@ -341,7 +341,7 @@ inline Key Position::material_key() const {
   return st->materialKey;
 }
 
-inline Score Position::psq_score() const {
+inline Score2 Position::psq_score() const {
   return psq;
 }
 

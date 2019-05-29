@@ -815,7 +815,8 @@ namespace {
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
     // imbalance. Score2 is computed internally from the white point of view.
-    Score2 score = Score2(mg_value(pos.psq_score()),eg_value(pos.psq_score()));
+    //Score2 score = Score2(mg_value(pos.psq_score()),eg_value(pos.psq_score()));
+    Score2 score = pos.psq_score();
     score += Score2(mg_value(me->imbalance()),eg_value(me->imbalance()));
     score += Score2(mg_value(pos.this_thread()->contempt),
                     eg_value(pos.this_thread()->contempt));
@@ -860,8 +861,8 @@ namespace {
     // In case of tracing add all remaining individual evaluation terms
     if (T)
     {
-        Score psq = pos.psq_score();
-        Trace::add(MATERIAL, Score2(mg_value(psq),eg_value(psq)));
+        //Score2 psq = pos.psq_score();
+        Trace::add(MATERIAL, pos.psq_score());
         Score mi = me->imbalance();
         Trace::add(IMBALANCE, Score2(mg_value(mi), eg_value(mi)));
         //Score2 pwhite = make_score(pe->pawn_score(WHITE).mg_value,pe->pawn_score(WHITE).eg_value);

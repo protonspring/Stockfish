@@ -29,13 +29,13 @@ Value PieceValue[PHASE_NB][PIECE_NB] = {
 
 namespace PSQT {
 
-#define S(mg, eg) make_score(mg, eg)
+#define S(mg, eg) Score2(Value(mg), Value(eg))
 
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
 // is defined for files A..D and white side: it is symmetric for black side and
 // second half of the files.
-constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
+const Score2 Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
   { },
   { // Knight
@@ -90,7 +90,7 @@ constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   }
 };
 
-constexpr Score PBonus[RANK_NB][FILE_NB] =
+const Score2 PBonus[RANK_NB][FILE_NB] =
   { // Pawn (asymmetric distribution)
    { },
    { S(  0,-10), S( -5,-3), S( 10, 7), S( 13,-1), S( 21,  7), S( 17,  6), S(  6, 1), S( -3,-20) },
@@ -103,7 +103,7 @@ constexpr Score PBonus[RANK_NB][FILE_NB] =
 
 #undef S
 
-Score psq[PIECE_NB][SQUARE_NB];
+Score2 psq[PIECE_NB][SQUARE_NB];
 
 // init() initializes piece-square tables: the white halves of the tables are
 // copied from Bonus[] adding the piece value, then the black halves of the
@@ -115,14 +115,14 @@ void init() {
       PieceValue[MG][~pc] = PieceValue[MG][pc];
       PieceValue[EG][~pc] = PieceValue[EG][pc];
 
-      Score score = make_score(PieceValue[MG][pc], PieceValue[EG][pc]);
+      Score2 score(PieceValue[MG][pc], PieceValue[EG][pc]);
 
       for (Square s = SQ_A1; s <= SQ_H8; ++s)
       {
           File f = std::min(file_of(s), ~file_of(s));
           psq[ pc][ s] = score + (type_of(pc) == PAWN ? PBonus[rank_of(s)][file_of(s)]
                                                       : Bonus[pc][rank_of(s)][f]);
-          psq[~pc][~s] = -psq[pc][s];
+          psq[~pc][~s] = psq[pc][s] * -1;
       }
   }
 }
