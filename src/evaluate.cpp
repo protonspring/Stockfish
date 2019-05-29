@@ -812,7 +812,10 @@ namespace {
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
     // Early exit if score is high
-    Value v = (mg_value(score) + eg_value(score)) / 2;
+    int egscale = (17000 - pos.non_pawn_material()) / 128;
+    int mgscale = 100 - egscale;
+    Value v = mgscale * mg_value(score) / 128 + egscale * eg_value(score) / 128;
+
     if (abs(v) > LazyThreshold)
        return pos.side_to_move() == WHITE ? v : -v;
 
