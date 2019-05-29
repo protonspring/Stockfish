@@ -818,8 +818,7 @@ namespace {
     //Score2 score = Score2(mg_value(pos.psq_score()),eg_value(pos.psq_score()));
     Score2 score = pos.psq_score();
     score += me->imbalance();
-    score += Score2(mg_value(pos.this_thread()->contempt),
-                    eg_value(pos.this_thread()->contempt));
+    score += pos.this_thread()->contempt;
 
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
@@ -896,7 +895,7 @@ std::string Eval::trace(const Position& pos) {
 
   std::memset(scores, 0, sizeof(scores));
 
-  pos.this_thread()->contempt = SCORE_ZERO; // Reset any dynamic contempt
+  pos.this_thread()->contempt = SCORE_ZERO2; // Reset any dynamic contempt
 
   Value v = Evaluation<TRACE>(pos).value();
 
