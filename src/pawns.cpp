@@ -62,7 +62,7 @@ namespace {
   #undef V
 
   template<Color Us>
-  Score evaluate(const Position& pos, Pawns::Entry* e) {
+  Score2 evaluate(const Position& pos, Pawns::Entry* e) {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
@@ -129,7 +129,6 @@ namespace {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
-            //score += make_score(v, v * (r - 2) / 4);
             score += Score2(Value(v), Value(v * (r - 2) / 4));
         }
         else if (!neighbours)
@@ -142,7 +141,7 @@ namespace {
             score -= Doubled;
     }
 
-    return make_score(score.mg_value,score.eg_value);
+    return score;
   }
 
 } // namespace
@@ -163,13 +162,8 @@ Entry* probe(const Position& pos) {
       return e;
 
   e->key = key;
-  //e->scores[WHITE] = evaluate<WHITE>(pos, e);
-  //e->scores[BLACK] = evaluate<BLACK>(pos, e);
-  Score pwhite = evaluate<WHITE>(pos, e);
-  Score pblack = evaluate<BLACK>(pos, e);
-  
-  e->scores[WHITE] = Score2(mg_value(pwhite), eg_value(pwhite));
-  e->scores[BLACK] = Score2(mg_value(pblack), eg_value(pblack));
+  e->scores[WHITE] = evaluate<WHITE>(pos, e);
+  e->scores[BLACK] = evaluate<BLACK>(pos, e);
 
   return e;
 }
@@ -179,7 +173,7 @@ Entry* probe(const Position& pos) {
 /// penalty for a king, looking at the king file and the two closest files.
 
 template<Color Us>
-void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
+void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
 
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
@@ -190,8 +184,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
-                    VALUE_ZERO };
+  Score2 bonus((shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5), VALUE_ZERO);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -203,16 +196,17 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);
-      bonus[MG] += ShelterStrength[d][ourRank];
+      bonus.add_mg(ShelterStrength[d][ourRank]);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
+          bonus.add_mg(Value(-82 * (theirRank == RANK_3))),
+          bonus.add_eg(Value(-82 * (theirRank == RANK_3)));
       else
-          bonus[MG] -= UnblockedStorm[d][theirRank];
+          bonus.add_mg(-UnblockedStorm[d][theirRank]);
   }
 
-  if (bonus[MG] > mg_value(shelter))
-      shelter = make_score(bonus[MG], bonus[EG]);
+  if (bonus.mg_value > shelter.mg_value)
+      shelter = bonus;
 }
 
 
@@ -220,7 +214,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
 /// when king square changes, which is about 20% of total king_safety() calls.
 
 template<Color Us>
-Score Entry::do_king_safety(const Position& pos) {
+Score2 Entry::do_king_safety(const Position& pos) {
 
   Square ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
@@ -235,7 +229,7 @@ Score Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
-  Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
+  Score2 shelter(-VALUE_INFINITE, VALUE_ZERO);
   evaluate_shelter<Us>(pos, ksq, shelter);
 
   // If we can castle use the bonus after the castling if it is bigger
@@ -245,11 +239,12 @@ Score Entry::do_king_safety(const Position& pos) {
   if (pos.can_castle(Us | QUEEN_SIDE))
       evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1), shelter);
 
-  return shelter - make_score(VALUE_ZERO, 16 * minPawnDist);
+  shelter.add_eg(Value(-16 * minPawnDist));
+  return shelter;
 }
 
 // Explicit template instantiation
-template Score Entry::do_king_safety<WHITE>(const Position& pos);
-template Score Entry::do_king_safety<BLACK>(const Position& pos);
+template Score2 Entry::do_king_safety<WHITE>(const Position& pos);
+template Score2 Entry::do_king_safety<BLACK>(const Position& pos);
 
 } // namespace Pawns
