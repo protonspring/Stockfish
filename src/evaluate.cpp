@@ -47,8 +47,8 @@ namespace Trace {
   }
 
   void add(int idx, Score w, Score b = SCORE_ZERO) {
-    scores[idx][WHITE] = w;
-    scores[idx][BLACK] = b;
+    scores[idx][WHITE] = w; //make_score(w.mg_value,w.eg_value);
+    scores[idx][BLACK] = b; //make_score(b.mg_value,b.eg_value);
   }
 
   std::ostream& operator<<(std::ostream& os, Score s) {
@@ -809,7 +809,10 @@ namespace {
 
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
-    score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
+    Score2 ps_white = pe->pawn_score(WHITE);
+    Score2 ps_black = pe->pawn_score(BLACK);
+    score += make_score(ps_white.mg_value,ps_white.eg_value) -
+             make_score(ps_black.mg_value,ps_black.eg_value);
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
@@ -848,7 +851,10 @@ namespace {
     {
         Trace::add(MATERIAL, pos.psq_score());
         Trace::add(IMBALANCE, me->imbalance());
-        Trace::add(PAWN, pe->pawn_score(WHITE), pe->pawn_score(BLACK));
+        Score pwhite = make_score(pe->pawn_score(WHITE).mg_value,pe->pawn_score(WHITE).eg_value);
+        Score pblack = make_score(pe->pawn_score(BLACK).mg_value,pe->pawn_score(BLACK).eg_value);
+        //Trace::add(PAWN, pe->pawn_score(WHITE), pe->pawn_score(BLACK));
+        Trace::add(PAWN, pwhite, pblack);
         Trace::add(MOBILITY, mobility[WHITE], mobility[BLACK]);
         Trace::add(TOTAL, score);
     }

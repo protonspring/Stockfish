@@ -259,6 +259,7 @@ struct Score2 {
   Value mg_value;
   Value eg_value;
 
+  Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
   Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
   void add_mg(Value v) { mg_value = Value(mg_value + v); }
   void add_eg(Value v) { eg_value = Value(eg_value + v); }
@@ -266,6 +267,7 @@ struct Score2 {
   Value get_eg() { return eg_value; }
 
   Score2 operator+=(const Score2& rhs) {add_mg(rhs.mg_value); add_eg(rhs.eg_value); return *this; }
+  Score2 operator+=(int v) {add_mg(Value(v)); add_eg(Value(v)); return *this; }
   Score2 operator-=(const Score2& rhs) {add_mg(Value(-rhs.mg_value)); add_eg(Value(-rhs.eg_value)); return *this; }
   Score2 operator/=(int i) { mg_value = Value(mg_value/i); eg_value = Value(eg_value/i); return *this; }
   Score2 operator*=(int i) {

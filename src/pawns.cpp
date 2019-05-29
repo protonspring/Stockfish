@@ -71,7 +71,7 @@ namespace {
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
-    Score2 score(Value(0), Value(0)); // = SCORE_ZERO;
+    Score2 score; // = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -163,8 +163,13 @@ Entry* probe(const Position& pos) {
       return e;
 
   e->key = key;
-  e->scores[WHITE] = evaluate<WHITE>(pos, e);
-  e->scores[BLACK] = evaluate<BLACK>(pos, e);
+  //e->scores[WHITE] = evaluate<WHITE>(pos, e);
+  //e->scores[BLACK] = evaluate<BLACK>(pos, e);
+  Score pwhite = evaluate<WHITE>(pos, e);
+  Score pblack = evaluate<BLACK>(pos, e);
+  
+  e->scores[WHITE] = Score2(mg_value(pwhite), eg_value(pwhite));
+  e->scores[BLACK] = Score2(mg_value(pblack), eg_value(pblack));
 
   return e;
 }
