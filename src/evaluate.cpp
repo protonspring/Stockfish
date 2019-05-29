@@ -817,7 +817,7 @@ namespace {
     // imbalance. Score2 is computed internally from the white point of view.
     //Score2 score = Score2(mg_value(pos.psq_score()),eg_value(pos.psq_score()));
     Score2 score = pos.psq_score();
-    score += Score2(mg_value(me->imbalance()),eg_value(me->imbalance()));
+    score += me->imbalance();
     score += Score2(mg_value(pos.this_thread()->contempt),
                     eg_value(pos.this_thread()->contempt));
 
@@ -863,8 +863,8 @@ namespace {
     {
         //Score2 psq = pos.psq_score();
         Trace::add(MATERIAL, pos.psq_score());
-        Score mi = me->imbalance();
-        Trace::add(IMBALANCE, Score2(mg_value(mi), eg_value(mi)));
+        //Score mi = me->imbalance();
+        Trace::add(IMBALANCE, me->imbalance());
         //Score2 pwhite = make_score(pe->pawn_score(WHITE).mg_value,pe->pawn_score(WHITE).eg_value);
         //Score2 pblack = make_score(pe->pawn_score(BLACK).mg_value,pe->pawn_score(BLACK).eg_value);
         Trace::add(PAWN, pe->pawn_score(WHITE), pe->pawn_score(BLACK));
