@@ -254,28 +254,6 @@ enum Rank : int {
 };
 
 
-/// Score enum stores a middlegame and an endgame value
-struct Score2 {
-  Value mg_value;
-  Value eg_value;
-
-  Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
-  Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
-  void add_mg(Value v) { mg_value = Value(mg_value + v); }
-  void add_eg(Value v) { eg_value = Value(eg_value + v); }
-  Value get_mg() { return mg_value; }
-  Value get_eg() { return eg_value; }
-
-  Score2 operator+(Score2 s) { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
-  Score2 operator-(Score2 s) { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
-
-  Score2 operator+=(const Score2& rhs) {add_mg(rhs.mg_value); add_eg(rhs.eg_value); return *this; }
-  Score2 operator-=(const Score2& rhs) {add_mg(Value(-rhs.mg_value)); add_eg(Value(-rhs.eg_value)); return *this; }
-  Score2 operator/=(int i) { mg_value = Value(mg_value/i); eg_value = Value(eg_value/i); return *this; }
-  Score2 operator*=(int i) { mg_value = Value(mg_value*i); eg_value = Value(eg_value*i); return *this; }
-};
-
-const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
   
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
 constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
@@ -326,6 +304,26 @@ constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
 inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
+/// Score enum stores a middlegame and an endgame value
+struct Score2 {
+  Value mg_value;
+  Value eg_value;
+
+  Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
+  Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
+  void add_mg(Value v) { mg_value += v; }
+  void add_eg(Value v) { eg_value += v; }
+
+  Score2 operator+(Score2 s) { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
+  Score2 operator-(Score2 s) { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
+
+  void operator+=(const Score2& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
+  void operator-=(const Score2& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }
+  void operator/=(int i) { mg_value /= i; eg_value /= i; }
+  void operator*=(int i) { mg_value *= i; eg_value *= i; }
+};
+
+const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
 inline Score2 operator*(const Score2 s, int i) {
   return Score2(s.mg_value * i, s.eg_value*i);
