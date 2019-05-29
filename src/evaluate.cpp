@@ -47,8 +47,8 @@ namespace Trace {
   }
 
   void add(int idx, Score2 w, Score2 b = Score2(VALUE_ZERO, VALUE_ZERO)) {
-    scores[idx][WHITE] = w; //make_score(w.mg_value,w.eg_value);
-    scores[idx][BLACK] = b; //make_score(b.mg_value,b.eg_value);
+    scores[idx][WHITE] = w;
+    scores[idx][BLACK] = b;
   }
 
   std::ostream& operator<<(std::ostream& os, Score2 s) {
@@ -273,7 +273,7 @@ namespace {
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
-    Score2 score = SCORE_ZERO2;
+    Score2 score;
 
     attackedBy[Us][Pt] = 0;
 
@@ -398,8 +398,6 @@ namespace {
     const Square ksq = pos.square<KING>(Us);
 
     // Init the score with king shelter and enemy pawns storm
-    //Score2 ksafety = pe->king_safety<Us>(pos);
-    //Score2 score = make_score(ksafety.mg_value,ksafety.eg_value);
     Score2 score = pe->king_safety<Us>(pos);
 
     // Attacked squares defended at most once by our queen or king
@@ -508,7 +506,7 @@ namespace {
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB : Rank6BB);
 
     Bitboard b, weak, defended, nonPawnEnemies, stronglyProtected, safe;
-    Score2 score = SCORE_ZERO2;
+    Score2 score;
 
     // Non-pawn enemies
     nonPawnEnemies = pos.pieces(Them) & ~pos.pieces(PAWN);
@@ -620,7 +618,7 @@ namespace {
     };
 
     Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
-    Score2 score = SCORE_ZERO2;
+    Score2 score;
 
     b = pe->passed_pawns(Us);
 
@@ -815,7 +813,6 @@ namespace {
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
     // imbalance. Score2 is computed internally from the white point of view.
-    //Score2 score = Score2(mg_value(pos.psq_score()),eg_value(pos.psq_score()));
     Score2 score = pos.psq_score();
     score += me->imbalance();
     score += pos.this_thread()->contempt;
@@ -860,14 +857,9 @@ namespace {
     // In case of tracing add all remaining individual evaluation terms
     if (T)
     {
-        //Score2 psq = pos.psq_score();
         Trace::add(MATERIAL, pos.psq_score());
-        //Score mi = me->imbalance();
         Trace::add(IMBALANCE, me->imbalance());
-        //Score2 pwhite = make_score(pe->pawn_score(WHITE).mg_value,pe->pawn_score(WHITE).eg_value);
-        //Score2 pblack = make_score(pe->pawn_score(BLACK).mg_value,pe->pawn_score(BLACK).eg_value);
         Trace::add(PAWN, pe->pawn_score(WHITE), pe->pawn_score(BLACK));
-        //Trace::add(PAWN, pwhite, pblack);
         Trace::add(MOBILITY, mobility[WHITE], mobility[BLACK]);
         Trace::add(TOTAL, score);
     }
