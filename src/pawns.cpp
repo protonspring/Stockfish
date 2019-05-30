@@ -123,9 +123,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            auto connected = [&](Rank r2) { return int(7 + r2 * r2 * r2 / 3); };
-
-            int v =  connected(r) * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
+            int v =  (7 + r * r * r / 3) * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
             score += make_score(v, v * (r - 2) / 4);
