@@ -321,6 +321,15 @@ namespace {
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
+            // Bonus for blocking an isolated pawn
+            // Knights and bishops that don't have a like opponent
+            if ((Pt == KNIGHT) ||
+                ((Pt == BISHOP) && !(pos.pieces(Them, BISHOP) & ((DarkSquares & s) ? DarkSquares : ~DarkSquares))))
+            {
+                if (shift<Down>(pe->isolated_pawns(Them)) & s)
+                    score += make_score(10,0);
+            }
+
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
