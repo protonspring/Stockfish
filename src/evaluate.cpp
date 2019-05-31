@@ -675,8 +675,8 @@ namespace {
             bonus = bonus / 2;
 
         File pf = std::min(f, ~f); //passed file bonus
-        int v = 10 - pf * pf * pf;
-        score += bonus + make_score(v , v);
+        int v = - (pf * pf * pf);
+        score += bonus + make_score( v, v + 10);
     }
 
     if (T)
