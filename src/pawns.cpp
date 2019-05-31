@@ -131,7 +131,8 @@ namespace {
 
             score += make_score(v, v * (r - 2) / 4);
         }
-        else if (!neighbours)
+        //else if (!neighbours)
+        else if (!(ourPawns & pawn_attack_span(Them, s + Up)))
             score -= Isolated, e->weakUnopposed[Us] += !opposed;
 
         else if (backward)
