@@ -216,21 +216,20 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
 template<Color Us>
 Score Entry::do_king_safety(const Position& pos) {
 
-  Square ksq = pos.square<KING>(Us);
-  kingSquares[Us] = ksq;
+  kingSquares[Us] = pos.square<KING>(Us);
   castlingRights[Us] = pos.castling_rights(Us);
 
   Bitboard pawns = pos.pieces(Us, PAWN);
   int minPawnDist = pawns ? 8 : 0;
 
-  if (pawns & PseudoAttacks[KING][ksq])
+  if (pawns & PseudoAttacks[KING][kingSquares[Us]])
       minPawnDist = 1;
 
   else while (pawns)
-      minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
+      minPawnDist = std::min(minPawnDist, distance(kingSquares[Us], pop_lsb(&pawns)));
 
   Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
-  evaluate_shelter<Us>(pos, ksq, shelter);
+  evaluate_shelter<Us>(pos, kingSquares[Us], shelter);
 
   // If we can castle use the bonus after the castling if it is bigger
   if (pos.can_castle(Us | KING_SIDE))
