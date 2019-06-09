@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -33,9 +34,6 @@ namespace {
   enum TimeType { OptimumTime, MaxTime };
 
   constexpr int MoveHorizon   = 50;   // Plan time management at most this many moves ahead
-  constexpr double MaxRatio   = 7.3;  // When in trouble, we can step over reserved time with this ratio
-  constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
-
 
   // move_importance() is a skew-logistic function based on naive statistical
   // analysis of "how many games are still undecided after n half-moves". Game
@@ -53,20 +51,15 @@ namespace {
 
   template<TimeType T>
   TimePoint remaining(TimePoint myTime, int movesToGo, int ply, TimePoint slowMover) {
-
-    constexpr double TMaxRatio   = (T == OptimumTime ? 1.0 : MaxRatio);
-    constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
-
+    constexpr double TimeScale = (T == OptimumTime) ? 1.0 : 7.3;
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
 
+    double otherMovesImportance = 0.0;
     for (int i = 1; i < movesToGo; ++i)
         otherMovesImportance += move_importance(ply + 2 * i);
 
-    double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
-    double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
-
-    return TimePoint(myTime * std::min(ratio1, ratio2)); // Intel C++ asks for an explicit cast
+    return  TimePoint(myTime * TimeScale * moveImportance /
+                     (TimeScale * moveImportance + otherMovesImportance));
   }
 
 } // namespace
