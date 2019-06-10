@@ -43,12 +43,8 @@ namespace {
   // Data was extracted from the CCRL game database with some simple filtering criteria.
 
   double move_importance(int ply) {
-
-    constexpr double XScale = 6.85;
-    constexpr double XShift = 64.5;
-    constexpr double Skew   = 0.171;
-
-    return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
+    double offset = (ply - 80.0) / 32.0;
+    return 0.85 - offset / (1 + std::abs(offset));
   }
 
   template<TimeType T>
