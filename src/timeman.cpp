@@ -43,8 +43,8 @@ namespace {
   // Data was extracted from the CCRL game database with some simple filtering criteria.
 
   double move_importance(int ply) {
-    double offset = (ply - 90.0);
-    return 0.7 * (0.9 - offset / (32 + std::abs(offset)));
+    double offset = (ply - 82.0) / 32.0;
+    return 1.0 - offset / sqrt(2 + offset * offset);
   }
 
   template<TimeType T>
