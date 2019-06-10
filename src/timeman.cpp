@@ -44,7 +44,7 @@ namespace {
 
   double move_importance(int ply) {
     double offset = (ply - 100.0) / 45.0;
-    return 0.65 * (1.0 - offset / sqrt(2 + offset * offset));
+    return 0.65 * (1.0 - offset / sqrt(1 + offset * offset));
   }
 
   template<TimeType T>
