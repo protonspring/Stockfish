@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -37,14 +38,14 @@ namespace {
   constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
 
 
-  // move_importance() is a skew-logistic function based on naive statistical
-  // analysis of "how many games are still undecided after n half-moves". Game
-  // is considered "undecided" as long as neither side has >275cp advantage.
-  // Data was extracted from the CCRL game database with some simple filtering criteria.
-
+  // move_importance() is a function for scaling time usage according to ply
   double move_importance(int ply) {
     double offset = (ply - 88.0) / 45.0;
     return 1.0 - (offset / std::sqrt(1 + offset * offset));
+  }
+
+  double integrate_mi(int ply) {
+    return ply - 45.0 * sqrt((ply - 88.0) * (ply - 88.0) / 2025.0 + 1);
   }
 
   template<TimeType T>
@@ -54,10 +55,9 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
 
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    // Integrate move_importance between ply and ply + movesToGo
+    double otherMovesImportance = integrate_mi(ply + 7*movesToGo/8) - integrate_mi(ply);
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
