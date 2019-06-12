@@ -658,7 +658,7 @@ namespace {
                     k += 5;
 
                 // More bonus if we have a phalanx pawn to support our advance
-                if (ourPawns & (shift<EAST>(s) | shift<WEST>(s)))
+                if (ourPawns & (shift<EAST>(square_bb(s)) | shift<WEST>(square_bb(s))))
                     k += 2;
 
                 bonus += make_score(k * w, k * w);
