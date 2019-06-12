@@ -265,6 +265,7 @@ constexpr Score make_score(int mg, int eg) {
   return Score((int)((unsigned int)eg << 16) + mg);
 }
 
+
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
@@ -277,6 +278,10 @@ inline Value mg_value(Score s) {
   union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
   return Value(mg.s);
 }
+
+inline Score score_mg(int v) { return make_score(v, 0); }
+inline Score score_eg(int v) { return make_score(0, v); }
+
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
 constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
