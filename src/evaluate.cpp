@@ -310,7 +310,7 @@ namespace {
                 score += Outpost / (Pt == KNIGHT ? 1 : 2);
 
             // Knight and Bishop bonus for being right behind a pawn
-            if ((shift<Down>(pos.pieces(PAWN)) & s) && (relative_rank(Us, s) > RANK_3))
+            if ((shift<Down>(pos.pieces(PAWN)) & s) && (relative_rank(Us, s) > RANK_1))
                 score += MinorBehindPawn;
 
             // Penalty if the piece is far from the king
