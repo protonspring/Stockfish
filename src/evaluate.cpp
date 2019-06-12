@@ -606,6 +606,7 @@ namespace {
 
     Bitboard b, bb, squaresToQueen, defendedSquares, unsafeSquares;
     Score score = SCORE_ZERO;
+    Bitboard ourPawns = pos.pieces(Us, PAWN);
 
     b = pe->passed_pawns(Us);
 
@@ -655,6 +656,10 @@ namespace {
                 // Assign a larger bonus if the block square is defended.
                 if (defendedSquares & blockSq)
                     k += 5;
+
+                // More bonus if we have a phalanx pawn to support our advance
+                if (ourPawns & (shift<EAST>(s) | shift<WEST>(s)))
+                    k += 2;
 
                 bonus += make_score(k * w, k * w);
             }
