@@ -110,10 +110,52 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (   !(stoppers ^ lever) ||
-              (!(stoppers ^ leverPush) && popcount(phalanx) >= popcount(leverPush)))
+
+        //no pawns can stop us
+        if (!stoppers)
             e->passedPawns[Us] |= s;
 
+        //All stoppers are levers, but we can push past
+        else if (!(stoppers ^ lever) && !(pos.pieces(PAWN) & (s + Up)))
+            e->passedPawns[Us] |= s;
+
+
+        //All stoppers are levers, check if a capture will result in passing
+/*
+        else if (!(stoppers ^ lever))
+        {
+            b = lever;
+            while(b)
+            {
+                Square capSq = pop_lsb(&b);
+                Bitboard stoppers2 = theirPawns & passed_pawn_span(Us, capSq);
+                Bitboard lever2 = theirPawns & PawnAttacks[Us][capSq];
+                Bitboard support2 = ourPawns & adjacent_files_bb(capSq)
+                                             & rank_bb(capSq - Up);
+
+                if (!stoppers2) e->passedPawns[Us] |= capSq;
+                else if (!(stoppers2 ^ lever2) && (popcount(support2) >= popcount(lever2)))
+                    e->passedPawns[Us] |= capSq;
+            }
+        }
+*/
+
+        //All stoppers are leverPush
+        else if (!(stoppers ^ leverPush))
+        {
+            if (popcount(phalanx) >= popcount(leverPush))
+                e->passedPawns[Us] |= s;
+        }
+
+        //All stoppers are either lever or leverPush (but we have both types)
+        else if (!(stoppers ^ lever ^ leverPush))
+        {
+            if ((popcount(support) >= popcount(lever)) &&
+                (popcount(phalanx) >= popcount(leverPush)))
+                e->passedPawns[Us] |= s;
+        }
+
+        // Only a single stopper directly opposed, and support can help pass
         else if (stoppers == square_bb(s + Up) && r >= RANK_5)
         {
             b = shift<Up>(support) & ~theirPawns;
