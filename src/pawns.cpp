@@ -128,13 +128,13 @@ namespace {
             {
                 Square capSq = pop_lsb(&b);
                 Bitboard stoppers2 = theirPawns & passed_pawn_span(Us, capSq);
-                //Bitboard lever2 = theirPawns & PawnAttacks[Us][capSq];
-                //Bitboard support2 = ourPawns & adjacent_files_bb(capSq)
-                                             //& rank_bb(capSq - Up);
+                Bitboard lever2 = theirPawns & PawnAttacks[Us][capSq];
+                Bitboard support2 = ourPawns & adjacent_files_bb(capSq)
+                                             & rank_bb(capSq - Up);
 
                 if (!stoppers2) e->passedPawns[Us] |= capSq;
-                //else if (!(stoppers2 ^ lever2) && (popcount(support2) >= popcount(lever2)))
-                    //e->passedPawns[Us] |= capSq;
+                else if (!(stoppers2 ^ lever2) && ((popcount(support2)-1) >= popcount(lever2)))
+                    e->passedPawns[Us] |= capSq;
             }
         }
 
