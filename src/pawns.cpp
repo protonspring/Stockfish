@@ -190,10 +190,10 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
       b = ourPawns & file_bb(f);
-      Rank ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      Rank ourRank = b ? relative_rank(Us, frontmost_sq<Them>(b)) : RANK_1;
 
       b = theirPawns & file_bb(f);
-      Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      Rank theirRank = b ? relative_rank(Us, frontmost_sq<Them>(b)) : RANK_1;
 
       int d = std::min(f, ~f);
       bonus[MG] += ShelterStrength[d][ourRank];
