@@ -81,6 +81,7 @@ namespace {
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = 0;
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
+    e->sideToMove = pos.side_to_move();
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -110,10 +111,12 @@ namespace {
         // full attack info to evaluate them. Include also not passed pawns
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
-        if (   !(stoppers ^ lever) ||
+
+        if (!(stoppers ^ lever) && (e->side_to_move() == Us))
+            e->passedPawns[Us] |= s;
+        else if (
               (!(stoppers ^ leverPush) && popcount(phalanx) >= popcount(leverPush)))
             e->passedPawns[Us] |= s;
-
         else if (stoppers == square_bb(s + Up) && r >= RANK_5)
         {
             b = shift<Up>(support) & ~theirPawns;
@@ -163,6 +166,7 @@ Entry* probe(const Position& pos) {
   e->key = key;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
+  e->sideToMove = pos.side_to_move();
 
   return e;
 }

@@ -372,7 +372,7 @@ void Position::set_check_info(StateInfo* si) const {
 void Position::set_state(StateInfo* si) const {
 
   si->key = si->materialKey = 0;
-  si->pawnKey = Zobrist::noPawns;
+  si->pawnKey = Zobrist::side;
   si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO;
   si->checkersBB = attackers_to(square<KING>(sideToMove)) & pieces(~sideToMove);
 
