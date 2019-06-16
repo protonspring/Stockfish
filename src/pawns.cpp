@@ -112,7 +112,7 @@ namespace {
         // which could become passed after one or two pawn pushes when are
         // not attacked more times than defended.
 
-        if (!(stoppers ^ lever) && (e->side_to_move() == Us))
+        if (!(stoppers ^ lever))
             e->passedPawns[Us] |= s;
         else if (
               (!(stoppers ^ leverPush) && popcount(phalanx) >= popcount(leverPush)))
@@ -124,6 +124,9 @@ namespace {
                 if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
                     e->passedPawns[Us] |= s;
         }
+
+        if ((e->side_to_move() == Us) && lever)
+            score += make_score(5, 5);
 
         // Score this pawn
         if (support | phalanx)
