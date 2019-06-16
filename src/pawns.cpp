@@ -172,40 +172,54 @@ Entry* probe(const Position& pos) {
 /// penalty for a king, looking at the king file and the two closest files.
 
 template<Color Us>
-void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
+Score Entry::evaluate_shelter(const Position& pos) {
 
   constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
   constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
   constexpr Bitboard BlockSquares =  (Rank1BB | Rank2BB | Rank7BB | Rank8BB)
                                    & (FileABB | FileHBB);
 
-  Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
-  Bitboard ourPawns = b & pos.pieces(Us);
-  Bitboard theirPawns = b & pos.pieces(Them);
-
-  Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
-                    VALUE_ZERO };
-
-  File center = clamp(file_of(ksq), FILE_B, FILE_G);
-  for (File f = File(center - 1); f <= File(center + 1); ++f)
+  Square ksqs[3] = {pos.square<KING>(Us),
+         pos.can_castle(Us | KING_SIDE ) ? relative_square(Us, SQ_G1) : SQ_NONE,
+         pos.can_castle(Us | QUEEN_SIDE) ? relative_square(Us, SQ_C1) : SQ_NONE};
+  Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
+ 
+  for (int i = 0; i < 3; ++i)
   {
-      b = ourPawns & file_bb(f);
-      Rank ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      Square ksq = ksqs[i];
+      if (ksq == SQ_NONE)
+          continue;
 
-      b = theirPawns & file_bb(f);
-      Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+      Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
+      Bitboard ourPawns = b & pos.pieces(Us);
+      Bitboard theirPawns = b & pos.pieces(Them);
 
-      int d = std::min(f, ~f);
-      bonus[MG] += ShelterStrength[d][ourRank];
+      Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
+                        VALUE_ZERO };
 
-      if (ourRank && (ourRank == theirRank - 1))
-          bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
-      else
-          bonus[MG] -= UnblockedStorm[d][theirRank];
+      File center = clamp(file_of(ksq), FILE_B, FILE_G);
+      for (File f = File(center - 1); f <= File(center + 1); ++f)
+      {
+          b = ourPawns & file_bb(f);
+          Rank ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+    
+          b = theirPawns & file_bb(f);
+          Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
+    
+          int d = std::min(f, ~f);
+          bonus[MG] += ShelterStrength[d][ourRank];
+    
+          if (ourRank && (ourRank == theirRank - 1))
+              bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
+          else
+              bonus[MG] -= UnblockedStorm[d][theirRank];
+      }
+
+      if (bonus[MG] > mg_value(shelter))
+          shelter = make_score(bonus[MG], bonus[EG]);
   }
 
-  if (bonus[MG] > mg_value(shelter))
-      shelter = make_score(bonus[MG], bonus[EG]);
+  return shelter;
 }
 
 
@@ -228,17 +242,7 @@ Score Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
-  Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
-  evaluate_shelter<Us>(pos, ksq, shelter);
-
-  // If we can castle use the bonus after the castling if it is bigger
-  if (pos.can_castle(Us | KING_SIDE))
-      evaluate_shelter<Us>(pos, relative_square(Us, SQ_G1), shelter);
-
-  if (pos.can_castle(Us | QUEEN_SIDE))
-      evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1), shelter);
-
-  return shelter - make_score(VALUE_ZERO, 16 * minPawnDist);
+  return evaluate_shelter<Us>(pos) - make_score(VALUE_ZERO, 16 * minPawnDist);
 }
 
 // Explicit template instantiation
