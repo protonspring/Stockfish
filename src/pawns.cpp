@@ -179,25 +179,22 @@ Score Entry::evaluate_shelter(const Position& pos) {
   constexpr Bitboard BlockSquares =  (Rank1BB | Rank2BB | Rank7BB | Rank8BB)
                                    & (FileABB | FileHBB);
 
-  Square ksqs[3] = {pos.square<KING>(Us),
-         pos.can_castle(Us | KING_SIDE ) ? relative_square(Us, SQ_G1) : SQ_NONE,
-         pos.can_castle(Us | QUEEN_SIDE) ? relative_square(Us, SQ_C1) : SQ_NONE};
   Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
+  std::vector<Square> ksqs;
+  ksqs.push_back(pos.square<KING>(Us));
+  if (pos.can_castle(Us |  KING_SIDE)) ksqs.push_back(relative_square(Us, SQ_G1));
+  if (pos.can_castle(Us | QUEEN_SIDE)) ksqs.push_back(relative_square(Us, SQ_C1));
  
-  for (int i = 0; i < 3; ++i)
+  for (std::vector<Square>::iterator it = ksqs.begin(); it != ksqs.end(); ++it)
   {
-      Square ksq = ksqs[i];
-      if (ksq == SQ_NONE)
-          continue;
-
-      Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
+      Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, *it);
       Bitboard ourPawns = b & pos.pieces(Us);
       Bitboard theirPawns = b & pos.pieces(Them);
 
-      Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & ksq) ? Value(374) : Value(5),
+      Value bonus[] = { (shift<Down>(theirPawns) & BlockSquares & *it) ? Value(374) : Value(5),
                         VALUE_ZERO };
 
-      File center = clamp(file_of(ksq), FILE_B, FILE_G);
+      File center = clamp(file_of(*it), FILE_B, FILE_G);
       for (File f = File(center - 1); f <= File(center + 1); ++f)
       {
           b = ourPawns & file_bb(f);
