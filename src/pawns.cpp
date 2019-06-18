@@ -36,7 +36,9 @@ namespace {
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
   constexpr Score WeakUnopposed = S( 13, 27);
-  constexpr Score DoubleAttackedLever = S( 0, 10);
+  Score DoubleAttackedLever = S( 0, 10);
+
+TUNE( SetRange(0,20), DoubleAttackedLever);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
