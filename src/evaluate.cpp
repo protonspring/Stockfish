@@ -265,7 +265,6 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-    constexpr Direction   Up = (Us == WHITE ? NORTH : SOUTH);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
@@ -307,29 +306,15 @@ namespace {
             if (bb & s)
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
-                if (pos.pieces(Them, PAWN) & (s + Up))
-                {
-                   score += Outpost / 2;
-
-                   //Bishops in fawn pawn position
-                   if ((relative_rank(Us, s) == RANK_6) && (Pt == BISHOP)
-                    && (KingFlank[file_of(pos.square<KING>(Them))] & s))
-                       score += Outpost / 2;
-                }
+                if (shift<Down>(pos.pieces(Them, PAWN)) & s)
+                   score += Outpost / 4;
             }
 
-            else if (bb & b & ~pos.pieces(Us))
+            else if (bb &= b & ~pos.pieces(Us))
             {
                 score += Outpost / (Pt == KNIGHT ? 1 : 2);
-                if (pos.pieces(Them, PAWN) & (s + Up))
-                {
-                   score += Outpost / 2;
-
-                   //Bishops in fawn pawn position
-                   if ((relative_rank(Us, s) == RANK_6) && (Pt == BISHOP)
-                    && (KingFlank[file_of(pos.square<KING>(Them))] & s))
-                       score += Outpost / 2;
-                }
+                if (shift<Down>(pos.pieces(Them, PAWN)) & bb)
+                   score += Outpost / 4;
             }
 
             // Knight and Bishop bonus for being right behind a pawn
