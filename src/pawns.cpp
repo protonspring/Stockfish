@@ -69,7 +69,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     Bitboard b, neighbours, stoppers, doubled, support, phalanx;
-    Bitboard lever, leverPush;
+    Bitboard lever, leverPush, isolated = 0;
     Square s;
     bool opposed, backward;
     Score score = SCORE_ZERO;
@@ -131,7 +131,13 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * int(!opposed);
+            isolated |= s;
+
+            if (isolated & (square_bb(s + Up) | square_bb(s - Up)))
+                score -= Isolated / 2;
+        }
 
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
