@@ -137,6 +137,8 @@ namespace {
             // More penalty if there is another isolated pawn on this file
             if (isolated & file_bb(s))
                 score -= Isolated / 2;
+
+            isolated |= s;
         }
 
         else if (backward)
