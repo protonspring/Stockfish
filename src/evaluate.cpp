@@ -308,14 +308,28 @@ namespace {
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
                 if (pos.pieces(Them, PAWN) & (s + Up))
+                {
                    score += Outpost / 2;
+
+                   //Bishops in fawn pawn position
+                   if ((relative_rank(Us, s) == RANK_6) && (Pt == BISHOP)
+                    && (KingFlank[file_of(pos.square<KING>(Them))] & s))
+                       score += Outpost / 2;
+                }
             }
 
             else if (bb & b & ~pos.pieces(Us))
             {
                 score += Outpost / (Pt == KNIGHT ? 1 : 2);
                 if (pos.pieces(Them, PAWN) & (s + Up))
+                {
                    score += Outpost / 2;
+
+                   //Bishops in fawn pawn position
+                   if ((relative_rank(Us, s) == RANK_6) && (Pt == BISHOP)
+                    && (KingFlank[file_of(pos.square<KING>(Them))] & s))
+                       score += Outpost / 2;
+                }
             }
 
             // Knight and Bishop bonus for being right behind a pawn
