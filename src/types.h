@@ -260,9 +260,13 @@ enum Rank : int {
 /// upper 16 bits are used to store the endgame value. We have to take care to
 /// avoid left-shifting a signed int to avoid undefined behavior.
 enum Score : int { SCORE_ZERO };
+enum ScoreType { SCORE_MG, SCORE_EG, SCORE_FULL };
 
-constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
+template<ScoreType ST>
+constexpr Score make_score(int v1, int v2 = SCORE_ZERO) {
+  return ST == SCORE_MG ? Score(v1) :
+         ST == SCORE_EG ? Score(((unsigned int)v1 << 16)) :
+                          Score(((unsigned int)v2 << 16) + v1);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
@@ -334,7 +338,7 @@ Score operator*(Score, Score) = delete;
 
 /// Division of a Score must be handled separately for each term
 inline Score operator/(Score s, int i) {
-  return make_score(mg_value(s) / i, eg_value(s) / i);
+  return make_score<SCORE_FULL>(mg_value(s) / i, eg_value(s) / i);
 }
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.

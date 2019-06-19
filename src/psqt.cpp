@@ -29,7 +29,7 @@ Value PieceValue[PHASE_NB][PIECE_NB] = {
 
 namespace PSQT {
 
-#define S(mg, eg) make_score(mg, eg)
+#define S(mg, eg) make_score<SCORE_FULL>(mg, eg)
 
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table
@@ -115,7 +115,7 @@ void init() {
       PieceValue[MG][~pc] = PieceValue[MG][pc];
       PieceValue[EG][~pc] = PieceValue[EG][pc];
 
-      Score score = make_score(PieceValue[MG][pc], PieceValue[EG][pc]);
+      Score score = make_score<SCORE_FULL>(PieceValue[MG][pc], PieceValue[EG][pc]);
 
       for (Square s = SQ_A1; s <= SQ_H8; ++s)
       {
