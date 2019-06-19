@@ -133,9 +133,9 @@ namespace {
         else if (!neighbours)
         {
             score -= Isolated + WeakUnopposed * int(!opposed);
-            isolated |= s;
 
-            if (isolated & (square_bb(s + Up) | square_bb(s - Up)))
+            // More penalty if there is another isolated pawn on this file
+            if (isolated & file_bb(s))
                 score -= Isolated / 2;
         }
 
