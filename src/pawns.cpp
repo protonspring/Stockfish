@@ -35,7 +35,10 @@ namespace {
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
+  Score DoubleIsolated = S( 2,  7);
   constexpr Score WeakUnopposed = S( 13, 27);
+
+TUNE(SetRange(0,10), DoubleIsolated);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -136,7 +139,7 @@ namespace {
 
             // More penalty if there is another isolated pawn on this file
             if (isolated & file_bb(s))
-                score -= Isolated / 2;
+                score -= DoubleIsolated;
 
             isolated |= s;
         }
