@@ -36,6 +36,7 @@ namespace {
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
   constexpr Score WeakUnopposed = S( 13, 27);
+  constexpr Score DoubleIsolated = S( 3,  6);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -88,6 +89,7 @@ namespace {
         assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         Rank r = relative_rank(Us, s);
+        File f = file_of(s);
 
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
@@ -131,8 +133,12 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * int(!opposed);
 
+            if (more_than_one(ourPawns & file_bb(f)))
+                score -= DoubleIsolated;
+        }
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
 
