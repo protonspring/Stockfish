@@ -33,8 +33,9 @@ namespace {
 
   // Pawn penalties
   constexpr Score Backward = S( 9, 24);
-  constexpr Score Doubled  = S( 5, 28);
+  constexpr Score Doubled  = S( 9, 50);
   constexpr Score Isolated = S( 5, 15);
+  constexpr Score MultiIsolated = S( 5, 10);
   constexpr Score WeakUnopposed = S( 13, 27);
 
   // Connected pawn bonus
@@ -134,9 +135,9 @@ namespace {
         else if (!neighbours)
         {
             score -= Isolated + WeakUnopposed * int(!opposed);
-
-            if (more_than_one(ourPawns & file_bb(f)))
-                score -= Isolated / 2;
+            b = ourPawns & file_bb(f);
+            if (more_than_one(b))
+               score -= MultiIsolated * (popcount(b) - 1);
         }
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
