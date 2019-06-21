@@ -36,7 +36,7 @@ namespace {
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
   constexpr Score WeakUnopposed = S( 13, 27);
-  constexpr Score DoubleAttackedLever = S( 2, 12);
+  constexpr Score Attacked2Unsupported = S( 0, 20);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -85,6 +85,9 @@ namespace {
     e->kingSquares[Us]   = SQ_NONE;
     e->pawnAttacks[Us]   = pawn_attacks_bb<Us>(ourPawns);
 
+    //Unsupported pawns attacked twice
+    score += Attacked2Unsupported * popcount(ourDoubles & theirPawns & ~theirAttacks);
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
@@ -103,9 +106,6 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(s);
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
-
-        if (ourDoubles & lever & ~theirAttacks)
-            score += DoubleAttackedLever;
 
         // A pawn is backward when it is behind all pawns of the same color
         // on the adjacent files and cannot be safely advanced.
