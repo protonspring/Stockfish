@@ -33,7 +33,7 @@ namespace {
 
   // Pawn penalties
   constexpr Score Backward = S( 9, 24);
-  constexpr Score Doubled  = S(11, 56);
+  constexpr Score Doubled  = S( 5, 28);
   constexpr Score Isolated = S( 5, 15);
   constexpr Score WeakUnopposed = S( 13, 27);
 
@@ -88,6 +88,7 @@ namespace {
         assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         Rank r = relative_rank(Us, s);
+        File f = file_of(s);
 
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
@@ -131,12 +132,16 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * int(!opposed);
 
+            if (more_than_one(ourPawns & file_bb(f)))
+                score -= Isolated / 2;
+        }
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
 
-        if (doubled && !support)
+        if (doubled && (support | phalanx))
             score -= Doubled;
     }
 
