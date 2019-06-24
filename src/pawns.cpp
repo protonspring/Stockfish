@@ -79,14 +79,13 @@ namespace {
     Bitboard ourPawns     = pos.pieces(  Us, PAWN);
     Bitboard ourDoubles   = pawn_double_attacks_bb<Us>(ourPawns);
     Bitboard theirPawns   = pos.pieces(Them, PAWN);
-    Bitboard theirAttacks = pawn_attacks_bb<Them>(theirPawns);
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = 0;
     e->kingSquares[Us] = SQ_NONE;
     e->pawnAttacks[Us] = pawn_attacks_bb<Us>(ourPawns);
 
-    //Unsupported enemy pawns attacked twice by us
-    score += Attacked2Unsupported * popcount(ourDoubles & theirPawns & ~theirAttacks);
+    //Enemy pawns attacked twice by us
+    score += Attacked2Unsupported * popcount(ourDoubles & theirPawns);
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
