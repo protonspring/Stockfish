@@ -34,7 +34,7 @@ namespace {
   // Pawn penalties
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
-  constexpr Score Isolated = S( 5, 15);
+  constexpr Score Isolated = S( 2, 5);
   constexpr Score WeakUnopposed = S( 13, 27);
 
   // Connected pawn bonus
@@ -72,7 +72,7 @@ namespace {
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
-    Score score = SCORE_ZERO;
+    Score score = SCORE_ZERO, isolatedScore = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -131,7 +131,14 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
-            score -= Isolated + WeakUnopposed * int(!opposed);
+        {
+            score -= WeakUnopposed * int(!opposed);
+
+            if (!isolatedScore)
+                isolatedScore = Isolated;
+            else
+                isolatedScore = isolatedScore * 2;
+        }
 
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
@@ -139,6 +146,9 @@ namespace {
         if (doubled && !support)
             score -= Doubled;
     }
+
+    // Scale penalty for isolated pawns (more quadratic)
+    score -= isolatedScore;
 
     return score;
   }
