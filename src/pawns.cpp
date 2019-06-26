@@ -52,12 +52,8 @@ namespace {
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king.
-  constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 89), V(107), V(123), V(93), V(57), V( 45), V( 51) },
-    { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) },
-    { V(  4), V( 52), V(162), V(37), V( 7), V(-14), V( -2) },
-    { V(-10), V(-14), V( 90), V(15), V( 2), V( -7), V(-16) }
-  };
+  constexpr Value UnblockedStorm[RANK_NB] =
+    { V( 44), V(-18), V(123), V(46), V(39), V( -7), V( 23) };
 
   #undef S
   #undef V
@@ -201,7 +197,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       if (ourRank && (ourRank == theirRank - 1))
           bonus[MG] -= 82 * (theirRank == RANK_3), bonus[EG] -= 82 * (theirRank == RANK_3);
       else
-          bonus[MG] -= UnblockedStorm[d][theirRank];
+          bonus[MG] -= UnblockedStorm[theirRank];
   }
 
   if (bonus[MG] > mg_value(shelter))
