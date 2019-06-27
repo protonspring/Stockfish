@@ -186,7 +186,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Value bonus[] = { VALUE_ZERO, VALUE_ZERO };
+  Value bonus[] = { Value(5), Value(5) };
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
