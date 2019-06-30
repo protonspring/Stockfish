@@ -123,9 +123,9 @@ namespace {
 
         else if (stoppers == square_bb(s + Up) && r >= RANK_5)
         {
-            b = shift<Up>(support) & ~theirPawns;
+            b = pawn_attack_span(Them, s + Up) & ourPawns;
             while (b)
-                if (!more_than_one(theirPawns & PawnAttacks[Us][pop_lsb(&b)]))
+                if (!more_than_one(theirPawns & passed_pawn_span(Us, pop_lsb(&b))))
                     e->passedPawns[Us] |= s;
         }
 
