@@ -131,8 +131,8 @@ namespace {
 
         // Score this pawn
         if (support | phalanx)
-            score += Connected[r] * (4 + popcount(support)) * (phalanx ? 3 : 2)
-                                  / (opposed ? 8 : 4);
+            score += Connected[r] * (16 + popcount(support)) * (phalanx ? 3 : 2)
+                                  / (opposed ? 32 : 16);
 
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
