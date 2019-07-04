@@ -135,7 +135,7 @@ namespace {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
-            score += make_score(v, v + r - 8);
+            score += make_score(v, v + r);
         }
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
