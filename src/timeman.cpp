@@ -41,7 +41,7 @@ namespace {
   double move_importance(int ply) {
 
     int p = ply - 88;
-    return 1.6 - 1.6 * p / std::sqrt(p * p + 1936);
+    return 0.6 - 0.6 * p / std::sqrt(p * p + 1936);
   }
 
   template<TimeType T>
