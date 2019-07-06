@@ -86,8 +86,7 @@ namespace {
 
     // Unsupported enemy pawns attacked twice by us
     score += Attacked2Unsupported * popcount(  theirPawns
-                                             & pawn_double_attacks_bb<Us>(ourPawns)
-                                             & ~pawn_attacks_bb<Them>(theirPawns));
+                                             & pawn_double_attacks_bb<Us>(ourPawns));
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
