@@ -222,7 +222,7 @@ Score Entry::do_king_safety(const Position& pos) {
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
 
-  Bitboard pawns = pos.pieces(Us, PAWN);
+  Bitboard pawns = pos.pieces(Us, PAWN) ? pos.pieces(Us, PAWN) : pos.pieces(PAWN);
   int minPawnDist = pawns ? 8 : 0;
 
   if (pawns & PseudoAttacks[KING][ksq])
