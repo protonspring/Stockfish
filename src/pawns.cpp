@@ -134,8 +134,10 @@ namespace {
         {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
+            int egv = v * (r - 2) / 4;
+            egv = std::max(egv, 0);
 
-            score += make_score(v, v * (r - 2) / 4);
+            score += make_score(v, egv);
         }
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
