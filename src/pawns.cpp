@@ -129,6 +129,9 @@ namespace {
                     e->passedPawns[Us] |= s;
         }
 
+        if (e->passedPawns[Us] & s)
+            score += make_score(8,0);
+
         // Score this pawn
         if (support | phalanx)
         {
