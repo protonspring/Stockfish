@@ -829,16 +829,12 @@ namespace {
     score += initiative(eg_value(score));
 
     // Checked for blocked position
-    if (pe->blockedFiles > 5)
+    if (pe->blockedFiles > 6)
     {
         score -= score / 2;
 
-        if (pe->blockedFiles > 6)
-        {
+        if (pe->blockedFiles > 7)
             score -= score / 2;
-            if (pe->blockedFiles > 7)
-                score -= score / 2;
-        }
     }
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
