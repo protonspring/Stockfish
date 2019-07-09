@@ -828,6 +828,19 @@ namespace {
 
     score += initiative(eg_value(score));
 
+    // Checked for blocked position
+    if (pe->blockedFiles > 5)
+    {
+        score -= score / 2;
+
+        if (pe->blockedFiles > 6)
+        {
+            score -= score / 2;
+            if (pe->blockedFiles > 7)
+                score -= score / 2;
+        }
+    }
+
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
     ScaleFactor sf = scale_factor(eg_value(score));
     v =  mg_value(score) * int(me->game_phase())

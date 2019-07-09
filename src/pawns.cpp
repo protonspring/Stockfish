@@ -89,6 +89,28 @@ namespace {
                                              & pawn_double_attacks_bb<Us>(ourPawns)
                                              & ~pawn_attacks_bb<Them>(theirPawns));
 
+    // Closed position analysis
+    if (Us == WHITE)
+    {
+        Bitboard blockedPawns = shift<Up>(ourPawns) & theirPawns;
+        e->blockedFiles = popcount(blockedPawns);
+        if (e->blockedFiles > 5)
+        {
+            // pretty closed. . check semi-open files.
+            for (File f = FILE_A; f <= FILE_H; f = File(f + 1))
+            {
+               if (!(blockedPawns & file_bb(f)))   //not one of the blocked files
+               {
+                  //if one side has a supported pawn here, still blocked
+                  if (pawn_attacks_bb<Us>(ourPawns) & ourPawns & file_bb(f))
+                      e->blockedFiles++;
+                  if (pawn_attacks_bb<Them>(theirPawns) & theirPawns & file_bb(f))
+                      e->blockedFiles++;
+               }
+            }
+        }
+    }
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
