@@ -607,7 +607,7 @@ namespace {
                          : pos.attacks_from(Pt,s);
 
         if (more_than_one(b & hangingPieces))
-            score += make_score(10,0);
+            score += make_score(30,0);
     }
 
     if (T)
