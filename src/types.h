@@ -255,35 +255,7 @@ enum Rank : int {
 };
 
 
-/// Score enum stores a middlegame and an endgame value in a single integer (enum).
-/// The least significant 16 bits are used to store the middlegame value and the
-/// upper 16 bits are used to store the endgame value. We have to take care to
-/// avoid left-shifting a signed int to avoid undefined behavior.
-enum Score : int { SCORE_ZERO };
-
-struct Score2 {
-   Value mg_value;
-   Value eg_value;
-   Score2(const Value mg, const Value eg) : mg_value(mg), eg_value(eg) {}
-};
-
-constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
-}
-
-/// Extracting the signed lower and upper 16 bits is not so trivial because
-/// according to the standard a simple cast to short is implementation defined
-/// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
-  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
-}
-
-inline Value mg_value(Score s) {
-  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
-}
-
+  
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
 constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
 constexpr T operator-(T d1, T d2) { return T(int(d1) - int(d2)); } \
@@ -315,7 +287,6 @@ ENABLE_INCR_OPERATORS_ON(Square)
 ENABLE_INCR_OPERATORS_ON(File)
 ENABLE_INCR_OPERATORS_ON(Rank)
 
-ENABLE_BASE_OPERATORS_ON(Score)
 
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
@@ -333,26 +304,28 @@ constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
 inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
-/// Only declared but not defined. We don't want to multiply two scores due to
-/// a very high risk of overflow. So user should explicitly convert to integer.
-Score operator*(Score, Score) = delete;
+/// Score enum stores a middlegame and an endgame value
+struct Score2 {
+  Value mg_value;
+  Value eg_value;
 
-/// Division of a Score must be handled separately for each term
-inline Score operator/(Score s, int i) {
-  return make_score(mg_value(s) / i, eg_value(s) / i);
-}
+  Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
+  Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
+  inline void add_mg(const Value v) { mg_value += v; }
+  inline void add_eg(const Value v) { eg_value += v; }
 
-/// Multiplication of a Score by an integer. We check for overflow in debug mode.
-inline Score operator*(Score s, int i) {
+  inline Score2 operator+(const Score2& s) const { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
+  inline Score2 operator-(const Score2& s) const { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
+  inline Score2 operator*(const int i) const { return Score2(mg_value * i, eg_value*i); }
+  inline Score2 operator/(const int i) const { return Score2(mg_value / i, eg_value / i); }
 
-  Score result = Score(int(s) * i);
+  inline void operator+=(const Score2& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
+  inline void operator-=(const Score2& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }
+  inline void operator/=(const int i) { mg_value /= i; eg_value /= i; }
+  inline void operator*=(const int i) { mg_value *= i; eg_value *= i; }
+};
 
-  assert(eg_value(result) == (i * eg_value(s)));
-  assert(mg_value(result) == (i * mg_value(s)));
-  assert((i == 0) || (result / i) == s);
-
-  return result;
-}
+const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
 
 constexpr Color operator~(Color c) {
   return Color(c ^ BLACK); // Toggle color
