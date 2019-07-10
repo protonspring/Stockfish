@@ -190,6 +190,7 @@ namespace {
     // attackedBy2[color] are the squares attacked by at least 2 units of a given
     // color, including x-rays. But diagonal x-rays through pawns are not computed.
     Bitboard attackedBy2[COLOR_NB];
+    Bitboard doubleAttackers[COLOR_NB]; //pieces that attack multiple targets
 
     // kingRing[color] are the squares adjacent to the king plus some other
     // very near squares, depending on king position.
@@ -240,6 +241,7 @@ namespace {
     attackedBy[Us][PAWN] = pe->pawn_attacks(Us);
     attackedBy[Us][ALL_PIECES] = attackedBy[Us][KING] | attackedBy[Us][PAWN];
     attackedBy2[Us] = dblAttackByPawn | (attackedBy[Us][KING] & attackedBy[Us][PAWN]);
+    doubleAttackers[Us] = 0;
 
     // Init our king safety tables
     kingRing[Us] = attackedBy[Us][KING];
@@ -295,6 +297,10 @@ namespace {
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
+
+        //double attackers
+        if (more_than_one(pos.pieces(Them) & b))
+            doubleAttackers[Us] |= s;
 
         int mob = popcount(b & mobilityArea[Us]);
 
@@ -584,6 +590,24 @@ namespace {
            | (attackedBy[Us][ROOK  ] & pos.attacks_from<ROOK  >(s));
 
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
+    }
+
+    // Bonus for double (or more) attacks on non-protected pieces
+    Bitboard hangingPieces = pos.pieces(Them) & ~attackedBy[Them][ALL_PIECES];
+    Bitboard attackers = doubleAttackers[Us];
+
+    while(attackers)
+    {
+        Square s = pop_lsb(&attackers);
+        PieceType Pt = type_of(pos.piece_on(s));
+
+        // Find attacked squares, including x-ray attacks for bishops and rooks
+        b = Pt == BISHOP ? attacks_bb<BISHOP>(s, pos.pieces() ^ pos.pieces(QUEEN))
+          : Pt ==   ROOK ? attacks_bb<  ROOK>(s, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK))
+                         : pos.attacks_from(Pt,s);
+
+        if (more_than_one(b & hangingPieces))
+            score += make_score(10,0);
     }
 
     if (T)
