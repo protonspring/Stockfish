@@ -211,8 +211,9 @@ inline Bitboard forward_ranks_bb(Color c, Square s) {
 /// forward_file_bb() returns a bitboard representing all the squares along the
 /// line in front of the given one, from the point of view of the given color.
 
-inline Bitboard forward_file_bb(Color c, Square s) {
-  return file_bb(s) & (c == WHITE ? (AllSquares << (s+1)) : (AllSquares >> (64-s)));
+template<Color C>
+inline Bitboard forward_file_bb(Square s) {
+  return file_bb(s) & (C == WHITE ? (AllSquares << (s+1)) : (AllSquares >> (64-s)));
 }
 
 

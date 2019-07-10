@@ -614,7 +614,7 @@ namespace {
     {
         Square s = pop_lsb(&b);
 
-        assert(!(pos.pieces(Them, PAWN) & forward_file_bb(Us, s + Up)));
+        assert(!(pos.pieces(Them, PAWN) & forward_file_bb<Us>(s + Up)));
 
         int r = relative_rank(Us, s);
 
@@ -636,10 +636,10 @@ namespace {
             // If the pawn is free to advance, then increase the bonus
             if (pos.empty(blockSq))
             {
-                defendedSquares = squaresToQueen = forward_file_bb(Us, s);
+                defendedSquares = squaresToQueen = forward_file_bb<Us>(s);
                 unsafeSquares = passed_pawn_span(Us, s);
 
-                bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
+                bb = forward_file_bb<Them>(s) & pos.pieces(ROOK, QUEEN);
 
                 if (!(pos.pieces(Us) & bb))
                     defendedSquares &= attackedBy[Us][ALL_PIECES];
@@ -666,7 +666,7 @@ namespace {
         // Scale down bonus for candidate passers which need more than one
         // pawn push to become passed, or have a pawn in front of them.
         if (   !pos.pawn_passed(Us, s + Up)
-            || (pos.pieces(PAWN) & forward_file_bb(Us, s)))
+            || (pos.pieces(PAWN) & forward_file_bb<Us>(s)))
             bonus = bonus / 2;
 
         score += bonus + PassedFile[file_of(s)];

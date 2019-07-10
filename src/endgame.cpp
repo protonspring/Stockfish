@@ -209,7 +209,7 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
   Value result;
 
   // If the stronger side's king is in front of the pawn, it's a win
-  if (forward_file_bb(WHITE, wksq) & psq)
+  if (forward_file_bb<WHITE>(wksq) & psq)
       result = RookValueEg - distance(wksq, psq);
 
   // If the weaker side's king is too far from the pawn and the rook,
@@ -770,7 +770,9 @@ ScaleFactor Endgame<KNPKB>::operator()(const Position& pos) const {
 
   // King needs to get close to promoting pawn to prevent knight from blocking.
   // Rules for this are very tricky, so just approximate.
-  if (forward_file_bb(strongSide, pawnSq) & pos.attacks_from<BISHOP>(bishopSq))
+  if ((strongSide == WHITE) && (forward_file_bb<WHITE>(pawnSq) & pos.attacks_from<BISHOP>(bishopSq)))
+      return ScaleFactor(distance(weakKingSq, pawnSq));
+  else if (forward_file_bb<BLACK>(pawnSq) & pos.attacks_from<BISHOP>(bishopSq))
       return ScaleFactor(distance(weakKingSq, pawnSq));
 
   return SCALE_FACTOR_NONE;
