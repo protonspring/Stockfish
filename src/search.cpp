@@ -360,7 +360,7 @@ void Thread::search() {
           : ct;
 
   // Evaluation score is from the white point of view
-  contempt = Score2(ct, ct / 2) * (us == WHITE) ? 1 : -1;
+  contempt = Score2(ct, ct / 2) * (us == WHITE ? 1 : -1);
 
   // Iterative deepening loop until requested to stop or the target depth is reached
   while (   (rootDepth += ONE_PLY) < DEPTH_MAX
