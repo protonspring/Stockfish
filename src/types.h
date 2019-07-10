@@ -304,7 +304,6 @@ constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
 inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
-/// Score enum stores a middlegame and an endgame value
 struct Score2 {
   Value mg_value;
   Value eg_value;
@@ -322,7 +321,7 @@ struct Score2 {
   inline void operator+=(const Score2& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
   inline void operator-=(const Score2& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }
   inline void operator/=(const int i) { mg_value /= i; eg_value /= i; }
-  inline void operator*=(const int i) { mg_value *= i; eg_value *= i; }
+  //inline void operator*=(const int i) { mg_value *= i; eg_value *= i; }
 };
 
 const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
