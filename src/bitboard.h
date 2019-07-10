@@ -212,7 +212,7 @@ inline Bitboard forward_ranks_bb(Color c, Square s) {
 /// line in front of the given one, from the point of view of the given color.
 
 inline Bitboard forward_file_bb(Color c, Square s) {
-  return forward_ranks_bb(c, s) & file_bb(s);
+  return file_bb(s) & (c == WHITE ? (AllSquares << (s+1)) : (AllSquares >> (64-s)));
 }
 
 
