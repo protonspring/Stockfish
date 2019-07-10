@@ -86,7 +86,7 @@ namespace {
   constexpr int BishopSafeCheck = 635;
   constexpr int KnightSafeCheck = 790;
 
-#define S(mg, eg) Score2(Value(mg), Value(eg))
+#define S(mg, eg) Score2(mg, eg)
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
@@ -472,7 +472,7 @@ namespace {
 
     // Transform the kingDanger units into a Score2, and subtract it from the evaluation
     if (kingDanger > 100)
-        score += Score2(Value(-(kingDanger * kingDanger / 4096)),Value(-kingDanger / 16));
+        score -= Score2(kingDanger * kingDanger / 4096, kingDanger / 16);
 
     // Penalty when our king is on a pawnless flank
     if (!(pos.pieces(PAWN) & KingFlank[file_of(ksq)]))
@@ -626,11 +626,11 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            bonus.add_eg(Value((king_proximity(Them, blockSq) * 5 - king_proximity(Us,   blockSq) * 2) * w));
+            bonus.add_eg((king_proximity(Them, blockSq) * 5 - king_proximity(Us,   blockSq) * 2) * w);
 
             // If blockSq is not the queening square then consider also a second push
             if (r != RANK_7)
-                bonus.add_eg(Value(-king_proximity(Us, blockSq + Up) * w));
+                bonus.add_eg(-king_proximity(Us, blockSq + Up) * w);
 
             // If the pawn is free to advance, then increase the bonus
             if (pos.empty(blockSq))
@@ -658,9 +658,7 @@ namespace {
                 if (defendedSquares & blockSq)
                     k += 5;
 
-                //bonus += Score2(Value(k * w), Value(k * w));
-                bonus.add_mg(Value(k * w));
-                bonus.add_eg(Value(k * w));
+                bonus += Score2(k * w, k * w);
             }
         } // r > RANK_3
 
@@ -711,7 +709,7 @@ namespace {
 
     int bonus = popcount(safe) + popcount(behind & safe);
     int weight = pos.count<ALL_PIECES>(Us) - 1;
-    Score2 score(Value(bonus * weight * weight / 16), VALUE_ZERO);
+    Score2 score(bonus * weight * weight / 16, VALUE_ZERO);
 
     score -= AttacksOnSpaceArea * popcount(attackedBy[Them][ALL_PIECES] & behind & safe);
 
@@ -749,9 +747,9 @@ namespace {
     int v = ((eg > 0) - (eg < 0)) * std::max(complexity, -abs(eg));
 
     if (T)
-        Trace::add(INITIATIVE, Score2(VALUE_ZERO, Value(v)));
+        Trace::add(INITIATIVE, Score2(VALUE_ZERO, v));
 
-    return Score2(VALUE_ZERO, Value(v));
+    return Score2(VALUE_ZERO, v);
   }
 
 

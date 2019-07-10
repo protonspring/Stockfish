@@ -29,7 +29,7 @@ Value PieceValue[PHASE_NB][PIECE_NB] = {
 
 namespace PSQT {
 
-#define S(mg, eg) Score2(Value(mg), Value(eg))
+#define S(mg, eg) Score2(mg, eg)
 
 // Bonus[PieceType][Square / 2] contains Piece-Square scores. For each piece
 // type on a given square a (middlegame, endgame) score pair is assigned. Table

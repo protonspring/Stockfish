@@ -133,7 +133,7 @@ namespace {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
-            score += Score2(Value(v), Value(v * (r - 2) / 4));
+            score += Score2(v, v * (r - 2) / 4);
         }
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
@@ -185,8 +185,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  //Value bonus[] = { Value(5), Value(5) };
-  Score2 bonus(Value(5), Value(5));
+  Score2 bonus(5, 5);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -201,8 +200,8 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
       bonus.add_mg(ShelterStrength[d][ourRank]);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus.add_mg(Value(-82 * (theirRank == RANK_3))),
-          bonus.add_eg(Value(-82 * (theirRank == RANK_3)));
+          bonus.add_mg(-82 * (theirRank == RANK_3)),
+          bonus.add_eg(-82 * (theirRank == RANK_3));
       else
           bonus.add_mg(-UnblockedStorm[d][theirRank]);
   }
@@ -241,7 +240,7 @@ Score2 Entry::do_king_safety(const Position& pos) {
   if (pos.can_castle(Us | QUEEN_SIDE))
       evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1), shelter);
 
-  shelter.add_eg(Value(-16 * minPawnDist));
+  shelter.add_eg(-16 * minPawnDist);
   return shelter;
 }
 

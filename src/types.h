@@ -310,12 +310,12 @@ struct Score2 {
   Value eg_value;
 
   Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
-  Score2(Value mg, Value eg): mg_value(mg), eg_value(eg) {}
-  inline void add_mg(const Value v) { mg_value += v; }
-  inline void add_eg(const Value v) { eg_value += v; }
+  Score2(int mg, int eg): mg_value(Value(mg)), eg_value(Value(eg)) {}
+  inline void add_mg(const int v) { mg_value += Value(v); }
+  inline void add_eg(const int v) { eg_value += Value(v); }
 
-  inline Score2 operator+(const Score2& s) const { return Score2(Value(mg_value + s.mg_value), Value(eg_value + s.eg_value));}
-  inline Score2 operator-(const Score2& s) const { return Score2(Value(mg_value - s.mg_value), Value(eg_value - s.eg_value));}
+  inline Score2 operator+(const Score2& s) const { return Score2(mg_value + s.mg_value, eg_value + s.eg_value);}
+  inline Score2 operator-(const Score2& s) const { return Score2(mg_value - s.mg_value, eg_value - s.eg_value);}
   inline Score2 operator*(const int i) const { return Score2(mg_value * i, eg_value*i); }
   inline Score2 operator/(const int i) const { return Score2(mg_value / i, eg_value / i); }
 
