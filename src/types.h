@@ -261,6 +261,12 @@ enum Rank : int {
 /// avoid left-shifting a signed int to avoid undefined behavior.
 enum Score : int { SCORE_ZERO };
 
+struct Score2 {
+   Value mg_value;
+   Value eg_value;
+   Score2(const Value mg, const Value eg) : mg_value(mg), eg_value(eg) {}
+};
+
 constexpr Score make_score(int mg, int eg) {
   return Score((int)((unsigned int)eg << 16) + mg);
 }
