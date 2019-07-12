@@ -132,6 +132,10 @@ Value Endgame<KXK>::operator()(const Position& pos) const {
                 + PushToEdges[loserKSq]
                 + PushClose[distance(winnerKSq, loserKSq)];
 
+  if (       pos.count<ROOK>(strongSide)
+         || (pos.non_pawn_material(strongSide) > (BishopValueMg + KnightValueMg)))
+     result = std::min(result + VALUE_KNOWN_WIN, VALUE_MATE_IN_MAX_PLY - 1);
+
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
