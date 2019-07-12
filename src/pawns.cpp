@@ -31,11 +31,11 @@ namespace {
   #define V Value
 
   // Pawn penalties
-  const Score2 Backward(V(9), V(24));
-  const Score2 Doubled(V(11), V(56));
-  const Score2 Isolated(V(5), V(15));
-  const Score2 WeakUnopposed( V(13), V(27));
-  const Score2 Attacked2Unsupported(V(0), V(20));
+  const Score Backward(V(9), V(24));
+  const Score Doubled(V(11), V(56));
+  const Score Isolated(V(5), V(15));
+  const Score WeakUnopposed( V(13), V(27));
+  const Score Attacked2Unsupported(V(0), V(56));
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -63,7 +63,7 @@ namespace {
   #undef V
 
   template<Color Us>
-  Score2 evaluate(const Position& pos, Pawns::Entry* e) {
+  Score evaluate(const Position& pos, Pawns::Entry* e) {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
@@ -72,7 +72,7 @@ namespace {
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward;
-    Score2 score; // = SCORE_ZERO;
+    Score score; // = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -81,11 +81,6 @@ namespace {
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = 0;
     e->kingSquares[Us] = SQ_NONE;
     e->pawnAttacks[Us] = pawn_attacks_bb<Us>(ourPawns);
-
-    // Unsupported enemy pawns attacked twice by us
-    score += Attacked2Unsupported * popcount(  theirPawns
-                                             & pawn_double_attacks_bb<Us>(ourPawns)
-                                             & ~pawn_attacks_bb<Them>(theirPawns));
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -106,17 +101,18 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
 
-        // A pawn is backward when it is behind all pawns of the same color
-        // on the adjacent files and cannot be safely advanced.
-        backward =  !(ourPawns & pawn_attack_span(Them, s + Up))
+        // A pawn is backward when it is behind all pawns of the same color on
+        // the adjacent files and cannot safely advance. Phalanx and isolated
+        // pawns will be excluded when the pawn is scored.
+        backward =  !(neighbours & forward_ranks_bb(Them, s))
                   && (stoppers & (leverPush | (s + Up)));
 
         // Passed pawns will be properly scored in evaluation because we need
         // full attack info to evaluate them. Include also not passed pawns
-        // which could become passed after one or two pawn pushes when are
-        // not attacked more times than defended.
-        if (   !(stoppers ^ lever) ||
-              (!(stoppers ^ leverPush) && popcount(phalanx) >= popcount(leverPush)))
+        // which could become passed after one or two pawn pushes when they
+        // are not attacked more times than defended.
+        if ( !(stoppers ^ lever) ||
+            (!(stoppers ^ leverPush) && popcount(phalanx) >= popcount(leverPush)))
             e->passedPawns[Us] |= s;
 
         else if (stoppers == square_bb(s + Up) && r >= RANK_5)
@@ -133,8 +129,9 @@ namespace {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
-            score += Score2(v, v * (r - 2) / 4);
+            score += Score(v, v * (r - 2) / 4);
         }
+
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
 
@@ -144,6 +141,12 @@ namespace {
         if (doubled && !support)
             score -= Doubled;
     }
+
+    // Unsupported friendly pawns attacked twice by the enemy
+    score -= Attacked2Unsupported * popcount(  ourPawns
+                                             & pawn_double_attacks_bb<Them>(theirPawns)
+                                             & ~pawn_attacks_bb<Us>(ourPawns)
+                                             & ~e->passedPawns[Us]);
 
     return score;
   }
@@ -177,15 +180,15 @@ Entry* probe(const Position& pos) {
 /// penalty for a king, looking at the king file and the two closest files.
 
 template<Color Us>
-void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
+void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
 
-  constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
+  constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Score2 bonus(5, 5);
+  Score bonus(5, 5);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -200,8 +203,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
       bonus.add_mg(ShelterStrength[d][ourRank]);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus.add_mg(-82 * (theirRank == RANK_3)),
-          bonus.add_eg(-82 * (theirRank == RANK_3));
+          bonus += Score(-82 * (theirRank == RANK_3),-82 * (theirRank == RANK_3));
       else
           bonus.add_mg(-UnblockedStorm[d][theirRank]);
   }
@@ -215,7 +217,7 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score2& shelter) {
 /// when king square changes, which is about 20% of total king_safety() calls.
 
 template<Color Us>
-Score2 Entry::do_king_safety(const Position& pos) {
+Score Entry::do_king_safety(const Position& pos) {
 
   Square ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
@@ -230,7 +232,7 @@ Score2 Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
-  Score2 shelter(-VALUE_INFINITE, VALUE_ZERO);
+  Score shelter(-VALUE_INFINITE, VALUE_ZERO);
   evaluate_shelter<Us>(pos, ksq, shelter);
 
   // If we can castle use the bonus after the castling if it is bigger
@@ -245,7 +247,7 @@ Score2 Entry::do_king_safety(const Position& pos) {
 }
 
 // Explicit template instantiation
-template Score2 Entry::do_king_safety<WHITE>(const Position& pos);
-template Score2 Entry::do_king_safety<BLACK>(const Position& pos);
+template Score Entry::do_king_safety<WHITE>(const Position& pos);
+template Score Entry::do_king_safety<BLACK>(const Position& pos);
 
 } // namespace Pawns

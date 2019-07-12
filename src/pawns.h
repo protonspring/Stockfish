@@ -33,32 +33,31 @@ namespace Pawns {
 
 struct Entry {
 
-  Score2 pawn_score(Color c) const { return scores[c]; }
+  Score pawn_score(Color c) const { return scores[c]; }
   Bitboard pawn_attacks(Color c) const { return pawnAttacks[c]; }
   Bitboard passed_pawns(Color c) const { return passedPawns[c]; }
   Bitboard pawn_attacks_span(Color c) const { return pawnAttacksSpan[c]; }
   int passed_count() const { return popcount(passedPawns[WHITE] | passedPawns[BLACK]); }
 
   template<Color Us>
-  Score2 king_safety(const Position& pos) {
+  Score king_safety(const Position& pos) {
     return  kingSquares[Us] == pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us)
           ? kingSafety[Us] : (kingSafety[Us] = do_king_safety<Us>(pos));
   }
 
   template<Color Us>
-  Score2 do_king_safety(const Position& pos);
+  Score do_king_safety(const Position& pos);
 
   template<Color Us>
-  void evaluate_shelter(const Position& pos, Square ksq, Score2& shelter);
+  void evaluate_shelter(const Position& pos, Square ksq, Score& shelter);
 
   Key key;
-  Score2 scores[COLOR_NB];
+  Score scores[COLOR_NB];
   Bitboard passedPawns[COLOR_NB];
   Bitboard pawnAttacks[COLOR_NB];
   Bitboard pawnAttacksSpan[COLOR_NB];
   Square kingSquares[COLOR_NB];
-  Score2 kingSafety[COLOR_NB];
-  int weakUnopposed[COLOR_NB];
+  Score kingSafety[COLOR_NB];
   int castlingRights[COLOR_NB];
 };
 

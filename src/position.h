@@ -108,6 +108,7 @@ public:
   Bitboard checkers() const;
   Bitboard blockers_for_king(Color c) const;
   Bitboard check_squares(PieceType pt) const;
+  bool is_discovery_check_on_king(Color c, Move m) const;
 
   // Attacks to/from a given square
   Bitboard attackers_to(Square s) const;
@@ -157,7 +158,7 @@ public:
   bool has_game_cycle(int ply) const;
   bool has_repeated() const;
   int rule50_count() const;
-  Score2 psq_score() const;
+  Score psq_score() const;
   Value non_pawn_material(Color c) const;
   Value non_pawn_material() const;
 
@@ -190,14 +191,14 @@ private:
   Bitboard castlingPath[CASTLING_RIGHT_NB];
   int gamePly;
   Color sideToMove;
-  Score2 psq;
+  Score psq;
   Thread* thisThread;
   StateInfo* st;
   bool chess960;
 };
 
 namespace PSQT {
-  extern Score2 psq[PIECE_NB][SQUARE_NB];
+  extern Score psq[PIECE_NB][SQUARE_NB];
 }
 
 extern std::ostream& operator<<(std::ostream& os, const Position& pos);
@@ -316,6 +317,10 @@ inline Bitboard Position::check_squares(PieceType pt) const {
   return st->checkSquares[pt];
 }
 
+inline bool Position::is_discovery_check_on_king(Color c, Move m) const {
+  return st->blockersForKing[c] & from_sq(m);
+}
+
 inline bool Position::pawn_passed(Color c, Square s) const {
   return !(pieces(~c, PAWN) & passed_pawn_span(c, s));
 }
@@ -341,7 +346,7 @@ inline Key Position::material_key() const {
   return st->materialKey;
 }
 
-inline Score2 Position::psq_score() const {
+inline Score Position::psq_score() const {
   return psq;
 }
 

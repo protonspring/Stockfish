@@ -304,27 +304,27 @@ constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
 inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
-struct Score2 {
+struct Score {
   Value mg_value;
   Value eg_value;
 
-  Score2(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
-  Score2(int mg, int eg): mg_value(Value(mg)), eg_value(Value(eg)) {}
+  Score(): mg_value(VALUE_ZERO), eg_value(VALUE_ZERO) {}
+  Score(int mg, int eg): mg_value(Value(mg)), eg_value(Value(eg)) {}
   inline void add_mg(const int v) { mg_value += Value(v); }
   inline void add_eg(const int v) { eg_value += Value(v); }
 
-  inline Score2 operator+(const Score2& s) const { return Score2(mg_value + s.mg_value, eg_value + s.eg_value);}
-  inline Score2 operator-(const Score2& s) const { return Score2(mg_value - s.mg_value, eg_value - s.eg_value);}
-  inline Score2 operator*(const int i) const { return Score2(mg_value * i, eg_value*i); }
-  inline Score2 operator/(const int i) const { return Score2(mg_value / i, eg_value / i); }
+  inline Score operator+(const Score& s) const { return Score(mg_value + s.mg_value, eg_value + s.eg_value);}
+  inline Score operator-(const Score& s) const { return Score(mg_value - s.mg_value, eg_value - s.eg_value);}
+  inline Score operator*(const int i) const { return Score(mg_value * i, eg_value*i); }
+  inline Score operator/(const int i) const { return Score(mg_value / i, eg_value / i); }
 
-  inline void operator+=(const Score2& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
-  inline void operator-=(const Score2& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }
+  inline void operator+=(const Score& rhs) {mg_value += rhs.mg_value; eg_value += rhs.eg_value; }
+  inline void operator-=(const Score& rhs) {mg_value -= rhs.mg_value; eg_value -= rhs.eg_value; }
   inline void operator/=(const int i) { mg_value /= i; eg_value /= i; }
   //inline void operator*=(const int i) { mg_value *= i; eg_value *= i; }
 };
 
-const Score2 SCORE_ZERO2(VALUE_ZERO, VALUE_ZERO);
+const Score SCORE_ZERO(VALUE_ZERO, VALUE_ZERO);
 
 constexpr Color operator~(Color c) {
   return Color(c ^ BLACK); // Toggle color

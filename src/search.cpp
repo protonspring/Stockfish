@@ -360,7 +360,7 @@ void Thread::search() {
           : ct;
 
   // Evaluation score is from the white point of view
-  contempt = Score2(ct, ct / 2) * (us == WHITE ? 1 : -1);
+  contempt = Score(ct, ct / 2) * (us == WHITE ? 1 : -1);
 
   // Iterative deepening loop until requested to stop or the target depth is reached
   while (   (rootDepth += ONE_PLY) < DEPTH_MAX
@@ -404,8 +404,8 @@ void Thread::search() {
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + 88 * previousScore / (abs(previousScore) + 200);
 
-              contempt = (us == WHITE ?  Score2(Value(dct), Value(dct / 2))
-                                      :  Score2(Value(dct), Value(dct / 2)) * -1);
+              contempt = (us == WHITE ?  Score(Value(dct), Value(dct / 2))
+                                      :  Score(Value(dct), Value(dct / 2)) * -1);
           }
 
           // Start with a small aspiration window and, in the case of a fail
@@ -577,7 +577,7 @@ namespace {
     Move ttMove, move, excludedMove, bestMove;
     Depth extension, newDepth;
     Value bestValue, value, ttValue, eval, maxValue;
-    bool ttHit, ttPv, inCheck, givesCheck, improving;
+    bool ttHit, ttPv, inCheck, givesCheck, improving, doLMR;
     bool captureOrPromotion, doFullDepthSearch, moveCountPruning, ttCapture;
     Piece movedPiece;
     int moveCount, captureCount, quietCount, singularLMR;
@@ -738,7 +738,7 @@ namespace {
     }
     else if (ttHit)
     {
-        // Never assume anything on values stored in TT
+        // Never assume anything about values stored in TT
         ss->staticEval = eval = tte->eval();
         if (eval == VALUE_NONE)
             ss->staticEval = eval = evaluate(pos);
@@ -977,7 +977,7 @@ moves_loop: // When in check, search starts from here
 
       // Check extension (~2 Elo)
       else if (    givesCheck
-               && (pos.blockers_for_king(~us) & from_sq(move) || pos.see_ge(move)))
+               && (pos.is_discovery_check_on_king(~us, move) || pos.see_ge(move)))
           extension = ONE_PLY;
 
       // Castling extension
@@ -1012,7 +1012,7 @@ moves_loop: // When in check, search starts from here
               && !givesCheck
               && (!pos.advanced_pawn_push(move) || pos.non_pawn_material(~us) > BishopValueMg))
           {
-              // Move count based pruning (~30 Elo)
+              // Move count based pruning
               if (moveCountPruning)
                   continue;
 
@@ -1036,8 +1036,8 @@ moves_loop: // When in check, search starts from here
               if (!pos.see_ge(move, Value(-29 * lmrDepth * lmrDepth)))
                   continue;
           }
-          else if ((!givesCheck || !extension)
-                  && !pos.see_ge(move, -PawnValueEg * (depth / ONE_PLY))) // (~20 Elo)
+          else if (  (!givesCheck || !extension)
+                   && !pos.see_ge(move, -PawnValueEg * (depth / ONE_PLY))) // (~20 Elo)
                   continue;
       }
 
@@ -1069,7 +1069,7 @@ moves_loop: // When in check, search starts from here
           Depth r = reduction(improving, depth, moveCount);
 
           // Reduction if other threads are searching this position.
-	  if (th.marked())
+          if (th.marked())
               r += ONE_PLY;
 
           // Decrease reduction if position is or has been on the PV
@@ -1114,21 +1114,32 @@ moves_loop: // When in check, search starts from here
                   r += ONE_PLY;
 
               // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
-              r -= ss->statScore / 20000 * ONE_PLY;
+              r -= ss->statScore / 16384 * ONE_PLY;
           }
 
           Depth d = clamp(newDepth - r, ONE_PLY, newDepth);
 
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
 
-          doFullDepthSearch = (value > alpha && d != newDepth);
+          doFullDepthSearch = (value > alpha && d != newDepth), doLMR = true;
       }
       else
-          doFullDepthSearch = !PvNode || moveCount > 1;
+          doFullDepthSearch = !PvNode || moveCount > 1, doLMR = false;
 
       // Step 17. Full depth search when LMR is skipped or fails high
       if (doFullDepthSearch)
+      {
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, newDepth, !cutNode);
+
+          if (doLMR && !captureOrPromotion)
+          {
+              int bonus = stat_bonus(newDepth) / 2;
+              if (value <= alpha)
+                  bonus = -bonus;
+
+              update_continuation_histories(ss, movedPiece, to_sq(move), bonus);
+          }
+      }
 
       // For PV nodes only, do a full PV search on the first move or after a fail
       // high (in the latter case search only if value < beta), otherwise let the
@@ -1340,7 +1351,7 @@ moves_loop: // When in check, search starts from here
     {
         if (ttHit)
         {
-            // Never assume anything on values stored in TT
+            // Never assume anything about values stored in TT
             if ((ss->staticEval = bestValue = tte->eval()) == VALUE_NONE)
                 ss->staticEval = bestValue = evaluate(pos);
 
