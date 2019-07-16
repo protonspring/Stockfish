@@ -169,27 +169,24 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-typedef int16_t Value;
-constexpr Value VALUE_ZERO      = 0;
-constexpr Value VALUE_DRAW      = 0;
+typedef int Value;
+
+constexpr Value VALUE_ZERO      =     0;
+constexpr Value VALUE_DRAW      =     0;
 constexpr Value VALUE_KNOWN_WIN = 10000;
 constexpr Value VALUE_MATE      = 32000;
 constexpr Value VALUE_INFINITE  = 32001;
 constexpr Value VALUE_NONE      = 32002;
+
 constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
 constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
-constexpr Value PawnValueMg   = 128;
-constexpr Value PawnValueEg   = 213;
-constexpr Value KnightValueMg = 782;
-constexpr Value KnightValueEg = 865;
-constexpr Value BishopValueMg = 830;
-constexpr Value BishopValueEg = 918;
-constexpr Value RookValueMg   = 1289;
-constexpr Value RookValueEg   = 1378;
-constexpr Value QueenValueMg  = 2529;
-constexpr Value QueenValueEg  = 2687;
-constexpr Value MidgameLimit  = 15258;
-constexpr Value EndgameLimit  = 3915;
+
+constexpr Value PawnValueMg   =     128; constexpr Value PawnValueEg   =  213;
+constexpr Value KnightValueMg =     782; constexpr Value KnightValueEg =  865;
+constexpr Value BishopValueMg =     830; constexpr Value BishopValueEg =  918;
+constexpr Value RookValueMg   =    1289; constexpr Value RookValueEg   = 1378;
+constexpr Value QueenValueMg  =    2529; constexpr Value QueenValueEg  = 2687;
+constexpr Value MidgameLimit  =   15258; constexpr Value EndgameLimit  = 3915;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
