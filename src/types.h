@@ -169,25 +169,27 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-enum Value : int {
-  VALUE_ZERO      = 0,
-  VALUE_DRAW      = 0,
-  VALUE_KNOWN_WIN = 10000,
-  VALUE_MATE      = 32000,
-  VALUE_INFINITE  = 32001,
-  VALUE_NONE      = 32002,
-
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
-
-  PawnValueMg   = 128,   PawnValueEg   = 213,
-  KnightValueMg = 782,   KnightValueEg = 865,
-  BishopValueMg = 830,   BishopValueEg = 918,
-  RookValueMg   = 1289,  RookValueEg   = 1378,
-  QueenValueMg  = 2529,  QueenValueEg  = 2687,
-
-  MidgameLimit  = 15258, EndgameLimit  = 3915
-};
+typedef int16_t Value;
+constexpr Value VALUE_ZERO      = 0;
+constexpr Value VALUE_DRAW      = 0;
+constexpr Value VALUE_KNOWN_WIN = 10000;
+constexpr Value VALUE_MATE      = 32000;
+constexpr Value VALUE_INFINITE  = 32001;
+constexpr Value VALUE_NONE      = 32002;
+constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
+constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
+constexpr Value PawnValueMg   = 128;
+constexpr Value PawnValueEg   = 213;
+constexpr Value KnightValueMg = 782;
+constexpr Value KnightValueEg = 865;
+constexpr Value BishopValueMg = 830;
+constexpr Value BishopValueEg = 918;
+constexpr Value RookValueMg   = 1289;
+constexpr Value RookValueEg   = 1378;
+constexpr Value QueenValueMg  = 2529;
+constexpr Value QueenValueEg  = 2687;
+constexpr Value MidgameLimit  = 15258;
+constexpr Value EndgameLimit  = 3915;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -298,7 +300,6 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
@@ -314,12 +315,6 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
-
-/// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-inline Value& operator+=(Value& v, int i) { return v = v + i; }
-inline Value& operator-=(Value& v, int i) { return v = v - i; }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
