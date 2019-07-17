@@ -333,7 +333,7 @@ inline bool Position::advanced_pawn_push(Move m) const {
 inline int Position::pawns_on_same_color_squares(Color c, Square s) const {
   //Bitboard b = pieces(c, PAWN) & ((DarkSquares & s) ? DarkSquares : ~DarkSquares);
   //return more_than_one(b) ? 4 : b ? 2 : 0;
-  return std::max(4, popcount(pieces(c, PAWN) & ((DarkSquares & s) ? DarkSquares : ~DarkSquares)));;
+  return std::min(4, popcount(pieces(c, PAWN) & ((DarkSquares & s) ? DarkSquares : ~DarkSquares)));;
 }
 
 inline Key Position::key() const {
