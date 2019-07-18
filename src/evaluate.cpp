@@ -602,7 +602,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     auto king_proximity = [&](Color c, Square s) {
-      return distance(pos.square<KING>(c), s) / 2;
+      return distance(pos.square<KING>(c), s);
     };
 
     Bitboard b, bb, squaresToQueen, unsafeSquares;
@@ -626,7 +626,7 @@ namespace {
             Square blockSq = s + Up;
 
             // Adjust bonus based on the king's proximity
-            bonus += make_score(0, (  king_proximity(Them, blockSq) * 5
+            bonus += make_score(0, (  king_proximity(Them, blockSq) * 4
                                     - king_proximity(Us,   blockSq) * 2) * w);
 
             // If blockSq is not the queening square then consider also a second push
