@@ -162,7 +162,7 @@ namespace {
         // apply to the 64 or 32 bits word to get the index.
         Magic& m = magics[s];
         m.mask  = sliding_attack(directions, s, 0) & ~edges;
-        m.shift = (Is64Bit ? 64 : 32) - popcount(m.mask);
+        m.shift = (Is64Bit ? 64 : 32) - bit_count<ALL>(m.mask);
 
         // Set the offset for the attacks table of the square. We have individual
         // table sizes for each square with "Fancy Magic Bitboards".
@@ -191,7 +191,7 @@ namespace {
         // until we find the one that passes the verification test.
         for (int i = 0; i < size; )
         {
-            for (m.magic = 0; popcount((m.magic * m.mask) >> 56) < 6; )
+            for (m.magic = 0; bit_count<ALL>((m.magic * m.mask) >> 56) < 6; )
                 m.magic = rng.sparse_rand<Bitboard>();
 
             // A good magic must map every possible occupancy to an index that

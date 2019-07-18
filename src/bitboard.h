@@ -119,14 +119,6 @@ inline Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb(s); }
 inline Bitboard& operator|=(Bitboard& b, Square s) { return b |= square_bb(s); }
 inline Bitboard& operator^=(Bitboard& b, Square s) { return b ^= square_bb(s); }
 
-constexpr bool more_than_one(Bitboard b) {
-  return b & (b - 1);
-}
-
-constexpr int first_few(Bitboard b) {
-  return b ? (more_than_one(b) ? 2 : 1 ) : 0;
-}
-
 inline bool opposite_colors(Square s1, Square s2) {
   return bool(DarkSquares & s1) != bool(DarkSquares & s2);
 }
@@ -281,9 +273,15 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
 }
 
 
-/// popcount() counts the number of non-zero bits in a bitboard
 
-inline int popcount(Bitboard b) {
+/// bit_count() counts the number of non-zero bits in a bitboard (in different ways)
+enum PopType {MTO, ALL}; //any bits are set, more_than_one bit is set, popcount
+
+template<PopType PT>
+inline int bit_count(Bitboard b) {
+
+if (PT == MTO) return bool(b & (b - 1)); //more than one bit is set
+else if (PT == ALL) {
 
 #ifndef USE_POPCNT
 
@@ -297,7 +295,7 @@ inline int popcount(Bitboard b) {
 #else // Assumed gcc or compatible compiler
 
   return __builtin_popcountll(b);
-
+}
 #endif
 }
 

@@ -338,7 +338,7 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
   while (b)
       *moveList++ = make_move(ksq, pop_lsb(&b));
 
-  if (more_than_one(pos.checkers()))
+  if (bit_count<MTO>(pos.checkers()))
       return moveList; // Double check, only a king move can save the day
 
   // Generate blocking evasions or captures of the checking piece

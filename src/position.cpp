@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream& os, const Position& pos) {
   for (Bitboard b = pos.checkers(); b; )
       os << UCI::square(pop_lsb(&b)) << " ";
 
-  if (    int(Tablebases::MaxCardinality) >= popcount(pos.pieces())
+  if (    int(Tablebases::MaxCardinality) >= bit_count<ALL>(pos.pieces())
       && !pos.can_castle(ANY_CASTLING))
   {
       StateInfo st;
@@ -498,7 +498,7 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
     Square sniperSq = pop_lsb(&snipers);
     Bitboard b = between_bb(s, sniperSq) & occupancy;
 
-    if (b && !more_than_one(b))
+    if (b && !bit_count<MTO>(b))
     {
         blockers |= b;
         if (b & pieces(color_of(piece_on(s))))
@@ -641,7 +641,7 @@ bool Position::pseudo_legal(const Move m) const {
       if (type_of(pc) != KING)
       {
           // Double check? In this case a king move is required
-          if (more_than_one(checkers()))
+          if (bit_count<MTO>(checkers()))
               return false;
 
           // Our move must be a blocking evasion or a capture of the checking piece
@@ -1274,8 +1274,8 @@ bool Position::pos_is_ok() const {
 
   if (   (pieces(WHITE) & pieces(BLACK))
       || (pieces(WHITE) | pieces(BLACK)) != pieces()
-      || popcount(pieces(WHITE)) > 16
-      || popcount(pieces(BLACK)) > 16)
+      || bit_count<ALL>(pieces(WHITE)) > 16
+      || bit_count<ALL>(pieces(BLACK)) > 16)
       assert(0 && "pos_is_ok: Bitboards");
 
   for (PieceType p1 = PAWN; p1 <= KING; ++p1)
@@ -1290,7 +1290,7 @@ bool Position::pos_is_ok() const {
 
   for (Piece pc : Pieces)
   {
-      if (   pieceCount[pc] != popcount(pieces(color_of(pc), type_of(pc)))
+      if (   pieceCount[pc] != bit_count<ALL>(pieces(color_of(pc), type_of(pc)))
           || pieceCount[pc] != std::count(board, board + SQUARE_NB, pc))
           assert(0 && "pos_is_ok: Pieces");
 

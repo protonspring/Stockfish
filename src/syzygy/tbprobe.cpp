@@ -369,7 +369,7 @@ TBTable<WDL>::TBTable(const std::string& code) : TBTable() {
     hasUniquePieces = false;
     for (Color c = WHITE; c <= BLACK; ++c)
         for (PieceType pt = PAWN; pt < KING; ++pt)
-            if (popcount(pos.pieces(c, pt)) == 1)
+            if (bit_count<ALL>(pos.pieces(c, pt)) == 1)
                 hasUniquePieces = true;
 
     // Set the leading color. In case both sides have pawns the leading color
@@ -1139,8 +1139,8 @@ void* mapped(TBTable<Type>& e, const Position& pos) {
     // Pieces strings in decreasing order for each color, like ("KPP","KR")
     std::string fname, w, b;
     for (PieceType pt = KING; pt >= PAWN; --pt) {
-        w += std::string(popcount(pos.pieces(WHITE, pt)), PieceToChar[pt]);
-        b += std::string(popcount(pos.pieces(BLACK, pt)), PieceToChar[pt]);
+        w += std::string(bit_count<ALL>(pos.pieces(WHITE, pt)), PieceToChar[pt]);
+        b += std::string(bit_count<ALL>(pos.pieces(BLACK, pt)), PieceToChar[pt]);
     }
 
     fname =  (e.key == pos.material_key() ? w + 'v' + b : b + 'v' + w)
