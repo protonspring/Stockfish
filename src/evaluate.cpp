@@ -602,7 +602,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     auto king_proximity = [&](Color c, Square s) {
-      return std::min(distance(pos.square<KING>(c), s), 5);
+      return distance(pos.square<KING>(c), s) / 2;
     };
 
     Bitboard b, bb, squaresToQueen, unsafeSquares;
