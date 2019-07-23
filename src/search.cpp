@@ -1068,6 +1068,13 @@ moves_loop: // When in check, search starts from here
 
       // Step 16. Reduced depth search (LMR). If the move fails high it will be
       // re-searched at full depth.
+      size_t idx = pos.this_thread()->pvIdx;
+      //std::cout << "<idx: " << idx << std::endl;
+      //std::cout << "<threads: " << Options["Threads"] << std::endl;
+      //if ((Options["Threads"] >= 4) && (idx != 0))
+      if (idx != 3)
+      {
+
       if (    depth >= 3 * ONE_PLY
           &&  moveCount > 1 + 3 * rootNode
           && (  !captureOrPromotion
@@ -1133,6 +1140,8 @@ moves_loop: // When in check, search starts from here
       }
       else
           doFullDepthSearch = !PvNode || moveCount > 1, doLMR = false;
+
+      }
 
       // Step 17. Full depth search when LMR is skipped or fails high
       if (doFullDepthSearch)
