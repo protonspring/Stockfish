@@ -1074,62 +1074,66 @@ moves_loop: // When in check, search starts from here
               || moveCountPruning
               || ss->staticEval + PieceValue[EG][pos.captured_piece()] <= alpha))
       {
-          Depth r = reduction(improving, depth, moveCount);
-
-          // Reduction if other threads are searching this position.
-          if (th.marked())
-              r += ONE_PLY;
-
-          // Decrease reduction if position is or has been on the PV
-          if (ttPv)
-              r -= 2 * ONE_PLY;
-
-          // Decrease reduction if opponent's move count is high (~10 Elo)
-          if ((ss-1)->moveCount > 15)
-              r -= ONE_PLY;
-
-          // Decrease reduction if move has been singularly extended
-          r -= singularLMR * ONE_PLY;
-
-          if (!captureOrPromotion)
+          size_t idx = pos.this_thread()->pvIdx;
+          if ((Options["Threads"] >= 4) && (idx == 3))
           {
-              // Increase reduction if ttMove is a capture (~0 Elo)
-              if (ttCapture)
+              Depth r = reduction(improving, depth, moveCount);
+
+              // Reduction if other threads are searching this position.
+              if (th.marked())
                   r += ONE_PLY;
 
-              // Increase reduction for cut nodes (~5 Elo)
-              if (cutNode)
-                  r += 2 * ONE_PLY;
-
-              // Decrease reduction for moves that escape a capture. Filter out
-              // castling moves, because they are coded as "king captures rook" and
-              // hence break make_move(). (~5 Elo)
-              else if (    type_of(move) == NORMAL
-                       && !pos.see_ge(make_move(to_sq(move), from_sq(move))))
+              // Decrease reduction if position is or has been on the PV
+              if (ttPv)
                   r -= 2 * ONE_PLY;
 
-              ss->statScore =  thisThread->mainHistory[us][from_to(move)]
-                             + (*contHist[0])[movedPiece][to_sq(move)]
-                             + (*contHist[1])[movedPiece][to_sq(move)]
-                             + (*contHist[3])[movedPiece][to_sq(move)]
-                             - 4000;
-
-              // Decrease/increase reduction by comparing opponent's stat score (~10 Elo)
-              if (ss->statScore >= 0 && (ss-1)->statScore < 0)
+              // Decrease reduction if opponent's move count is high (~10 Elo)
+              if ((ss-1)->moveCount > 15)
                   r -= ONE_PLY;
 
-              else if ((ss-1)->statScore >= 0 && ss->statScore < 0)
-                  r += ONE_PLY;
+              // Decrease reduction if move has been singularly extended
+              r -= singularLMR * ONE_PLY;
 
-              // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
-              r -= ss->statScore / 16384 * ONE_PLY;
+              if (!captureOrPromotion)
+              {
+                  // Increase reduction if ttMove is a capture (~0 Elo)
+                  if (ttCapture)
+                      r += ONE_PLY;
+
+                  // Increase reduction for cut nodes (~5 Elo)
+                  if (cutNode)
+                      r += 2 * ONE_PLY;
+
+                  // Decrease reduction for moves that escape a capture. Filter out
+                  // castling moves, because they are coded as "king captures rook" and
+                  // hence break make_move(). (~5 Elo)
+                  else if (    type_of(move) == NORMAL
+                           && !pos.see_ge(make_move(to_sq(move), from_sq(move))))
+                      r -= 2 * ONE_PLY;
+
+                  ss->statScore =  thisThread->mainHistory[us][from_to(move)]
+                                 + (*contHist[0])[movedPiece][to_sq(move)]
+                                 + (*contHist[1])[movedPiece][to_sq(move)]
+                                 + (*contHist[3])[movedPiece][to_sq(move)]
+                                 - 4000;
+
+                  // Decrease/increase reduction by comparing opponent's stat score (~10 Elo)
+                  if (ss->statScore >= 0 && (ss-1)->statScore < 0)
+                      r -= ONE_PLY;
+
+                  else if ((ss-1)->statScore >= 0 && ss->statScore < 0)
+                      r += ONE_PLY;
+
+                  // Decrease/increase reduction for moves with a good/bad history (~30 Elo)
+                  r -= ss->statScore / 16384 * ONE_PLY;
+              }
+
+              Depth d = clamp(newDepth - r, ONE_PLY, newDepth);
+
+              value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
+
+              doFullDepthSearch = (value > alpha && d != newDepth), doLMR = true;
           }
-
-          Depth d = clamp(newDepth - r, ONE_PLY, newDepth);
-
-          value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
-
-          doFullDepthSearch = (value > alpha && d != newDepth), doLMR = true;
       }
       else
           doFullDepthSearch = !PvNode || moveCount > 1, doLMR = false;
