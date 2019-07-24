@@ -104,15 +104,15 @@ namespace {
             }
         }
 
-        while (b1)
+        for(Bitboard bb = b1; bb;)
         {
-            Square to = pop_lsb(&b1);
+            Square to = pop_lsb(&bb);
             *moveList++ = make_move(to - Up, to);
         }
 
-        while (b2)
+        for(Bitboard bb = b2; bb;)
         {
-            Square to = pop_lsb(&b2);
+            Square to = pop_lsb(&bb);
             *moveList++ = make_move(to - Up - Up, to);
         }
     }
@@ -126,35 +126,28 @@ namespace {
         if (Type == EVASIONS)
             emptySquares &= target;
 
-        Bitboard b1 = shift<UpRight>(pawnsOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies;
-        Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares;
-
         Square ksq = pos.square<KING>(Them);
 
-        while (b1)
+        for(Bitboard b1 = shift<UpRight>(pawnsOn7) & enemies; b1;)
             moveList = make_promotions<Type, UpRight>(moveList, pop_lsb(&b1), ksq);
 
-        while (b2)
+        for(Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies; b2;)
             moveList = make_promotions<Type, UpLeft >(moveList, pop_lsb(&b2), ksq);
 
-        while (b3)
+        for(Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares; b3;)
             moveList = make_promotions<Type, Up     >(moveList, pop_lsb(&b3), ksq);
     }
 
     // Standard and en-passant captures
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
     {
-        Bitboard b1 = shift<UpRight>(pawnsNotOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsNotOn7) & enemies;
-
-        while (b1)
+        for(Bitboard b1 = shift<UpRight>(pawnsNotOn7) & enemies; b1;)
         {
             Square to = pop_lsb(&b1);
             *moveList++ = make_move(to - UpRight, to);
         }
 
-        while (b2)
+        for(Bitboard b2 = shift<UpLeft >(pawnsNotOn7) & enemies; b2;)
         {
             Square to = pop_lsb(&b2);
             *moveList++ = make_move(to - UpLeft, to);
@@ -170,12 +163,8 @@ namespace {
             if (Type == EVASIONS && !(target & (pos.ep_square() - Up)))
                 return moveList;
 
-            b1 = pawnsNotOn7 & pos.attacks_from<PAWN>(pos.ep_square(), Them);
-
-            assert(b1);
-
-            while (b1)
-                *moveList++ = make<ENPASSANT>(pop_lsb(&b1), pos.ep_square());
+            for(Bitboard bb = pawnsNotOn7 & pos.attacks_from<PAWN>(pos.ep_square(), Them); bb;)
+                *moveList++ = make<ENPASSANT>(pop_lsb(&bb), pos.ep_square());
         }
     }
 
