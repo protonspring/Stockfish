@@ -81,7 +81,8 @@ namespace {
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
     e->passedPawns[Us] = e->pawnAttacksSpan[Us] = 0;
-    e->kingSquares[Us] = SQ_NONE;
+    e->kingSquares &= ~pos.pieces(Us, KING);
+
     e->pawnAttacks[Us] = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
@@ -222,7 +223,7 @@ template<Color Us>
 Score Entry::do_king_safety(const Position& pos) {
 
   Square ksq = pos.square<KING>(Us);
-  kingSquares[Us] = ksq;
+  kingSquares |= ksq;
   castlingRights[Us] = pos.castling_rights(Us);
 
   Bitboard pawns = pos.pieces(Us, PAWN);

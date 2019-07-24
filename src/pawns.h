@@ -41,7 +41,7 @@ struct Entry {
 
   template<Color Us>
   Score king_safety(const Position& pos) {
-    return  kingSquares[Us] == pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us)
+    return  kingSquares & pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us)
           ? kingSafety[Us] : (kingSafety[Us] = do_king_safety<Us>(pos));
   }
 
@@ -56,7 +56,7 @@ struct Entry {
   Bitboard passedPawns[COLOR_NB];
   Bitboard pawnAttacks[COLOR_NB];
   Bitboard pawnAttacksSpan[COLOR_NB];
-  Square kingSquares[COLOR_NB];
+  Bitboard kingSquares;
   Score kingSafety[COLOR_NB];
   int castlingRights[COLOR_NB];
 };
