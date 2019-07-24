@@ -132,7 +132,7 @@ namespace {
                    + 17 * popcount(support);
 
             if (shift<-Up>(theirPawns) & s) //blocked
-                v /= 2;
+                v = 3 * v / 4;
 
             score += make_score(v, v * (r - 2) / 4);
         }
