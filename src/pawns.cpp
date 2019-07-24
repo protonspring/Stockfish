@@ -131,6 +131,9 @@ namespace {
             int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
                    + 17 * popcount(support);
 
+            if (shift<-Up>(theirPawns) & s) //blocked
+                v /= 2;
+
             score += make_score(v, v * (r - 2) / 4);
         }
 
