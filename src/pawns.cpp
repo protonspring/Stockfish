@@ -136,13 +136,13 @@ namespace {
         }
 
         else if (!neighbours)
-            score -= Isolated + WeakUnopposed * int(!opposed);
+            score -= Isolated + WeakUnopposed * int(!opposed) / r;
 
         else if (backward)
-            score -= Backward + WeakUnopposed * int(!opposed);
+            score -= Backward + WeakUnopposed * int(!opposed) / r;
 
         if (doubled && !support)
-            score -= Doubled;
+            score -= Doubled / r;
     }
 
     // Penalize the unsupported and non passed pawns attacked twice by the enemy
