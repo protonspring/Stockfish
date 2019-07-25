@@ -107,7 +107,7 @@ namespace {
   };
 
   // Rook bonus if there is no friendly pawn on the rook's file.
-  constexpr Score RookOnFile = S( 9, 4);
+  constexpr Score RookOnFile = S( 9, 3);
 
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
   // which piece type attacks which one. Attacks on lesser pieces which are
