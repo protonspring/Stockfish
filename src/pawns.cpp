@@ -148,7 +148,7 @@ namespace {
     // Penalize the unsupported and non passed pawns attacked twice by the enemy
     b =   ourPawns
         & doubleAttackThem
-        & ~(e->pawnAttacks[Us]);
+        & ~(e->pawnAttacks[Us] | (e->passedPawns & pos.pieces(Us)));
     score -= WeakLever * popcount(b);
 
     return score;
