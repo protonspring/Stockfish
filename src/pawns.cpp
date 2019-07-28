@@ -67,7 +67,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard b, neighbours, stoppers, doubled, support, phalanx;
+    Bitboard neighbours, stoppers, doubled, support, phalanx;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward, passed;
@@ -142,11 +142,10 @@ namespace {
             score -= Doubled;
     }
 
-    // Penalize the unsupported and non passed pawns attacked twice by the enemy
-    b =   ourPawns
-        & doubleAttackThem
-        & ~(e->pawnAttacks[Us] | e->passedPawns[Us]);
-    score -= WeakLever * popcount(b);
+    // Penalize our unsupported pawns attacked twice by enemy pawns
+    score -= WeakLever * popcount(  ourPawns
+                                  & doubleAttackThem
+                                  & ~e->pawnAttacks[Us]);
 
     return score;
   }
