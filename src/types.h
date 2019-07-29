@@ -260,9 +260,9 @@ enum Rank : int {
 /// avoid left-shifting a signed int to avoid undefined behavior.
 typedef int32_t Score;
 constexpr Score SCORE_ZERO = 0;
-constexpr Score make_score(int mg, int eg) { return Score(eg * 65536 + mg); }
-constexpr Value eg_value(         Score s) { return Value(unsigned(s + 0x8000) / 65536); }
-inline Value mg_value(            Score s) { return Value(s & 0xFFFF); }
+constexpr Score make_score(int mg, int eg) { return Score(unsigned(eg * 65536) + mg); }
+constexpr Value eg_value(         Score s) { return Value(int16_t(unsigned(s + 0x8000) / 65536)); }
+inline Value mg_value(            Score s) { return Value(int16_t(s & 0xFFFF)); }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
 constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
