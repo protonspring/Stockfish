@@ -170,43 +170,23 @@ enum Bound {
 };
 
 typedef int16_t Value16;
-  constexpr Value16 VALUE_ZERO16      = 0;
-  constexpr Value16 VALUE_DRAW16      = 0;
-  constexpr Value16 VALUE_KNOWN_WIN16 = 10000;
-  constexpr Value16 VALUE_MATE16      = 32000;
-  constexpr Value16 VALUE_INFINITE16  = 32001;
-  constexpr Value16 VALUE_NONE16      = 32002;
+constexpr Value16 VALUE_ZERO16      = 0;
+constexpr Value16 VALUE_DRAW16      = 0;
+constexpr Value16 VALUE_KNOWN_WIN16 = 10000;
+constexpr Value16 VALUE_MATE16      = 32000;
+constexpr Value16 VALUE_INFINITE16  = 32001;
+constexpr Value16 VALUE_NONE16      = 32002;
 
-  constexpr Value16 VALUE_MATE_IN_MAX_PLY16  =  VALUE_MATE16 - 2 * MAX_PLY;
-  constexpr Value16 VALUE_MATED_IN_MAX_PLY16 = -VALUE_MATE16 + 2 * MAX_PLY;
+constexpr Value16 VALUE_MATE_IN_MAX_PLY16  =  VALUE_MATE16 - 2 * MAX_PLY;
+constexpr Value16 VALUE_MATED_IN_MAX_PLY16 = -VALUE_MATE16 + 2 * MAX_PLY;
 
-  constexpr Value16 PawnValueMg16   = 128;  constexpr Value16 PawnValueEg16   = 213;
-  constexpr Value16 KnightValueMg16 = 782;  constexpr Value16 KnightValueEg16 = 865;
-  constexpr Value16 BishopValueMg16 = 830;  constexpr Value16 BishopValueEg16 = 918;
-  constexpr Value16 RookValueMg16   = 1289; constexpr Value16 RookValueEg16   = 1378;
-  constexpr Value16 QueenValueMg16  = 2529; constexpr Value16 QueenValueEg16  = 2687;
+constexpr Value16 PawnValueMg16   = 128;  constexpr Value16 PawnValueEg16   = 213;
+constexpr Value16 KnightValueMg16 = 782;  constexpr Value16 KnightValueEg16 = 865;
+constexpr Value16 BishopValueMg16 = 830;  constexpr Value16 BishopValueEg16 = 918;
+constexpr Value16 RookValueMg16   = 1289; constexpr Value16 RookValueEg16   = 1378;
+constexpr Value16 QueenValueMg16  = 2529; constexpr Value16 QueenValueEg16  = 2687;
 
-  constexpr Value16 MidgameLimit16  = 15258; constexpr Value16 EndgameLimit16  = 3915;
-
-//enum Value : int32_t {
-  //VALUE_ZERO      = 0,
-  //VALUE_DRAW      = 0,
-  //VALUE_KNOWN_WIN = 10000,
-  //VALUE_MATE      = 32000,
-  //VALUE_INFINITE  = 32001,
-  //VALUE_NONE      = 32002,
-
-  //VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  //VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
-
-  //PawnValueMg   = 128,   PawnValueEg   = 213,
-  //KnightValueMg = 782,   KnightValueEg = 865,
-  //BishopValueMg = 830,   BishopValueEg = 918,
-  //RookValueMg   = 1289,  RookValueEg   = 1378,
-  //QueenValueMg  = 2529,  QueenValueEg  = 2687,
-
-  //MidgameLimit  = 15258, EndgameLimit  = 3915
-//};
+constexpr Value16 MidgameLimit16  = 15258; constexpr Value16 EndgameLimit16  = 3915;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -317,7 +297,6 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-//ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
@@ -332,12 +311,6 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
-
-/// Additional operators to add integers to a Value
-//constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-//constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-//inline Value& operator+=(Value& v, int i) { return v = v + i; }
-//inline Value& operator-=(Value& v, int i) { return v = v - i; }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
