@@ -43,8 +43,6 @@
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
-#include <bitset>
-#include <iostream>
 
 #if defined(_MSC_VER)
 // Disable some silly and noisy warning from MSVC compiler
