@@ -169,6 +169,27 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
+
+typedef int32_t Value;
+constexpr Value VALUE_ZERO      = 0;
+constexpr Value VALUE_DRAW      = 0;
+constexpr Value VALUE_KNOWN_WIN = 10000;
+constexpr Value VALUE_MATE      = 32000;
+constexpr Value VALUE_INFINITE  = 32001;
+constexpr Value VALUE_NONE      = 32002;
+
+constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
+constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
+
+constexpr Value PawnValueMg   = 128;   constexpr Value PawnValueEg   = 213;
+constexpr Value KnightValueMg = 782;   constexpr Value KnightValueEg = 865;
+constexpr Value BishopValueMg = 830;   constexpr Value BishopValueEg = 918;
+constexpr Value RookValueMg   = 1289;  constexpr Value RookValueEg   = 1378;
+constexpr Value QueenValueMg  = 2529;  constexpr Value QueenValueEg  = 2687;
+
+constexpr Value MidgameLimit  = 15258; constexpr Value EndgameLimit  = 3915;
+
+/*
 enum Value : int32_t {
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
@@ -188,6 +209,7 @@ enum Value : int32_t {
 
   MidgameLimit  = 15258, EndgameLimit  = 3915
 };
+*/
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -259,7 +281,9 @@ enum Rank : int {
 /// The least significant 16 bits are used to store the middlegame value and the
 /// upper 16 bits are used to store the endgame value. We have to take care to
 /// avoid left-shifting a signed int to avoid undefined behavior.
-enum Score : int64_t { SCORE_ZERO };
+//enum Score : int64_t { SCORE_ZERO };
+typedef int64_t Score;
+constexpr Score SCORE_ZERO = 0;
 
 constexpr Score make_score(int mg, int eg) {
   return Score(eg * (1ULL << 32) + mg);
@@ -273,13 +297,13 @@ constexpr Value eg_value(Score s) {
 }
 
 constexpr Value mg_value(Score s) {
-  return Value(s & 0xFFFFFFFF);
+  return Value((s & 0xFFFFFFFF));
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
-constexpr T operator+(T d1, T d2) { return T(int64_t(d1) + int64_t(d2)); } \
-constexpr T operator-(T d1, T d2) { return T(int64_t(d1) - int64_t(d2)); } \
-constexpr T operator-(T d) { return T(-int64_t(d)); }                  \
+constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
+constexpr T operator-(T d1, T d2) { return T(int(d1) - int(d2)); } \
+constexpr T operator-(T d) { return T(-int(d)); }                  \
 inline T& operator+=(T& d1, T d2) { return d1 = d1 + d2; }         \
 inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }
 
@@ -296,7 +320,7 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-ENABLE_FULL_OPERATORS_ON(Value)
+//ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
@@ -306,17 +330,17 @@ ENABLE_INCR_OPERATORS_ON(Square)
 ENABLE_INCR_OPERATORS_ON(File)
 ENABLE_INCR_OPERATORS_ON(Rank)
 
-ENABLE_BASE_OPERATORS_ON(Score)
+//ENABLE_BASE_OPERATORS_ON(Score)
 
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
 
 /// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-inline Value& operator+=(Value& v, int i) { return v = v + i; }
-inline Value& operator-=(Value& v, int i) { return v = v - i; }
+//constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
+//constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
+//inline Value& operator+=(Value& v, int i) { return v = v + i; }
+//inline Value& operator-=(Value& v, int i) { return v = v - i; }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
@@ -326,18 +350,18 @@ inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
 /// Only declared but not defined. We don't want to multiply two scores due to
 /// a very high risk of overflow. So user should explicitly convert to integer.
-Score operator*(Score, Score) = delete;
+//Score operator*(Score, Score) = delete;
 
 /// Division of a Score must be handled separately for each term
-inline Score operator/(Score s, int i) {
+constexpr Score div_by(Score s, int i) {
   return make_score(mg_value(s) / i, eg_value(s) / i);
 }
 
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
-constexpr Score operator*(Score s, int i) {
-  return Score(int64_t(s) * i);
-}
+//constexpr Score operator*(Score s, int i) {
+  //return Score(int64_t(s) * i);
+//}
 
 constexpr Color operator~(Color c) {
   return Color(c ^ BLACK); // Toggle color
