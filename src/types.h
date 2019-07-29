@@ -262,18 +262,18 @@ enum Rank : int {
 enum Score : int64_t { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {
-  return Score(eg * (65536*65536ULL) + mg);
+  return Score(eg * (1ULL << 32) + mg);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
-  return Value(int32_t(uint64_t(s + 0x80000000) / (65536*65536ULL)));
+constexpr Value eg_value(Score s) {
+  return Value((s + 0x80000000) / (1ULL << 32));
 }
 
-inline Value mg_value(Score s) {
-  return Value(int32_t(s & 0xFFFFFFFF));
+constexpr Value mg_value(Score s) {
+  return Value(s & 0xFFFFFFFF);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -335,15 +335,8 @@ inline Score operator/(Score s, int i) {
 
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
-inline Score operator*(Score s, int i) {
-
-  Score result = Score(int64_t(s) * i);
-
-  assert(eg_value(result) == (i * eg_value(s)));
-  assert(mg_value(result) == (i * mg_value(s)));
-  assert((i == 0) || (result / i) == s);
-
-  return result;
+constexpr Score operator*(Score s, int i) {
+  return Score(int64_t(s) * i);
 }
 
 constexpr Color operator~(Color c) {
