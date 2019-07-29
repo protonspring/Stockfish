@@ -285,9 +285,9 @@ inline Value mg_value(Score s) {
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
-constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
-constexpr T operator-(T d1, T d2) { return T(int(d1) - int(d2)); } \
-constexpr T operator-(T d) { return T(-int(d)); }                  \
+constexpr T operator+(T d1, T d2) { return T(int64_t(d1) + int64_t(d2)); } \
+constexpr T operator-(T d1, T d2) { return T(int64_t(d1) - int64_t(d2)); } \
+constexpr T operator-(T d) { return T(-int64_t(d)); }                  \
 inline T& operator+=(T& d1, T d2) { return d1 = d1 + d2; }         \
 inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }
 
@@ -340,6 +340,11 @@ Score operator*(Score, Score) = delete;
 inline Score operator/(Score s, int i) {
   return make_score(mg_value(s) / i, eg_value(s) / i);
 }
+
+//inline Score operator+(Score s, Score i) {
+  //return s + i; //make_score(mg_value(s) / i, eg_value(s) / i);
+//}
+
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
 inline Score operator*(Score s, int i) {
