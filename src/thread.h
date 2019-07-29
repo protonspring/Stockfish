@@ -85,7 +85,7 @@ struct MainThread : public Thread {
   void check_time();
 
   double previousTimeReduction;
-  Value previousScore;
+  Value2 previousScore;
   int callsCnt;
   bool stopOnPonderhit;
   std::atomic_bool ponder;

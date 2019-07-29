@@ -167,7 +167,7 @@ namespace {
     template<Color Us> Score threats() const;
     template<Color Us> Score passed() const;
     template<Color Us> Score space() const;
-    ScaleFactor scale_factor(Value eg) const;
+    ScaleFactor scale_factor(Value2 eg) const;
     Score initiative(Value2 eg) const;
 
     const Position& pos;
@@ -747,7 +747,7 @@ namespace {
   // Evaluation::scale_factor() computes the scale factor for the winning side
 
   template<Tracing T>
-  ScaleFactor Evaluation<T>::scale_factor(Value eg) const {
+  ScaleFactor Evaluation<T>::scale_factor(Value2 eg) const {
 
     Color strongSide = eg > VALUE_DRAW ? WHITE : BLACK;
     int sf = me->scale_factor(pos, strongSide);
@@ -794,9 +794,9 @@ namespace {
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
     // Early exit if score is high
-    int v = Value((mg_value(score) + eg_value(score)) / 2);
+    int v = int((mg_value(score) + eg_value(score)) / 2);
     if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
-       return Value(pos.side_to_move() == WHITE ? v : -v);
+       return Value2(pos.side_to_move() == WHITE ? v : -v);
 
     // Main evaluation begins here
 
@@ -819,7 +819,7 @@ namespace {
     score += initiative(eg_value(score));
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
-    ScaleFactor sf = scale_factor(Value(eg_value(score)));
+    ScaleFactor sf = scale_factor(eg_value(score));
     v =  mg_value(score) * int(me->game_phase())
        + eg_value(score) * int(PHASE_MIDGAME - me->game_phase()) * sf / SCALE_FACTOR_NORMAL;
 
