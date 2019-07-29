@@ -210,13 +210,13 @@ Value16 Endgame<KRKP>::operator()(const Position& pos) const {
 
   // If the stronger side's king is in front of the pawn, it's a win
   if (forward_file_bb(WHITE, wksq) & psq)
-      result = RookValueEg - distance(wksq, psq);
+      result = RookValueEg16 - distance(wksq, psq);
 
   // If the weaker side's king is too far from the pawn and the rook,
   // it's a win.
   else if (   distance(bksq, psq) >= 3 + (pos.side_to_move() == weakSide)
            && distance(bksq, rsq) >= 3)
-      result = RookValueEg - distance(wksq, psq);
+      result = RookValueEg16 - distance(wksq, psq);
 
   // If the pawn is far advanced and supported by the defending king,
   // the position is drawish
@@ -240,8 +240,8 @@ Value16 Endgame<KRKP>::operator()(const Position& pos) const {
 template<>
 Value16 Endgame<KRKB>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, strongSide, RookValueMg, 0));
-  assert(verify_material(pos, weakSide, BishopValueMg, 0));
+  assert(verify_material(pos, strongSide, RookValueMg16, 0));
+  assert(verify_material(pos, weakSide, BishopValueMg16, 0));
 
   Value16 result = Value16(PushToEdges[pos.square<KING>(weakSide)]);
   return strongSide == pos.side_to_move() ? result : -result;
@@ -253,8 +253,8 @@ Value16 Endgame<KRKB>::operator()(const Position& pos) const {
 template<>
 Value16 Endgame<KRKN>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, strongSide, RookValueMg, 0));
-  assert(verify_material(pos, weakSide, KnightValueMg, 0));
+  assert(verify_material(pos, strongSide, RookValueMg16, 0));
+  assert(verify_material(pos, weakSide, KnightValueMg16, 0));
 
   Square bksq = pos.square<KING>(weakSide);
   Square bnsq = pos.square<KNIGHT>(weakSide);
@@ -270,7 +270,7 @@ Value16 Endgame<KRKN>::operator()(const Position& pos) const {
 template<>
 Value16 Endgame<KQKP>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, strongSide, QueenValueMg, 0));
+  assert(verify_material(pos, strongSide, QueenValueMg16, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO16, 1));
 
   Square winnerKSq = pos.square<KING>(strongSide);
@@ -282,7 +282,7 @@ Value16 Endgame<KQKP>::operator()(const Position& pos) const {
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
       || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
-      result += QueenValueEg - PawnValueEg16;
+      result += QueenValueEg16 - PawnValueEg16;
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -301,8 +301,8 @@ Value16 Endgame<KQKR>::operator()(const Position& pos) const {
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
 
-  Value16 result =  QueenValueEg
-                - RookValueEg
+  Value16 result =  QueenValueEg16
+                - RookValueEg16
                 + PushToEdges[loserKSq]
                 + PushClose[distance(winnerKSq, loserKSq)];
 
