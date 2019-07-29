@@ -67,7 +67,7 @@ enum EndgameCode {
 /// Value or a ScaleFactor.
 
 template<EndgameCode E> using
-eg_type = typename std::conditional<(E < SCALING_FUNCTIONS), Value, ScaleFactor>::type;
+eg_type = typename std::conditional<(E < SCALING_FUNCTIONS), Value16, ScaleFactor>::type;
 
 
 /// Base and derived functors for endgame evaluation and scaling functions
@@ -100,7 +100,7 @@ namespace Endgames {
   template<typename T> using Ptr = std::unique_ptr<EndgameBase<T>>;
   template<typename T> using Map = std::map<Key, Ptr<T>>;
 
-  extern std::pair<Map<Value>, Map<ScaleFactor>> maps;
+  extern std::pair<Map<Value16>, Map<ScaleFactor>> maps;
 
   void init();
 

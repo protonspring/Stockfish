@@ -1058,7 +1058,7 @@ bool Position::see_ge(Move m, Value16 threshold) const {
   PieceType nextVictim = type_of(piece_on(from));
   Color us = color_of(piece_on(from));
   Color stm = ~us; // First consider opponent's move
-  Value balance;   // Values of the pieces taken by us minus opponent's ones
+  Value16 balance;   // Values of the pieces taken by us minus opponent's ones
 
   // The opponent may be able to recapture so this is the best result
   // we can hope for.

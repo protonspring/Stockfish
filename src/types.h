@@ -203,7 +203,7 @@ enum Piece {
   PIECE_NB = 16
 };
 
-extern Value PieceValue[PHASE_NB][PIECE_NB];
+extern Value16 PieceValue[PHASE_NB][PIECE_NB];
 
 enum Depth : int {
 
@@ -269,14 +269,14 @@ constexpr Score make_score(int mg, int eg) {
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
+inline Value16 eg_value(Score s) {
   union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(int16_t(eg.s));
+  return Value16(int16_t(eg.s));
 }
 
-inline Value mg_value(Score s) {
+inline Value16 mg_value(Score s) {
   union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(int16_t(mg.s));
+  return Value16(int16_t(mg.s));
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -368,11 +368,11 @@ constexpr CastlingRight operator|(Color c, CastlingSide s) {
   return CastlingRight(WHITE_OO << ((s == QUEEN_SIDE) + 2 * c));
 }
 
-constexpr Value mate_in(int ply) {
+constexpr Value16 mate_in(int ply) {
   return VALUE_MATE - ply;
 }
 
-constexpr Value mated_in(int ply) {
+constexpr Value16 mated_in(int ply) {
   return -VALUE_MATE + ply;
 }
 

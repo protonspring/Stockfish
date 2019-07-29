@@ -628,8 +628,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max(mated_in(ss->ply), Value(alpha));
-        beta = std::min(mate_in(ss->ply+1), Value(beta));
+        alpha = std::max(mated_in(ss->ply), Value16(alpha));
+        beta = std::min(mate_in(ss->ply+1), Value16(beta));
         if (alpha >= beta)
             return alpha;
     }
@@ -849,7 +849,7 @@ namespace {
         &&  depth >= 5 * ONE_PLY
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
-        Value16 raisedBeta = std::min(Value(beta + 216 - 48 * improving), VALUE_INFINITE);
+        Value16 raisedBeta = std::min(Value16(beta + 216 - 48 * improving), Value16(VALUE_INFINITE));
         MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
@@ -1196,7 +1196,7 @@ moves_loop: // When in check, search starts from here
           // PV move or new best move?
           if (moveCount == 1 || value > alpha)
           {
-              rm.score = Value(value);
+              rm.score = Value16(value);
               rm.selDepth = thisThread->selDepth;
               rm.pv.resize(1);
 
@@ -1385,7 +1385,7 @@ moves_loop: // When in check, search starts from here
                 bestValue = ttValue;
         }
         else
-            ss->staticEval = Value(bestValue =
+            ss->staticEval = Value16(bestValue =
             Value16((ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
                                              : -(ss-1)->staticEval + 2 * Eval::Tempo));
 
@@ -1626,7 +1626,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value16 topScore = rootMoves[0].score;
-    int delta = std::min(Value(topScore - rootMoves[multiPV - 1].score), PawnValueMg);
+    int delta = std::min(Value16(topScore - rootMoves[multiPV - 1].score), Value16(PawnValueMg));
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 
@@ -1717,7 +1717,7 @@ string UCI::pv(const Position& pos, Depth depth, Value16 alpha, Value16 beta) {
          << " depth "    << d / ONE_PLY
          << " seldepth " << rootMoves[i].selDepth
          << " multipv "  << i + 1
-         << " score "    << UCI::value(Value(v));
+         << " score "    << UCI::value(Value16(v));
 
       if (!tb && i == pvIdx)
           ss << (v >= beta ? " lowerbound" : v <= alpha ? " upperbound" : "");

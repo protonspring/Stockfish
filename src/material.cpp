@@ -127,9 +127,9 @@ Entry* probe(const Position& pos) {
   e->key = key;
   e->factor[WHITE] = e->factor[BLACK] = (uint8_t)SCALE_FACTOR_NORMAL;
 
-  Value npm_w = pos.non_pawn_material(WHITE);
-  Value npm_b = pos.non_pawn_material(BLACK);
-  Value npm   = clamp(npm_w + npm_b, EndgameLimit, MidgameLimit);
+  Value16 npm_w = pos.non_pawn_material(WHITE);
+  Value16 npm_b = pos.non_pawn_material(BLACK);
+  Value16 npm   = clamp(Value16(npm_w + npm_b), Value16(EndgameLimit), Value16(MidgameLimit));
 
   // Map total non-pawn material into [PHASE_ENDGAME, PHASE_MIDGAME]
   e->gamePhase = Phase(((npm - EndgameLimit) * PHASE_MIDGAME) / (MidgameLimit - EndgameLimit));
@@ -137,7 +137,7 @@ Entry* probe(const Position& pos) {
   // Let's look if we have a specialized evaluation function for this particular
   // material configuration. Firstly we look for a fixed configuration one, then
   // for a generic one if the previous search failed.
-  if ((e->evaluationFunction = Endgames::probe<Value>(key)) != nullptr)
+  if ((e->evaluationFunction = Endgames::probe<Value16>(key)) != nullptr)
       return e;
 
   for (Color c : { WHITE, BLACK })
