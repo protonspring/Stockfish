@@ -171,7 +171,7 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-enum Value : int {
+enum Value : int32_t {
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
   VALUE_KNOWN_WIN = 10000,
@@ -264,7 +264,6 @@ enum Rank : int {
 enum Score : int64_t { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {
-  //return Score((int)((unsigned int)eg << 16) + mg);
   return Score(eg * (65536*65536ULL) + mg);
 }
 
@@ -272,15 +271,10 @@ constexpr Score make_score(int mg, int eg) {
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
 inline Value eg_value(Score s) {
-  //union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  //return Value(eg.s);
-  //return Value(int16_t(unsigned(s + 0x80000) / (65536*16)));
   return Value(int32_t(uint64_t(s + 0x80000000) / (65536*65536ULL)));
 }
 
 inline Value mg_value(Score s) {
-  //union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  //return Value(mg.s);
   return Value(int32_t(s & 0xFFFFFFFF));
 }
 
@@ -341,19 +335,11 @@ inline Score operator/(Score s, int i) {
   return make_score(mg_value(s) / i, eg_value(s) / i);
 }
 
-//inline Score operator+(Score s, Score i) {
-  //return s + i; //make_score(mg_value(s) / i, eg_value(s) / i);
-//}
-
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
 inline Score operator*(Score s, int i) {
 
   Score result = Score(int64_t(s) * i);
-
-  //std::cout << "In * operator: ";
-  //std::cout << std::bitset<64>(result) << std::endl;
-  //std::cout << eg_value(result) << " :: " << eg_value(s) * i << std::endl;
 
   assert(eg_value(result) == (i * eg_value(s)));
   assert(mg_value(result) == (i * mg_value(s)));

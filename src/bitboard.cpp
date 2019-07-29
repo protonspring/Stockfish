@@ -69,15 +69,6 @@ const std::string Bitboards::pretty(Bitboard b) {
 
 void Bitboards::init() {
 
-  //Score sc = make_score(16556, -16656);
-  //Score sc = make_score(-128, 128);
-  Score sc = make_score(0, 128);
-  std::cout << "before: " << std::bitset<64>(sc) << std::endl;
-  //sc = make_score(-7, -7);
-  sc += make_score(2, 0); //Score(int64_t(sc));
-  std::cout << "after: " << std::bitset<64>(sc) << std::endl;
-  std::cout << mg_value(sc) << "," << eg_value(sc) << std::endl;
-  
   for (unsigned i = 0; i < (1 << 16); ++i)
       PopCnt16[i] = std::bitset<16>(i).count();
 
