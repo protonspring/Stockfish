@@ -64,7 +64,7 @@ namespace {
   // Razor and futility margins
   constexpr int RazorMargin = 600;
   Value futility_margin(Depth d, bool improving) {
-    return Value((175 - 50 * improving) * d / ONE_PLY);
+    return (175 - 50 * improving) * d / ONE_PLY;
   }
 
   // Reductions lookup table, initialized at startup
@@ -88,7 +88,7 @@ namespace {
   // Add a small random component to draw evaluations to avoid 3fold-blindness
   Value value_draw(Depth depth, Thread* thisThread) {
     return depth < 4 * ONE_PLY ? VALUE_DRAW
-                               : VALUE_DRAW + Value(2 * (thisThread->nodes & 1) - 1);
+                               : VALUE_DRAW + (2 * (thisThread->nodes & 1) - 1);
   }
 
   // Skill structure is used to implement strength limit
@@ -414,7 +414,7 @@ void Thread::search() {
               Value previousScore = rootMoves[pvIdx].previousScore;
               delta = Value(20);
               alpha = std::max(previousScore - delta,-VALUE_INFINITE);
-              beta  = std::min(previousScore + delta, VALUE_INFINITE);
+              beta  = std::min(Value(previousScore + delta), VALUE_INFINITE);
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + 88 * previousScore / (abs(previousScore) + 200);
@@ -467,7 +467,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min(bestValue + delta, VALUE_INFINITE);
+                  beta = std::min(Value(bestValue + delta), VALUE_INFINITE);
                   ++failedHighCnt;
               }
               else
@@ -849,7 +849,7 @@ namespace {
         &&  depth >= 5 * ONE_PLY
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
-        Value raisedBeta = std::min(beta + 216 - 48 * improving, VALUE_INFINITE);
+        Value raisedBeta = std::min(Value(beta + 216 - 48 * improving), VALUE_INFINITE);
         MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
@@ -1048,7 +1048,7 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Prune moves with negative SEE (~10 Elo)
-              if (!pos.see_ge(move, Value(-(31 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
+              if (!pos.see_ge(move, -(31 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth))
                   continue;
           }
           else if (  (!givesCheck || !extension)
@@ -1626,7 +1626,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value topScore = rootMoves[0].score;
-    int delta = std::min(topScore - rootMoves[multiPV - 1].score, PawnValueMg);
+    int delta = std::min(Value(topScore - rootMoves[multiPV - 1].score), PawnValueMg);
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 

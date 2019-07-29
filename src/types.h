@@ -169,25 +169,24 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-enum Value : int {
-  VALUE_ZERO      = 0,
-  VALUE_DRAW      = 0,
-  VALUE_KNOWN_WIN = 10000,
-  VALUE_MATE      = 32000,
-  VALUE_INFINITE  = 32001,
-  VALUE_NONE      = 32002,
+typedef int16_t Value;
+constexpr Value VALUE_ZERO      = 0;
+constexpr Value VALUE_DRAW      = 0;
+constexpr Value VALUE_KNOWN_WIN = 10000;
+constexpr Value VALUE_MATE      = 32000;
+constexpr Value VALUE_INFINITE  = 32001;
+constexpr Value VALUE_NONE      = 32002;
 
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
+constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
+constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
 
-  PawnValueMg   = 128,   PawnValueEg   = 213,
-  KnightValueMg = 782,   KnightValueEg = 865,
-  BishopValueMg = 830,   BishopValueEg = 918,
-  RookValueMg   = 1289,  RookValueEg   = 1378,
-  QueenValueMg  = 2529,  QueenValueEg  = 2687,
+constexpr Value PawnValueMg   = 128;   constexpr Value PawnValueEg   = 213;
+constexpr Value KnightValueMg = 782;   constexpr Value KnightValueEg = 865;
+constexpr Value BishopValueMg = 830;   constexpr Value BishopValueEg = 918;
+constexpr Value RookValueMg   = 1289;  constexpr Value RookValueEg   = 1378;
+constexpr Value QueenValueMg  = 2529;  constexpr Value QueenValueEg  = 2687;
 
-  MidgameLimit  = 15258, EndgameLimit  = 3915
-};
+constexpr Value MidgameLimit  = 15258; constexpr Value EndgameLimit  = 3915;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -261,21 +260,9 @@ enum Rank : int {
 /// avoid left-shifting a signed int to avoid undefined behavior.
 typedef int32_t Score;
 constexpr Score SCORE_ZERO = 0;
-
-constexpr Score make_score(int mg, int eg) {
-  return Score(eg * 65536 + mg);
-}
-
-/// Extracting the signed lower and upper 16 bits is not so trivial because
-/// according to the standard a simple cast to short is implementation defined
-/// and so is a right shift of a signed integer.
-constexpr Value eg_value(Score s) {
-  return Value(int16_t(unsigned(s + 0x8000) / 65536));
-}
-
-inline Value mg_value(Score s) {
-  return Value(int16_t(s & 0xFFFF));
-}
+constexpr Score make_score(int mg, int eg) { return Score(eg * 65536 + mg); }
+constexpr Value eg_value(         Score s) { return Value(unsigned(s + 0x8000) / 65536); }
+inline Value mg_value(            Score s) { return Value(s & 0xFFFF); }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
 constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
@@ -297,7 +284,6 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
@@ -311,21 +297,11 @@ ENABLE_INCR_OPERATORS_ON(Rank)
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
 
-/// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-inline Value& operator+=(Value& v, int i) { return v = v + i; }
-inline Value& operator-=(Value& v, int i) { return v = v - i; }
-
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
 constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d)); }
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
 inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
-
-/// Only declared but not defined. We don't want to multiply two scores due to
-/// a very high risk of overflow. So user should explicitly convert to integer.
-//Score operator*(Score, Score) = delete;
 
 /// Division of a Score must be handled separately for each term
 inline Score div_by(Score s, int i) {
