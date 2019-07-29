@@ -255,7 +255,7 @@ string UCI::value(Value16 v) {
   stringstream ss;
 
   if (abs(v) < VALUE_MATE16 - MAX_PLY)
-      ss << "cp " << v * 100 / PawnValueEg;
+      ss << "cp " << v * 100 / PawnValueEg16;
   else
       ss << "mate " << (v > 0 ? VALUE_MATE16 - v + 1 : -VALUE_MATE16 - v) / 2;
 

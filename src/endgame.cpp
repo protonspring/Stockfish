@@ -128,7 +128,7 @@ Value16 Endgame<KXK>::operator()(const Position& pos) const {
   Square loserKSq = pos.square<KING>(weakSide);
 
   Value16 result =  pos.non_pawn_material(strongSide)
-                + pos.count<PAWN>(strongSide) * PawnValueEg
+                + pos.count<PAWN>(strongSide) * PawnValueEg16
                 + PushToEdges[loserKSq]
                 + PushClose[distance(winnerKSq, loserKSq)];
 
@@ -184,7 +184,7 @@ Value16 Endgame<KPK>::operator()(const Position& pos) const {
   if (!Bitbases::probe(wksq, psq, bksq, us))
       return VALUE_DRAW16;
 
-  Value16 result = VALUE_KNOWN_WIN16 + PawnValueEg + Value16(rank_of(psq));
+  Value16 result = VALUE_KNOWN_WIN16 + PawnValueEg16 + Value16(rank_of(psq));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -282,7 +282,7 @@ Value16 Endgame<KQKP>::operator()(const Position& pos) const {
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
       || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
-      result += QueenValueEg - PawnValueEg;
+      result += QueenValueEg - PawnValueEg16;
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -317,8 +317,8 @@ Value16 Endgame<KNNKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO16, 1));
 
-  Value16 result =  2 * KnightValueEg
-                - PawnValueEg
+  Value16 result =  2 * KnightValueEg16
+                - PawnValueEg16
                 + PushToEdges[pos.square<KING>(weakSide)];
 
   return strongSide == pos.side_to_move() ? result : -result;
