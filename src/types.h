@@ -259,23 +259,22 @@ enum Rank : int {
 /// The least significant 16 bits are used to store the middlegame value and the
 /// upper 16 bits are used to store the endgame value. We have to take care to
 /// avoid left-shifting a signed int to avoid undefined behavior.
-enum Score : int { SCORE_ZERO };
+typedef int32_t Score;
+constexpr Score SCORE_ZERO = 0;
 
 constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
+  return Score(eg * 65536 + mg);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
-  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
+constexpr Value eg_value(Score s) {
+  return Value(int16_t(unsigned(s + 0x8000) / 65536));
 }
 
 inline Value mg_value(Score s) {
-  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
+  return Value(int16_t(s & 0xFFFF));
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -308,8 +307,6 @@ ENABLE_INCR_OPERATORS_ON(Square)
 ENABLE_INCR_OPERATORS_ON(File)
 ENABLE_INCR_OPERATORS_ON(Rank)
 
-ENABLE_BASE_OPERATORS_ON(Score)
-
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
@@ -328,23 +325,11 @@ inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 
 /// Only declared but not defined. We don't want to multiply two scores due to
 /// a very high risk of overflow. So user should explicitly convert to integer.
-Score operator*(Score, Score) = delete;
+//Score operator*(Score, Score) = delete;
 
 /// Division of a Score must be handled separately for each term
-inline Score operator/(Score s, int i) {
+inline Score div_by(Score s, int i) {
   return make_score(mg_value(s) / i, eg_value(s) / i);
-}
-
-/// Multiplication of a Score by an integer. We check for overflow in debug mode.
-inline Score operator*(Score s, int i) {
-
-  Score result = Score(int(s) * i);
-
-  assert(eg_value(result) == (i * eg_value(s)));
-  assert(mg_value(result) == (i * mg_value(s)));
-  assert((i == 0) || (result / i) == s);
-
-  return result;
 }
 
 constexpr Color operator~(Color c) {
