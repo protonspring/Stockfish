@@ -169,7 +169,8 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-enum Value : int {
+typedef int16_t Value16;
+enum Value : int32_t {
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
   VALUE_KNOWN_WIN = 10000,
@@ -270,12 +271,12 @@ constexpr Score make_score(int mg, int eg) {
 /// and so is a right shift of a signed integer.
 inline Value eg_value(Score s) {
   union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
+  return Value(int16_t(eg.s));
 }
 
 inline Value mg_value(Score s) {
   union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
+  return Value(int16_t(mg.s));
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \

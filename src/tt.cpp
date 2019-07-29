@@ -33,7 +33,7 @@ TranspositionTable TT; // Our global transposition table
 /// TTEntry::save populates the TTEntry with a new node's data, possibly
 /// overwriting an old position. Update is not atomic and can be racy.
 
-void TTEntry::save(Key k, Value v, bool pv, Bound b, Depth d, Move m, Value ev) {
+void TTEntry::save(Key k, Value16 v, bool pv, Bound b, Depth d, Move m, Value16 ev) {
 
   assert(d / ONE_PLY * ONE_PLY == d);
 
