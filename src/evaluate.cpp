@@ -61,10 +61,10 @@ namespace Trace {
 
     if (t == MATERIAL || t == IMBALANCE || t == INITIATIVE || t == TOTAL)
         os << " ----  ----"    << " | " << " ----  ----";
-    else
-        os << scores[t][WHITE] << " | " << scores[t][BLACK];
+    //else
+        //os << int(scores[t][WHITE]) << " | " << int(scores[t][BLACK]);
 
-    os << " | " << scores[t][WHITE] - scores[t][BLACK] << "\n";
+    //os << " | " << int32_t(scores[t][WHITE] - scores[t][BLACK]) << "\n";
     return os;
   }
 }
@@ -659,7 +659,7 @@ namespace {
         // pawn push to become passed, or have a pawn in front of them.
         if (   !pos.pawn_passed(Us, s + Up)
             || (pos.pieces(PAWN) & (s + Up)))
-            bonus = bonus / 2;
+            bonus = div_by(bonus,2);
 
         score += bonus - PassedFile * std::min(f, ~f);
     }
