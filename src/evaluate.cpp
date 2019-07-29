@@ -74,8 +74,8 @@ using namespace Trace;
 namespace {
 
   // Threshold for lazy and space evaluation
-  constexpr Value LazyThreshold  = Value(1400);
-  constexpr Value SpaceThreshold = Value(12222);
+  constexpr Value2 LazyThreshold  = Value2(1400);
+  constexpr Value2 SpaceThreshold = Value2(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
   constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
@@ -158,7 +158,7 @@ namespace {
     Evaluation() = delete;
     explicit Evaluation(const Position& p) : pos(p) {}
     Evaluation& operator=(const Evaluation&) = delete;
-    Value value();
+    Value2 value();
 
   private:
     template<Color Us> void initialize();
@@ -772,7 +772,7 @@ namespace {
   // of view of the side to move.
 
   template<Tracing T>
-  Value Evaluation<T>::value() {
+  Value2 Evaluation<T>::value() {
 
     assert(!pos.checkers());
 
@@ -782,7 +782,7 @@ namespace {
     // If we have a specialized evaluation function for the current material
     // configuration, call it and return.
     if (me->specialized_eval_exists())
-        return me->evaluate(pos);
+        return Value2(me->evaluate(pos));
 
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
@@ -835,7 +835,7 @@ namespace {
         Trace::add(TOTAL, score);
     }
 
-    return  Value((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
+    return  Value2((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
            + Eval::Tempo);
   }
 
@@ -845,7 +845,7 @@ namespace {
 /// evaluate() is the evaluator for the outer world. It returns a static
 /// evaluation of the position from the point of view of the side to move.
 
-Value Eval::evaluate(const Position& pos) {
+Value2 Eval::evaluate(const Position& pos) {
   return Evaluation<NO_TRACE>(pos).value();
 }
 
@@ -860,7 +860,7 @@ std::string Eval::trace(const Position& pos) {
 
   pos.this_thread()->contempt = SCORE_ZERO; // Reset any dynamic contempt
 
-  Value v = Evaluation<TRACE>(pos).value();
+  Value2 v = Evaluation<TRACE>(pos).value();
 
   v = pos.side_to_move() == WHITE ? v : -v; // Trace scores are from white's point of view
 
