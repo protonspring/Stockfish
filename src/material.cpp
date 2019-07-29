@@ -129,10 +129,10 @@ Entry* probe(const Position& pos) {
 
   Value16 npm_w = pos.non_pawn_material(WHITE);
   Value16 npm_b = pos.non_pawn_material(BLACK);
-  Value16 npm   = clamp(Value16(npm_w + npm_b), Value16(EndgameLimit), Value16(MidgameLimit));
+  Value16 npm   = clamp(Value16(npm_w + npm_b), Value16(EndgameLimit16), Value16(MidgameLimit16));
 
   // Map total non-pawn material into [PHASE_ENDGAME, PHASE_MIDGAME]
-  e->gamePhase = Phase(((npm - EndgameLimit) * PHASE_MIDGAME) / (MidgameLimit - EndgameLimit));
+  e->gamePhase = Phase(((npm - EndgameLimit16) * PHASE_MIDGAME) / (MidgameLimit16 - EndgameLimit16));
 
   // Let's look if we have a specialized evaluation function for this particular
   // material configuration. Firstly we look for a fixed configuration one, then
@@ -169,7 +169,7 @@ Entry* probe(const Position& pos) {
         e->scalingFunction[c] = &ScaleKQKRPs[c];
   }
 
-  if (npm_w + npm_b == VALUE_ZERO && pos.pieces(PAWN)) // Only pawns on the board
+  if (npm_w + npm_b == VALUE_ZERO16 && pos.pieces(PAWN)) // Only pawns on the board
   {
       if (!pos.count<PAWN>(BLACK))
       {

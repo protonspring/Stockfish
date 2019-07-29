@@ -141,7 +141,7 @@ public:
   void undo_null_move();
 
   // Static Exchange Evaluation
-  bool see_ge(Move m, Value16 threshold = Value16(VALUE_ZERO)) const;
+  bool see_ge(Move m, Value16 threshold = Value16(VALUE_ZERO16)) const;
 
   // Accessing hash keys
   Key key() const;

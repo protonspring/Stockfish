@@ -749,7 +749,7 @@ namespace {
   template<Tracing T>
   ScaleFactor Evaluation<T>::scale_factor(Value16 eg) const {
 
-    Color strongSide = eg > VALUE_DRAW ? WHITE : BLACK;
+    Color strongSide = eg > VALUE_DRAW16 ? WHITE : BLACK;
     int sf = me->scale_factor(pos, strongSide);
 
     // If scale is not already specific, scale down the endgame via general heuristics

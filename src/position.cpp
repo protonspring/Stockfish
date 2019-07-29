@@ -373,7 +373,7 @@ void Position::set_state(StateInfo* si) const {
 
   si->key = si->materialKey = 0;
   si->pawnKey = Zobrist::noPawns;
-  si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO;
+  si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO16;
   si->checkersBB = attackers_to(square<KING>(sideToMove)) & pieces(~sideToMove);
 
   set_check_info(si);
@@ -1051,7 +1051,7 @@ bool Position::see_ge(Move m, Value16 threshold) const {
 
   // Only deal with normal moves, assume others pass a simple see
   if (type_of(m) != NORMAL)
-      return VALUE_ZERO >= threshold;
+      return VALUE_ZERO16 >= threshold;
 
   Bitboard stmAttackers;
   Square from = from_sq(m), to = to_sq(m);
@@ -1064,7 +1064,7 @@ bool Position::see_ge(Move m, Value16 threshold) const {
   // we can hope for.
   balance = PieceValue[MG][piece_on(to)] - threshold;
 
-  if (balance < VALUE_ZERO)
+  if (balance < VALUE_ZERO16)
       return false;
 
   // Now assume the worst possible result: that the opponent can
@@ -1074,7 +1074,7 @@ bool Position::see_ge(Move m, Value16 threshold) const {
   // If it is enough (like in PxQ) then return immediately. Note that
   // in case nextVictim == KING we always return here, this is ok
   // if the given move is legal.
-  if (balance >= VALUE_ZERO)
+  if (balance >= VALUE_ZERO16)
       return true;
 
   // Find all attackers to the destination square, with the moving piece
@@ -1106,14 +1106,14 @@ bool Position::see_ge(Move m, Value16 threshold) const {
       //
       //      (balance, balance+1) -> (-balance-1, -balance)
       //
-      assert(balance < VALUE_ZERO);
+      assert(balance < VALUE_ZERO16);
 
       balance = -balance - 1 - PieceValue[MG][nextVictim];
 
       // If balance is still non-negative after giving away nextVictim then we
       // win. The only thing to be careful about it is that we should revert
       // stm if we captured with the king when the opponent still has attackers.
-      if (balance >= VALUE_ZERO)
+      if (balance >= VALUE_ZERO16)
       {
           if (nextVictim == KING && (attackers & pieces(stm)))
               stm = ~stm;

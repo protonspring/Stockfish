@@ -117,12 +117,12 @@ namespace Endgames {
 template<>
 Value16 Endgame<KXK>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 0));
   assert(!pos.checkers()); // Eval is never called when in check
 
   // Stalemate detection with lone king
   if (pos.side_to_move() == weakSide && !MoveList<LEGAL>(pos).size())
-      return VALUE_DRAW;
+      return VALUE_DRAW16;
 
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
@@ -137,7 +137,7 @@ Value16 Endgame<KXK>::operator()(const Position& pos) const {
       ||(pos.count<BISHOP>(strongSide) && pos.count<KNIGHT>(strongSide))
       || (   (pos.pieces(strongSide, BISHOP) & ~DarkSquares)
           && (pos.pieces(strongSide, BISHOP) &  DarkSquares)))
-      result = std::min(Value16(result + VALUE_KNOWN_WIN), Value16(VALUE_MATE_IN_MAX_PLY - 1));
+      result = std::min(Value16(result + VALUE_KNOWN_WIN16), Value16(VALUE_MATE_IN_MAX_PLY16 - 1));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -149,7 +149,7 @@ template<>
 Value16 Endgame<KBNK>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, KnightValueMg + BishopValueMg, 0));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 0));
 
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
@@ -158,11 +158,11 @@ Value16 Endgame<KBNK>::operator()(const Position& pos) const {
   // If our Bishop does not attack A1/H8, we flip the enemy king square
   // to drive to opposite corners (A8/H1).
 
-  Value16 result =  VALUE_KNOWN_WIN
+  Value16 result =  VALUE_KNOWN_WIN16
                 + PushClose[distance(winnerKSq, loserKSq)]
                 + PushToCorners[opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq];
 
-  assert(abs(result) < VALUE_MATE_IN_MAX_PLY);
+  assert(abs(result) < VALUE_MATE_IN_MAX_PLY16);
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
@@ -171,8 +171,8 @@ Value16 Endgame<KBNK>::operator()(const Position& pos) const {
 template<>
 Value16 Endgame<KPK>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, strongSide, VALUE_ZERO, 1));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(verify_material(pos, strongSide, VALUE_ZERO16, 1));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 0));
 
   // Assume strongSide is white and the pawn is on files A-D
   Square wksq = normalize(pos, strongSide, pos.square<KING>(strongSide));
@@ -182,9 +182,9 @@ Value16 Endgame<KPK>::operator()(const Position& pos) const {
   Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
 
   if (!Bitbases::probe(wksq, psq, bksq, us))
-      return VALUE_DRAW;
+      return VALUE_DRAW16;
 
-  Value16 result = VALUE_KNOWN_WIN + PawnValueEg + Value16(rank_of(psq));
+  Value16 result = VALUE_KNOWN_WIN16 + PawnValueEg + Value16(rank_of(psq));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -198,7 +198,7 @@ template<>
 Value16 Endgame<KRKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, RookValueMg, 0));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 1));
 
   Square wksq = relative_square(strongSide, pos.square<KING>(strongSide));
   Square bksq = relative_square(strongSide, pos.square<KING>(weakSide));
@@ -271,7 +271,7 @@ template<>
 Value16 Endgame<KQKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, QueenValueMg, 0));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 1));
 
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
@@ -315,7 +315,7 @@ template<>
 Value16 Endgame<KNNKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 1));
 
   Value16 result =  2 * KnightValueEg
                 - PawnValueEg
@@ -326,7 +326,7 @@ Value16 Endgame<KNNKP>::operator()(const Position& pos) const {
 
 
 /// Some cases of trivial draws
-template<> Value16 Endgame<KNNK>::operator()(const Position&) const { return VALUE_DRAW; }
+template<> Value16 Endgame<KNNK>::operator()(const Position&) const { return VALUE_DRAW16; }
 
 
 /// KB and one or more pawns vs K. It checks for draws with rook pawns and
@@ -599,9 +599,9 @@ ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
 template<>
 ScaleFactor Endgame<KPsK>::operator()(const Position& pos) const {
 
-  assert(pos.non_pawn_material(strongSide) == VALUE_ZERO);
+  assert(pos.non_pawn_material(strongSide) == VALUE_ZERO16);
   assert(pos.count<PAWN>(strongSide) >= 2);
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 0));
 
   Square ksq = pos.square<KING>(weakSide);
   Bitboard pawns = pos.pieces(strongSide, PAWN);
@@ -743,7 +743,7 @@ template<>
 ScaleFactor Endgame<KNPK>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, KnightValueMg, 1));
-  assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
+  assert(verify_material(pos, weakSide, VALUE_ZERO16, 0));
 
   // Assume strongSide is white and the pawn is on files A-D
   Square pawnSq     = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
@@ -785,8 +785,8 @@ ScaleFactor Endgame<KNPKB>::operator()(const Position& pos) const {
 template<>
 ScaleFactor Endgame<KPKP>::operator()(const Position& pos) const {
 
-  assert(verify_material(pos, strongSide, VALUE_ZERO, 1));
-  assert(verify_material(pos, weakSide,   VALUE_ZERO, 1));
+  assert(verify_material(pos, strongSide, VALUE_ZERO16, 1));
+  assert(verify_material(pos, weakSide,   VALUE_ZERO16, 1));
 
   // Assume strongSide is white and the pawn is on files A-D
   Square wksq = normalize(pos, strongSide, pos.square<KING>(strongSide));
