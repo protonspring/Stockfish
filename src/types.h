@@ -169,6 +169,7 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
+typedef int16_t Value2;
 enum Value : int {
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
@@ -268,14 +269,14 @@ constexpr Score make_score(int mg, int eg) {
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
+inline Value2 eg_value(Score s) {
   union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
+  return Value2(eg.s);
 }
 
-inline Value mg_value(Score s) {
+inline Value2 mg_value(Score s) {
   union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
+  return Value2(mg.s);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -315,10 +316,10 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_BASE_OPERATORS_ON
 
 /// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-inline Value& operator+=(Value& v, int i) { return v = v + i; }
-inline Value& operator-=(Value& v, int i) { return v = v - i; }
+constexpr Value operator+(Value v, int i) { return Value(Value2(int(v) + i)); }
+constexpr Value operator-(Value v, int i) { return Value(Value2(int(v) - i)); }
+inline Value& operator+=(Value& v, int i) { return v = Value(Value2(v + i)); }
+inline Value& operator-=(Value& v, int i) { return v = Value(Value2(v - i)); }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
@@ -367,11 +368,11 @@ constexpr CastlingRight operator|(Color c, CastlingSide s) {
   return CastlingRight(WHITE_OO << ((s == QUEEN_SIDE) + 2 * c));
 }
 
-constexpr Value mate_in(int ply) {
+constexpr Value2 mate_in(int ply) {
   return VALUE_MATE - ply;
 }
 
-constexpr Value mated_in(int ply) {
+constexpr Value2 mated_in(int ply) {
   return -VALUE_MATE + ply;
 }
 

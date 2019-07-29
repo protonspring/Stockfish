@@ -40,7 +40,7 @@ namespace Trace {
 
   Score scores[TERM_NB][COLOR_NB];
 
-  double to_cp(Value v) { return double(v) / PawnValueEg; }
+  double to_cp(Value2 v) { return double(v) / PawnValueEg; }
 
   void add(int idx, Color c, Score s) {
     scores[idx][c] = s;
@@ -168,7 +168,7 @@ namespace {
     template<Color Us> Score passed() const;
     template<Color Us> Score space() const;
     ScaleFactor scale_factor(Value eg) const;
-    Score initiative(Value eg) const;
+    Score initiative(Value2 eg) const;
 
     const Position& pos;
     Material::Entry* me;
@@ -716,7 +716,7 @@ namespace {
   // known attacking/defending status of the players.
 
   template<Tracing T>
-  Score Evaluation<T>::initiative(Value eg) const {
+  Score Evaluation<T>::initiative(Value2 eg) const {
 
     int outflanking =  distance<File>(pos.square<KING>(WHITE), pos.square<KING>(BLACK))
                      - distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
@@ -794,9 +794,9 @@ namespace {
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
     // Early exit if score is high
-    Value v = (mg_value(score) + eg_value(score)) / 2;
+    int v = Value((mg_value(score) + eg_value(score)) / 2);
     if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
-       return pos.side_to_move() == WHITE ? v : -v;
+       return Value(pos.side_to_move() == WHITE ? v : -v);
 
     // Main evaluation begins here
 
@@ -819,7 +819,7 @@ namespace {
     score += initiative(eg_value(score));
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
-    ScaleFactor sf = scale_factor(eg_value(score));
+    ScaleFactor sf = scale_factor(Value(eg_value(score)));
     v =  mg_value(score) * int(me->game_phase())
        + eg_value(score) * int(PHASE_MIDGAME - me->game_phase()) * sf / SCALE_FACTOR_NORMAL;
 
@@ -835,8 +835,8 @@ namespace {
         Trace::add(TOTAL, score);
     }
 
-    return  (pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
-           + Eval::Tempo;
+    return  Value((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
+           + Eval::Tempo);
   }
 
 } // namespace

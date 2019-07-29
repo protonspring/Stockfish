@@ -63,8 +63,8 @@ namespace {
 
   // Razor and futility margins
   constexpr int RazorMargin = 600;
-  Value futility_margin(Depth d, bool improving) {
-    return Value((175 - 50 * improving) * d / ONE_PLY);
+  Value2 futility_margin(Depth d, bool improving) {
+    return Value2((175 - 50 * improving) * d / ONE_PLY);
   }
 
   // Reductions lookup table, initialized at startup
@@ -86,7 +86,7 @@ namespace {
   }
 
   // Add a small random component to draw evaluations to avoid 3fold-blindness
-  Value value_draw(Depth depth, Thread* thisThread) {
+  Value2 value_draw(Depth depth, Thread* thisThread) {
     return depth < 4 * ONE_PLY ? VALUE_DRAW
                                : VALUE_DRAW + Value(2 * (thisThread->nodes & 1) - 1);
   }
@@ -150,8 +150,8 @@ namespace {
   template <NodeType NT>
   Value qsearch(Position& pos, Stack* ss, Value alpha, Value beta, Depth depth = DEPTH_ZERO);
 
-  Value value_to_tt(Value v, int ply);
-  Value value_from_tt(Value v, int ply);
+  Value2 value_to_tt(Value v, int ply);
+  Value2 value_from_tt(Value v, int ply);
   void update_pv(Move* pv, Move move, Move* childPv);
   void update_continuation_histories(Stack* ss, Piece pc, Square to, int bonus);
   void update_quiet_stats(const Position& pos, Stack* ss, Move move, Move* quiets, int quietCount, int bonus);
@@ -570,7 +570,7 @@ namespace {
         && !rootNode
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(depth, pos.this_thread());
+        alpha = Value(value_draw(depth, pos.this_thread()));
         if (alpha >= beta)
             return alpha;
     }
@@ -620,7 +620,7 @@ namespace {
             || pos.is_draw(ss->ply)
             || ss->ply >= MAX_PLY)
             return (ss->ply >= MAX_PLY && !inCheck) ? evaluate(pos)
-                                                    : value_draw(depth, pos.this_thread());
+                                                    : Value(value_draw(depth, pos.this_thread()));
 
         // Step 3. Mate distance pruning. Even if we mate at the next move our score
         // would be at best mate_in(ss->ply+1), but if alpha is already bigger because
@@ -628,8 +628,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max(mated_in(ss->ply), alpha);
-        beta = std::min(mate_in(ss->ply+1), beta);
+        alpha = std::max(Value(mated_in(ss->ply)), alpha);
+        beta = std::min(Value(mate_in(ss->ply+1)), beta);
         if (alpha >= beta)
             return alpha;
     }
@@ -657,7 +657,7 @@ namespace {
     excludedMove = ss->excludedMove;
     posKey = pos.key() ^ Key(excludedMove << 16); // Isn't a very good hash
     tte = TT.probe(posKey, ttHit);
-    ttValue = ttHit ? value_from_tt(tte->value(), ss->ply) : VALUE_NONE;
+    ttValue = ttHit ? Value(value_from_tt(tte->value(), ss->ply)) : VALUE_NONE;
     ttMove =  rootNode ? thisThread->rootMoves[thisThread->pvIdx].pv[0]
             : ttHit    ? tte->move() : MOVE_NONE;
     ttPv = PvNode || (ttHit && tte->is_pv());
@@ -726,7 +726,7 @@ namespace {
                 if (    b == BOUND_EXACT
                     || (b == BOUND_LOWER ? value >= beta : value <= alpha))
                 {
-                    tte->save(posKey, value_to_tt(value, ss->ply), ttPv, b,
+                    tte->save(posKey, Value(value_to_tt(value, ss->ply)), ttPv, b,
                               std::min(DEPTH_MAX - ONE_PLY, depth + 6 * ONE_PLY),
                               MOVE_NONE, VALUE_NONE);
 
@@ -886,7 +886,7 @@ namespace {
         search<NT>(pos, ss, alpha, beta, depth - 7 * ONE_PLY, cutNode);
 
         tte = TT.probe(posKey, ttHit);
-        ttValue = ttHit ? value_from_tt(tte->value(), ss->ply) : VALUE_NONE;
+        ttValue = ttHit ? Value(value_from_tt(tte->value(), ss->ply)) : VALUE_NONE;
         ttMove = ttHit ? tte->move() : MOVE_NONE;
     }
 
@@ -1267,7 +1267,7 @@ moves_loop: // When in check, search starts from here
 
     if (!moveCount)
         bestValue = excludedMove ? alpha
-                   :     inCheck ? mated_in(ss->ply) : VALUE_DRAW;
+                   :     inCheck ? Value(mated_in(ss->ply)) : VALUE_DRAW;
     else if (bestMove)
     {
         // Quiet best move: update move sorting heuristics
@@ -1292,7 +1292,7 @@ moves_loop: // When in check, search starts from here
         bestValue = std::min(bestValue, maxValue);
 
     if (!excludedMove)
-        tte->save(posKey, value_to_tt(bestValue, ss->ply), ttPv,
+        tte->save(posKey, Value(value_to_tt(bestValue, ss->ply)), ttPv,
                   bestValue >= beta ? BOUND_LOWER :
                   PvNode && bestMove ? BOUND_EXACT : BOUND_UPPER,
                   depth, bestMove, ss->staticEval);
@@ -1353,7 +1353,7 @@ moves_loop: // When in check, search starts from here
     // Transposition table lookup
     posKey = pos.key();
     tte = TT.probe(posKey, ttHit);
-    ttValue = ttHit ? value_from_tt(tte->value(), ss->ply) : VALUE_NONE;
+    ttValue = ttHit ? Value(value_from_tt(tte->value(), ss->ply)) : VALUE_NONE;
     ttMove = ttHit ? tte->move() : MOVE_NONE;
     pvHit = ttHit && tte->is_pv();
 
@@ -1393,7 +1393,7 @@ moves_loop: // When in check, search starts from here
         if (bestValue >= beta)
         {
             if (!ttHit)
-                tte->save(posKey, value_to_tt(bestValue, ss->ply), pvHit, BOUND_LOWER,
+                tte->save(posKey, Value(value_to_tt(bestValue, ss->ply)), pvHit, BOUND_LOWER,
                           DEPTH_NONE, MOVE_NONE, ss->staticEval);
 
             return bestValue;
@@ -1505,9 +1505,9 @@ moves_loop: // When in check, search starts from here
     // All legal moves have been searched. A special case: If we're in check
     // and no legal moves were found, it is checkmate.
     if (inCheck && bestValue == -VALUE_INFINITE)
-        return mated_in(ss->ply); // Plies to mate from the root
+        return Value(mated_in(ss->ply)); // Plies to mate from the root
 
-    tte->save(posKey, value_to_tt(bestValue, ss->ply), pvHit,
+    tte->save(posKey, Value(value_to_tt(bestValue, ss->ply)), pvHit,
               bestValue >= beta ? BOUND_LOWER :
               PvNode && bestValue > oldAlpha  ? BOUND_EXACT : BOUND_UPPER,
               ttDepth, bestMove, ss->staticEval);
@@ -1522,12 +1522,12 @@ moves_loop: // When in check, search starts from here
   // "plies to mate from the current position". Non-mate scores are unchanged.
   // The function is called before storing a value in the transposition table.
 
-  Value value_to_tt(Value v, int ply) {
+  Value2 value_to_tt(Value v, int ply) {
 
     assert(v != VALUE_NONE);
 
-    return  v >= VALUE_MATE_IN_MAX_PLY  ? v + ply
-          : v <= VALUE_MATED_IN_MAX_PLY ? v - ply : v;
+    return Value2( v >= VALUE_MATE_IN_MAX_PLY  ? v + ply
+          : v <= VALUE_MATED_IN_MAX_PLY ? v - ply : v);
   }
 
 
@@ -1535,11 +1535,11 @@ moves_loop: // When in check, search starts from here
   // from the transposition table (which refers to the plies to mate/be mated
   // from current position) to "plies to mate/be mated from the root".
 
-  Value value_from_tt(Value v, int ply) {
+  Value2 value_from_tt(Value v, int ply) {
 
-    return  v == VALUE_NONE             ? VALUE_NONE
+    return Value2( v == VALUE_NONE             ? VALUE_NONE
           : v >= VALUE_MATE_IN_MAX_PLY  ? v - ply
-          : v <= VALUE_MATED_IN_MAX_PLY ? v + ply : v;
+          : v <= VALUE_MATED_IN_MAX_PLY ? v + ply : v);
   }
 
 
