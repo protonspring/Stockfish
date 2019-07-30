@@ -88,7 +88,7 @@ namespace {
   // Add a small random component to draw evaluations to avoid 3fold-blindness
   Value2 value_draw(Depth depth, Thread* thisThread) {
     return depth < 4 * ONE_PLY ? VALUE_DRAW
-                               : VALUE_DRAW + Value(2 * (thisThread->nodes & 1) - 1);
+                               : VALUE_DRAW + Value2(2 * (thisThread->nodes & 1) - 1);
   }
 
   // Skill structure is used to implement strength limit
@@ -412,9 +412,9 @@ void Thread::search() {
           if (rootDepth >= 5 * ONE_PLY)
           {
               Value2 previousScore = rootMoves[pvIdx].previousScore;
-              delta = Value(20);
-              alpha = std::max(previousScore - delta,int(-VALUE_INFINITE));
-              beta  = std::min(previousScore + delta, int(VALUE_INFINITE));
+              delta = Value2(20);
+              alpha = std::max(Value2(previousScore - delta),Value2(-VALUE_INFINITE));
+              beta  = std::min(Value2(previousScore + delta), Value2(VALUE_INFINITE));
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + 88 * previousScore / (abs(previousScore) + 200);
@@ -483,7 +483,7 @@ void Thread::search() {
 
           if (    mainThread
               && (Threads.stop || pvIdx + 1 == multiPV || Time.elapsed() > 3000))
-              sync_cout << UCI::pv(rootPos, rootDepth, Value(alpha), Value(beta)) << sync_endl;
+              sync_cout << UCI::pv(rootPos, rootDepth, alpha, Value2(beta)) << sync_endl;
       }
 
       if (!Threads.stop)
@@ -657,7 +657,7 @@ namespace {
     excludedMove = ss->excludedMove;
     posKey = pos.key() ^ Key(excludedMove << 16); // Isn't a very good hash
     tte = TT.probe(posKey, ttHit);
-    ttValue = ttHit ? Value(value_from_tt(tte->value(), ss->ply)) : VALUE_NONE;
+    ttValue = ttHit ? value_from_tt(tte->value(), ss->ply) : Value2(VALUE_NONE);
     ttMove =  rootNode ? thisThread->rootMoves[thisThread->pvIdx].pv[0]
             : ttHit    ? tte->move() : MOVE_NONE;
     ttPv = PvNode || (ttHit && tte->is_pv());
@@ -756,7 +756,7 @@ namespace {
         // Never assume anything about values stored in TT
         ss->staticEval = eval = tte->eval();
         if (eval == VALUE_NONE)
-            ss->staticEval = eval = Value(evaluate(pos));
+            ss->staticEval = eval = Value2(evaluate(pos));
 
         // Can ttValue be used as a better position evaluation?
         if (    ttValue != VALUE_NONE
@@ -769,7 +769,7 @@ namespace {
         {
             int bonus = -(ss-1)->statScore / 512;
 
-            ss->staticEval = eval = Value(evaluate(pos) + bonus);
+            ss->staticEval = eval = Value2(evaluate(pos) + bonus);
         }
         else
             ss->staticEval = eval = -(ss-1)->staticEval + 2 * Eval::Tempo;
@@ -803,6 +803,8 @@ namespace {
         &&  pos.non_pawn_material(us)
         && (ss->ply >= thisThread->nmpMinPly || us != thisThread->nmpColor))
     {
+        if (eval < beta)
+           std::cout << "<" << eval << "," << beta<< ">" << std::endl;
         assert(eval - beta >= 0);
 
         // Null move dynamic reduction based on depth and value
@@ -850,7 +852,7 @@ namespace {
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
         Value2 raisedBeta = std::min(Value2(beta + 216 - 48 * improving), Value2(VALUE_INFINITE));
-        MovePicker mp(pos, ttMove, Value(raisedBeta - ss->staticEval), &thisThread->captureHistory);
+        MovePicker mp(pos, ttMove, Value2(raisedBeta - ss->staticEval), &thisThread->captureHistory);
         int probCutCount = 0;
 
         while (  (move = mp.next_move()) != MOVE_NONE
@@ -1267,7 +1269,7 @@ moves_loop: // When in check, search starts from here
 
     if (!moveCount)
         bestValue = excludedMove ? alpha
-                   :     inCheck ? Value(mated_in(ss->ply)) : VALUE_DRAW;
+                   :     inCheck ? Value2(mated_in(ss->ply)) : Value2(VALUE_DRAW);
     else if (bestMove)
     {
         // Quiet best move: update move sorting heuristics

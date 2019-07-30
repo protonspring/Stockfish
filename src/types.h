@@ -170,7 +170,9 @@ enum Bound {
 };
 
 typedef int16_t Value2;
-enum Value : int {
+//enum Value2 : int16_t { };
+
+enum Value : int16_t {
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
   VALUE_KNOWN_WIN = 10000,
@@ -189,6 +191,8 @@ enum Value : int {
 
   MidgameLimit  = 15258, EndgameLimit  = 3915
 };
+
+//typedef Value Value2;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -300,6 +304,7 @@ inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
 ENABLE_FULL_OPERATORS_ON(Value)
+//ENABLE_FULL_OPERATORS_ON(Value2)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
@@ -369,11 +374,11 @@ constexpr CastlingRight operator|(Color c, CastlingSide s) {
 }
 
 constexpr Value2 mate_in(int ply) {
-  return VALUE_MATE - ply;
+  return Value2(VALUE_MATE - ply);
 }
 
 constexpr Value2 mated_in(int ply) {
-  return -VALUE_MATE + ply;
+  return Value2(-VALUE_MATE + ply);
 }
 
 constexpr Square make_square(File f, Rank r) {

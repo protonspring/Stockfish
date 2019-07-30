@@ -756,7 +756,7 @@ namespace {
     if (sf == SCALE_FACTOR_NORMAL)
     {
         if (   pos.opposite_bishops()
-            && pos.non_pawn_material() == 2 * BishopValueMg)
+            && pos.non_pawn_material() == Value2(2 * BishopValueMg))
             sf = 16 + 4 * pe->passed_count();
         else
             sf = std::min(40 + (pos.opposite_bishops() ? 2 : 7) * pos.count<PAWN>(strongSide), sf);
@@ -862,7 +862,7 @@ std::string Eval::trace(const Position& pos) {
 
   Value2 v = Evaluation<TRACE>(pos).value();
 
-  v = pos.side_to_move() == WHITE ? v : -v; // Trace scores are from white's point of view
+  v = pos.side_to_move() == WHITE ? v : Value2(-v); // Trace scores are from white's point of view
 
   std::stringstream ss;
   ss << std::showpoint << std::noshowpos << std::fixed << std::setprecision(2)
