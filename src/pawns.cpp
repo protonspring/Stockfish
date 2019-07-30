@@ -94,6 +94,7 @@ namespace {
         Rank r = relative_rank(Us, s);
 
         e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
+        e->openFiles &= ~file_bb(file_of(s));
 
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
@@ -171,6 +172,7 @@ Entry* probe(const Position& pos) {
       return e;
 
   e->key = key;
+  e->openFiles = AllSquares;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
 

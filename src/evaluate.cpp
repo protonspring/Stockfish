@@ -580,6 +580,10 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Bonus for attacking openfile positions for enemy rooks
+    if (attackedBy[Them][ROOK] & pe->openFiles & attackedBy[Us][ALL_PIECES])
+        score += make_score(10,0);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
