@@ -268,12 +268,12 @@ constexpr Score make_score(int mg, int eg) {
 /// and so is a right shift of a signed integer.
 inline Value eg_value(Score s) {
   union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
+  return eg.s;
 }
 
 inline Value mg_value(Score s) {
   union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
+  return mg.s;
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
