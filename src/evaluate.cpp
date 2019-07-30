@@ -582,7 +582,7 @@ namespace {
 
     // Bonus for attacking openfile positions for enemy rooks
     if (attackedBy[Them][ROOK] & pe->openFiles & attackedBy[Us][ALL_PIECES])
-        score += make_score(10,0);
+        score += make_score(0, 10);
 
     if (T)
         Trace::add(THREAT, Us, score);
