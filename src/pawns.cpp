@@ -144,7 +144,7 @@ namespace {
         if (doubled && !support)
             score -= Doubled;
 
-        if (more_than_one(lever)) // && !more_than_one(support))
+        if (more_than_one(lever) && !more_than_one(support))
             score -= WeakLever / (support ? 2 : 1);
     }
 
