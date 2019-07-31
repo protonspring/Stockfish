@@ -28,8 +28,8 @@
 ///
 /// key        16 bit
 /// move       16 bit
-/// value      16 bit
-/// eval value 16 bit
+/// value      32 bit
+/// eval value 32 bit
 /// generation  5 bit
 /// pv node     1 bit
 /// bound type  2 bit
@@ -50,8 +50,8 @@ private:
 
   uint16_t key16;
   uint16_t move16;
-  int16_t  value16;
-  int16_t  eval16;
+  int32_t  value16;
+  int32_t  eval16;
   uint8_t  genBound8;
   uint8_t  depth8;
 };
@@ -66,13 +66,15 @@ private:
 
 class TranspositionTable {
 
-  static constexpr int CacheLineSize = 64;
-  static constexpr int ClusterSize = 3;
+  static constexpr int CacheLineSize = 128;
+  static constexpr int ClusterSize = 4;
 
   struct Cluster {
     TTEntry entry[ClusterSize];
-    char padding[2]; // Align to a divisor of the cache line size
+    //char padding[4]; // Align to a divisor of the cache line size
   };
+
+  //std::cout << "<" << sizeof(Cluster) << ">";
 
   static_assert(CacheLineSize % sizeof(Cluster) == 0, "Cluster size incorrect");
 
