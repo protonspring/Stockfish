@@ -26,10 +26,10 @@
 
 /// TTEntry struct is the 10 bytes transposition table entry, defined as below:
 ///
-/// key        16 bit
-/// move       16 bit
+/// key        32 bit
 /// value      32 bit
 /// eval value 32 bit
+/// move       16 bit
 /// generation  5 bit
 /// pv node     1 bit
 /// bound type  2 bit
@@ -48,10 +48,10 @@ struct TTEntry {
 private:
   friend class TranspositionTable;
 
-  uint16_t key16;
-  uint16_t move16;
+  uint32_t key32;
   int32_t  value32;
   int32_t  eval32;
+  uint16_t move16;
   uint8_t  genBound8;
   uint8_t  depth8;
 };
