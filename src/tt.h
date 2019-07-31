@@ -66,15 +66,13 @@ private:
 
 class TranspositionTable {
 
-  static constexpr int CacheLineSize = 128;
+  static constexpr int CacheLineSize = 64;
   static constexpr int ClusterSize = 4;
 
   struct Cluster {
     TTEntry entry[ClusterSize];
     //char padding[4]; // Align to a divisor of the cache line size
   };
-
-  //std::cout << "<" << sizeof(Cluster) << ">";
 
   static_assert(CacheLineSize % sizeof(Cluster) == 0, "Cluster size incorrect");
 
