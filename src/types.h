@@ -189,28 +189,6 @@ constexpr Value QueenValueMg  = 2529;  constexpr Value QueenValueEg  = 2687;
 
 constexpr Value MidgameLimit  = 15258; constexpr Value EndgameLimit  = 3915;
 
-/*
-enum Value : int32_t {
-  VALUE_ZERO      = 0,
-  VALUE_DRAW      = 0,
-  VALUE_KNOWN_WIN = 10000,
-  VALUE_MATE      = 32000,
-  VALUE_INFINITE  = 32001,
-  VALUE_NONE      = 32002,
-
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
-
-  PawnValueMg   = 128,   PawnValueEg   = 213,
-  KnightValueMg = 782,   KnightValueEg = 865,
-  BishopValueMg = 830,   BishopValueEg = 918,
-  RookValueMg   = 1289,  RookValueEg   = 1378,
-  QueenValueMg  = 2529,  QueenValueEg  = 2687,
-
-  MidgameLimit  = 15258, EndgameLimit  = 3915
-};
-*/
-
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
   ALL_PIECES = 0,
