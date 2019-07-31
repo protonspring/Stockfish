@@ -143,12 +143,10 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
-    }
 
-    // Penalize our unsupported pawns attacked twice by enemy pawns
-    score -= WeakLever * popcount(  ourPawns
-                                  & doubleAttackThem
-                                  & ~e->pawnAttacks[Us]);
+        if (more_than_one(lever)) // && !more_than_one(support))
+            score -= WeakLever / (support ? 2 : 1);
+    }
 
     return score;
   }
