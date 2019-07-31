@@ -67,7 +67,7 @@ private:
 class TranspositionTable {
 
   static constexpr int CacheLineSize = 64;
-  static constexpr int ClusterSize = 4;
+  static constexpr int ClusterSize = 2;
   struct Cluster { TTEntry entry[ClusterSize]; };
 
   static_assert(CacheLineSize % sizeof(Cluster) == 0, "Cluster size incorrect");
