@@ -117,12 +117,6 @@ extern Magic BishopMagics[SQUARE_NB];
 
 /// Overloads of bitwise operators between a Bitboard and a Square for testing
 /// whether a given bit is set in a bitboard, and for setting and clearing bits.
-
-//constexpr Bitboard  operator&( Bitboard  b, Square s) { return b & square_bb[s]; }
-//constexpr Bitboard  operator|( Bitboard  b, Square s) { return b |  square_bb[s]; }
-//constexpr Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb[s]; }
-//inline Bitboard& operator|=(Bitboard& b, Square s) { return b |= square_bb[s]; }
-//inline Bitboard& operator^=(Bitboard& b, Square s) { return b ^= square_bb[s]; }
 constexpr Bitboard  operator&( Bitboard  b, Square s) { return b & square_bb[s]; }
 constexpr Bitboard  operator|( Bitboard  b, Square s) { return b |  square_bb[s]; }
 constexpr Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb[s]; }
