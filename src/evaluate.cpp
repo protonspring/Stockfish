@@ -326,7 +326,7 @@ namespace {
             }
             else //KNIGHT
             {
-                score += make_score(2, 0) * pos.count<PAWN>();
+                score += make_score(0, 2) * pos.count<PAWN>();
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
