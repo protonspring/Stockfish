@@ -71,10 +71,20 @@ constexpr Bitboard KingFlank[FILE_NB] = {
   KingSide, KingSide, KingSide ^ FileEBB
 };
 
+constexpr Bitboard sbb(int s) { return (1ULL << s); }
+constexpr Bitboard square_bb[SQUARE_NB] = {
+    sbb( 0),sbb( 1),sbb( 2),sbb( 3),sbb( 4),sbb( 5),sbb( 6),sbb( 7),
+    sbb( 8),sbb( 9),sbb(10),sbb(11),sbb(12),sbb(13),sbb(14),sbb(15),
+    sbb(16),sbb(17),sbb(18),sbb(19),sbb(20),sbb(21),sbb(22),sbb(23),
+    sbb(24),sbb(25),sbb(26),sbb(27),sbb(28),sbb(29),sbb(30),sbb(31),
+    sbb(32),sbb(33),sbb(34),sbb(35),sbb(36),sbb(37),sbb(38),sbb(39),
+    sbb(40),sbb(41),sbb(42),sbb(43),sbb(44),sbb(45),sbb(46),sbb(47),
+    sbb(48),sbb(49),sbb(50),sbb(51),sbb(52),sbb(53),sbb(54),sbb(55),
+    sbb(56),sbb(57),sbb(58),sbb(59),sbb(60),sbb(61),sbb(62),sbb(63) };
+
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
-extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
@@ -105,19 +115,19 @@ struct Magic {
 extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
 
-inline Bitboard square_bb(Square s) {
-  assert(s >= SQ_A1 && s <= SQ_H8);
-  return SquareBB[s];
-}
-
 /// Overloads of bitwise operators between a Bitboard and a Square for testing
 /// whether a given bit is set in a bitboard, and for setting and clearing bits.
 
-inline Bitboard  operator&( Bitboard  b, Square s) { return b &  square_bb(s); }
-inline Bitboard  operator|( Bitboard  b, Square s) { return b |  square_bb(s); }
-inline Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb(s); }
-inline Bitboard& operator|=(Bitboard& b, Square s) { return b |= square_bb(s); }
-inline Bitboard& operator^=(Bitboard& b, Square s) { return b ^= square_bb(s); }
+//constexpr Bitboard  operator&( Bitboard  b, Square s) { return b & square_bb[s]; }
+//constexpr Bitboard  operator|( Bitboard  b, Square s) { return b |  square_bb[s]; }
+//constexpr Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb[s]; }
+//inline Bitboard& operator|=(Bitboard& b, Square s) { return b |= square_bb[s]; }
+//inline Bitboard& operator^=(Bitboard& b, Square s) { return b ^= square_bb[s]; }
+constexpr Bitboard  operator&( Bitboard  b, Square s) { return b & square_bb[s]; }
+constexpr Bitboard  operator|( Bitboard  b, Square s) { return b |  square_bb[s]; }
+constexpr Bitboard  operator^( Bitboard  b, Square s) { return b ^  square_bb[s]; }
+inline Bitboard& operator|=(Bitboard& b, Square s) { return b |= square_bb[s]; }
+inline Bitboard& operator^=(Bitboard& b, Square s) { return b ^= square_bb[s]; }
 
 constexpr bool more_than_one(Bitboard b) {
   return b & (b - 1);

@@ -342,7 +342,7 @@ void Position::set_castling_right(Color c, Square rfrom) {
   Square rto = relative_square(c, cs == KING_SIDE ? SQ_F1 : SQ_D1);
 
   castlingPath[cr] =   (between_bb(rfrom, rto) | between_bb(kfrom, kto) | rto | kto)
-                    & ~(square_bb(kfrom) | rfrom);
+                    & ~(square_bb[kfrom] | rfrom);
 }
 
 
