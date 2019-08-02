@@ -1300,9 +1300,8 @@ bool Position::pos_is_ok() const {
   }
 
   for (Color c : { WHITE, BLACK })
-      for (CastlingRight s : {KING_SIDE, QUEEN_SIDE})
+      for (CastlingRight cr : {c & KING_SIDE, c & QUEEN_SIDE})
       {
-          CastlingRight cr = c & s;
           if (!can_castle(cr))
               continue;
 
