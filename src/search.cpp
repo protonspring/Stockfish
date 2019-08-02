@@ -172,7 +172,7 @@ namespace {
             cnt = 1, nodes++;
         else
         {
-            pos.do_move(m, st);
+            pos.do_move(m, st, pos.gives_check(m));
             cnt = leaf ? MoveList<LEGAL>(pos).size() : perft<false>(pos, depth - ONE_PLY);
             nodes += cnt;
             pos.undo_move(m);
@@ -864,7 +864,7 @@ namespace {
 
                 assert(depth >= 5 * ONE_PLY);
 
-                pos.do_move(move, st);
+                pos.do_move(move, st, pos.gives_check(move));
 
                 // Perform a preliminary qsearch to verify that the move holds
                 value = -qsearch<NonPV>(pos, ss+1, -raisedBeta, -raisedBeta+1);
@@ -1749,7 +1749,7 @@ bool RootMove::extract_ponder_from_tt(Position& pos) {
     if (pv[0] == MOVE_NONE)
         return false;
 
-    pos.do_move(pv[0], st);
+    pos.do_move(pv[0], st, pos.gives_check(pv[0]));
     TTEntry* tte = TT.probe(pos.key(), ttHit);
 
     if (ttHit)
