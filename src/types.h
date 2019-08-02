@@ -362,7 +362,7 @@ constexpr Piece operator~(Piece pc) {
 }
 
 constexpr CastlingRight operator&(Color c, CastlingRight s) {
-  return CastlingRight((WHITE_CASTLING << (2 * c)) & s);
+  return CastlingRight((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & s);
 }
 
 constexpr Value mate_in(int ply) {
