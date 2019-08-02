@@ -330,8 +330,8 @@ Position& Position::set(const string& fenStr, bool isChess960, StateInfo* si, Th
 void Position::set_castling_right(Color c, Square rfrom) {
 
   Square kfrom = square<KING>(c);
-  CastlingSide cs = kfrom < rfrom ? KING_SIDE : QUEEN_SIDE;
-  CastlingRight cr = (c | cs);
+  CastlingRight cs = kfrom < rfrom ? KING_SIDE: QUEEN_SIDE;
+  CastlingRight cr = c & cs;
 
   st->castlingRights |= cr;
   castlingRightsMask[kfrom] |= cr;
@@ -1300,14 +1300,15 @@ bool Position::pos_is_ok() const {
   }
 
   for (Color c : { WHITE, BLACK })
-      for (CastlingSide s : {KING_SIDE, QUEEN_SIDE})
+      for (CastlingRight s : {KING_SIDE, QUEEN_SIDE})
       {
-          if (!can_castle(c | s))
+          CastlingRight cr = c & s;
+          if (!can_castle(cr))
               continue;
 
-          if (   piece_on(castlingRookSquare[c | s]) != make_piece(c, ROOK)
-              || castlingRightsMask[castlingRookSquare[c | s]] != (c | s)
-              || (castlingRightsMask[square<KING>(c)] & (c | s)) != (c | s))
+          if (   piece_on(castlingRookSquare[cr]) != make_piece(c, ROOK)
+              || castlingRightsMask[castlingRookSquare[cr]] != (cr)
+              || (castlingRightsMask[square<KING>(c)] & (cr)) != (cr))
               assert(0 && "pos_is_ok: Castling");
       }
 

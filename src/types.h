@@ -131,16 +131,14 @@ enum Color {
   WHITE, BLACK, COLOR_NB = 2
 };
 
-enum CastlingSide {
-  KING_SIDE, QUEEN_SIDE, CASTLING_SIDE_NB = 2
-};
-
 enum CastlingRight {
   NO_CASTLING,
   WHITE_OO,
-  WHITE_OOO = WHITE_OO << 1,
-  BLACK_OO  = WHITE_OO << 2,
-  BLACK_OOO = WHITE_OO << 3,
+  WHITE_OOO  = WHITE_OO << 1,
+  BLACK_OO   = WHITE_OO << 2,
+  BLACK_OOO  = WHITE_OO << 3,
+  KING_SIDE  = WHITE_OO | BLACK_OO,
+  QUEEN_SIDE = WHITE_OOO | BLACK_OOO,
 
   WHITE_CASTLING = WHITE_OO | WHITE_OOO,
   BLACK_CASTLING = BLACK_OO | BLACK_OOO,
@@ -363,8 +361,8 @@ constexpr Piece operator~(Piece pc) {
   return Piece(pc ^ 8); // Swap color of piece B_KNIGHT -> W_KNIGHT
 }
 
-constexpr CastlingRight operator|(Color c, CastlingSide s) {
-  return CastlingRight(WHITE_OO << ((s == QUEEN_SIDE) + 2 * c));
+constexpr CastlingRight operator&(Color c, CastlingRight s) {
+  return CastlingRight((WHITE_CASTLING << (2 * c)) & s);
 }
 
 constexpr Value mate_in(int ply) {
