@@ -169,7 +169,7 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-typedef int_fast32_t Value;
+typedef int Value;
 constexpr Value VALUE_ZERO      = 0;
 constexpr Value VALUE_DRAW      = 0;
 constexpr Value VALUE_KNOWN_WIN = 10000;
