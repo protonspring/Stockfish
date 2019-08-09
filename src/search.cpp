@@ -64,7 +64,7 @@ namespace {
   // Razor and futility margins
   constexpr int RazorMargin = 661;
   Value futility_margin(Depth d, bool improving) {
-    return Value((168 - 51 * improving) * d / ONE_PLY);
+    return (168 - 51 * improving) * d / ONE_PLY;
   }
 
   // Reductions lookup table, initialized at startup
@@ -88,7 +88,7 @@ namespace {
   // Add a small random component to draw evaluations to avoid 3fold-blindness
   Value value_draw(Depth depth, Thread* thisThread) {
     return depth < 4 * ONE_PLY ? VALUE_DRAW
-                               : VALUE_DRAW + Value(2 * (thisThread->nodes & 1) - 1);
+                               : VALUE_DRAW + (2 * (thisThread->nodes & 1) - 1);
   }
 
   // Skill structure is used to implement strength limit
@@ -279,7 +279,7 @@ void MainThread::search() {
 
       // Find out minimum score
       for (Thread* th: Threads)
-          minScore = std::min(minScore, Value(th->rootMoves[0].score));
+          minScore = std::min(minScore, th->rootMoves[0].score);
 
       // Vote according to score and depth, and select the best thread
       for (Thread* th : Threads)
@@ -412,7 +412,7 @@ void Thread::search() {
           if (rootDepth >= 4 * ONE_PLY)
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
-              delta = Value(23);
+              delta = 23;
               alpha = std::max(previousScore - delta,-VALUE_INFINITE);
               beta  = std::min(previousScore + delta, int(VALUE_INFINITE));
 
@@ -452,14 +452,14 @@ void Thread::search() {
                   && multiPV == 1
                   && (bestValue <= alpha || bestValue >= beta)
                   && Time.elapsed() > 3000)
-                  sync_cout << UCI::pv(rootPos, rootDepth, Value(alpha), Value(beta)) << sync_endl;
+                  sync_cout << UCI::pv(rootPos, rootDepth, alpha, beta) << sync_endl;
 
               // In case of failing low/high increase aspiration window and
               // re-search, otherwise exit the loop.
               if (bestValue <= alpha)
               {
                   beta = (alpha + beta) / 2;
-                  alpha = std::max(Value(bestValue - delta), Value(-VALUE_INFINITE));
+                  alpha = std::max(bestValue - delta, -VALUE_INFINITE);
 
                   failedHighCnt = 0;
                   if (mainThread)
@@ -467,7 +467,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min(Value(bestValue + delta), Value(VALUE_INFINITE));
+                  beta = std::min(bestValue + delta, int(VALUE_INFINITE));
                   ++failedHighCnt;
               }
               else
@@ -483,7 +483,7 @@ void Thread::search() {
 
           if (    mainThread
               && (Threads.stop || pvIdx + 1 == multiPV || Time.elapsed() > 3000))
-              sync_cout << UCI::pv(rootPos, rootDepth, Value(alpha), Value(beta)) << sync_endl;
+              sync_cout << UCI::pv(rootPos, rootDepth, alpha, beta) << sync_endl;
       }
 
       if (!Threads.stop)
@@ -628,8 +628,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max(mated_in(ss->ply), Value(alpha));
-        beta = std::min(mate_in(ss->ply+1), Value(beta));
+        alpha = std::max(mated_in(ss->ply), alpha);
+        beta = std::min(mate_in(ss->ply+1), beta);
         if (alpha >= beta)
             return alpha;
     }
@@ -1042,11 +1042,11 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Prune moves with negative SEE (~10 Elo)
-              if (!pos.see_ge(move, Value(-(31 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
+              if (!pos.see_ge(move, (-(31 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
                   continue;
           }
           else if (  (!givesCheck || !extension)
-                   && !pos.see_ge(move, Value(-199) * (depth / ONE_PLY))) // (~20 Elo)
+                   && !pos.see_ge(move, -199 * (depth / ONE_PLY))) // (~20 Elo)
                   continue;
       }
 
@@ -1190,7 +1190,7 @@ moves_loop: // When in check, search starts from here
           // PV move or new best move?
           if (moveCount == 1 || value > alpha)
           {
-              rm.score = Value(value);
+              rm.score = value;
               rm.selDepth = thisThread->selDepth;
               rm.pv.resize(1);
 
@@ -1371,7 +1371,7 @@ moves_loop: // When in check, search starts from here
         {
             // Never assume anything about values stored in TT
             if ((ss->staticEval = bestValue = tte->eval()) == VALUE_NONE)
-                ss->staticEval = Value(bestValue = evaluate(pos));
+                ss->staticEval = bestValue = evaluate(pos);
 
             // Can ttValue be used as a better position evaluation?
             if (    ttValue != VALUE_NONE
@@ -1379,8 +1379,8 @@ moves_loop: // When in check, search starts from here
                 bestValue = ttValue;
         }
         else
-            ss->staticEval = Value(bestValue =
-            Value((ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
+            ss->staticEval = (bestValue =
+            ((ss-1)->currentMove != MOVE_NULL ? evaluate(pos)
                                              : -(ss-1)->staticEval + 2 * Eval::Tempo));
 
         // Stand pat. Return immediately if static value is at least beta
@@ -1620,7 +1620,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value topScore = rootMoves[0].score;
-    int delta = std::min(Value(topScore - rootMoves[multiPV - 1].score), Value(PawnValueMg));
+    int delta = std::min(topScore - rootMoves[multiPV - 1].score, int(PawnValueMg));
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 
@@ -1711,7 +1711,7 @@ string UCI::pv(const Position& pos, Depth depth, Value alpha, Value beta) {
          << " depth "    << d / ONE_PLY
          << " seldepth " << rootMoves[i].selDepth
          << " multipv "  << i + 1
-         << " score "    << UCI::value(Value(v));
+         << " score "    << UCI::value(v);
 
       if (!tb && i == pvIdx)
           ss << (v >= beta ? " lowerbound" : v <= alpha ? " upperbound" : "");

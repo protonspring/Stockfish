@@ -74,8 +74,8 @@ using namespace Trace;
 namespace {
 
   // Threshold for lazy and space evaluation
-  constexpr Value LazyThreshold  = Value(1400);
-  constexpr Value SpaceThreshold = Value(12222);
+  constexpr Value LazyThreshold  = 1400;
+  constexpr Value SpaceThreshold = 12222;
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
   constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
@@ -796,7 +796,7 @@ namespace {
     // Early exit if score is high
     int v = (mg_value(score) + eg_value(score)) / 2;
     if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
-       return Value(pos.side_to_move() == WHITE ? v : -v);
+       return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
 
@@ -835,8 +835,8 @@ namespace {
         Trace::add(TOTAL, score);
     }
 
-    return  Value((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
-           + Eval::Tempo);
+    return  (pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
+           + Eval::Tempo;
   }
 
 } // namespace
