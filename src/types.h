@@ -131,7 +131,7 @@ enum Color {
   WHITE, BLACK, COLOR_NB = 2
 };
 
-enum CastlingRight {
+enum CastlingRights {
   NO_CASTLING,
   WHITE_OO,
   WHITE_OOO = WHITE_OO << 1,
@@ -361,8 +361,8 @@ constexpr Piece operator~(Piece pc) {
   return Piece(pc ^ 8); // Swap color of piece B_KNIGHT -> W_KNIGHT
 }
 
-constexpr CastlingRight operator&(Color c, CastlingRight s) {
-  return CastlingRight((WHITE_CASTLING << (2 * c)) & s);
+constexpr CastlingRights operator&(Color c, CastlingRights s) {
+  return CastlingRights((WHITE_CASTLING << (2 * c)) & s);
 }
 
 constexpr Value mate_in(int ply) {
