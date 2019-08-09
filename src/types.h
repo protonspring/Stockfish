@@ -260,8 +260,7 @@ enum Rank : int {
 /// avoid left-shifting a signed int to avoid undefined behavior.
 enum Score : int { SCORE_ZERO };
 
-constexpr Score make_score(int mg, int eg) {
-  //return Score((int)((unsigned int)eg << 16) + mg);
+constexpr Score make_score(Value mg, Value eg) {
   return Score(((unsigned int)eg << 16) + mg);
 }
 
