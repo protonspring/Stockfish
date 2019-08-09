@@ -28,7 +28,7 @@
 
 namespace {
 
-  #define V Value16
+  #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
@@ -43,7 +43,7 @@ namespace {
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value16 ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
     { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
     { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
@@ -54,7 +54,7 @@ namespace {
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king.
   // [0][1-2] accommodate opponent pawn on edge (likely blocked by our king)
-  constexpr Value16 UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
+  constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
     { V( 89), V(-285), V(-185), V(93), V(57), V( 45), V( 51) },
     { V( 44), V( -18), V( 123), V(46), V(39), V( -7), V( 23) },
     { V(  4), V(  52), V( 162), V(37), V( 7), V(-14), V( -2) },
@@ -234,7 +234,7 @@ Score Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
-  Score shelter = make_score(-VALUE_INFINITE16, VALUE_ZERO16);
+  Score shelter = make_score(-VALUE_INFINITE, VALUE_ZERO);
   evaluate_shelter<Us>(pos, ksq, shelter);
 
   // If we can castle use the bonus after the castling if it is bigger
@@ -244,7 +244,7 @@ Score Entry::do_king_safety(const Position& pos) {
   if (pos.can_castle(Us | QUEEN_SIDE))
       evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1), shelter);
 
-  return shelter - make_score(VALUE_ZERO16, 16 * minPawnDist);
+  return shelter - make_score(VALUE_ZERO, 16 * minPawnDist);
 }
 
 // Explicit template instantiation

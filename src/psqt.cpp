@@ -22,9 +22,9 @@
 
 #include "types.h"
 
-Value16 PieceValue[PHASE_NB][PIECE_NB] = {
-  { VALUE_ZERO16, PawnValueMg16, KnightValueMg16, BishopValueMg16, RookValueMg16, QueenValueMg16 },
-  { VALUE_ZERO16, PawnValueEg16, KnightValueEg16, BishopValueEg16, RookValueEg16, QueenValueEg16 }
+Value PieceValue[PHASE_NB][PIECE_NB] = {
+  { VALUE_ZERO, PawnValueMg, KnightValueMg, BishopValueMg, RookValueMg, QueenValueMg },
+  { VALUE_ZERO, PawnValueEg, KnightValueEg, BishopValueEg, RookValueEg, QueenValueEg }
 };
 
 namespace PSQT {

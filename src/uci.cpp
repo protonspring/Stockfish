@@ -248,16 +248,16 @@ void UCI::loop(int argc, char* argv[]) {
 /// mate <y>  Mate in y moves, not plies. If the engine is getting mated
 ///           use negative values for y.
 
-string UCI::value(Value16 v) {
+string UCI::value(Value v) {
 
   assert(-VALUE_INFINITE < v && v < VALUE_INFINITE);
 
   stringstream ss;
 
-  if (abs(v) < VALUE_MATE16 - MAX_PLY)
-      ss << "cp " << v * 100 / PawnValueEg16;
+  if (abs(v) < VALUE_MATE - MAX_PLY)
+      ss << "cp " << v * 100 / PawnValueEg;
   else
-      ss << "mate " << (v > 0 ? VALUE_MATE16 - v + 1 : -VALUE_MATE16 - v) / 2;
+      ss << "mate " << (v > 0 ? VALUE_MATE - v + 1 : -VALUE_MATE - v) / 2;
 
   return ss.str();
 }

@@ -150,7 +150,7 @@ void ThreadPool::clear() {
       th->clear();
 
   main()->callsCnt = 0;
-  main()->previousScore = VALUE_INFINITE16;
+  main()->previousScore = VALUE_INFINITE;
   main()->previousTimeReduction = 1.0;
 }
 

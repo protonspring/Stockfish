@@ -373,7 +373,7 @@ void Position::set_state(StateInfo* si) const {
 
   si->key = si->materialKey = 0;
   si->pawnKey = Zobrist::noPawns;
-  si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO16;
+  si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO;
   si->checkersBB = attackers_to(square<KING>(sideToMove)) & pieces(~sideToMove);
 
   set_check_info(si);
@@ -1045,26 +1045,26 @@ Key Position::key_after(Move m) const {
 /// SEE value of move is greater or equal to the given threshold. We'll use an
 /// algorithm similar to alpha-beta pruning with a null window.
 
-bool Position::see_ge(Move m, Value16 threshold) const {
+bool Position::see_ge(Move m, Value threshold) const {
 
   assert(is_ok(m));
 
   // Only deal with normal moves, assume others pass a simple see
   if (type_of(m) != NORMAL)
-      return VALUE_ZERO16 >= threshold;
+      return VALUE_ZERO >= threshold;
 
   Bitboard stmAttackers;
   Square from = from_sq(m), to = to_sq(m);
   PieceType nextVictim = type_of(piece_on(from));
   Color us = color_of(piece_on(from));
   Color stm = ~us; // First consider opponent's move
-  Value16 balance;   // Values of the pieces taken by us minus opponent's ones
+  Value balance;   // Values of the pieces taken by us minus opponent's ones
 
   // The opponent may be able to recapture so this is the best result
   // we can hope for.
   balance = PieceValue[MG][piece_on(to)] - threshold;
 
-  if (balance < VALUE_ZERO16)
+  if (balance < VALUE_ZERO)
       return false;
 
   // Now assume the worst possible result: that the opponent can
@@ -1074,7 +1074,7 @@ bool Position::see_ge(Move m, Value16 threshold) const {
   // If it is enough (like in PxQ) then return immediately. Note that
   // in case nextVictim == KING we always return here, this is ok
   // if the given move is legal.
-  if (balance >= VALUE_ZERO16)
+  if (balance >= VALUE_ZERO)
       return true;
 
   // Find all attackers to the destination square, with the moving piece
@@ -1106,14 +1106,14 @@ bool Position::see_ge(Move m, Value16 threshold) const {
       //
       //      (balance, balance+1) -> (-balance-1, -balance)
       //
-      assert(balance < VALUE_ZERO16);
+      assert(balance < VALUE_ZERO);
 
       balance = -balance - 1 - PieceValue[MG][nextVictim];
 
       // If balance is still non-negative after giving away nextVictim then we
       // win. The only thing to be careful about it is that we should revert
       // stm if we captured with the king when the opponent still has attackers.
-      if (balance >= VALUE_ZERO16)
+      if (balance >= VALUE_ZERO)
       {
           if (nextVictim == KING && (attackers & pieces(stm)))
               stm = ~stm;

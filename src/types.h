@@ -169,24 +169,24 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-typedef int16_t Value16;
-constexpr Value16 VALUE_ZERO16      = 0;
-constexpr Value16 VALUE_DRAW16      = 0;
-constexpr Value16 VALUE_KNOWN_WIN16 = 10000;
-constexpr Value16 VALUE_MATE16      = 32000;
-constexpr Value16 VALUE_INFINITE16  = 32001;
-constexpr Value16 VALUE_NONE16      = 32002;
+typedef int16_t Value;
+constexpr Value VALUE_ZERO      = 0;
+constexpr Value VALUE_DRAW      = 0;
+constexpr Value VALUE_KNOWN_WIN = 10000;
+constexpr Value VALUE_MATE      = 32000;
+constexpr Value VALUE_INFINITE  = 32001;
+constexpr Value VALUE_NONE      = 32002;
 
-constexpr Value16 VALUE_MATE_IN_MAX_PLY16  =  VALUE_MATE16 - 2 * MAX_PLY;
-constexpr Value16 VALUE_MATED_IN_MAX_PLY16 = -VALUE_MATE16 + 2 * MAX_PLY;
+constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
+constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
 
-constexpr Value16 PawnValueMg16   = 128;  constexpr Value16 PawnValueEg16   = 213;
-constexpr Value16 KnightValueMg16 = 782;  constexpr Value16 KnightValueEg16 = 865;
-constexpr Value16 BishopValueMg16 = 830;  constexpr Value16 BishopValueEg16 = 918;
-constexpr Value16 RookValueMg16   = 1289; constexpr Value16 RookValueEg16   = 1378;
-constexpr Value16 QueenValueMg16  = 2529; constexpr Value16 QueenValueEg16  = 2687;
+constexpr Value PawnValueMg   = 128;  constexpr Value PawnValueEg   = 213;
+constexpr Value KnightValueMg = 782;  constexpr Value KnightValueEg = 865;
+constexpr Value BishopValueMg = 830;  constexpr Value BishopValueEg = 918;
+constexpr Value RookValueMg   = 1289; constexpr Value RookValueEg   = 1378;
+constexpr Value QueenValueMg  = 2529; constexpr Value QueenValueEg  = 2687;
 
-constexpr Value16 MidgameLimit16  = 15258; constexpr Value16 EndgameLimit16  = 3915;
+constexpr Value MidgameLimit  = 15258; constexpr Value EndgameLimit  = 3915;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -201,7 +201,7 @@ enum Piece {
   PIECE_NB = 16
 };
 
-extern Value16 PieceValue[PHASE_NB][PIECE_NB];
+extern Value PieceValue[PHASE_NB][PIECE_NB];
 
 enum Depth : int {
 
@@ -261,20 +261,21 @@ enum Rank : int {
 enum Score : int { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
+  //return Score((int)((unsigned int)eg << 16) + mg);
+  return Score(((unsigned int)eg << 16) + mg);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value16 eg_value(Score s) {
-  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value16(int16_t(eg.s));
+inline Value eg_value(Score s) {
+  union { uint16_t u; Value s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
+  return eg.s;
 }
 
-inline Value16 mg_value(Score s) {
-  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value16(int16_t(mg.s));
+inline Value mg_value(Score s) {
+  union { uint16_t u; Value s; } mg = { uint16_t(unsigned(s)) };
+  return mg.s;
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -359,12 +360,12 @@ constexpr CastlingRight operator|(Color c, CastlingSide s) {
   return CastlingRight(WHITE_OO << ((s == QUEEN_SIDE) + 2 * c));
 }
 
-constexpr Value16 mate_in(int ply) {
-  return VALUE_MATE16 - ply;
+constexpr Value mate_in(int ply) {
+  return VALUE_MATE - ply;
 }
 
-constexpr Value16 mated_in(int ply) {
-  return -VALUE_MATE16 + ply;
+constexpr Value mated_in(int ply) {
+  return -VALUE_MATE + ply;
 }
 
 constexpr Square make_square(File f, Rank r) {
