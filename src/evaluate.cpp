@@ -586,7 +586,7 @@ namespace {
     {
         Square s = pop_lsb(&b);
         if (!(PseudoAttacks[KNIGHT][s] & ~(attackedBy[Them][ALL_PIECES] | pos.pieces(Us))))
-            score -= make_score(10,0);
+            score -= make_score(0, 10);
     }
 
     if (T)
