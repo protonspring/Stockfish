@@ -558,6 +558,17 @@ namespace {
     b = pawn_attacks_bb<Us>(b) & nonPawnEnemies;
     score += ThreatByPawnPush * popcount(b);
 
+    // A pawn with phalanx that can push and attack two non-pawn pieces should be good
+    b = pos.pieces(Us, PAWN);
+    b &= (shift<EAST>(b) | shift<WEST>(b));
+    while(b)  //pawns in a phalanx
+    {
+        Square s = pop_lsb(&b);
+        if (!(pos.pieces() & (s + Up)))  //can push
+            if (more_than_one((pos.pieces(Them) ^ pos.pieces(Them, PAWN)) & PawnAttacks[Us][s + Up]))
+                score += ThreatByPawnPush;
+    }
+
     // Our safe or protected pawns
     b = pos.pieces(Us, PAWN) & safe;
 
