@@ -580,6 +580,15 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Check for trapped knights
+    b = pos.pieces(Us, KNIGHT);
+    while(b)
+    {
+        Square s = pop_lsb(&b);
+        if (!(PseudoAttacks[KNIGHT][s] & ~(attackedBy[Them][ALL_PIECES] | pos.pieces(Us))))
+            score -= make_score(10,0);
+    }
+
     if (T)
         Trace::add(THREAT, Us, score);
 
