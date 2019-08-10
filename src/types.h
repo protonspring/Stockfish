@@ -246,6 +246,9 @@ enum Direction : int {
   NORTH_WEST = NORTH + WEST
 };
 
+constexpr Direction Up(  Color c) { return c == WHITE ? NORTH : SOUTH; }
+constexpr Direction Down(Color c) { return c == WHITE ? SOUTH : NORTH; }
+
 enum File : int {
   FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NB
 };
@@ -414,10 +417,6 @@ constexpr Rank relative_rank(Color c, Rank r) {
 
 constexpr Rank relative_rank(Color c, Square s) {
   return relative_rank(c, rank_of(s));
-}
-
-constexpr Direction pawn_push(Color c) {
-  return c == WHITE ? NORTH : SOUTH;
 }
 
 constexpr Square from_sq(Move m) {
