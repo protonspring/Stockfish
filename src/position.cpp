@@ -619,7 +619,7 @@ bool Position::pseudo_legal(const Move m) const {
   {
       // We have already handled promotion moves, so destination
       // cannot be on the 8th/1st rank.
-      if ((Rank8BB | Rank1BB) & to)
+      if ((rbb(RANK_8) | rbb(RANK_1)) & to)
           return false;
 
       if (   !(attacks_from<PAWN>(from, us) & pieces(~us) & to) // Not a capture
@@ -1267,7 +1267,7 @@ bool Position::pos_is_ok() const {
       || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove))
       assert(0 && "pos_is_ok: Kings");
 
-  if (   (pieces(PAWN) & (Rank1BB | Rank8BB))
+  if (   (pieces(PAWN) & (rbb(RANK_1) | rbb(RANK_1)))
       || pieceCount[W_PAWN] > 8
       || pieceCount[B_PAWN] > 8)
       assert(0 && "pos_is_ok: Pawns");

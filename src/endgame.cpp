@@ -281,7 +281,7 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
 
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
-      || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
+      || !((fbb(FILE_A) | fbb(FILE_C) | fbb(FILE_F) | fbb(FILE_H)) & pawnSq))
       result += QueenValueEg - PawnValueEg;
 
   return strongSide == pos.side_to_move() ? result : -result;
@@ -347,7 +347,7 @@ ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
 
   // All pawns are on a single rook file?
   if (    (pawnsFile == FILE_A || pawnsFile == FILE_H)
-      && !(pawns & ~file_bb(pawnsFile)))
+      && !(pawns & ~fbb(pawnsFile)))
   {
       Square bishopSq = pos.square<BISHOP>(strongSide);
       Square queeningSq = relative_square(strongSide, make_square(pawnsFile, RANK_8));
@@ -360,7 +360,7 @@ ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
 
   // If all the pawns are on the same B or G file, then it's potentially a draw
   if (    (pawnsFile == FILE_B || pawnsFile == FILE_G)
-      && !(pos.pieces(PAWN) & ~file_bb(pawnsFile))
+      && !(pos.pieces(PAWN) & ~fbb(pawnsFile))
       && pos.non_pawn_material(weakSide) == 0
       && pos.count<PAWN>(weakSide) >= 1)
   {
@@ -528,7 +528,7 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
   // Test for a rook pawn
-  if (pos.pieces(PAWN) & (FileABB | FileHBB))
+  if (pos.pieces(PAWN) & (FileABB | fbb(FILE_H)))
   {
       Square ksq = pos.square<KING>(weakSide);
       Square bsq = pos.square<BISHOP>(weakSide);
@@ -609,7 +609,7 @@ ScaleFactor Endgame<KPsK>::operator()(const Position& pos) const {
   // If all pawns are ahead of the king, on a single rook file and
   // the king is within one file of the pawns, it's a draw.
   if (   !(pawns & ~forward_ranks_bb(weakSide, ksq))
-      && !((pawns & ~FileABB) && (pawns & ~FileHBB))
+      && !((pawns & ~FileABB) && (pawns & ~fbb(FILE_H)))
       &&  distance<File>(ksq, lsb(pawns)) <= 1)
       return SCALE_FACTOR_DRAW;
 

@@ -102,8 +102,8 @@ namespace {
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         doubled    = ourPawns   & (s - Up);
         neighbours = ourPawns   & adjacent_files_bb(s);
-        phalanx    = neighbours & rank_bb(s);
-        support    = neighbours & rank_bb(s - Up);
+        phalanx    = neighbours & rbb(s);
+        support    = neighbours & rbb(s - Up);
 
         // A pawn is backward when it is behind all pawns of the same color on
         // the adjacent files and cannot safely advance. Phalanx and isolated
@@ -195,10 +195,10 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
+      b = ourPawns & fbb(f);
       Rank ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
-      b = theirPawns & file_bb(f);
+      b = theirPawns & fbb(f);
       Rank theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : RANK_1;
 
       int d = std::min(f, ~f);

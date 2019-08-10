@@ -153,7 +153,7 @@ namespace {
     for (Square s = SQ_A1; s <= SQ_H8; ++s)
     {
         // Board edges are not considered in the relevant occupancies
-        edges = ((Rank1BB | Rank8BB) & ~rank_bb(s)) | ((FileABB | FileHBB) & ~file_bb(s));
+        edges = ((rbb(RANK_1) | rbb(RANK_8)) & ~rbb(s)) | ((fbb(FILE_A) | fbb(FILE_H)) & ~fbb(s));
 
         // Given a square 's', the mask is the bitboard of sliding attacks from
         // 's' computed on an empty board. The index must be big enough to contain
