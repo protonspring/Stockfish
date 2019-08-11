@@ -472,7 +472,7 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   if (   wpsq == SQ_A7
       && wrsq == SQ_A8
       && (bksq == SQ_H7 || bksq == SQ_G7)
-      && file_of(brsq) == File(A) 
+      && file_of(brsq) == File(A)
       && (rank_of(brsq) <= Rank(R3) || file_of(wksq) >= File(D) || rank_of(wksq) <= Rank(R5)))
       return SCALE_FACTOR_DRAW;
 

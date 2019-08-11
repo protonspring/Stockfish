@@ -237,13 +237,13 @@ namespace {
 
     // Init our king safety tables
     kingRing[Us] = attackedBy[Us][KING];
-    if (relative_rank(Us, ksq) == R1)
+    if (relative_rank(Us, ksq) == Rank(R1))
         kingRing[Us] |= shift<Up>(kingRing[Us]);
 
-    if (file_of(ksq) == H)
+    if (file_of(ksq) == File(H))
         kingRing[Us] |= shift<WEST>(kingRing[Us]);
 
-    else if (file_of(ksq) == A)
+    else if (file_of(ksq) == File(A))
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
     kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
@@ -260,7 +260,7 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-    constexpr Bitboard OutpostRanks = (Us == WHITE ? RankBB(R4) | RankBB(R5) | RankBB(R6) 
+    constexpr Bitboard OutpostRanks = (Us == WHITE ? RankBB(R4) | RankBB(R5) | RankBB(R6)
                                                    : RankBB(R5) | RankBB(R4) | RankBB(R3));
     const Square* pl = pos.squares<Pt>(Us);
 
@@ -343,7 +343,7 @@ namespace {
         if (Pt == ROOK)
         {
             // Bonus for aligning rook with enemy pawns on the same rank/file
-            if (relative_rank(Us, s) >= R5)
+            if (relative_rank(Us, s) >= Rank(R5))
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
