@@ -51,9 +51,9 @@ const std::string Bitboards::pretty(Bitboard b) {
 
   std::string s = "+---+---+---+---+---+---+---+---+\n";
 
-  for (Rank r = RANK_8; r >= RANK_1; --r)
+  for (Rank r = Rank(R8); r >= Rank(R1); --r)
   {
-      for (File f = FILE_A; f <= FILE_H; ++f)
+      for (File f = File(A); f <= File(H); ++f)
           s += b & make_square(f, r) ? "| X " : "|   ";
 
       s += "|\n+---+---+---+---+---+---+---+---+\n";
@@ -153,7 +153,7 @@ namespace {
     for (Square s = SQ_A1; s <= SQ_H8; ++s)
     {
         // Board edges are not considered in the relevant occupancies
-        edges = ((rbb(RANK_1) | rbb(RANK_8)) & ~rbb(s)) | ((fbb(FILE_A) | fbb(FILE_H)) & ~fbb(s));
+        edges = ((RankBB(R1) | RankBB(R8)) & ~RankBB(s)) | ((FileBB(A) | FileBB(H)) & ~FileBB(s));
 
         // Given a square 's', the mask is the bitboard of sliding attacks from
         // 's' computed on an empty board. The index must be big enough to contain

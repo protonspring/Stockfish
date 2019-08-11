@@ -49,15 +49,15 @@ constexpr Bitboard FileBB(File f)   { return FileABB << f; }
 constexpr Bitboard RankBB(Square s) { return RankBB(rank_of(s)); }
 constexpr Bitboard FileBB(Square s) { return FileBB(file_of(s)); }
 
-constexpr Bitboard QueenSide   =  FileBB(FILE_A) | FileBB(FILE_B) | FileBB(FILE_C) | FileBB(FILE_D);
-constexpr Bitboard CenterFiles =  FileBB(FILE_C) | FileBB(FILE_D) | FileBB(FILE_E) | FileBB(FILE_F);
-constexpr Bitboard KingSide    =  FileBB(FILE_E) | FileBB(FILE_F) | FileBB(FILE_G) | FileBB(FILE_H);
-constexpr Bitboard Center      = (FileBB(FILE_D) | FileBB(FILE_E))&(RankBB(    R4) | RankBB(    R5));
+constexpr Bitboard QueenSide   =  FileBB(A) | FileBB(B)  |  FileBB(C) | FileBB(D);
+constexpr Bitboard CenterFiles =  FileBB(C) | FileBB(D)  |  FileBB(E) | FileBB(F);
+constexpr Bitboard KingSide    =  FileBB(E) | FileBB(F)  |  FileBB(G) | FileBB(H);
+constexpr Bitboard Center      = (FileBB(D) | FileBB(E)) & (RankBB(R4)| RankBB(R5));
 
 constexpr Bitboard KingFlank[FILE_NB] = {
-  QueenSide ^ FileBB(FILE_D), QueenSide, QueenSide,
+  QueenSide ^ FileBB(D), QueenSide, QueenSide,
   CenterFiles, CenterFiles,
-  KingSide, KingSide, KingSide ^ FileBB(FILE_E)
+  KingSide, KingSide, KingSide ^ FileBB(E)
 };
 
 extern uint8_t PopCnt16[1 << 16];
@@ -123,9 +123,9 @@ template<Direction D>
 constexpr Bitboard shift(Bitboard b) {
   return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
         : D == NORTH+NORTH?  b             <<16 : D == SOUTH+SOUTH?  b             >>16
-        : D == EAST       ? (b & ~FileBB(FILE_H)) << 1 : D == WEST       ? (b & ~FileBB(FILE_A)) >> 1
-        : D == NORTH_EAST ? (b & ~FileBB(FILE_H)) << 9 : D == NORTH_WEST ? (b & ~FileBB(FILE_A)) << 7
-        : D == SOUTH_EAST ? (b & ~FileBB(FILE_H)) >> 7 : D == SOUTH_WEST ? (b & ~FileBB(FILE_A)) >> 9
+        : D == EAST       ? (b & ~FileBB(H)) << 1 : D == WEST       ? (b & ~FileBB(A)) >> 1
+        : D == NORTH_EAST ? (b & ~FileBB(H)) << 9 : D == NORTH_WEST ? (b & ~FileBB(A)) << 7
+        : D == SOUTH_EAST ? (b & ~FileBB(H)) >> 7 : D == SOUTH_WEST ? (b & ~FileBB(A)) >> 9
         : 0;
 }
 
