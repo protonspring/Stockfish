@@ -71,7 +71,7 @@ namespace Trace {
 
 using namespace Trace;
 
-namespace {
+namespace Eval {
 
   // Threshold for lazy and space evaluation
   constexpr Value LazyThreshold  = Value(1400);
@@ -90,9 +90,8 @@ namespace {
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
-  constexpr Score MobilityBonus[][32] = {
-    { S(-62,-81), S(-53,-56), S(-12,-30), S( -4,-14), S(  3,  8), S( 13, 15), // Knights
-      S( 22, 23), S( 28, 27), S( 33, 33) },
+  Score MobilityBonus[][32] = {
+    {  }, //Knights
     { S(-48,-59), S(-20,-23), S( 16, -3), S( 26, 13), S( 38, 24), S( 51, 42), // Bishops
       S( 55, 54), S( 63, 57), S( 63, 65), S( 68, 73), S( 81, 78), S( 81, 86),
       S( 91, 88), S( 98, 97) },
@@ -839,6 +838,13 @@ namespace {
            + Eval::Tempo;
   }
 
+  void init() {
+
+    for(int m = 0; m < 32; ++m)
+    {
+        MobilityBonus[KNIGHT-2][m] = make_score(-((m - 10) * (m - 10)) + 40, -((m - 11) * (m - 11)) + 45);
+    }
+  }
 } // namespace
 
 
