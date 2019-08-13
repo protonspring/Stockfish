@@ -39,16 +39,16 @@ struct Entry {
   Bitboard pawn_attacks_span(Color c) const { return pawnAttacksSpan[c]; }
   int passed_count() const { return popcount(passedPawns[WHITE] | passedPawns[BLACK]); }
 
-  template<Color Us>
+  template<Color C>
   Score king_safety(const Position& pos) {
-    return  kingSquares[Us] == pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us)
-          ? kingSafety[Us] : (kingSafety[Us] = do_king_safety<Us>(pos));
+    return  kingSquares[Us(C)] == pos.square<KING>(Us(C)) && castlingRights[Us(C)] == pos.castling_rights(Us(C))
+          ? kingSafety[Us(C)] : (kingSafety[Us(C)] = do_king_safety<Us(C)>(pos));
   }
 
-  template<Color Us>
+  template<Color C>
   Score do_king_safety(const Position& pos);
 
-  template<Color Us>
+  template<Color C>
   void evaluate_shelter(const Position& pos, Square ksq, Score& shelter);
 
   Key key;

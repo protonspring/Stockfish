@@ -139,7 +139,7 @@ namespace {
         result = UNKNOWN;
   }
 
-  template<Color Us>
+  template<Color C>
   Result KPKPosition::classify(const std::vector<KPKPosition>& db) {
 
     // White to move: If one move leads to a position classified as WIN, the result
@@ -152,26 +152,25 @@ namespace {
     // as WIN, the position is classified as WIN, otherwise the current position is
     // classified as UNKNOWN.
 
-    constexpr Color  Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Result Good = (Us == WHITE ? WIN   : DRAW);
-    constexpr Result Bad  = (Us == WHITE ? DRAW  : WIN);
+    constexpr Result Good = (C == WHITE ? WIN   : DRAW);
+    constexpr Result Bad  = (C == WHITE ? DRAW  : WIN);
 
     Result r = INVALID;
-    Bitboard b = PseudoAttacks[KING][ksq[Us]];
+    Bitboard b = PseudoAttacks[KING][ksq[Us(C)]];
 
     while (b)
-        r |= Us == WHITE ? db[index(Them, ksq[Them]  , pop_lsb(&b), psq)]
-                         : db[index(Them, pop_lsb(&b), ksq[Them]  , psq)];
+        r |= C == WHITE ? db[index(BLACK, ksq[BLACK] ,  pop_lsb(&b), psq)]
+                         : db[index(WHITE, pop_lsb(&b), ksq[WHITE]  , psq)];
 
-    if (Us == WHITE)
+    if (C == WHITE)
     {
         if (rank_of(psq) < RANK_7)      // Single push
-            r |= db[index(Them, ksq[Them], ksq[Us], psq + NORTH)];
+            r |= db[index(BLACK, ksq[BLACK], ksq[WHITE], psq + NORTH)];
 
         if (   rank_of(psq) == RANK_2   // Double push
-            && psq + NORTH != ksq[Us]
-            && psq + NORTH != ksq[Them])
-            r |= db[index(Them, ksq[Them], ksq[Us], psq + NORTH + NORTH)];
+            && psq + NORTH != ksq[WHITE]
+            && psq + NORTH != ksq[BLACK])
+            r |= db[index(BLACK, ksq[BLACK], ksq[WHITE], psq + NORTH + NORTH)];
     }
 
     return result = r & Good  ? Good  : r & UNKNOWN ? UNKNOWN : Bad;
