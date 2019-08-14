@@ -91,8 +91,8 @@ namespace {
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
   constexpr Score MobilityBonus[][32] = {
-    { S(-60,-76), S(-41,-55), S(-24,-36), S( -9,-19), S(  4, -4), S( 15,  9), // Knights
-      S( 24, 20), S( 31, 29), S( 36, 36) },
+    { S(-55,-66), S(-36,-46), S(-19,-29), S( -4,-14), S(  9, -1), S( 20, 10), // Knights
+      S( 29, 19), S( 36, 26), S( 41, 31) },
     { S(-48,-59), S(-20,-23), S( 16, -3), S( 26, 13), S( 38, 24), S( 51, 42), // Bishops
       S( 55, 54), S( 63, 57), S( 63, 65), S( 68, 73), S( 81, 78), S( 81, 86),
       S( 91, 88), S( 98, 97) },
