@@ -96,11 +96,7 @@ namespace Eval {
     { S(-58,-76), S(-27,-18), S(-15, 28), S(-10, 55), S( -5, 69), S( -2, 82), // Rooks
       S(  9,112), S( 16,118), S( 30,132), S( 29,142), S( 32,155), S( 38,165),
       S( 46,166), S( 48,169), S( 58,171) },
-    { S(-39,-36), S(-21,-15), S(  3,  8), S(  3, 18), S( 14, 34), S( 22, 54), // Queens
-      S( 28, 61), S( 41, 73), S( 43, 79), S( 48, 92), S( 56, 94), S( 60,104),
-      S( 60,113), S( 66,120), S( 67,123), S( 70,126), S( 71,133), S( 73,136),
-      S( 79,140), S( 88,143), S( 88,148), S( 99,166), S(102,170), S(102,175),
-      S(106,184), S(109,191), S(113,206), S(116,212) }
+    {  } //Queens
   };
 
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
@@ -836,10 +832,12 @@ namespace Eval {
 
     for(int m = 0; m < 32; ++m)
     {
-        int knightValue = -((m - 10) * (m - 10)) + 40;
-        MobilityBonus[KNIGHT-2][m] = make_score(knightValue, knightValue/2);
-        int bishopValue = m < 3 ? 35 * m - 50 : 7 * m + 8;
-        MobilityBonus[BISHOP-2][m] = make_score(bishopValue, bishopValue/2);
+        int v = -((m - 10) * (m - 10)) + 40;
+        MobilityBonus[KNIGHT-2][m] = make_score(v, v / 2);
+        v = m < 3 ? 35 * m - 50 : 7 * m + 8;
+        MobilityBonus[BISHOP-2][m] = make_score(v, v / 2);
+        v = -((m - 28) * (m - 28)) / 4 + 175;  //Queens
+        MobilityBonus[QUEEN-2][m] = make_score(v, v / 2);
     }
   }
 } // namespace
