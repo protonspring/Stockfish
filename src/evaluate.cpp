@@ -821,25 +821,34 @@ namespace Eval {
            + Eval::Tempo;
   }
 
+  int coef[40] = {2, 10, -63, 6, -20, 5, 22, -80, 6, -17,
+                  3, 35, -50, 7, 8, 5, 19, -50, 7, 8,
+                  1, 0, -58, 7, -28, 3, 50, -70, 11, 28,
+                  5, 14, -40, 4, 10, 6, 17, -35, 7, 20};
+
   void init() {
 
     for(int m = 0; m < 32; ++m)
     {
-        int mg = m < 2 ? 10 * m - 63 :  6 * m - 20;
-        int eg = m < 5 ? 22 * m - 80 :  6 * m - 17;
+        int mg = m < coef[0] ? coef[1] * m + coef[2] : coef[3] * m + coef[4];
+        int eg = m < coef[5] ? coef[6] * m + coef[7] : coef[8] * m + coef[9];
         MobilityBonus[KNIGHT-2][m] = make_score(mg, eg);
-        mg     = m < 3 ? 35 * m - 50 :  7 * m +  8;
-        eg     = m < 5 ? 19 * m - 50 :  7 * m +  8;
+        mg = m < coef[10] ? coef[11] * m + coef[12] : coef[13] * m + coef[14];
+        eg = m < coef[15] ? coef[16] * m + coef[17] : coef[18] * m + coef[19];
         MobilityBonus[BISHOP-2][m] = make_score(mg, eg);
-        mg     = m < 1 ?        - 58 :  7 * m - 28;
-        eg     = m < 3 ? 50 * m - 70 : 11 * m + 28;
+        mg = m < coef[20] ? coef[21] * m + coef[22] : coef[23] * m + coef[24];
+        eg = m < coef[25] ? coef[26] * m + coef[27] : coef[28] * m + coef[29];
         MobilityBonus[  ROOK-2][m] = make_score(mg, eg);
-        mg     = m < 6 ? 14 * m - 40 :  4 * m + 10;
-        eg     = m < 6 ? 17 * m - 35 :  7 * m + 20;
+        mg = m < coef[30] ? coef[31] * m + coef[32] : coef[33] * m + coef[34];
+        eg = m < coef[35] ? coef[36] * m + coef[37] : coef[38] * m + coef[39];
         MobilityBonus[ QUEEN-2][m] = make_score(mg, eg);
     }
   }
+
+TUNE(coef, Eval::init);
+
 } // namespace
+
 
 
 /// evaluate() is the evaluator for the outer world. It returns a static
