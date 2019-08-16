@@ -90,14 +90,7 @@ namespace Eval {
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
-  Score MobilityBonus[][32] = {
-    {  }, //Knights
-    {  }, //Bishops
-    { S(-58,-76), S(-27,-18), S(-15, 28), S(-10, 55), S( -5, 69), S( -2, 82), // Rooks
-      S(  9,112), S( 16,118), S( 30,132), S( 29,142), S( 32,155), S( 38,165),
-      S( 46,166), S( 48,169), S( 58,171) },
-    {  } //Queens
-  };
+  Score MobilityBonus[PIECE_TYPE_NB - 2][32];
 
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
   // no (friendly) pawn on the rook file.
@@ -832,12 +825,18 @@ namespace Eval {
 
     for(int m = 0; m < 32; ++m)
     {
-        int v = -((m - 10) * (m - 10)) + 40;
-        MobilityBonus[KNIGHT-2][m] = make_score(v, v / 2);
-        v = m < 3 ? 35 * m - 50 : 7 * m + 8;
-        MobilityBonus[BISHOP-2][m] = make_score(v, v / 2);
-        v = m < 4 ? 20 * m - 40 : -((m - 29) * (m - 29)) / 4 + 185;
-        MobilityBonus[QUEEN-2][m] = make_score(v / 2, v);
+        int mg = m < 2 ? 10 * m - 63 :  6 * m - 20;
+        int eg = m < 5 ? 22 * m - 80 :  6 * m - 17;
+        MobilityBonus[KNIGHT-2][m] = make_score(mg, eg);
+        mg     = m < 3 ? 35 * m - 50 :  7 * m +  8;
+        eg     = m < 5 ? 19 * m - 50 :  7 * m +  8;
+        MobilityBonus[BISHOP-2][m] = make_score(mg, eg);
+        mg     = m < 1 ?        - 58 :  7 * m - 28;
+        eg     = m < 3 ? 50 * m - 70 : 11 * m + 28;
+        MobilityBonus[  ROOK-2][m] = make_score(mg, eg);
+        mg     = m < 6 ? 14 * m - 40 :  4 * m + 10;
+        eg     = m < 6 ? 17 * m - 35 :  7 * m + 20;
+        MobilityBonus[ QUEEN-2][m] = make_score(mg, eg);
     }
   }
 } // namespace
