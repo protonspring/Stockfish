@@ -601,8 +601,9 @@ namespace {
     b = pe->passed_pawns(Us);
 
     // If we have more passed pawns than opponent
-    if (pe->passed_count(Us) > pe->passed_count(Them))
-        score += make_score(0, 30);
+    if ((pe->passed_count(Us) > pe->passed_count(Them)) &&
+        (!pos.non_pawn_material()))
+        score += make_score(0, 10);
 
     while (b)
     {
