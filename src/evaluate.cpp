@@ -602,7 +602,7 @@ namespace {
 
     // If we have more passed pawns than opponent
     if (pe->passed_count(Us) > pe->passed_count(Them))
-        score += make_score(0, 20);
+        score += make_score(0, 10);
 
     while (b)
     {
