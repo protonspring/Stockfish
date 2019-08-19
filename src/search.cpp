@@ -61,11 +61,15 @@ namespace {
   // Different node types, used as a template parameter
   enum NodeType { NonPV, PV };
 
+  int coef[2] = { 180, 180 };
+
   // Razor and futility margins
   constexpr int RazorMargin = 661;
   Value futility_margin(Depth d, bool improving) {
-    return Value(180 * std::max(d / ONE_PLY - improving, 0));
+    return Value(coef[0] * (d / ONE_PLY) - coef[1] * improving);
   }
+
+TUNE(coef);
 
   // Reductions lookup table, initialized at startup
   int Reductions[MAX_MOVES]; // [depth or moveNumber]
