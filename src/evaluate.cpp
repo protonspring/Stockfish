@@ -297,8 +297,8 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
-            bb = OutpostRanks & attackedBy[Us][PAWN] & ~(pos.pieces(Them, PAWN) & pawn_attack_span(Us, s));
-            if (bb & s)
+            bb = OutpostRanks & attackedBy[Us][PAWN];
+            if ((bb & s) && ~(pos.pieces(Them, PAWN) & pawn_attack_span(Us, s)))
                 score += Outpost * (Pt == KNIGHT ? 4 : 2);
 
             else if (bb & b & ~pos.pieces(Us) & ~attackedBy[Them][PAWN])
