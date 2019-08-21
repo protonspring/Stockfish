@@ -30,6 +30,7 @@ namespace {
 
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
+  #define M(    mg) make_score(mg,  0)
 
   // Pawn penalties
   constexpr Score Backward      = S( 9, 24);
@@ -43,26 +44,27 @@ namespace {
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+  constexpr Score ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+    { M( -6), M( 81), M( 93), M( 58), M( 39), M( 18), M(  25) },
+    { M(-43), M( 61), M( 35), M(-49), M(-29), M(-11), M( -63) },
+    { M(-10), M( 75), M( 23), M( -2), M( 32), M(  3), M( -45) },
+    { M(-39), M(-13), M(-29), M(-52), M(-48), M(-67), M(-166) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king. Note that UnblockedStorm[0][1-2] accommodate opponent pawn
   // on edge, likely blocked by our king.
-  constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 89), V(-285), V(-185), V(93), V(57), V( 45), V( 51) },
-    { V( 44), V( -18), V( 123), V(46), V(39), V( -7), V( 23) },
-    { V(  4), V(  52), V( 162), V(37), V( 7), V(-14), V( -2) },
-    { V(-10), V( -14), V(  90), V(15), V( 2), V( -7), V(-16) }
+  constexpr Score UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
+    { M( 89), M(-285), M(-185), M(93), M(57), M( 45), M( 51) },
+    { M( 44), M( -18), M( 123), M(46), M(39), M( -7), M( 23) },
+    { M(  4), M(  52), M( 162), M(37), M( 7), M(-14), M( -2) },
+    { M(-10), M( -14), M(  90), M(15), M( 2), M( -7), M(-16) }
   };
 
   #undef S
   #undef V
+  #undef M
 
   template<Color Us>
   Score evaluate(const Position& pos, Pawns::Entry* e) {
@@ -202,12 +204,12 @@ void Entry::evaluate_shelter(const Position& pos, Square ksq, Score& shelter) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       int d = std::min(f, ~f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      bonus += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus -= make_score(82 * (theirRank == RANK_3), 82 * (theirRank == RANK_3));
+          bonus -= make_score(82, 82) * (theirRank == RANK_3);
       else
-          bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+          bonus -= UnblockedStorm[d][theirRank];
   }
 
   if (mg_value(bonus) > mg_value(shelter))
