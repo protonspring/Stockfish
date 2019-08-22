@@ -131,6 +131,9 @@ enum Color {
   WHITE, BLACK, COLOR_NB = 2
 };
 
+constexpr Color Us(  Color c) { return c == WHITE ? WHITE : BLACK; }
+constexpr Color Them(Color c) { return c == WHITE ? BLACK : WHITE; }
+
 enum CastlingSide {
   KING_SIDE, QUEEN_SIDE, CASTLING_SIDE_NB = 2
 };
@@ -238,13 +241,13 @@ enum Direction : int {
   NORTH =  8,
   EAST  =  1,
   SOUTH = -NORTH,
-  WEST  = -EAST,
-
-  NORTH_EAST = NORTH + EAST,
-  SOUTH_EAST = SOUTH + EAST,
-  SOUTH_WEST = SOUTH + WEST,
-  NORTH_WEST = NORTH + WEST
+  WEST  = -EAST
 };
+
+constexpr Direction Up(   Color c) { return c == WHITE ? NORTH : SOUTH; }
+constexpr Direction Down( Color c) { return c == WHITE ? SOUTH : NORTH; }
+constexpr Direction Left( Color c) { return c == WHITE ?  WEST :  EAST; }
+constexpr Direction Right(Color c) { return c == WHITE ?  EAST :  WEST; }
 
 enum File : int {
   FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NB
@@ -414,10 +417,6 @@ constexpr Rank relative_rank(Color c, Rank r) {
 
 constexpr Rank relative_rank(Color c, Square s) {
   return relative_rank(c, rank_of(s));
-}
-
-constexpr Direction pawn_push(Color c) {
-  return c == WHITE ? NORTH : SOUTH;
 }
 
 constexpr Square from_sq(Move m) {
