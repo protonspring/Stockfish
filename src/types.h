@@ -168,21 +168,26 @@ enum Bound {
 };
 
 typedef int16_t Value;
-constexpr Value VALUE_ZERO      = 0;
-constexpr Value VALUE_DRAW      = 0;
-constexpr Value VALUE_KNOWN_WIN = 10000;
-constexpr Value VALUE_MATE      = 16000;
-constexpr Value VALUE_INFINITE  = 16001;
-constexpr Value VALUE_NONE      = 16002;
+#define VALUE_ZERO 0
+#define VALUE_DRAW 0
+#define VALUE_KNOWN_WIN 10000
+#define VALUE_MATE      16000
+#define VALUE_INFINITE  16001
+#define VALUE_NONE      16002
 
-constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
-constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
+#define VALUE_MATE_IN_MAX_PLY  (VALUE_MATE - 2 * MAX_PLY)
+#define VALUE_MATED_IN_MAX_PLY (-VALUE_MATE + 2 * MAX_PLY)
 
-constexpr Value PawnValueMg   = 128;  constexpr Value PawnValueEg   = 213;
-constexpr Value KnightValueMg = 782;  constexpr Value KnightValueEg = 865;
-constexpr Value BishopValueMg = 830;  constexpr Value BishopValueEg = 918;
-constexpr Value RookValueMg   = 1289; constexpr Value RookValueEg   = 1378;
-constexpr Value QueenValueMg  = 2529; constexpr Value QueenValueEg  = 2687;
+#define PawnValueMg    128
+#define PawnValueEg    213
+#define KnightValueMg  782
+#define KnightValueEg  865
+#define BishopValueMg  830
+#define BishopValueEg  918
+#define RookValueMg    1289
+#define RookValueEg    1378
+#define QueenValueMg   2529
+#define QueenValueEg   2687
 
 constexpr Value MidgameLimit  = 15258; constexpr Value EndgameLimit  = 3915;
 
