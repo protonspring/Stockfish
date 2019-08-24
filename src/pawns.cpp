@@ -42,6 +42,8 @@ namespace {
   int coef[4] = { 24, 16, 17, 14 };
   Score Connected[RANK_NB] = { S(0,0), S(7,6), S(8, 6), S(12, 10),  S(29,23), S(48, 38), S(86, 70) };
 
+TUNE(coef, Connected);
+
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
