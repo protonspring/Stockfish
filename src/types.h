@@ -382,6 +382,14 @@ constexpr PieceType type_of(Piece pc) {
   return PieceType(pc & 7);
 }
 
+constexpr Value piece_value(Phase ph, PieceType pt) {
+  return PieceValue[ph][pt];
+}
+
+constexpr Value piece_value(Phase ph, Piece pc) {
+  return PieceValue[ph][type_of(pc)];
+}
+
 inline Color color_of(Piece pc) {
   assert(pc != NO_PIECE);
   return Color(pc >> 3);
