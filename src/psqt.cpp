@@ -107,7 +107,7 @@ void init() {
 
   for (Piece pc = W_PAWN; pc <= W_KING; ++pc)
   {
-      Score score = make_score(PieceValue[MG][type_of(pc)], PieceValue[EG][type_of(pc)]);
+      Score score = make_score(piece_value(MG, pc), piece_value(EG, pc));
 
       for (Square s = SQ_A1; s <= SQ_H8; ++s)
       {

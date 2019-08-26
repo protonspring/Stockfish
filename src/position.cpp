@@ -785,7 +785,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
           st->pawnKey ^= Zobrist::psq[captured][capsq];
       }
       else
-          st->nonPawnMaterial[them] -= piece(value(MG, captured);
+          st->nonPawnMaterial[them] -= piece_value(MG, captured);
 
       // Update board and piece lists
       remove_piece(captured, capsq);
