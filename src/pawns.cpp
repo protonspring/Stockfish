@@ -40,7 +40,7 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  constexpr Score Connected[RANK_NB] = { S(0,0), S(7,6), S(7,6), S(11, 8), S(29,21), S(48,41), S(86,70) };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -129,12 +129,8 @@ namespace {
 
         // Score this pawn
         if (support | phalanx)
-        {
-            int v =  Connected[r] * (phalanx ? 3 : 2) / (opposed ? 2 : 1)
-                   + 17 * popcount(support);
-
-            score += make_score(v, v * (r - 2) / 4);
-        }
+            score += Connected[r] * (phalanx ? 24 : 16) / (opposed ? 16 : 8)
+                  +  make_score(18, 13) * popcount(support);
 
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
