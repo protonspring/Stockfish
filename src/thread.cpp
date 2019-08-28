@@ -52,6 +52,15 @@ Thread::~Thread() {
   stdThread.join();
 }
 
+/// Thread::bestMoveCount(Move move) return best move counter for the given root move
+
+int Thread::best_move_count(Move move) {
+
+  auto rm = std::find(rootMoves.begin() + pvIdx,
+                      rootMoves.begin() + pvLast, move);
+
+  return rm != rootMoves.begin() + pvLast ? rm->bestMoveCount : 0;
+}
 
 /// Thread::clear() reset histories, usually before a new game
 
@@ -191,7 +200,7 @@ void ThreadPool::start_thinking(Position& pos, StateListPtr& states,
 
   for (Thread* th : *this)
   {
-      th->nodes = th->tbHits = th->nmpMinPly = 0;
+      th->shuffleExts = th->nodes = th->tbHits = th->nmpMinPly = 0;
       th->rootDepth = th->completedDepth = DEPTH_ZERO;
       th->rootMoves = rootMoves;
       th->rootPos.set(pos.fen(), pos.is_chess960(), &setupStates->back(), th);

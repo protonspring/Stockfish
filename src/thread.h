@@ -56,11 +56,11 @@ public:
   void idle_loop();
   void start_searching();
   void wait_for_search_finished();
+  int best_move_count(Move move);
 
   Pawns::Table pawnsTable;
   Material::Table materialTable;
-  Endgames endgames;
-  size_t pvIdx, pvLast;
+  size_t pvIdx, pvLast, shuffleExts;
   int selDepth, nmpMinPly;
   Color nmpColor;
   std::atomic<uint64_t> nodes, tbHits, bestMoveChanges;
