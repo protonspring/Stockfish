@@ -38,6 +38,7 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score DoubleIsolated = S( 4, 10);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -72,7 +73,7 @@ namespace {
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
     Bitboard neighbours, stoppers, doubled, support, phalanx;
-    Bitboard lever, leverPush;
+    Bitboard lever, leverPush, isolated = 0;
     Square s;
     bool opposed, backward, passed;
     Score score = SCORE_ZERO;
@@ -137,8 +138,14 @@ namespace {
         }
 
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * int(!opposed);
 
+            if (isolated & file_bb(s))
+                score -= DoubleIsolated;
+
+            isolated |= s;
+        }
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
 
