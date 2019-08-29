@@ -829,14 +829,14 @@ namespace Eval {
 
     for(int m = 0; m < 32; ++m)
     {
-        MobilityBonus[KNIGHT-2][m] = make_score(mob_value(m, 2,  9, -60,  7, -20),
-                                                mob_value(m, 5, 24, -92,  6, -16));
-        MobilityBonus[BISHOP-2][m] = make_score(mob_value(m, 3, 28, -51,  7,  8),
-                                                mob_value(m, 5, 17, -48,  7,  8));
-        MobilityBonus[  ROOK-2][m] = make_score(mob_value(m, 1,  0, -58,  7, -25),
-                                                mob_value(m, 3, 56, -67, 11,  28));
-        MobilityBonus[ QUEEN-2][m] = make_score(mob_value(m, 5, 14, -44,  5,  10),
-                                                mob_value(m, 6, 16, -31,  8,  21));
+        MobilityBonus[KNIGHT-2][m] = make_score(mob_value(m, 2,  9, -62,  7, -24),
+                                                mob_value(m, 4, 25, -81,  7, -20));
+        MobilityBonus[BISHOP-2][m] = make_score(mob_value(m, 3, 32, -51,  7,  10),
+                                                mob_value(m, 3, 27, -58,  8,  -4));
+        MobilityBonus[  ROOK-2][m] = make_score(mob_value(m, 1,  0, -58,  6, -28),
+                                                mob_value(m, 3, 53, -72, 13,  24));
+        MobilityBonus[ QUEEN-2][m] = make_score(mob_value(m, 5, 12, -30,  4,  10),
+                                                mob_value(m, 6, 16, -31,  7,  21));
     }
   }
 } // namespace
