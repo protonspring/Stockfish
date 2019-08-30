@@ -80,9 +80,8 @@ namespace {
   }
 
   // History and stats update bonus, based on depth
-  int stat_bonus(Depth depth) {
-    int d = depth / ONE_PLY;
-    return d > 18 ? -8 : 530 * d - 800;
+  inline int stat_bonus(Depth depth) {
+    return std::min(5000, int(400 * depth / ONE_PLY));
   }
 
   // Add a small random component to draw evaluations to avoid 3fold-blindness
