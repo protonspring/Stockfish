@@ -70,7 +70,7 @@ namespace {
   Depth reduction(bool i, Depth d, int mn) {
     auto red = [&](int moves) {
         int r = moves / 32;
-        return 110 * r / (1 + r);
+        return 140 * r / (1 + r);
     };
 
     int r = red(d / ONE_PLY) * red(mn);
