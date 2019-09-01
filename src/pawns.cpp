@@ -33,11 +33,13 @@ namespace {
 
   // Pawn penalties
   constexpr Score Backward      = S( 9, 24);
-  constexpr Score BlockedStorm  = S(82, 82);
+  Score BlockedStorm  = S(82, 82);
   constexpr Score Doubled       = S(11, 56);
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+
+TUNE(BlockedStorm);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
