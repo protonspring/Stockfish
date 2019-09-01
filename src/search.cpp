@@ -79,9 +79,13 @@ namespace {
     return (5 + depth * depth) * (1 + improving) / 2;
   }
 
+  int coef[2] = {5000, 400};
+
+TUNE(coef);
+
   // History and stats update bonus, based on depth
   inline int stat_bonus(Depth depth) {
-    return std::min(5000, int(360 * depth / ONE_PLY));
+    return std::min(coef[0], int(coef[1]* depth / ONE_PLY));
   }
 
   // Add a small random component to draw evaluations to avoid 3fold-blindness
