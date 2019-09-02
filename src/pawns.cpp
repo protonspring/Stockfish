@@ -71,10 +71,10 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard neighbours, stoppers, doubled, support, phalanx;
+    Bitboard neighbours, stoppers, support, phalanx;
     Bitboard lever, leverPush;
     Square s;
-    bool opposed, backward, passed;
+    bool opposed, passed, doubled;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -106,12 +106,6 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
 
-        // A pawn is backward when it is behind all pawns of the same color on
-        // the adjacent files and cannot safely advance. Phalanx and isolated
-        // pawns will be excluded when the pawn is scored.
-        backward =  !(neighbours & forward_ranks_bb(Them, s))
-                  && (stoppers & (leverPush | (s + Up)));
-
         // A pawn is passed if one of the three following conditions is true:
         // (a) there is no stoppers except some levers
         // (b) the only stoppers are the leverPush, but we outnumber them
@@ -139,17 +133,16 @@ namespace {
         else if (!neighbours)
             score -= Isolated + WeakUnopposed * int(!opposed);
 
-        else if (backward)
+        // A pawn is backward when it is behind all pawns of the same color on
+        // the adjacent files and cannot safely advance. Phalanx and isolated
+        // pawns will be excluded when the pawn is scored.
+        else if (!(neighbours & forward_ranks_bb(Them, s))
+                  && (stoppers & (leverPush | (s + Up))))
             score -= Backward + WeakUnopposed * int(!opposed);
 
-        if (doubled && !support)
-            score -= Doubled;
+        if (!support)
+            score -= Doubled * doubled + WeakLever * more_than_one(lever);
     }
-
-    // Penalize our unsupported pawns attacked twice by enemy pawns
-    score -= WeakLever * popcount(  ourPawns
-                                  & doubleAttackThem
-                                  & ~e->pawnAttacks[Us]);
 
     return score;
   }
