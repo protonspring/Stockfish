@@ -79,12 +79,6 @@ namespace {
     return (5 + depth * depth) * (1 + improving) / 2;
   }
 
-  // History and stats update bonus, based on depth
-  int stat_bonus(Depth depth) {
-    int d = depth / ONE_PLY;
-    return d > 17 ? -8 : 22 * d * d + 151 * d - 140;
-  }
-
   // Add a small random component to draw evaluations to avoid 3fold-blindness
   Value value_draw(Depth depth, Thread* thisThread) {
     return depth < 4 * ONE_PLY ? VALUE_DRAW
@@ -680,18 +674,17 @@ namespace {
             if (ttValue >= beta)
             {
                 if (!pos.capture_or_promotion(ttMove))
-                    update_quiet_stats(pos, ss, ttMove, nullptr, 0, stat_bonus(depth));
+                    update_quiet_stats(pos, ss, ttMove, nullptr, 0, depth);
 
                 // Extra penalty for early quiet moves of the previous ply
                 if ((ss-1)->moveCount <= 2 && !pos.captured_piece())
-                    update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, -stat_bonus(depth + ONE_PLY));
+                    update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, -(depth + ONE_PLY));
             }
             // Penalty for a quiet ttMove that fails low
             else if (!pos.capture_or_promotion(ttMove))
             {
-                int penalty = -stat_bonus(depth);
-                thisThread->mainHistory[us][from_to(ttMove)] << penalty;
-                update_continuation_histories(ss, pos.moved_piece(ttMove), to_sq(ttMove), penalty);
+                thisThread->mainHistory[us][from_to(ttMove)] << depth;
+                update_continuation_histories(ss, pos.moved_piece(ttMove), to_sq(ttMove), depth);
             }
         }
         return ttValue;
@@ -772,7 +765,6 @@ namespace {
         if ((ss-1)->currentMove != MOVE_NULL)
         {
             int bonus = -(ss-1)->statScore / 512;
-
             ss->staticEval = eval = evaluate(pos) + bonus;
         }
         else
@@ -1156,13 +1148,13 @@ moves_loop: // When in check, search starts from here
 
           if (doLMR && !captureOrPromotion)
           {
-              int bonus = value > alpha ?  stat_bonus(newDepth)
-                                        : -stat_bonus(newDepth);
+              Depth d = value > alpha ?  (newDepth)
+                                    : -(newDepth);
 
               if (move == ss->killers[0])
-                  bonus += bonus / 4;
+                  d += d / 4;
 
-              update_continuation_histories(ss, movedPiece, to_sq(move), bonus);
+              update_continuation_histories(ss, movedPiece, to_sq(move), d);
           }
       }
 
@@ -1274,20 +1266,20 @@ moves_loop: // When in check, search starts from here
         // Quiet best move: update move sorting heuristics
         if (!pos.capture_or_promotion(bestMove))
             update_quiet_stats(pos, ss, bestMove, quietsSearched, quietCount,
-                               stat_bonus(depth + (bestValue > beta + PawnValueMg ? ONE_PLY : DEPTH_ZERO)));
+                               (depth + (bestValue > beta + PawnValueMg ? ONE_PLY : DEPTH_ZERO)));
 
-        update_capture_stats(pos, bestMove, capturesSearched, captureCount, stat_bonus(depth + ONE_PLY));
+        update_capture_stats(pos, bestMove, capturesSearched, captureCount, depth + ONE_PLY);
 
         // Extra penalty for a quiet TT or main killer move in previous ply when it gets refuted
         if (   ((ss-1)->moveCount == 1 || ((ss-1)->currentMove == (ss-1)->killers[0]))
             && !pos.captured_piece())
-                update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, -stat_bonus(depth + ONE_PLY));
+                update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, -(depth + ONE_PLY));
 
     }
     // Bonus for prior countermove that caused the fail low
     else if (   (depth >= 3 * ONE_PLY || PvNode)
              && !pos.captured_piece())
-        update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, stat_bonus(depth));
+        update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, depth);
 
     if (PvNode)
         bestValue = std::min(bestValue, maxValue);

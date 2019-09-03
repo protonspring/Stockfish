@@ -45,12 +45,15 @@ public:
   operator const T&() const { return entry; }
 
   void operator<<(int bonus) {
-    assert(abs(bonus) <= D); // Ensure range is [-D, D]
     static_assert(D <= std::numeric_limits<T>::max(), "D overflows T");
 
-    entry += bonus - entry * abs(bonus) / D;
+    int d = abs(bonus);
+    int v = (d > 17 ? -8 : 22 * d * d + 151 * d - 140) * (bonus < 0 ? -1 : 1);
+
+    entry += v - entry * abs(v) / D;
 
     assert(abs(entry) <= D);
+    assert(abs(v) <= D); // Ensure range is [-D, D]
   }
 };
 
