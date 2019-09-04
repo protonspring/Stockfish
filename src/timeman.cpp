@@ -38,7 +38,7 @@ namespace {
 
 
   // move_importance() is a function for distributing time according to ply
-  double move_importance(int ply) {
+  inline double move_importance(int ply) {
 
     float v = ply / 32.0 - 2.8;
 
