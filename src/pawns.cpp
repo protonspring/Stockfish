@@ -136,20 +136,21 @@ namespace {
             score += make_score(v, v * (r - 2) / 4);
         }
 
-        else if (!neighbours)
-            score -= Isolated + WeakUnopposed * int(!opposed);
+        if (!support)
+        {
+            if (!neighbours)
+                score -= Isolated + WeakUnopposed * int(!opposed);
 
-        else if (backward)
-            score -= Backward + WeakUnopposed * int(!opposed);
+            else if (backward)
+                score -= Backward + WeakUnopposed * int(!opposed);
 
-        if (doubled && !support)
-            score -= Doubled;
+            if (doubled)
+                score -= Doubled;
+
+            if (more_than_one(lever))
+                score -= WeakLever;
+        }
     }
-
-    // Penalize our unsupported pawns attacked twice by enemy pawns
-    score -= WeakLever * popcount(  ourPawns
-                                  & doubleAttackThem
-                                  & ~e->pawnAttacks[Us]);
 
     return score;
   }
