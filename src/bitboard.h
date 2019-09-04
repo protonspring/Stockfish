@@ -149,15 +149,21 @@ inline Bitboard file_bb(Square s) {
 
 
 /// shift() moves a bitboard one step along direction D
+constexpr bool westward(Direction D) { return (D & 7) == 7; }
+constexpr bool eastward(Direction D) { return (D & 7) == 1; }
+constexpr bool vertical(Direction D) { return (D & 7) == 0; }
 
 template<Direction D>
-constexpr Bitboard shift(Bitboard b) {
-  return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == NORTH+NORTH?  b             <<16 : D == SOUTH+SOUTH?  b             >>16
-        : D == EAST       ? (b & ~FileHBB) << 1 : D == WEST       ? (b & ~FileABB) >> 1
-        : D == NORTH+EAST ? (b & ~FileHBB) << 9 : D == NORTH+WEST ? (b & ~FileABB) << 7
-        : D == SOUTH+EAST ? (b & ~FileHBB) >> 7 : D == SOUTH+WEST ? (b & ~FileABB) >> 9
-        : 0;
+inline Bitboard shift(Bitboard b) {
+
+    static_assert(westward(D) || eastward(D) || vertical(D),
+                   "Horizontal shifting limited to 1 step.");
+
+    Bitboard b2 = eastward(D) ? b & ~FileHBB :
+                  westward(D) ? b & ~FileABB :
+                  b;
+
+    return D > 0 ? b2 << D : b2 >> -D;
 }
 
 
