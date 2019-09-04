@@ -71,10 +71,10 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard neighbours, stoppers, doubled, support, phalanx;
+    Bitboard neighbours, stoppers, support, phalanx;
     Bitboard lever, leverPush;
     Square s;
-    bool opposed, backward, passed;
+    bool opposed, backward, passed, doubled;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -137,19 +137,11 @@ namespace {
         }
 
         if (!support)
-        {
-            if (!neighbours)
-                score -= Isolated + WeakUnopposed * int(!opposed);
-
-            else if (backward)
-                score -= Backward + WeakUnopposed * int(!opposed);
-
-            if (doubled)
-                score -= Doubled;
-
-            if (more_than_one(lever))
-                score -= WeakLever;
-        }
+            score -= WeakUnopposed * opposed
+                   + Isolated      * !neighbours
+                   + Backward      * backward
+                   + Doubled       * doubled
+                   + WeakLever     * more_than_one(lever);
     }
 
     return score;
