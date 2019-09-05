@@ -67,11 +67,14 @@ namespace {
     return Value(198 * (d / ONE_PLY - improving));
   }
 
-  // Reductions lookup table, initialized at startup
-  int Reductions[MAX_MOVES]; // [depth or moveNumber]
-
   Depth reduction(bool i, Depth d, int mn) {
-    int r = Reductions[d / ONE_PLY] * Reductions[mn];
+
+    auto red = [](int r) {
+        double r2 = double(r) / 4.0;
+        return 100.0 * r2 / (fabs(r2) + 1) -20.0 + r2;
+    };
+
+    int r = red(d / ONE_PLY) * red(mn);
     return ((r + 520) / 1024 + (!i && r > 999)) * ONE_PLY;
   }
 
@@ -185,32 +188,6 @@ namespace {
   }
 
 } // namespace
-
-
-/// Search::init() is called at startup to initialize various lookup tables
-
-void Search::init() {
-
-  //typedef union {
-      //float f;
-      //struct {
-          //unsigned int mantisa : 23;
-          //unsigned int exponent : 8;
-          //unsigned int sign : 1;
-      //} parts;
-   //} float_cast;
-
-  for (int i = 1; i < MAX_MOVES; ++i)
-  {
-      //Reductions[i] = int(23.4 * std::log(i));
-
-      //float_cast d1 = { .f = float(i << 20) };
-      double i2 = double(i) / 4.0;
-      Reductions[i] = 100.0 * i2 / (fabs(i2) + 1) -20.0 + i2;
-      //double v2 = fabs(i2);
-      //std::cout << "<" << Reductions[i] << "," << v2 << ">" << std::endl;
-  }
-}
 
 
 /// Search::clear() resets search state to its initial value
