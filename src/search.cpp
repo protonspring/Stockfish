@@ -191,8 +191,25 @@ namespace {
 
 void Search::init() {
 
+  //typedef union {
+      //float f;
+      //struct {
+          //unsigned int mantisa : 23;
+          //unsigned int exponent : 8;
+          //unsigned int sign : 1;
+      //} parts;
+   //} float_cast;
+
   for (int i = 1; i < MAX_MOVES; ++i)
-      Reductions[i] = int(23.4 * std::log(i));
+  {
+      //Reductions[i] = int(23.4 * std::log(i));
+
+      //float_cast d1 = { .f = float(i << 20) };
+      double i2 = double(i) / 4.0;
+      Reductions[i] = 100.0 * i2 / (fabs(i2) + 1) -20.0 + i2;
+      //double v2 = fabs(i2);
+      //std::cout << "<" << Reductions[i] << "," << v2 << ">" << std::endl;
+  }
 }
 
 
