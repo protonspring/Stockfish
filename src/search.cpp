@@ -67,12 +67,10 @@ namespace {
     return Value(198 * (d / ONE_PLY - improving));
   }
 
-  // Reductions lookup table, initialized at startup
-  int Reductions[MAX_MOVES]; // [depth or moveNumber]
+  int coef = 1024;
 
-  Depth reduction(bool i, Depth d, int mn) {
-    int r = Reductions[d / ONE_PLY] * Reductions[mn];
-    return ((r + 520) / 1024 + (!i && r > 999)) * ONE_PLY;
+  inline Depth reduction(bool i, Depth d, int mn) {
+    return Depth(coef * d * mn / (16*1024) + !i);
   }
 
   constexpr int futility_move_count(bool improving, int depth) {
@@ -185,15 +183,6 @@ namespace {
   }
 
 } // namespace
-
-
-/// Search::init() is called at startup to initialize various lookup tables
-
-void Search::init() {
-
-  for (int i = 1; i < MAX_MOVES; ++i)
-      Reductions[i] = int(23.4 * std::log(i));
-}
 
 
 /// Search::clear() resets search state to its initial value
@@ -1083,6 +1072,8 @@ moves_loop: // When in check, search starts from here
               || cutNode))
       {
           Depth r = reduction(improving, depth, moveCount);
+
+          //std::cout << "<" << depth << "," << moveCount << "," << r << ">" << std::endl;
 
           // Reduction if other threads are searching this position.
           if (th.marked())
