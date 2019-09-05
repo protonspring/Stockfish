@@ -69,6 +69,8 @@ namespace {
 
   int coef = 1024;
 
+TUNE(coef);
+
   inline Depth reduction(bool i, Depth d, int mn) {
     return Depth(coef * d * mn / (16*1024) + !i);
   }
