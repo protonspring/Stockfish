@@ -71,7 +71,7 @@ namespace {
 
     auto red = [](int r) {
         double r2 = double(r) / 4.0;
-        return 114 * r2 / (fabs(r2) + 2) - 12 + r2;
+        return 107 * r2 / (fabs(r2) + 1) - 22 + r2;
     };
 
     int r = red(d / ONE_PLY) * red(mn);
