@@ -1075,8 +1075,6 @@ moves_loop: // When in check, search starts from here
       {
           Depth r = reduction(improving, depth, moveCount);
 
-          std::cout << "<" << depth << "," << moveCount << "," << r << ">" << std::endl;
-
           // Reduction if other threads are searching this position.
           if (th.marked())
               r += ONE_PLY;
