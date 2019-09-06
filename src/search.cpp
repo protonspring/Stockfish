@@ -67,12 +67,12 @@ namespace {
     return Value(198 * (d / ONE_PLY - improving));
   }
 
-  int coef = 1024;
+  int coef[2] = { 1024, 1024 };
 
 TUNE(coef);
 
   inline Depth reduction(bool i, Depth d, int mn) {
-    return Depth(coef * d * mn / (16*1024) + !i);
+    return Depth((coef[0] * d +  coef[1]*mn) / (16384) + !i);
   }
 
   constexpr int futility_move_count(bool improving, int depth) {
@@ -1075,7 +1075,7 @@ moves_loop: // When in check, search starts from here
       {
           Depth r = reduction(improving, depth, moveCount);
 
-          //std::cout << "<" << depth << "," << moveCount << "," << r << ">" << std::endl;
+          std::cout << "<" << depth << "," << moveCount << "," << r << ">" << std::endl;
 
           // Reduction if other threads are searching this position.
           if (th.marked())
