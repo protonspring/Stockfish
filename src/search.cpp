@@ -194,8 +194,8 @@ void Search::init() {
   for (int i = 1; i < MAX_MOVES; ++i)
   {
       int i2 = i - 15;
-      Reductions[i] = i < 15 ? 59 - 38 * i2 * i2 / 128
-                             : i / 2 + 55;
+      Reductions[i] = i < 15 ? 67 - 44 * i2 * i2 / 128
+                             : i / 2 + 63;
   }
 }
 
