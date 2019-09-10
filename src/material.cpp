@@ -19,7 +19,6 @@
 */
 
 #include <cassert>
-#include <cstring>   // For std::memset
 
 #include "material.h"
 #include "thread.h"
@@ -123,7 +122,7 @@ Entry* probe(const Position& pos) {
   if (e->key == key)
       return e;
 
-  std::memset(e, 0, sizeof(Entry));
+  e->value = VALUE_ZERO;
   e->key = key;
   e->factor[WHITE] = e->factor[BLACK] = (uint8_t)SCALE_FACTOR_NORMAL;
 
@@ -149,6 +148,7 @@ Entry* probe(const Position& pos) {
 
   // OK, we didn't find any special evaluation function for the current material
   // configuration. Is there a suitable specialized scaling function?
+  e->scalingFunction[WHITE] = e->scalingFunction[BLACK] = nullptr;
   const auto* sf = Endgames::probe<ScaleFactor>(key);
 
   if (sf)
