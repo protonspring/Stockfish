@@ -146,7 +146,7 @@ namespace {
             score -= Doubled;
 
         if (backward && (ourPawns & forward_file_bb(Them, s)))
-            score -= make_score(0, 10);
+            score -= make_score(0,  6);
     }
 
     // Penalize our unsupported pawns attacked twice by enemy pawns
