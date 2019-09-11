@@ -64,17 +64,17 @@ namespace {
   // Helper used to detect a given material distribution
   bool is_KXK(const Position& pos, Color us) {
     return  !more_than_one(pos.pieces(~us))
-          && pos.non_pawn_material(us) >= RookValueMg;
+          && pos.non_pawn_material(us) >= piece_value(MG, ROOK);
   }
 
   bool is_KBPsK(const Position& pos, Color us) {
-    return   pos.non_pawn_material(us) == BishopValueMg
+    return   pos.non_pawn_material(us) == piece_value(MG, BISHOP)
           && pos.count<PAWN  >(us) >= 1;
   }
 
   bool is_KQKRPs(const Position& pos, Color us) {
     return  !pos.count<PAWN>(us)
-          && pos.non_pawn_material(us) == QueenValueMg
+          && pos.non_pawn_material(us) == piece_value(MG, QUEEN)
           && pos.count<ROOK>(~us) == 1
           && pos.count<PAWN>(~us) >= 1;
   }
@@ -195,9 +195,9 @@ Entry* probe(const Position& pos) {
   // advantage. This catches some trivial draws like KK, KBK and KNK and gives a
   // drawish scale factor for cases such as KRKBP and KmmKm (except for KBBKN).
   for (Color c : {WHITE, BLACK})
-      if (!pos.count<PAWN>(c) && npm[c] - npm[~c] <= BishopValueMg)
-          e->factor[c] = uint8_t(npm[c] <  RookValueMg   ? SCALE_FACTOR_DRAW :
-                                npm[~c] <= BishopValueMg ? 4 : 14);
+      if (!pos.count<PAWN>(c) && npm[c] - npm[~c] <= piece_value(MG, BISHOP))
+          e->factor[c] = uint8_t(npm[c] <  piece_value(MG, ROOK) ? SCALE_FACTOR_DRAW :
+                                npm[~c] <= piece_value(MG, BISHOP) ? 4 : 14);
 
   // Evaluate the material imbalance. We use PIECE_TYPE_NONE as a place holder
   // for the bishop pair "extended piece", which allows us to be more flexible
