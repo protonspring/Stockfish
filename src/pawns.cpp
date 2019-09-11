@@ -150,7 +150,7 @@ namespace {
 
         // penalty for being behind an already backward pawn
         if (forward_file_bb(Us, s) & backPawns)
-            score -= make_score(10,0);
+            score -= make_score(0,10);
     }
 
     // Penalize our unsupported pawns attacked twice by enemy pawns
