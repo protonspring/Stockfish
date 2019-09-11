@@ -71,7 +71,7 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
 
-    Bitboard neighbours, stoppers, doubled, support, phalanx, backPawns = 0;
+    Bitboard neighbours, stoppers, doubled, support, phalanx;
     Bitboard lever, leverPush;
     Square s;
     bool opposed, backward, passed;
@@ -112,9 +112,6 @@ namespace {
         backward =  !(neighbours & forward_ranks_bb(Them, s))
                   && (stoppers & (leverPush | (s + Up)));
 
-        if (backward)
-            backPawns |= s;
-
         // A pawn is passed if one of the three following conditions is true:
         // (a) there is no stoppers except some levers
         // (b) the only stoppers are the leverPush, but we outnumber them
@@ -148,9 +145,8 @@ namespace {
         if (doubled && !support)
             score -= Doubled;
 
-        // penalty for being behind an already backward pawn
-        if (forward_file_bb(Us, s) & backPawns)
-            score -= make_score(0,10);
+        if (backward && (ourPawns & forward_file_bb(Them, s)))
+            score -= make_score(0, 10);
     }
 
     // Penalize our unsupported pawns attacked twice by enemy pawns
