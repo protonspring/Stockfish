@@ -112,7 +112,8 @@ namespace {
         backward =  !(neighbours & forward_ranks_bb(Them, s))
                   && (stoppers & (leverPush | (s + Up)));
 
-        backPawns |= s;
+        if (backward)
+            backPawns |= s;
 
         // A pawn is passed if one of the three following conditions is true:
         // (a) there is no stoppers except some levers
