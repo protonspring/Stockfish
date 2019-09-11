@@ -137,13 +137,21 @@ namespace {
         }
 
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * int(!opposed);
+
+            if (ourPawns & forward_file_bb(Them, s))  //another isolated behind
+                score -= make_score( 5, 10);
+        }
 
         else if (backward)
             score -= Backward + WeakUnopposed * int(!opposed);
 
         if (doubled && !support)
             score -= Doubled;
+
+        if (backward && (ourPawns & forward_file_bb(Them, s)))
+            score -= make_score(0, 6);
     }
 
     // Penalize our unsupported pawns attacked twice by enemy pawns
