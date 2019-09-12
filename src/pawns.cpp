@@ -28,7 +28,6 @@
 
 namespace {
 
-  #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
@@ -45,10 +44,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    {  -6,  81,  93,  58,  39,  18,   25 },
+    { -43,  61,  35, -49, -29, -11,  -63 },
+    { -10,  75,  23,  -2,  32,   3,  -45 },
+    { -39, -13, -29, -52, -48, -67, -166 }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
@@ -56,14 +55,13 @@ namespace {
   // is behind our king. Note that UnblockedStorm[0][1-2] accommodate opponent pawn
   // on edge, likely blocked by our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 89), V(-285), V(-185), V(93), V(57), V( 45), V( 51) },
-    { V( 44), V( -18), V( 123), V(46), V(39), V( -7), V( 23) },
-    { V(  4), V(  52), V( 162), V(37), V( 7), V(-14), V( -2) },
-    { V(-10), V( -14), V(  90), V(15), V( 2), V( -7), V(-16) }
+    {  89, -285, -185, 93, 57,  45,  51 },
+    {  44,  -18,  123, 46, 39,  -7,  23 },
+    {   4,   52,  162, 37,  7, -14,  -2 },
+    { -10,  -14,   90, 15,  2,  -7, -16 }
   };
 
   #undef S
-  #undef V
 
   template<Color Us>
   Score evaluate(const Position& pos, Pawns::Entry* e) {
