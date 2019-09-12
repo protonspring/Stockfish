@@ -38,6 +38,7 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score MultiBackward = S( 1,  6);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -146,7 +147,7 @@ namespace {
             score -= Doubled;
 
         if (backward && (ourPawns & forward_file_bb(Them, s)))
-            score -= make_score(0,  6);
+            score -= MultiBackward;
     }
 
     // Penalize our unsupported pawns attacked twice by enemy pawns
