@@ -219,7 +219,7 @@ Score Entry::do_king_safety(const Position& pos) {
 
   Square ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
-  castlingRights[Us] = pos.castling_rights(Us);
+  castlingRights = pos.castling_rights();
 
   Score shelters[3] = { evaluate_shelter<Us>(pos, ksq),
                         make_score(-VALUE_INFINITE, 0),

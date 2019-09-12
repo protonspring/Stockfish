@@ -99,7 +99,7 @@ public:
   bool is_on_semiopen_file(Color c, Square s) const;
 
   // Castling
-  int castling_rights(Color c) const;
+  int castling_rights() const;
   bool can_castle(CastlingRights cr) const;
   bool castling_impeded(CastlingRights cr) const;
   Square castling_rook_square(CastlingRights cr) const;
@@ -272,8 +272,8 @@ inline bool Position::can_castle(CastlingRights cr) const {
   return st->castlingRights & cr;
 }
 
-inline int Position::castling_rights(Color c) const {
-  return st->castlingRights & (c == WHITE ? WHITE_CASTLING : BLACK_CASTLING);
+inline int Position::castling_rights() const {
+  return st->castlingRights;
 }
 
 inline bool Position::castling_impeded(CastlingRights cr) const {
