@@ -38,6 +38,7 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score MultiBackward = S( 1,  6);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -145,6 +146,9 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if (backward && (ourPawns & forward_file_bb(Them, s)))
+            score -= MultiBackward;
     }
 
     return score;
