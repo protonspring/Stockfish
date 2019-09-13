@@ -324,7 +324,7 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 // don't give this bonus if there is low mobility
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center)
-                    && mob > 1)
+                    && mob > 3)
                     score += LongDiagonalBishop;
             }
 
