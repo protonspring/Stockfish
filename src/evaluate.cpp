@@ -322,9 +322,8 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
-                // don't give this bonus if there is low mobility
-                if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center)
-                    && mob > 3)
+                // don't give this bonus if the bishop is trapped
+                if (move > 0 && more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
 
