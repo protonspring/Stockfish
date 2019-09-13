@@ -323,7 +323,7 @@ namespace {
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 // don't give this bonus if the bishop is trapped
-                if (mob > 0 && more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
+                if (mob > 1 && more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
             }
 
