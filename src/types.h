@@ -167,7 +167,7 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-typedef int Value;
+typedef int_fast32_t Value;
 constexpr Value
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
@@ -202,8 +202,8 @@ enum Piece {
 
 extern Value PieceValue[PHASE_NB][PIECE_NB];
 
-enum Depth : int {
-
+typedef int Depth;
+constexpr Depth
   ONE_PLY = 1,
 
   DEPTH_ZERO          =  0 * ONE_PLY,
@@ -213,8 +213,7 @@ enum Depth : int {
 
   DEPTH_NONE   = -6 * ONE_PLY,
   DEPTH_OFFSET = DEPTH_NONE,
-  DEPTH_MAX    = MAX_PLY * ONE_PLY
-};
+  DEPTH_MAX    = MAX_PLY * ONE_PLY;
 
 static_assert(!(ONE_PLY & (ONE_PLY - 1)), "ONE_PLY is not a power of 2");
 
@@ -287,18 +286,6 @@ inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }
 inline T& operator++(T& d) { return d = T(int(d) + 1); }           \
 inline T& operator--(T& d) { return d = T(int(d) - 1); }
 
-#define ENABLE_FULL_OPERATORS_ON(T)                                \
-ENABLE_BASE_OPERATORS_ON(T)                                        \
-constexpr T operator*(int i, T d) { return T(i * int(d)); }        \
-constexpr T operator*(T d, int i) { return T(int(d) * i); }        \
-constexpr T operator/(T d, int i) { return T(int(d) / i); }        \
-constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
-inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
-inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
-
-ENABLE_FULL_OPERATORS_ON(Depth)
-ENABLE_FULL_OPERATORS_ON(Direction)
-
 ENABLE_INCR_OPERATORS_ON(PieceType)
 ENABLE_INCR_OPERATORS_ON(Piece)
 ENABLE_INCR_OPERATORS_ON(Square)
@@ -307,11 +294,12 @@ ENABLE_INCR_OPERATORS_ON(Rank)
 
 ENABLE_BASE_OPERATORS_ON(Score)
 
-#undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
 
-/// Additional operators to add a Direction to a Square
+/// Additional operators for Directions and Squares
+constexpr Direction operator*(int i, Direction d) { return Direction(i * int(d)); }
+constexpr Direction operator+(Direction d1, Direction d2) { return Direction(d1 + int(d2)); }
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
 constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d)); }
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
