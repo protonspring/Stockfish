@@ -312,6 +312,14 @@ namespace {
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
+            // If we have a knight, and opponent has only a bishop,
+            // penalize a wide pawn structure.
+            if (pos.non_pawn_material(Us) == KnightValueMg &&
+                pos.non_pawn_material(Them) == BishopValueMg &&
+                pos.pieces(PAWN) & (FileABB | FileBBB) &&
+                pos.pieces(PAWN) & (FileGBB | FileHBB))
+            score -= make_score(0, 10);
+
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
