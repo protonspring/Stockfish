@@ -45,6 +45,8 @@ namespace {
   int Opposed[RANK_NB] = { 0, 5, 10, 15, 20, 25, 30 };
   int Supported[RANK_NB] = { 0, 5, 10, 15, 20, 25, 30 };
 
+TUNE(Connected, Phalanxed, Opposed, Supported);
+
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
