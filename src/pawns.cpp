@@ -45,10 +45,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(   5) },
-    { V(-43), V( 61), V( 50), V( 30), V( 15), V(-11), V( -63) },
-    { V(-10), V( 75), V( 60), V( 45), V( 32), V(  3), V( -45) },
-    { V(-39), V( 13), V(  0), V(-20), V(-48), V(-67), V( -90) }
+    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  5) },
+    { V(-43), V( 61), V( 35), V(-20), V(-20), V(-20), V(-20) },
+    { V(-10), V( 75), V( 45), V( -2), V(  0), V(  0), V(  0) },
+    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-50), V(-50) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
