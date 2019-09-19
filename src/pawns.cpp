@@ -46,7 +46,7 @@ namespace {
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(   5) },
-    { V(-43), V( 20), V(  5), V(-20), V(-30), V(-45), V( -63) },
+    { V(-43), V( 61), V( 35), V(  4), V(-10), V(-21), V( -43) },
     { V(-10), V( 75), V( 23), V( -2), V(-10), V(-25), V( -45) },
     { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V( -90) }
   };
