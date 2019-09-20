@@ -47,6 +47,7 @@ namespace {
   constexpr Value NoShelterPawn[FILE_NB/2] = {V( -6), V(-43), V(-10), V(-39) };
   constexpr Value ShelterOffset[FILE_NB/2] = {V(105), V( 80), V( 80), V(  0) };
   constexpr Value ShelterSlope = V(17);
+  constexpr Score FileB_Rank4 = S(-50, 0);
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
@@ -200,7 +201,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
                                   : NoShelterPawn[d], 0);
 
       if ((d == FILE_B) && (ourRank == RANK_4))
-          bonus += make_score(-50, 0);
+          bonus += FileB_Rank4;
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
