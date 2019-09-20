@@ -44,10 +44,12 @@ namespace {
 
   // Strength of pawn shelter for our king
   // NoShelterPawn = there is no pawn on the file, or pawn is behind king
-  constexpr Value NoShelterPawn[FILE_NB/2] = {V( -6), V(-43), V(-10), V(-39) };
-  constexpr Value ShelterOffset[FILE_NB/2] = {V(105), V( 80), V( 80), V(  0) };
-  constexpr Value ShelterSlope = V(17);
-  constexpr Score FileB_Rank4 = S(-50, 0);
+  Value NoShelterPawn[FILE_NB/2] = {V( -6), V(-43), V(-10), V(-39) };
+  Value ShelterOffset[FILE_NB/2] = {V(105), V( 80), V( 80), V(  0) };
+  Value ShelterSlope = V(17);
+  Score FileB_Rank4 = S(-50, 0);
+
+TUNE(NoShelterPawn, ShelterOffset, ShelterSlope, FileB_Rank4);
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
