@@ -42,14 +42,11 @@ namespace {
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
 
-  // Strength of pawn shelter for our king by [distance from edge][rank].
-  // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
-  };
+  // Strength of pawn shelter for our king
+  // NoShelterPawn = there is no pawn on the file, or pawn is behind king
+  constexpr Value NoShelterPawn[FILE_NB/2] = {V( -6), V(-43), V(-10), V(-39) };
+  constexpr Value ShelterOffset[FILE_NB/2] = {V(105), V( 80), V( 80), V(  0) };
+  constexpr Value ShelterSlope = V(17);
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
@@ -199,7 +196,11 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       int d = std::min(f, ~f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      bonus += make_score(ourRank ? ShelterOffset[d] - ShelterSlope * ourRank
+                                  : NoShelterPawn[d], 0);
+
+      if ((d == FILE_B) && (ourRank == RANK_4))
+          bonus += make_score(-50, 0);
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
