@@ -324,6 +324,10 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                // Bonus for being supported by a weakUnopposed Pawn
+                if (pawn_attacks_bb<Us>(pe->weakUnopposed[Us]) & s)
+                    score += make_score(10, 0);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
