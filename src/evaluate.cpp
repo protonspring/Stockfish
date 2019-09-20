@@ -327,7 +327,7 @@ namespace {
 
                 // Bonus for being supported by a weakUnopposed Pawn
                 if (pawn_attacks_bb<Us>(pe->weakUnopposed[Us]) & s)
-                    score += make_score(10, 0);
+                    score += make_score( 0, 10);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
