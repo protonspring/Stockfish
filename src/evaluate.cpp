@@ -322,7 +322,7 @@ namespace {
                                      * (1 + popcount(blocked & CenterFiles));
 
                 // Bonus for bishop which can "see" center squares
-                if (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center)
+                if (b & Center)
                     score += LongDiagonalBishop;
             }
 
