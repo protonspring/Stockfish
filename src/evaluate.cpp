@@ -857,7 +857,8 @@ namespace {
 /// evaluation of the position from the point of view of the side to move.
 
 Value Eval::evaluate(const Position& pos) {
-  return Evaluation<NO_TRACE>(pos).value();
+  //scale down score when shuffling
+  return (50 - pos.rule50_count()) * Evaluation<NO_TRACE>(pos).value() / 50;
 }
 
 
