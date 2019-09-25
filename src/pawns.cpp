@@ -137,7 +137,12 @@ namespace {
         }
 
         else if (!neighbours)
+        {
             score -= Isolated + WeakUnopposed * !opposed;
+
+            if (more_than_one(theirPawns & pawn_attack_span(Us, s)))
+                score -= make_score(10,0);
+        }
 
         else if (backward)
             score -= Backward + WeakUnopposed * !opposed;
