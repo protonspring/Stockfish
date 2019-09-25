@@ -147,7 +147,7 @@ namespace {
                      + WeakLever * more_than_one(lever);
 
         if ((r > RANK_4) && (theirPawns & (s + Up)))
-            score += make_score(5, 0);
+            score += make_score(10, 0);
     }
 
     return score;
