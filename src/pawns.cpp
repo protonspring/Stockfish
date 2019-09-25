@@ -145,6 +145,9 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if ((r > RANK_4) && (theirPawns & (s + Up)))
+            score += make_score(0, 5);
     }
 
     return score;
