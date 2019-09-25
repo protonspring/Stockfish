@@ -145,6 +145,9 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if ((r == RANK_5) && (leverPush))
+            score += make_score(8, 0);
     }
 
     return score;
