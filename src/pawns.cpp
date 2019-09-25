@@ -141,7 +141,7 @@ namespace {
             score -= Isolated + WeakUnopposed * !opposed;
 
             if (more_than_one(theirPawns & pawn_attack_span(Us, s)))
-                score -= make_score(10,0);
+                score -= make_score(0, 10);
         }
 
         else if (backward)
