@@ -147,7 +147,7 @@ namespace {
                      + WeakLever * more_than_one(lever);
 
         if ((r == RANK_5) && (leverPush))
-            score += make_score(0, 8);
+            score += make_score(5, 0);
     }
 
     return score;
