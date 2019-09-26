@@ -296,7 +296,7 @@ namespace {
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         //Bonus for supporting pawns in the pawn storm
-        score += make_score(5,0) * popcount(pos.pieces(Us, PAWN) & KingFlank[file_of(pos.square<KING>(Them))] & b);
+        score += make_score(0,5) * popcount(pos.pieces(Us, PAWN) & KingFlank[file_of(pos.square<KING>(Them))] & b);
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
