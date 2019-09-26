@@ -370,6 +370,15 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            // don't line up with our KING if there is a like colored bishop around
+            if (PseudoAttacks[BISHOP][s] & pos.square<KING>(Us))
+            {
+                Bitboard theirBishops = pos.pieces(Them, BISHOP);
+                while(theirBishops)
+                  if (!opposite_colors(pop_lsb(&theirBishops), s))
+                      score -= make_score(7,0);
+            }
         }
     }
     if (T)
