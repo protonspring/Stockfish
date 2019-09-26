@@ -377,7 +377,7 @@ namespace {
                 Bitboard theirBishops = pos.pieces(Them, BISHOP);
                 while(theirBishops)
                   if (!opposite_colors(pop_lsb(&theirBishops), s))
-                      score -= make_score(7,0);
+                      score -= make_score(0,7);
             }
         }
     }
