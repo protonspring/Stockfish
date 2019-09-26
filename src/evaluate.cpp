@@ -652,6 +652,14 @@ namespace {
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
 
+
+                // Pawn is fully passed, and king is too far away to stop it.
+                Square queeningSq = make_square(file_of(s), relative_rank(Us, RANK_8));
+                if ((distance(s, queeningSq) < distance(pos.square<KING>(Them), queeningSq))
+                       && pos.pawn_passed(Us, s)
+                       && pos.non_pawn_material(Them) == VALUE_ZERO)
+                    k += 3;
+
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
