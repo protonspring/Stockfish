@@ -313,7 +313,7 @@ namespace {
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
             //Bonus for supporting pawns in the pawn storm
-            score += make_score(0,5) * popcount(pos.pieces(Us, PAWN) & KingFlank[file_of(pos.square<KING>(Them))] & forward_ranks_bb(Us, s) & b);
+            score += make_score(0,5) * popcount(pos.pieces(Us, PAWN) & KingFlank[file_of(pos.square<KING>(Them))] & ~KingFlank[file_of(pos.square<KING>(Us))] & b);
 
             if (Pt == BISHOP)
             {
