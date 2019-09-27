@@ -114,7 +114,7 @@ namespace {
   // which piece type attacks which one. Attacks on lesser pieces which are
   // pawn-defended are not considered.
   constexpr Score ThreatByMinor[PIECE_TYPE_NB] = {
-    S(0, 0), S(32, 28), S(65, 42), S(83, 44), S(94, 112), S(88, 120)
+    S(0, 0), S(6, 28), S(39+15, 42), S(57+15, 44), S(68+15, 112), S(62+15, 120)
   };
 
   constexpr Score ThreatByRook[PIECE_TYPE_NB] = {
