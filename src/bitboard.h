@@ -170,9 +170,9 @@ inline Bitboard shift(Bitboard b) {
 /// from the squares in the given bitboard.
 
 template<Color C>
-constexpr Bitboard pawn_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH+WEST>(b) | shift<NORTH+EAST>(b)
-                    : shift<SOUTH+WEST>(b) | shift<SOUTH+EAST>(b);
+inline Bitboard pawn_attacks_bb(Bitboard b) {
+  constexpr Direction Up = C == WHITE ? NORTH : SOUTH;
+  return shift<Up+WEST>(b) | shift<Up+EAST>(b);
 }
 
 
@@ -180,9 +180,9 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
 /// given color from the squares in the given bitboard.
 
 template<Color C>
-constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH+WEST>(b) & shift<NORTH+EAST>(b)
-                    : shift<SOUTH+WEST>(b) & shift<SOUTH+EAST>(b);
+inline Bitboard pawn_double_attacks_bb(Bitboard b) {
+  constexpr Direction Up = C == WHITE ? NORTH : SOUTH;
+  return shift<Up+WEST>(b) & shift<Up+EAST>(b);
 }
 
 
