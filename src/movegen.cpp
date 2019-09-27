@@ -57,8 +57,6 @@ namespace {
     constexpr Bitboard  TRank7BB = (Us == WHITE ? Rank7BB    : Rank2BB);
     constexpr Bitboard  TRank3BB = (Us == WHITE ? Rank3BB    : Rank6BB);
     constexpr Direction Up       = (Us == WHITE ? NORTH      : SOUTH);
-    constexpr Direction UpRight  = (Us == WHITE ? NORTH+EAST : SOUTH+WEST);
-    constexpr Direction UpLeft   = (Us == WHITE ? NORTH+WEST : SOUTH+EAST);
 
     Bitboard emptySquares;
 
@@ -126,17 +124,17 @@ namespace {
         if (Type == EVASIONS)
             emptySquares &= target;
 
-        Bitboard b1 = shift<UpRight>(pawnsOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsOn7) & enemies;
+        Bitboard b1 = shift<Up+EAST>(pawnsOn7) & enemies;
+        Bitboard b2 = shift<Up+WEST>(pawnsOn7) & enemies;
         Bitboard b3 = shift<Up     >(pawnsOn7) & emptySquares;
 
         Square ksq = pos.square<KING>(Them);
 
         while (b1)
-            moveList = make_promotions<Type, UpRight>(moveList, pop_lsb(&b1), ksq);
+            moveList = make_promotions<Type, Up+EAST>(moveList, pop_lsb(&b1), ksq);
 
         while (b2)
-            moveList = make_promotions<Type, UpLeft >(moveList, pop_lsb(&b2), ksq);
+            moveList = make_promotions<Type, Up+WEST>(moveList, pop_lsb(&b2), ksq);
 
         while (b3)
             moveList = make_promotions<Type, Up     >(moveList, pop_lsb(&b3), ksq);
@@ -145,19 +143,19 @@ namespace {
     // Standard and en-passant captures
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
     {
-        Bitboard b1 = shift<UpRight>(pawnsNotOn7) & enemies;
-        Bitboard b2 = shift<UpLeft >(pawnsNotOn7) & enemies;
+        Bitboard b1 = shift<Up+EAST>(pawnsNotOn7) & enemies;
+        Bitboard b2 = shift<Up+WEST>(pawnsNotOn7) & enemies;
 
         while (b1)
         {
             Square to = pop_lsb(&b1);
-            *moveList++ = make_move(to - UpRight, to);
+            *moveList++ = make_move(to - Up - EAST, to);
         }
 
         while (b2)
         {
             Square to = pop_lsb(&b2);
-            *moveList++ = make_move(to - UpLeft, to);
+            *moveList++ = make_move(to - Up - WEST, to);
         }
 
         if (pos.ep_square() != SQ_NONE)
