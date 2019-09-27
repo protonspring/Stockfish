@@ -113,9 +113,11 @@ namespace {
   // ThreatByMinor/ByRook[attacked PieceType] contains bonuses according to
   // which piece type attacks which one. Attacks on lesser pieces which are
   // pawn-defended are not considered.
-  constexpr Score ThreatByMinor[PIECE_TYPE_NB] = {
-    S(0, 0), S(6, 28), S(39+15, 42), S(57+15, 44), S(68+15, 112), S(62+15, 120)
+  Score ThreatByMinor[PIECE_TYPE_NB] = {
+    S(0, 0), S(6, 28), S(54, 42), S(72, 44), S(83, 112), S(77, 120)
   };
+
+TUNE(ThreatByMinor);
 
   constexpr Score ThreatByRook[PIECE_TYPE_NB] = {
     S(0, 0), S(3, 44), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
