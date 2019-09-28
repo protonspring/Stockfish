@@ -114,7 +114,7 @@ namespace {
   // which piece type attacks which one. Attacks on lesser pieces which are
   // pawn-defended are not considered.
   Score ThreatByMinor[PIECE_TYPE_NB] = {
-    S(0, 0), S(6, 28), S(54, 42), S(72, 44), S(83, 112), S(77, 120)
+    S(0, 0), S(6, 31), S(55, 37), S(74, 53), S(86, 111), S(76, 155)
   };
 
 TUNE(ThreatByMinor);
