@@ -117,11 +117,11 @@ namespace {
     S(0, 0), S(6, 31), S(55, 37), S(74, 53), S(86, 111), S(76, 155)
   };
 
-TUNE(ThreatByMinor);
-
   constexpr Score ThreatByRook[PIECE_TYPE_NB] = {
-    S(0, 0), S(3, 44), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
+    S(0, 0), S(23, 44), S(58, 71), S(58, 61), S(20, 38), S(71, 38)
   };
+
+TUNE(ThreatByMinor, ThreatByRook);
 
   // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
   constexpr Score PassedRank[RANK_NB] = {
