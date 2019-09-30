@@ -739,7 +739,7 @@ namespace {
     // Now apply the bonus: note that we find the attacking side by extracting the
     // sign of the midgame or endgame values, and that we carefully cap the bonus
     // so that the midgame and endgame scores do not change sign after the bonus.
-    int u = clamp(complexity, -abs(mg), abs(mg));
+    int u = clamp(complexity + 50, -abs(mg), abs(mg));
     int v = clamp(complexity, -abs(eg), abs(eg));
 
     if (T)
