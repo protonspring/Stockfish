@@ -736,11 +736,9 @@ namespace {
                     - 36 * almostUnwinnable
                     -103 ;
 
-    // Now apply the bonus: note that we find the attacking side by extracting the
-    // sign of the midgame or endgame values, and that we carefully cap the bonus
-    // so that the midgame and endgame scores do not change sign after the bonus.
-    int u = ((mg > 0) - (mg < 0)) * std::max(std::min(complexity + 50, 0), -abs(mg));
-    int v = ((eg > 0) - (eg < 0)) * std::max(complexity, -abs(eg));
+    // Make sure the bonus does not change the sign of the score.
+    int u = clamp(std::min(complexity + 50, 0), -abs(mg), abs(mg));
+    int v = clamp(complexity, -abs(eg), abs(eg));
 
     if (T)
         Trace::add(INITIATIVE, make_score(u, v));
