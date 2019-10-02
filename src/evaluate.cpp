@@ -813,12 +813,16 @@ namespace {
 
     score += initiative(score);
 
+    // Scale down score as we approach 50 move limit
+    score = Score(score - Score(pos.rule50_count() * score) / 100);
+    
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
     ScaleFactor sf = scale_factor(eg_value(score));
     v =  mg_value(score) * int(me->game_phase())
        + eg_value(score) * int(PHASE_MIDGAME - me->game_phase()) * sf / SCALE_FACTOR_NORMAL;
 
     v /= PHASE_MIDGAME;
+
 
     // In case of tracing add all remaining individual evaluation terms
     if (T)
