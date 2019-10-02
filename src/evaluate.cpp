@@ -820,6 +820,11 @@ namespace {
 
     v /= PHASE_MIDGAME;
 
+    // Scale down score for a fortress/blocked position
+    if (pe->noSafeMoves[WHITE] && pe->noSafeMoves[BLACK]
+                               && (popcount(pos.pieces(PAWN)) > 10))
+        score = score / 4;
+
     // In case of tracing add all remaining individual evaluation terms
     if (T)
     {
