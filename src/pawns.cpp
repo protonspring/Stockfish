@@ -33,7 +33,6 @@ namespace {
 
   // Pawn penalties
   constexpr Score Backward      = S( 9, 24);
-  constexpr Score BlockedStorm  = S(82, 82);
   constexpr Score Doubled       = S(11, 56);
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
@@ -61,6 +60,11 @@ namespace {
     { V(  4), V(  52), V( 162), V(37), V( 7), V(-14), V( -2) },
     { V(-10), V( -14), V(  90), V(15), V( 2), V( -7), V(-16) }
   };
+
+  Score BlockedStorm[int(FILE_NB) / 2] = {
+       S(82, 82), S(82, 82), S(82, 82), S(82, 82) };
+
+TUNE(BlockedStorm);
 
   #undef S
   #undef V
@@ -213,7 +217,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       bonus += make_score(ShelterStrength[d][ourRank], 0);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus -= BlockedStorm * int(theirRank == RANK_3);
+          bonus -= BlockedStorm[d] * int(theirRank == RANK_3);
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
   }
