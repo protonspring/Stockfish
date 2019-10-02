@@ -822,8 +822,8 @@ namespace {
 
     // Scale down score for a fortress/blocked position
     if (pe->noSafeMoves[WHITE] && pe->noSafeMoves[BLACK]
-                               && pos.count<PAWN>() > 10)
-        score = score / 4;
+                               && pos.count<PAWN>() >  8)
+        score = score / 2;
 
     // In case of tracing add all remaining individual evaluation terms
     if (T)
