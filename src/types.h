@@ -205,16 +205,15 @@ extern Value PieceValue[PHASE_NB][PIECE_NB];
 
 typedef short Depth;
 
-constexpr Depth ONE_PLY = 1;
+constexpr Depth ONE_PLY = 1,
+  DEPTH_ZERO          =  0 * ONE_PLY,
+  DEPTH_QS_CHECKS     =  0 * ONE_PLY,
+  DEPTH_QS_NO_CHECKS  = -1 * ONE_PLY,
+  DEPTH_QS_RECAPTURES = -5 * ONE_PLY,
 
-constexpr Depth DEPTH_ZERO          =  0 * ONE_PLY;
-constexpr Depth DEPTH_QS_CHECKS     =  0 * ONE_PLY;
-constexpr Depth DEPTH_QS_NO_CHECKS  = -1 * ONE_PLY;
-constexpr Depth DEPTH_QS_RECAPTURES = -5 * ONE_PLY;
-
-constexpr Depth DEPTH_NONE   = -6 * ONE_PLY;
-constexpr Depth DEPTH_OFFSET = DEPTH_NONE;
-constexpr Depth DEPTH_MAX    = MAX_PLY * ONE_PLY;
+  DEPTH_NONE   = -6 * ONE_PLY,
+  DEPTH_OFFSET = DEPTH_NONE,
+  DEPTH_MAX    = MAX_PLY * ONE_PLY;
 
 static_assert(!(ONE_PLY & (ONE_PLY - 1)), "ONE_PLY is not a power of 2");
 
