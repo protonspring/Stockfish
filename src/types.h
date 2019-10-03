@@ -363,12 +363,8 @@ inline File map_to_queenside(File f) {
   return std::min(f, File(FILE_H - f)); // Map files ABCDEFGH to files ABCDDCBA
 }
 
-constexpr CastlingRights operator&(CastlingRights cr1, CastlingRights cr2) {
-  return CastlingRights(int(cr1) & int(cr2));
-}
-
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
-  return CastlingRights((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & cr);
+  return CastlingRights(int(c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & int(cr));
 }
 
 constexpr Value mate_in(int ply) {
