@@ -269,11 +269,11 @@ inline bool Position::is_on_semiopen_file(Color c, Square s) const {
 }
 
 inline bool Position::can_castle(CastlingRights cr) const {
-  return st->castlingRights & cr;
+  return st->castlingRights & int(cr);
 }
 
 inline int Position::castling_rights(Color c) const {
-  return st->castlingRights & (c == WHITE ? WHITE_CASTLING : BLACK_CASTLING);
+  return st->castlingRights & int(c == WHITE ? WHITE_CASTLING : BLACK_CASTLING);
 }
 
 inline bool Position::castling_impeded(CastlingRights cr) const {
@@ -322,7 +322,7 @@ inline bool Position::is_discovery_check_on_king(Color c, Move m) const {
 }
 
 inline bool Position::pawn_passed(Color c, Square s) const {
-  return !(pieces(~c, PAWN) & passed_pawn_span(c, s));
+  return !(pieces(!c, PAWN) & passed_pawn_span(c, s));
 }
 
 inline bool Position::advanced_pawn_push(Move m) const {

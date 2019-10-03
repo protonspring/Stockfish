@@ -128,11 +128,11 @@ enum MoveType {
   CASTLING  = 3 << 14
 };
 
-enum Color {
-  WHITE, BLACK, COLOR_NB = 2
-};
+typedef bool Color;
+constexpr Color WHITE = false, BLACK = true;
+constexpr int COLOR_NB = 2;
 
-enum CastlingRights {
+enum CastlingRights : int {
   NO_CASTLING,
   WHITE_OO,
   WHITE_OOO = WHITE_OO << 1,
@@ -351,10 +351,6 @@ inline Score operator*(Score s, bool b) {
   return Score(int(s) * int(b));
 }
 
-constexpr Color operator~(Color c) {
-  return Color(c ^ BLACK); // Toggle color
-}
-
 constexpr Square operator~(Square s) {
   return Square(s ^ SQ_A8); // Vertical flip SQ_A1 -> SQ_A8
 }
@@ -365,6 +361,10 @@ constexpr Piece operator~(Piece pc) {
 
 inline File map_to_queenside(File f) {
   return std::min(f, File(FILE_H - f)); // Map files ABCDEFGH to files ABCDDCBA
+}
+
+constexpr CastlingRights operator&(CastlingRights cr1, CastlingRights cr2) {
+  return CastlingRights(int(cr1) & int(cr2));
 }
 
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
@@ -393,7 +393,7 @@ constexpr PieceType type_of(Piece pc) {
 
 inline Color color_of(Piece pc) {
   assert(pc != NO_PIECE);
-  return Color(pc >> 3);
+  return Color(pc & 8);
 }
 
 constexpr bool is_ok(Square s) {

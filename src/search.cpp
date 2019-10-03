@@ -993,7 +993,7 @@ moves_loop: // When in check, search starts from here
 
       // Check extension (~2 Elo)
       else if (    givesCheck
-               && (pos.is_discovery_check_on_king(~us, move) || pos.see_ge(move)))
+               && (pos.is_discovery_check_on_king(!us, move) || pos.see_ge(move)))
           extension = ONE_PLY;
 
       // Shuffle extension
@@ -1026,7 +1026,7 @@ moves_loop: // When in check, search starts from here
 
           if (   !captureOrPromotion
               && !givesCheck
-              && (!pos.advanced_pawn_push(move) || pos.non_pawn_material(~us) > BishopValueMg))
+              && (!pos.advanced_pawn_push(move) || pos.non_pawn_material(!us) > BishopValueMg))
           {
               // Move count based pruning
               if (moveCountPruning)
@@ -1461,7 +1461,7 @@ moves_loop: // When in check, search starts from here
 
       // Don't search moves with negative SEE values
       if (  (!inCheck || evasionPrunable)
-          && (!givesCheck || !(pos.blockers_for_king(~pos.side_to_move()) & from_sq(move)))
+          && (!givesCheck || !(pos.blockers_for_king(!pos.side_to_move()) & from_sq(move)))
           && !pos.see_ge(move))
           continue;
 
