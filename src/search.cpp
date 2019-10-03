@@ -429,7 +429,7 @@ void Thread::search() {
           int failedHighCnt = 0;
           while (true)
           {
-              Depth adjustedDepth = std::max(ONE_PLY, rootDepth - failedHighCnt * ONE_PLY);
+              Depth adjustedDepth = std::max(ONE_PLY, Depth(rootDepth - failedHighCnt * ONE_PLY));
               bestValue = ::search<PV>(rootPos, ss, alpha, beta, adjustedDepth, false);
 
               // Bring the best move to the front. It is critical that sorting
@@ -1033,7 +1033,7 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Reduced depth of the next LMR search
-              int lmrDepth = std::max(newDepth - reduction(improving, depth, moveCount), DEPTH_ZERO);
+              int lmrDepth = std::max(Depth(newDepth - reduction(improving, depth, moveCount)), DEPTH_ZERO);
               lmrDepth /= ONE_PLY;
 
               // Countermoves based pruning (~20 Elo)
@@ -1142,7 +1142,7 @@ moves_loop: // When in check, search starts from here
               r -= ss->statScore / 16384 * ONE_PLY;
           }
 
-          Depth d = clamp(newDepth - r, ONE_PLY, newDepth);
+          Depth d = clamp(Depth(newDepth - r), ONE_PLY, newDepth);
 
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
 
