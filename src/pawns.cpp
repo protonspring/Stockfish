@@ -62,7 +62,7 @@ namespace {
   };
 
   Score BlockedStorm[int(FILE_NB) / 2] = {
-       S(82, 82), S(82, 82), S(82, 82), S(82, 82) };
+       S(71, 80), S(74, 86), S(91, 82), S(80, 81) };
 
 TUNE(BlockedStorm);
 
