@@ -114,11 +114,10 @@ namespace {
         // in the pawnAttacksSpan bitboard.
         if (!backward || phalanx)
         {
+            e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
+
             if (opposed)
-                e->pawnAttacksSpan[Us] |=  pawn_attack_span(Us, s) &
-                                          ~pawn_attack_span(Us, frontmost_sq(Them, opposed));
-            else
-                e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
+                e->pawnAttacksSpan[Us] ^= pawn_attack_span(Us, frontmost_sq(Them, opposed));
         }
 
         // A pawn is passed if one of the three following conditions is true:
