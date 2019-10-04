@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -146,7 +147,7 @@ namespace {
   constexpr Score ThreatBySafePawn   = S(173, 94);
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
-  constexpr Score KingPawnSeparate   = S(  0, 20);
+  constexpr Score KingPawnSeparate   = S(  0, 10);
 
 #undef S
 
@@ -358,17 +359,31 @@ namespace {
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
 
-            // bonus for separating opponent king from pawns
-            if ((forward_ranks_bb(Us, s) & pos.square<KING>(Them)) &&
-               ((forward_ranks_bb(Them, s) & pos.pieces(PAWN)) == pos.pieces(PAWN)))
-                score += KingPawnSeparate;
+            Bitboard allPawns = pos.pieces(PAWN);
+            if (allPawns)
+            {
+                Square ksq = pos.square<KING>(Them);
+                Bitboard fRanks = forward_ranks_bb(Us, s);
+                Bitboard bRanks = forward_ranks_bb(Them, s);
+                Bitboard eastRanks = EastRanks[file_of(s)];
+                Bitboard westRanks = WestRanks[file_of(s)];
 
-            // bonus for separating opponent king from pawns
-            if ((forward_ranks_bb(Them, s) & pos.square<KING>(Them)) &&
-               ((forward_ranks_bb(Us, s) & pos.pieces(PAWN)) == pos.pieces(PAWN)))
-                score += KingPawnSeparate;
+                // bonus for separating opponent king from pawns
+                if ((fRanks & ksq) && ((bRanks & allPawns) == allPawns))
+                    score += KingPawnSeparate;
+    
+    
+                else if ((bRanks & ksq) && ((fRanks & allPawns) == allPawns))
+                    score += KingPawnSeparate;
+    
+                else if ((eastRanks & ksq) && ((westRanks & allPawns) == allPawns))
+                    score += KingPawnSeparate;
+    
+                else if ((westRanks & ksq) && ((eastRanks & allPawns) == allPawns))
+                    score += KingPawnSeparate;
+            }
         }
-
+    
         if (Pt == QUEEN)
         {
             // Penalty if any relative pin or discovered attack against the queen

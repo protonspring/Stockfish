@@ -71,6 +71,26 @@ constexpr Bitboard KingFlank[FILE_NB] = {
   KingSide, KingSide, KingSide ^ FileEBB
 };
 
+constexpr Bitboard WestRanks[FILE_NB] = {
+  0,
+  FileABB,
+  FileABB | FileBBB,
+  FileABB | FileBBB | FileCBB,
+  FileABB | FileBBB | FileCBB | FileDBB,
+  FileABB | FileBBB | FileCBB | FileDBB | FileEBB,
+  FileABB | FileBBB | FileCBB | FileDBB | FileEBB | FileFBB,
+  FileABB | FileBBB | FileCBB | FileDBB | FileEBB | FileFBB | FileGBB };
+
+constexpr Bitboard EastRanks[FILE_NB] = {
+  FileBBB | FileCBB | FileDBB | FileEBB | FileFBB | FileGBB | FileHBB,
+            FileCBB | FileDBB | FileEBB | FileFBB | FileGBB | FileHBB,
+                      FileDBB | FileEBB | FileFBB | FileGBB | FileHBB,
+                                FileEBB | FileFBB | FileGBB | FileHBB,
+                                          FileFBB | FileGBB | FileHBB,
+                                                    FileGBB | FileHBB,
+                                                              FileHBB,
+  0 };
+
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
