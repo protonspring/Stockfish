@@ -146,6 +146,7 @@ namespace {
   constexpr Score ThreatBySafePawn   = S(173, 94);
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
+  constexpr Score KingPawnSeparate   = S( 10,  0);
 
 #undef S
 
@@ -356,6 +357,16 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // bonus for separating opponent king from pawns
+            if ((forward_ranks_bb(Us, s) & pos.square<KING>(Them)) &&
+               ((forward_ranks_bb(Them, s) & pos.pieces(PAWN)) == pos.pieces(PAWN)))
+                score += KingPawnSeparate;
+
+            // bonus for separating opponent king from pawns
+            if ((forward_ranks_bb(Them, s) & pos.square<KING>(Them)) &&
+               ((forward_ranks_bb(Us, s) & pos.pieces(PAWN)) == pos.pieces(PAWN)))
+                score += KingPawnSeparate;
         }
 
         if (Pt == QUEEN)
