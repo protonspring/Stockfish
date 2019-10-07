@@ -175,8 +175,9 @@ Entry* probe(const Position& pos) {
   e->key = key;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
-  e->outpostSquares[WHITE] &= (Rank4BB | Rank5BB | Rank6BB) & ~e->pawnAttacksSpan[BLACK];
-  e->outpostSquares[BLACK] &= (Rank3BB | Rank4BB | Rank5BB) & ~e->pawnAttacksSpan[WHITE];
+
+  e->outpostSquares[WHITE] &= OutpostRanks[WHITE] & ~e->pawnAttacksSpan[BLACK];
+  e->outpostSquares[BLACK] &= OutpostRanks[BLACK] & ~e->pawnAttacksSpan[WHITE];
   return e;
 }
 
