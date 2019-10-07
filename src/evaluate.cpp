@@ -293,8 +293,10 @@ namespace {
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
+            bool pawnProtectedOutpost = more_than_one(PawnAttacks[Us][s] & pawn_attacks_bb<Us>(pos.pieces(Us, PAWN)));
+
             // Bonus if piece is on an outpost square or can reach one
-            if (pe->outpost_squares(Us) & s)
+            if (pawnProtectedOutpost || (pe->outpost_squares(Us) & s))
                 score += Outpost * (Pt == KNIGHT ? 4 : 2);
 
             else if (pe->outpost_squares(Us) & b & ~pos.pieces(Us))
