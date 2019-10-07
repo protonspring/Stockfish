@@ -85,10 +85,8 @@ namespace {
 
     e->passedPawns[Us] = 0;
     e->kingSquares[Us] = SQ_NONE;
-    e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
-    e->outpostSquares[Us] = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
-                                         : Rank5BB | Rank4BB | Rank3BB)
-                          & pawn_attacks_bb<Us>(ourPawns);
+    e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] =
+                         e->outpostSquares[Us]  = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -177,8 +175,8 @@ Entry* probe(const Position& pos) {
   e->key = key;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
-  e->outpostSquares[WHITE] &= ~e->pawnAttacksSpan[BLACK];
-  e->outpostSquares[BLACK] &= ~e->pawnAttacksSpan[WHITE];
+  e->outpostSquares[WHITE] &= (Rank4BB | Rank5BB | Rank6BB) & ~e->pawnAttacksSpan[BLACK];
+  e->outpostSquares[BLACK] &= (Rank3BB | Rank4BB | Rank5BB) & ~e->pawnAttacksSpan[WHITE];
   return e;
 }
 
