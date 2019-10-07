@@ -297,7 +297,7 @@ namespace {
             if (pe->outpost_squares(Us) & s)
                 score += Outpost * (Pt == KNIGHT ? 4 : 2);
 
-            else if (pe->outpostSquares[Us] & b & ~pos.pieces(Us))
+            else if (pe->outpost_squares(Us) & b & ~pos.pieces(Us))
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
 
             // Knight and Bishop bonus for being right behind a pawn
