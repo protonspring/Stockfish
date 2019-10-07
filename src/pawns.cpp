@@ -85,7 +85,7 @@ namespace {
 
     e->passedPawns[Us] = 0;
     e->kingSquares[Us] = SQ_NONE;
-    e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
+    e->pawnAttacks[Us] = pawn_attacks_bb<Us>(ourPawns);
     e->outpostSquares[Them] = pawn_attacks_bb<Them>(theirPawns);
 
     // Loop through all pawns of the current color and score each pawn
@@ -113,7 +113,6 @@ namespace {
 
         // Compute additional span if pawn is not backward nor blocked
         if (!backward && !blocked)
-            //e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
             e->outpostSquares[Them] &= ~pawn_attack_span(Us, s);
 
         // A pawn is passed if one of the three following conditions is true:
@@ -177,8 +176,8 @@ Entry* probe(const Position& pos) {
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
 
-  e->outpostSquares[WHITE] &= OutpostRanks[WHITE] & ~e->pawnAttacksSpan[BLACK];
-  e->outpostSquares[BLACK] &= OutpostRanks[BLACK] & ~e->pawnAttacksSpan[WHITE];
+  e->outpostSquares[WHITE] &= OutpostRanks[WHITE] & ~pawn_attacks_bb<BLACK>(pos.pieces(BLACK, PAWN));
+  e->outpostSquares[BLACK] &= OutpostRanks[BLACK] & ~pawn_attacks_bb<WHITE>(pos.pieces(WHITE, PAWN));
   return e;
 }
 

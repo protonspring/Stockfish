@@ -294,7 +294,7 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
-            if (pe->outpostSquares[Us] & s)
+            if (pe->outpost_squares(Us) & s)
                 score += Outpost * (Pt == KNIGHT ? 4 : 2);
 
             else if (pe->outpostSquares[Us] & b & ~pos.pieces(Us))
