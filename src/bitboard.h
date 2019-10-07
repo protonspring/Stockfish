@@ -71,10 +71,6 @@ constexpr Bitboard KingFlank[FILE_NB] = {
   KingSide, KingSide, KingSide ^ FileEBB
 };
 
-constexpr Bitboard OutpostRanks[COLOR_NB] = {
-  Rank4BB | Rank5BB | Rank6BB, Rank3BB | Rank4BB | Rank5BB
-};
-
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
