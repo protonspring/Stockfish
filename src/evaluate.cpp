@@ -140,6 +140,7 @@ namespace {
   constexpr Score PawnlessFlank      = S( 17, 95);
   constexpr Score RestrictedPiece    = S(  7,  7);
   constexpr Score RookOnQueenFile    = S(  7,  6);
+  constexpr Score BishopOnQueenDiagonal = S(  7,  6);
   constexpr Score SliderOnQueen      = S( 59, 18);
   constexpr Score ThreatByKing       = S( 24, 89);
   constexpr Score ThreatByPawnPush   = S( 48, 39);
@@ -322,6 +323,10 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+                // Bonus for Bishop on the same diagonal as a queen
+                if (PseudoAttacks[BISHOP][s] & pos.pieces(QUEEN))
+                    score += BishopOnQueenDiagonal;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
