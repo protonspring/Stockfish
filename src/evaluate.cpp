@@ -837,8 +837,8 @@ namespace Eval {
     {
         MobilityBonus[KNIGHT-2][m] = make_score(m < 2 ?  9 * m - 62 : 7 * m - 24,
                                                 m < 4 ? 24 * m - 80 : 7 * m - 20);
-        MobilityBonus[BISHOP-2][m] = make_score(m < 3 ? 32 * m - 48 : 7 * m + 10,
-                                                m < 4 ? 22 * m - 54 : 8 * m +  0);
+        MobilityBonus[BISHOP-2][m] = make_score(38 * std::log2(m     + 1) - 50,
+                                                55 * std::log2(m / 2 + 1) - 58);
     }
   }
 } // namespace
