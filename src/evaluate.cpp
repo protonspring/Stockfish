@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <cmath>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -839,6 +840,9 @@ namespace Eval {
                                                 m < 4 ? 24 * m - 80 : 7 * m - 20);
         MobilityBonus[BISHOP-2][m] = make_score(38 * std::log2(m     + 1) - 50,
                                                 55 * std::log2(m / 2 + 1) - 58);
+        MobilityBonus[  ROOK-2][m] = make_score(m < 1 ?         -58 : 6 * m - 28,
+                                                65 * std::log2(m     + 1) - 76);
+
     }
   }
 } // namespace
