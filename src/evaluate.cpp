@@ -121,11 +121,6 @@ namespace {
     S(0, 0), S(3, 44), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
   };
 
-  // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
-  constexpr Score PassedRank[RANK_NB] = {
-    S(0, 0), S(10, 28), S(17, 33), S(15, 41), S(62, 72), S(168, 177), S(276, 260)
-  };
-
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -598,7 +593,8 @@ namespace {
         int r = relative_rank(Us, s);
         File f = file_of(s);
 
-        Score bonus = PassedRank[r];
+        Score bonus = r < 4 ? make_score(12  * r      ,  5 * r +  25)
+                            : make_score(100 * r - 340, 98 * r - 320);
 
         if (r > RANK_3)
         {
