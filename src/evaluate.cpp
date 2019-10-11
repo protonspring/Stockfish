@@ -593,7 +593,7 @@ namespace {
         int r = relative_rank(Us, s);
         File f = file_of(s);
 
-        Score bonus = r < 4 ? make_score(12  * r      ,  5 * r +  25)
+        Score bonus = r < 4 ? make_score(      r +  12,  5 * r +  25)
                             : make_score(100 * r - 340, 98 * r - 320);
 
         if (r > RANK_3)
