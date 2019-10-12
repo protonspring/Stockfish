@@ -74,7 +74,7 @@ namespace {
     Bitboard neighbours, stoppers, support, phalanx, opposed;
     Bitboard lever, leverPush, blocked;
     Square s;
-    bool backward, passed, doubled;
+    bool passed, doubled;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -105,13 +105,8 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
 
-        // A pawn is backward when it is behind all pawns of the same color on
-        // the adjacent files and cannot safely advance.
-        backward =  !(neighbours & forward_ranks_bb(Them, s + Up))
-                  && (stoppers & (leverPush | blocked));
-
         // Compute additional span if pawn is not backward nor blocked
-        if (!backward && !blocked)
+        if (!leverPush && !blocked)
             e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
         // A pawn is passed if one of the three following conditions is true:
@@ -142,7 +137,7 @@ namespace {
             score -=   Isolated
                      + WeakUnopposed * !opposed;
 
-        else if (backward)
+        else if (leverPush)  //backward
             score -=   Backward
                      + WeakUnopposed * !opposed;
 
