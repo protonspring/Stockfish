@@ -716,12 +716,10 @@ namespace {
     int complexity =   9 * pe->passed_count()
                     + 11 * pos.count<PAWN>()
                     +  9 * outflanking
-                    + 18 * pawnsOnBothFlanks
+                    + 30 * pawnsOnBothFlanks
                     + 49 * !pos.non_pawn_material()
-                    - 12 * !pe->passed_count()
-                    - 12 * (outflanking < 0)
-                    - 12 * !pawnsOnBothFlanks
-                    -103 ;
+                    - 24 * (!pe->passed_count() + (outflanking < 0))
+                    -115 ;
 
     // Now apply the bonus: note that we find the attacking side by extracting the
     // sign of the midgame or endgame values, and that we carefully cap the bonus
