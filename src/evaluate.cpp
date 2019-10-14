@@ -282,7 +282,7 @@ namespace {
         if (b & kingRing[Them])
         {
             kingAttackersCount[Us]++;
-            kingAttackersWeight[Us] += (126 - 22 * Pt);
+            kingAttackersWeight[Us] += (120 - 22 * Pt);
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
