@@ -88,7 +88,7 @@ namespace {
 
 #define S(mg, eg) make_score(mg, eg)
 
-#define D -5
+#define D 5
 
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
