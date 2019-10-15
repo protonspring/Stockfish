@@ -96,8 +96,8 @@ namespace {
     { S(-48,-59), S(-20,-23), S( 16, -3), S( 26, 13), S( 38, 24), S( 51, 42), // Bishops
       S( 55, 54), S( 63, 57), S( 63, 65), S( 68, 73), S( 81, 78), S( 81, 86),
       S( 91, 88), S( 98, 97) },
-    { S(-58,-76), S(-27,-18), S(-15, 28), S(-10, 55), S( -5, 69), S( -2, 82), // Rooks
-      S(  9,112), S( 16,118), S( 30,132), S( 29,142), S( 32,155), S( 38,165),
+    { S(-106,-76), S(-64,-18), S(-40, 28), S(-22, 55), S( -8, 69), S(  3, 82), // Rooks
+      S( 11,112), S( 20,118), S( 27,132), S( 29,142), S( 32,155), S( 38,165),
       S( 46,166), S( 48,169), S( 58,171) },
     { S(-39,-36), S(-21,-15), S(  3,  8), S(  3, 18), S( 14, 34), S( 22, 54), // Queens
       S( 28, 61), S( 41, 73), S( 43, 79), S( 48, 92), S( 56, 94), S( 60,104),
@@ -144,7 +144,6 @@ namespace {
   constexpr Score ThreatByKing       = S( 24, 89);
   constexpr Score ThreatByPawnPush   = S( 48, 39);
   constexpr Score ThreatBySafePawn   = S(173, 94);
-  constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
 
 #undef S
@@ -349,13 +348,12 @@ namespace {
             if (pos.is_on_semiopen_file(Us, s))
                 score += RookOnFile[pos.is_on_semiopen_file(Them, s)];
 
-            // Penalty when trapped by the king, even more if the king cannot castle
-            else if (mob <= 3)
-            {
-                File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
-                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
-            }
+            // Increase rook mobility if the king can free by castling
+            if ((s == make_square(FILE_A, relative_rank(Us, RANK_1)) &&
+                                          pos.can_castle(Us & QUEEN_SIDE)) ||
+                (s == make_square(FILE_H, relative_rank(Us, RANK_8)) &&
+                                          pos.can_castle(Us & KING_SIDE)))
+                mobility[Us] += make_score(47, 4);
         }
 
         if (Pt == QUEEN)
