@@ -145,6 +145,7 @@ namespace {
   constexpr Score ThreatByPawnPush   = S( 48, 39);
   constexpr Score ThreatBySafePawn   = S(173, 94);
   constexpr Score WeakQueen          = S( 49, 15);
+  constexpr Score UnTrapRook         = S( 47,  4);
 
 #undef S
 
@@ -353,7 +354,7 @@ namespace {
                                           pos.can_castle(Us & QUEEN_SIDE)) ||
                 (s == make_square(FILE_H, relative_rank(Us, RANK_1)) &&
                                           pos.can_castle(Us & KING_SIDE)))
-                mobility[Us] += make_score(47, 4);
+                score += UnTrapRook;
         }
 
         if (Pt == QUEEN)
