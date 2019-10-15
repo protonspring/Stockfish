@@ -88,22 +88,24 @@ namespace {
 
 #define S(mg, eg) make_score(mg, eg)
 
+#define D -5
+
   // MobilityBonus[PieceType-2][attacked] contains bonuses for middle and end game,
   // indexed by piece type and number of attacked squares in the mobility area.
   constexpr Score MobilityBonus[][32] = {
-    { S(-62,-81), S(-53,-56), S(-12,-30), S( -4,-14), S(  3,  8), S( 13, 15), // Knights
-      S( 22, 23), S( 28, 27), S( 33, 33) },
-    { S(-48,-59), S(-20,-23), S( 16, -3), S( 26, 13), S( 38, 24), S( 51, 42), // Bishops
-      S( 55, 54), S( 63, 57), S( 63, 65), S( 68, 73), S( 81, 78), S( 81, 86),
-      S( 91, 88), S( 98, 97) },
-    { S(-58,-76), S(-27,-18), S(-15, 28), S(-10, 55), S( -5, 69), S( -2, 82), // Rooks
-      S(  9,112), S( 16,118), S( 30,132), S( 29,142), S( 32,155), S( 38,165),
-      S( 46,166), S( 48,169), S( 58,171) },
-    { S(-39,-36), S(-21,-15), S(  3,  8), S(  3, 18), S( 14, 34), S( 22, 54), // Queens
-      S( 28, 61), S( 41, 73), S( 43, 79), S( 48, 92), S( 56, 94), S( 60,104),
-      S( 60,113), S( 66,120), S( 67,123), S( 70,126), S( 71,133), S( 73,136),
-      S( 79,140), S( 88,143), S( 88,148), S( 99,166), S(102,170), S(102,175),
-      S(106,184), S(109,191), S(113,206), S(116,212) }
+    { S(-62+D,-81+D), S(-53+D,-56+D), S(-12+D,-30+D), S( -4+D,-14+D), S(  3+D,  8+D), S( 13+D, 15+D), // Knights
+      S( 22+D, 23+D), S( 28+D, 27+D), S( 33+D, 33+D) },
+    { S(-48+D,-59+D), S(-20+D,-23+D), S( 16+D, -3+D), S( 26+D, 13+D), S( 38+D, 24+D), S( 51+D, 42+D), // Bishops
+      S( 55+D, 54+D), S( 63+D, 57+D), S( 63+D, 65+D), S( 68+D, 73+D), S( 81+D, 78+D), S( 81+D, 86+D),
+      S( 91+D, 88+D), S( 98+D, 97+D) },
+    { S(-58+D,-76+D), S(-27+D,-18+D), S(-15+D, 28+D), S(-10+D, 55+D), S( -5+D, 69+D), S( -2+D, 82+D), // Rooks
+      S(  9+D,112+D), S( 16+D,118+D), S( 30+D,132+D), S( 29+D,142+D), S( 32+D,155+D), S( 38+D,165+D),
+      S( 46+D,166+D), S( 48+D,169+D), S( 58+D,171+D) },
+    { S(-39+D,-36+D), S(-21+D,-15+D), S(  3+D,  8+D), S(  3+D, 18+D), S( 14+D, 34+D), S( 22+D, 54+D), // Queens
+      S( 28+D, 61+D), S( 41+D, 73+D), S( 43+D, 79+D), S( 48+D, 92+D), S( 56+D, 94+D), S( 60+D,104+D),
+      S( 60+D,113+D), S( 66+D,120+D), S( 67+D,123+D), S( 70+D,126+D), S( 71+D,133+D), S( 73+D,136+D),
+      S( 79+D,140+D), S( 88+D,143+D), S( 88+D,148+D), S( 99+D,166+D), S(102+D,170+D), S(102+D,175+D),
+      S(106+D,184+D), S(109+D,191+D), S(113+D,206+D), S(116+D,212+D) }
   };
 
   // RookOnFile[semiopen/open] contains bonuses for each rook when there is
@@ -215,14 +217,13 @@ namespace {
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Up   = (Us == WHITE ? NORTH : SOUTH);
     constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
-    constexpr Bitboard LowRanks = (Us == WHITE ? Rank2BB | Rank3BB : Rank7BB | Rank6BB);
 
     const Square ksq = pos.square<KING>(Us);
 
     Bitboard dblAttackByPawn = pawn_double_attacks_bb<Us>(pos.pieces(Us, PAWN));
 
     // Find our pawns that are blocked or on the first two ranks
-    Bitboard b = pos.pieces(Us, PAWN) & (shift<Down>(pos.pieces()) | LowRanks);
+    Bitboard b = pos.pieces(Us, PAWN) & (shift<Down>(pos.pieces()));
 
     // Squares occupied by those pawns, by our king or queen or controlled by
     // enemy pawns are excluded from the mobility area.
