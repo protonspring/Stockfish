@@ -351,7 +351,7 @@ namespace {
             // Increase rook mobility if the king can free by castling
             if ((s == make_square(FILE_A, relative_rank(Us, RANK_1)) &&
                                           pos.can_castle(Us & QUEEN_SIDE)) ||
-                (s == make_square(FILE_H, relative_rank(Us, RANK_8)) &&
+                (s == make_square(FILE_H, relative_rank(Us, RANK_1)) &&
                                           pos.can_castle(Us & KING_SIDE)))
                 mobility[Us] += make_score(47, 4);
         }
