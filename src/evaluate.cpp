@@ -269,9 +269,8 @@ namespace {
 
         if (b & kingRing[Them])
         {
-            kingPressure[Them] += 3 * kingPressure[Them] / 8; // multi-attack bonus
-            kingPressure[Them] += KingAttackWeights[Pt]    //attacking piece bonus
-               + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of attacked squares bonus
+            kingPressure[Them] += 3 * kingPressure[Them] / 8 // multi-attack bonus
+                               +  KingAttackWeights[Pt] * popcount(b & attackedBy[Them][KING]);  //# of attacked squares bonus
         }
 
         int mob = popcount(b & mobilityArea[Us]);
