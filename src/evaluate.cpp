@@ -78,7 +78,7 @@ namespace {
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
-  int KingAttackWeights[PIECE_TYPE_NB] = { 58,  0, 142, 87, 67, 17};
+  int KingAttackWeights[PIECE_TYPE_NB] = { 23, 0, 57, 35, 14, 7};
 
   // Penalties for enemy's safe checks
   constexpr int QueenSafeCheck  = 780;
@@ -188,8 +188,8 @@ namespace {
     // very near squares, depending on king position.
     Bitboard kingRing[COLOR_NB];
 
-    // kingPressure is a combined value of attacking pieces and their weights.
-    int kingPressure[COLOR_NB];
+    int kingAttacksCount[COLOR_NB];
+    int kingAttacksWeight[COLOR_NB];
   };
 
 
@@ -231,7 +231,8 @@ namespace {
     else if (file_of(ksq) == FILE_A)
         kingRing[Us] |= shift<EAST>(kingRing[Us]);
 
-    kingPressure[Us] = KingAttackWeights[0] * popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    kingAttacksCount[Us] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    kingAttacksWeight[Us] = kingAttacksCount[Us] ? KingAttackWeights[0] : 0;
 
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~dblAttackByPawn;
@@ -269,9 +270,9 @@ namespace {
 
         if (b & kingRing[Them])
         {
-            kingPressure[Them] += 3 * kingPressure[Them] / 8 // multi-attack bonus
-                               + KingAttackWeights[Pt]  //attacking piece bonus
-                               + KingAttackWeights[0] * popcount(b & attackedBy[Them][KING]);  //# of attacked squares bonus
+            int count = popcount(b & attackedBy[Them][KING]);
+            kingAttacksCount[Us] += count;
+            kingAttacksWeight[Us] += KingAttackWeights[Pt] * count;
         }
 
         int mob = popcount(b & mobilityArea[Us]);
@@ -432,7 +433,7 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    kingDanger +=        kingPressure[Us]
+    kingDanger +=   30 + kingAttacksCount[Them] * kingAttacksWeight[Them]
                  + 185 * popcount(kingRing[Us] & weak)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  -  35 * bool(attackedBy[Us][BISHOP] & attackedBy[Us][KING])
@@ -783,10 +784,10 @@ namespace {
     initialize<BLACK>();
 
     // Pieces should be evaluated first (populate attack tables, force order)
-    score += (pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>());
-    score += (pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>());
-    score += (pieces<WHITE, ROOK  >() - pieces<BLACK, ROOK  >());
-    score += (pieces<WHITE, QUEEN >() - pieces<BLACK, QUEEN >());
+    score += (pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>())
+          +  (pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>())
+          +  (pieces<WHITE, ROOK  >() - pieces<BLACK, ROOK  >())
+          +  (pieces<WHITE, QUEEN >() - pieces<BLACK, QUEEN >());
 
     score += mobility[WHITE] - mobility[BLACK];
 
