@@ -354,7 +354,6 @@ namespace {
                      (rank_of(pos.square<KING>(Us)) == rank_of(s)) &&
                      (distance(pos.square<KING>(Us), s) <= 3))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
-            }
         }
 
         if (Pt == QUEEN)
