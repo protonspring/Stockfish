@@ -304,7 +304,8 @@ namespace {
                 score += Outpost;
 
             // Knight and Bishop bonus for blocking enemy pawns
-            if (shift<Down>(pos.pieces(Them, PAWN)) & s)
+            if ((shift<Down>(pos.pieces(Them, PAWN)) & s) &&
+                !(pos.pieces(Them, PAWN) & pawn_attack_span(Us, s)))
                 score += MinorBlocksPawn;
 
             // Penalty if the piece is far from the king
