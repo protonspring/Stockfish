@@ -307,9 +307,6 @@ namespace {
             if (shift<Down>(pos.pieces(PAWN)) & s)
                 score += MinorBehindPawn;
 
-            // Penalty if the piece is far from the king
-            score -= KingProtector * distance(s, pos.square<KING>(Us));
-
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
@@ -322,6 +319,11 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+            }
+            else //KNIGHT
+            {
+                // Penalty if the piece is far from the king
+                score -= KingProtector * distance(s, pos.square<KING>(Us));
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
