@@ -146,6 +146,7 @@ namespace {
   constexpr Score ThreatBySafePawn   = S(173, 94);
   constexpr Score TrappedRook        = S( 47,  4);
   constexpr Score WeakQueen          = S( 49, 15);
+  constexpr Score NoPawnDanger       = S(  3,  0);
 
 #undef S
 
@@ -292,6 +293,10 @@ namespace {
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
+
+        // Bonus if the piece can't be attacked by a pawn.
+        if (!(pos.pieces(Them, PAWN) & pawn_attack_span(Us, s)))
+            score += NoPawnDanger;
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
