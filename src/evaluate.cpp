@@ -565,6 +565,9 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Bonus for attacking pieces that are supported by their queen
+    score += make_score(8,0) * popcount(attackedBy2[Us] & attackedBy[Them][QUEEN]);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
