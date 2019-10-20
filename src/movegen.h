@@ -37,25 +37,17 @@ enum GenType {
 };
 
 typedef int32_t ExtMove;
-inline ExtMove make_extmove(Move m, Value v) { return ExtMove(v * 16384 + m); }
-inline Value move_value(ExtMove m) { return Value(m / 16384); }
-inline Move move_move(ExtMove m) { return Move(m & 0xFFFF); }
+inline ExtMove make_extmove(Move m, Value v) {
+  return ExtMove(v * 16384 + m);
+}
 
-//struct ExtMove {
-  //Move move;
-  //int value;
+inline Value move_value(ExtMove m) {
+  return Value(m / 16384);
+}
 
-  //operator Move() const { return move; }
-  //void operator=(Move m) { move = m; }
-
-  // Inhibit unwanted implicit conversions to Move
-  // with an ambiguity that yields to a compile error.
-  //operator float() const = delete;
-//};
-
-//inline bool operator<(const ExtMove& f, const ExtMove& s) {
-  //return f.value < s.value;
-//}
+inline Move move_move(ExtMove m) {
+  return Move(m & 0xFFFF);
+}
 
 template<GenType>
 ExtMove* generate(const Position& pos, ExtMove* moveList);
