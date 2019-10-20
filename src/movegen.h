@@ -36,17 +36,19 @@ enum GenType {
   LEGAL
 };
 
-typedef int32_t ExtMove;
+typedef int ExtMove;
 inline ExtMove make_extmove(Move m, Value v) {
-  return ExtMove(v * 16384 + m);
+  return ExtMove(((unsigned int)v << 16) + m);
 }
 
 inline Value move_value(ExtMove m) {
-  return Value(m / 16384);
+  union { uint16_t u; int16_t s; } v = { uint16_t(unsigned(m + 0x8000) >> 16) };
+  return Value(v.s);
 }
 
 inline Move move_move(ExtMove m) {
-  return Move(m & 0xFFFF);
+  union { uint16_t u; uint16_t s; } v = { uint16_t(unsigned(m)) };
+  return Move(v.s);
 }
 
 template<GenType>
