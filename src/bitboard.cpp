@@ -70,12 +70,6 @@ const std::string Bitboards::pretty(Bitboard b) {
 
 void Bitboards::init() {
 
-  //test code
-  Move m = make_move(SQ_A1, SQ_H8);
-  ExtMove em = make_extmove(m, -16300);
-  Move m2 = move_move(em);
-  std::cout << "<" << from_sq(m2) << "," << to_sq(m2) << "," << move_value(em) << ">" << std::endl;
-
   for (unsigned i = 0; i < (1 << 16); ++i)
       PopCnt16[i] = std::bitset<16>(i).count();
 

@@ -383,7 +383,6 @@ inline bool Position::capture_or_promotion(Move m) const {
 }
 
 inline bool Position::capture(Move m) const {
-  std::cout << "<" << from_sq(m) << "," << to_sq(m) << ">";
   assert(is_ok(m));
   // Castling is encoded as "king captures rook"
   return (!empty(to_sq(m)) && type_of(m) != CASTLING) || type_of(m) == ENPASSANT;
