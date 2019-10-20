@@ -307,8 +307,8 @@ Move UCI::to_move(const Position& pos, string& str) {
       str[4] = char(tolower(str[4]));
 
   for (const auto& m : MoveList<LEGAL>(pos))
-      if (str == UCI::move(m, pos.is_chess960()))
-          return m;
+      if (str == UCI::move(move_move(m), pos.is_chess960()))
+          return move_move(m);
 
   return MOVE_NONE;
 }

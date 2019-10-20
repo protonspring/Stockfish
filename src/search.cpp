@@ -171,13 +171,13 @@ namespace {
             cnt = 1, nodes++;
         else
         {
-            pos.do_move(m, st);
+            pos.do_move(move_move(m), st);
             cnt = leaf ? MoveList<LEGAL>(pos).size() : perft<false>(pos, depth - 1);
             nodes += cnt;
-            pos.undo_move(m);
+            pos.undo_move(move_move(m));
         }
         if (Root)
-            sync_cout << UCI::move(m, pos.is_chess960()) << ": " << cnt << sync_endl;
+            sync_cout << UCI::move(move_move(m), pos.is_chess960()) << ": " << cnt << sync_endl;
     }
     return nodes;
   }

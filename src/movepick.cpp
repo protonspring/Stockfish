@@ -36,7 +36,7 @@ namespace {
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
     for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
+        if (move_value(*p) >= limit)
         {
             ExtMove tmp = *p, *q;
             *p = *++sortedEnd;
@@ -59,7 +59,9 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
            : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) {
+             refutations{make_extmove(killers[0], VALUE_NONE),
+                         make_extmove(killers[1], VALUE_NONE),
+                         make_extmove(cm, VALUE_NONE)}, depth(d) {
 
   assert(d > 0);
 
@@ -107,25 +109,24 @@ void MovePicker::score() {
 
   for (auto& m : *this)
       if (Type == CAPTURES)
-          m.value =  int(PieceValue[MG][pos.piece_on(to_sq(m))]) * 6
-                   + (*captureHistory)[pos.moved_piece(m)][to_sq(m)][type_of(pos.piece_on(to_sq(m)))];
+          m = make_extmove(move_move(m), (PieceValue[MG][pos.piece_on(to_sq(move_move(m)))]) * 6
+                   + (*captureHistory)[pos.moved_piece(move_move(m))][to_sq(move_move(m))][type_of(pos.piece_on(to_sq(move_move(m))))]);
 
       else if (Type == QUIETS)
-          m.value =      (*mainHistory)[pos.side_to_move()][from_to(m)]
-                   + 2 * (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
-                   + 2 * (*continuationHistory[1])[pos.moved_piece(m)][to_sq(m)]
-                   + 2 * (*continuationHistory[3])[pos.moved_piece(m)][to_sq(m)]
-                   +     (*continuationHistory[5])[pos.moved_piece(m)][to_sq(m)];
+          m = make_extmove(move_move(m), (*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
+                   + 2 * (*continuationHistory[0])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
+                   + 2 * (*continuationHistory[1])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
+                   + 2 * (*continuationHistory[3])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
+                   +     (*continuationHistory[5])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]);
 
       else // Type == EVASIONS
       {
-          if (pos.capture(m))
-              m.value =  PieceValue[MG][pos.piece_on(to_sq(m))]
-                       - type_of(pos.moved_piece(m));
+          if (pos.capture(move_move(m)))
+              m = make_extmove(move_move(m), PieceValue[MG][pos.piece_on(to_sq(move_move(m)))] - type_of(pos.moved_piece(move_move(m))));
           else
-              m.value =  (*mainHistory)[pos.side_to_move()][from_to(m)]
-                       + (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
-                       - (1 << 28);
+              m =  make_extmove(move_move(m), (*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
+                       + (*continuationHistory[0])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
+                       - (1 << 28));
       }
 }
 
@@ -139,8 +140,8 @@ Move MovePicker::select(Pred filter) {
       if (T == Best)
           std::swap(*cur, *std::max_element(cur, endMoves));
 
-      if (*cur != ttMove && filter())
-          return *cur++;
+      if (move_move(*cur) != ttMove && filter())
+          return move_move(*cur++);
 
       cur++;
   }
@@ -174,28 +175,28 @@ top:
 
   case GOOD_CAPTURE:
       if (select<Best>([&](){
-                       return pos.see_ge(*cur, -55 * cur->value / 1024) ?
+                       return pos.see_ge(move_move(*cur), -55 * move_value(*cur) / 1024) ?
                               // Move losing capture to endBadCaptures to be tried later
                               true : (*endBadCaptures++ = *cur, false); }))
-          return *(cur - 1);
+          return move_move(*(cur - 1));
 
       // Prepare the pointers to loop over the refutations array
       cur = std::begin(refutations);
       endMoves = std::end(refutations);
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
+      if (   move_move(refutations[0]) == move_move(refutations[2])
+          || move_move(refutations[1]) == move_move(refutations[2]))
           --endMoves;
 
       ++stage;
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    *cur != MOVE_NONE
-                                    && !pos.capture(*cur)
-                                    &&  pos.pseudo_legal(*cur); }))
-          return *(cur - 1);
+      if (select<Next>([&](){ return    move_move(*cur) != MOVE_NONE
+                                    && !pos.capture(move_move(*cur))
+                                    &&  pos.pseudo_legal(move_move(*cur)); }))
+          return move_move(*(cur - 1));
       ++stage;
       /* fallthrough */
 
@@ -214,10 +215,10 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
-                                      && *cur != refutations[1].move
-                                      && *cur != refutations[2].move;}))
-          return *(cur - 1);
+          && select<Next>([&](){return   move_move(*cur) != move_move(refutations[0])
+                                      && move_move(*cur) != move_move(refutations[1])
+                                      && move_move(*cur) != move_move(refutations[2]);}))
+          return move_move(*(cur - 1));
 
       // Prepare the pointers to loop over the bad captures
       cur = moves;
@@ -241,12 +242,12 @@ top:
       return select<Best>([](){ return true; });
 
   case PROBCUT:
-      return select<Best>([&](){ return pos.see_ge(*cur, threshold); });
+      return select<Best>([&](){ return pos.see_ge(move_move(*cur), threshold); });
 
   case QCAPTURE:
       if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(*cur) == recaptureSquare; }))
-          return *(cur - 1);
+                                    || to_sq(move_move(*cur)) == recaptureSquare; }))
+          return move_move(*(cur - 1));
 
       // If we did not find any move and we do not try checks, we have finished
       if (depth != DEPTH_QS_CHECKS)
