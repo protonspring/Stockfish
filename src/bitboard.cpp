@@ -24,7 +24,6 @@
 
 #include "bitboard.h"
 #include "misc.h"
-#include "movegen.h"
 
 uint8_t PopCnt16[1 << 16];
 uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
