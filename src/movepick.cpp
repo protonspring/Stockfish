@@ -109,24 +109,24 @@ void MovePicker::score() {
 
   for (auto& m : *this)
       if (Type == CAPTURES)
-          m = make_extmove(move_move(m), (PieceValue[MG][pos.piece_on(to_sq(move_move(m)))]) * 6
-                   + (*captureHistory)[pos.moved_piece(move_move(m))][to_sq(move_move(m))][type_of(pos.piece_on(to_sq(move_move(m))))]);
+          m = make_extmove(move_move(m), ((PieceValue[MG][pos.piece_on(to_sq(move_move(m)))]) * 6
+                   + (*captureHistory)[pos.moved_piece(move_move(m))][to_sq(move_move(m))][type_of(pos.piece_on(to_sq(move_move(m))))]) / 8);
 
       else if (Type == QUIETS)
-          m = make_extmove(move_move(m), (*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
+          m = make_extmove(move_move(m), ((*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
                    + 2 * (*continuationHistory[0])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
                    + 2 * (*continuationHistory[1])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
                    + 2 * (*continuationHistory[3])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
-                   +     (*continuationHistory[5])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]);
+                   +     (*continuationHistory[5])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]) / 8);
 
       else // Type == EVASIONS
       {
           if (pos.capture(move_move(m)))
-              m = make_extmove(move_move(m), PieceValue[MG][pos.piece_on(to_sq(move_move(m)))] - type_of(pos.moved_piece(move_move(m))));
+              m = make_extmove(move_move(m), (PieceValue[MG][pos.piece_on(to_sq(move_move(m)))] - type_of(pos.moved_piece(move_move(m)))) / 8);
           else
-              m =  make_extmove(move_move(m), (*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
+              m =  make_extmove(move_move(m), ((*mainHistory)[pos.side_to_move()][from_to(move_move(m))]
                        + (*continuationHistory[0])[pos.moved_piece(move_move(m))][to_sq(move_move(m))]
-                       - (1 << 28));
+                       - (1 << 16)) / 8);
       }
 }
 
