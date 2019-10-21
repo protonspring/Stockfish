@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <bitset>
-#include <iostream>
 
 #include "bitboard.h"
 #include "misc.h"

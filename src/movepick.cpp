@@ -59,9 +59,9 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers)
            : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
-             refutations{make_extmove(killers[0], VALUE_NONE),
-                         make_extmove(killers[1], VALUE_NONE),
-                         make_extmove(cm, VALUE_NONE)}, depth(d) {
+             refutations{make_extmove(killers[0], 0),
+                         make_extmove(killers[1], 0),
+                         make_extmove(cm, 0)}, depth(d) {
 
   assert(d > 0);
 

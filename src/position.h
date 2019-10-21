@@ -25,7 +25,6 @@
 #include <deque>
 #include <memory> // For std::unique_ptr
 #include <string>
-#include <iostream>
 
 #include "bitboard.h"
 #include "types.h"
