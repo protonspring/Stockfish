@@ -216,16 +216,15 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
 
 /// Entry::king_safety() calculates a king safety bonus. If it was already
-/// calculated for this position (80% of the time), just return the bonus.
+/// calculated for this position (about 80% of the time), just return the bonus.
 
 template<Color Us>
 Score Entry::king_safety(const Position& pos) {
 
-  Square ksq = pos.square<KING>(Us);
-  if ((kingSquares[Us] == ksq) && (castlingRights[Us] == pos.castling_rights(Us)))
+  if (kingSquares[Us] == pos.square<KING>(Us) && castlingRights[Us] == pos.castling_rights(Us))
       return kingSafety[Us];
 
-  kingSquares[Us] = ksq;
+  kingSquares[Us] = pos.square<KING>(Us);
   castlingRights[Us] = pos.castling_rights(Us);
   auto compare = [](Score a, Score b) { return mg_value(a) < mg_value(b); };
 
