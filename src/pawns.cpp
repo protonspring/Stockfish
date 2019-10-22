@@ -38,6 +38,9 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  Score CastlingBonus = S(20, 20);
+
+TUNE(SetRange(0, 100), CastlingBonus);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -224,17 +227,12 @@ Score Entry::do_king_safety(const Position& pos) {
   Square ksq = pos.square<KING>(Us);
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
-  auto compare = [](Score a, Score b) { return mg_value(a) < mg_value(b); };
 
   Score shelter = evaluate_shelter<Us>(pos, ksq);
 
   // If we can castle use the bonus after castling if it is bigger
-
-  if (pos.can_castle(Us & KING_SIDE))
-      shelter = std::max(shelter, evaluate_shelter<Us>(pos, relative_square(Us, SQ_G1)), compare);
-
-  if (pos.can_castle(Us & QUEEN_SIDE))
-      shelter = std::max(shelter, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)), compare);
+  if (pos.can_castle(Us == WHITE ? WHITE_CASTLING : BLACK_CASTLING))
+      shelter += CastlingBonus;
 
   // In endgame we like to bring our king near our closest pawn
   Bitboard pawns = pos.pieces(Us, PAWN);
