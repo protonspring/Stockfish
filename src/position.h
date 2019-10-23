@@ -83,9 +83,7 @@ public:
   const std::string fen() const;
 
   // Position representation
-  Bitboard pieces() const;
-  Bitboard pieces(PieceType pt) const;
-  Bitboard pieces(PieceType pt1, PieceType pt2) const;
+  template<typename ...Pts> Bitboard pieces(Pts... pts) const;
   Bitboard pieces(Color c) const;
   Bitboard pieces(Color c, PieceType pt) const;
   Bitboard pieces(Color c, PieceType pt1, PieceType pt2) const;
@@ -219,16 +217,11 @@ inline Piece Position::moved_piece(Move m) const {
   return board[from_sq(m)];
 }
 
-inline Bitboard Position::pieces() const {
-  return byTypeBB[ALL_PIECES];
-}
-
-inline Bitboard Position::pieces(PieceType pt) const {
-  return byTypeBB[pt];
-}
-
-inline Bitboard Position::pieces(PieceType pt1, PieceType pt2) const {
-  return byTypeBB[pt1] | byTypeBB[pt2];
+template<typename ...Pts> Bitboard Position::pieces(Pts... pts) const {
+  Bitboard bb = 0;
+  PieceType types[] = {pts...};
+  for(const PieceType &pt : types) bb |= byTypeBB[pt];
+  return bb;
 }
 
 inline Bitboard Position::pieces(Color c) const {
@@ -277,7 +270,7 @@ inline int Position::castling_rights(Color c) const {
 }
 
 inline bool Position::castling_impeded(CastlingRights cr) const {
-  return byTypeBB[ALL_PIECES] & castlingPath[cr];
+  return byTypeBB[ALL] & castlingPath[cr];
 }
 
 inline Square Position::castling_rook_square(CastlingRights cr) const {
@@ -287,7 +280,7 @@ inline Square Position::castling_rook_square(CastlingRights cr) const {
 template<PieceType Pt>
 inline Bitboard Position::attacks_from(Square s) const {
   assert(Pt != PAWN);
-  return  Pt == BISHOP || Pt == ROOK ? attacks_bb<Pt>(s, byTypeBB[ALL_PIECES])
+  return  Pt == BISHOP || Pt == ROOK ? attacks_bb<Pt>(s, byTypeBB[ALL])
         : Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
         : PseudoAttacks[Pt][s];
 }
@@ -298,11 +291,11 @@ inline Bitboard Position::attacks_from<PAWN>(Square s, Color c) const {
 }
 
 inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
-  return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
+  return attacks_bb(pt, s, byTypeBB[ALL]);
 }
 
 inline Bitboard Position::attackers_to(Square s) const {
-  return attackers_to(s, byTypeBB[ALL_PIECES]);
+  return attackers_to(s, byTypeBB[ALL]);
 }
 
 inline Bitboard Position::checkers() const {
@@ -398,12 +391,12 @@ inline Thread* Position::this_thread() const {
 inline void Position::put_piece(Piece pc, Square s) {
 
   board[s] = pc;
-  byTypeBB[ALL_PIECES] |= s;
+  byTypeBB[ALL] |= s;
   byTypeBB[type_of(pc)] |= s;
   byColorBB[color_of(pc)] |= s;
   index[s] = pieceCount[pc]++;
   pieceList[pc][index[s]] = s;
-  pieceCount[make_piece(color_of(pc), ALL_PIECES)]++;
+  pieceCount[make_piece(color_of(pc), ALL)]++;
   psq += PSQT::psq[pc][s];
 }
 
@@ -413,7 +406,7 @@ inline void Position::remove_piece(Piece pc, Square s) {
   // do_move() and then replace it in undo_move() we will put it at the end of
   // the list and not in its original place, it means index[] and pieceList[]
   // are not invariant to a do_move() + undo_move() sequence.
-  byTypeBB[ALL_PIECES] ^= s;
+  byTypeBB[ALL] ^= s;
   byTypeBB[type_of(pc)] ^= s;
   byColorBB[color_of(pc)] ^= s;
   /* board[s] = NO_PIECE;  Not needed, overwritten by the capturing one */
@@ -421,7 +414,7 @@ inline void Position::remove_piece(Piece pc, Square s) {
   index[lastSquare] = index[s];
   pieceList[pc][index[lastSquare]] = lastSquare;
   pieceList[pc][pieceCount[pc]] = SQ_NONE;
-  pieceCount[make_piece(color_of(pc), ALL_PIECES)]--;
+  pieceCount[make_piece(color_of(pc), ALL)]--;
   psq -= PSQT::psq[pc][s];
 }
 
@@ -430,7 +423,7 @@ inline void Position::move_piece(Piece pc, Square from, Square to) {
   // index[from] is not updated and becomes stale. This works as long as index[]
   // is accessed just by known occupied squares.
   Bitboard fromTo = square_bb(from) | square_bb(to);
-  byTypeBB[ALL_PIECES] ^= fromTo;
+  byTypeBB[ALL] ^= fromTo;
   byTypeBB[type_of(pc)] ^= fromTo;
   byColorBB[color_of(pc)] ^= fromTo;
   board[from] = NO_PIECE;

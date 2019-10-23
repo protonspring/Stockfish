@@ -365,7 +365,7 @@ TBTable<WDL>::TBTable(const std::string& code) : TBTable() {
     Position pos;
 
     key = pos.set(code, WHITE, &st).material_key();
-    pieceCount = pos.count<ALL_PIECES>();
+    pieceCount = pos.count<ALL>();
     hasPawns = pos.pieces(PAWN);
 
     hasUniquePieces = false;
@@ -719,7 +719,7 @@ Ret do_probe_table(const Position& pos, T* entry, WDLScore wdl, ProbeState* resu
 
     // Now we are ready to get all the position pieces (but the lead pawns) and
     // directly map them to the correct color and square.
-    b = pos.pieces() ^ leadPawns;
+    b = pos.pieces(ALL) ^ leadPawns;
     do {
         Square s = pop_lsb(&b);
         squares[size] = s ^ flipSquares;
@@ -1160,7 +1160,7 @@ void* mapped(TBTable<Type>& e, const Position& pos) {
 template<TBType Type, typename Ret = typename TBTable<Type>::Ret>
 Ret probe_table(const Position& pos, ProbeState* result, WDLScore wdl = WDLDraw) {
 
-    if (pos.count<ALL_PIECES>() == 2) // KvK
+    if (pos.count<ALL>() == 2) // KvK
         return Ret(WDLDraw);
 
     TBTable<Type>* entry = TBTables.get<Type>(pos.material_key());

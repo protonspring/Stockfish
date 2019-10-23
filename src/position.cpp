@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream& os, const Position& pos) {
   for (Bitboard b = pos.checkers(); b; )
       os << UCI::square(pop_lsb(&b)) << " ";
 
-  if (    int(Tablebases::MaxCardinality) >= popcount(pos.pieces())
+  if (    int(Tablebases::MaxCardinality) >= popcount(pos.pieces(ALL))
       && !pos.can_castle(ANY_CASTLING))
   {
       StateInfo st;
@@ -377,7 +377,7 @@ void Position::set_state(StateInfo* si) const {
 
   set_check_info(si);
 
-  for (Bitboard b = pieces(); b; )
+  for (Bitboard b = pieces(ALL); b; )
   {
       Square s = pop_lsb(&b);
       Piece pc = piece_on(s);
@@ -490,7 +490,7 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
   // Snipers are sliders that attack 's' when a piece and other snipers are removed
   Bitboard snipers = (  (PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
                       | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
-  Bitboard occupancy = pieces() ^ snipers;
+  Bitboard occupancy = pieces(ALL) ^ snipers;
 
   while (snipers)
   {
@@ -516,7 +516,7 @@ Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
   return  (attacks_from<PAWN>(s, BLACK)    & pieces(WHITE, PAWN))
         | (attacks_from<PAWN>(s, WHITE)    & pieces(BLACK, PAWN))
         | (attacks_from<KNIGHT>(s)         & pieces(KNIGHT))
-        | (attacks_bb<  ROOK>(s, occupied) & pieces(  ROOK, QUEEN))
+        | (attacks_bb<  ROOK>(s, occupied) & pieces(ROOK, QUEEN))
         | (attacks_bb<BISHOP>(s, occupied) & pieces(BISHOP, QUEEN))
         | (attacks_from<KING>(s)           & pieces(KING));
 }
@@ -542,7 +542,7 @@ bool Position::legal(Move m) const {
   {
       Square ksq = square<KING>(us);
       Square capsq = to - pawn_push(us);
-      Bitboard occupied = (pieces() ^ from ^ capsq) | to;
+      Bitboard occupied = (pieces(ALL) ^ from ^ capsq) | to;
 
       assert(to == ep_square());
       assert(moved_piece(m) == make_piece(us, PAWN));
@@ -570,7 +570,7 @@ bool Position::legal(Move m) const {
       // not discover some hidden checker.
       // For instance an enemy queen in SQ_A1 when castling rook is in SQ_B1.
       return   !chess960
-            || !(attacks_bb<ROOK>(to, pieces() ^ to_sq(m)) & pieces(~us, ROOK, QUEEN));
+            || !(attacks_bb<ROOK>(to, pieces(ALL) ^ to_sq(m)) & pieces(~us, ROOK, QUEEN));
   }
 
   // If the moving piece is a king, check whether the destination square is
@@ -649,7 +649,7 @@ bool Position::pseudo_legal(const Move m) const {
       }
       // In case of king moves under check we have to remove king so as to catch
       // invalid moves like b1a1 when opposite queen is on c1.
-      else if (attackers_to(to, pieces() ^ from) & pieces(~us))
+      else if (attackers_to(to, pieces(ALL) ^ from) & pieces(~us))
           return false;
   }
 
@@ -682,7 +682,7 @@ bool Position::gives_check(Move m) const {
       return false;
 
   case PROMOTION:
-      return attacks_bb(promotion_type(m), to, pieces() ^ from) & square<KING>(~sideToMove);
+      return attacks_bb(promotion_type(m), to, pieces(ALL) ^ from) & square<KING>(~sideToMove);
 
   // En passant capture with check? We have already handled the case
   // of direct checks and ordinary discovered check, so the only case we
@@ -691,7 +691,7 @@ bool Position::gives_check(Move m) const {
   case ENPASSANT:
   {
       Square capsq = make_square(file_of(to), rank_of(from));
-      Bitboard b = (pieces() ^ from ^ capsq) | to;
+      Bitboard b = (pieces(ALL) ^ from ^ capsq) | to;
 
       return  (attacks_bb<  ROOK>(square<KING>(~sideToMove), b) & pieces(sideToMove, QUEEN, ROOK))
             | (attacks_bb<BISHOP>(square<KING>(~sideToMove), b) & pieces(sideToMove, QUEEN, BISHOP));
@@ -704,7 +704,7 @@ bool Position::gives_check(Move m) const {
       Square rto = relative_square(sideToMove, rfrom > kfrom ? SQ_F1 : SQ_D1);
 
       return   (PseudoAttacks[ROOK][rto] & square<KING>(~sideToMove))
-            && (attacks_bb<ROOK>(rto, (pieces() ^ kfrom ^ rfrom) | rto | kto) & square<KING>(~sideToMove));
+            && (attacks_bb<ROOK>(rto, (pieces(ALL) ^ kfrom ^ rfrom) | rto | kto) & square<KING>(~sideToMove));
   }
   default:
       assert(false);
@@ -1078,7 +1078,7 @@ bool Position::see_ge(Move m, Value threshold) const {
 
   // Find all attackers to the destination square, with the moving piece
   // removed, but possibly an X-ray attacker added behind it.
-  Bitboard occupied = pieces() ^ from ^ to;
+  Bitboard occupied = pieces(ALL) ^ from ^ to;
   Bitboard attackers = attackers_to(to, occupied) & occupied;
 
   while (true)
@@ -1186,7 +1186,7 @@ bool Position::has_game_cycle(int ply) const {
           Square s1 = from_sq(move);
           Square s2 = to_sq(move);
 
-          if (!(between_bb(s1, s2) & pieces()))
+          if (!(between_bb(s1, s2) & pieces(ALL)))
           {
               if (ply > i)
                   return true;
@@ -1272,7 +1272,7 @@ bool Position::pos_is_ok() const {
       assert(0 && "pos_is_ok: Pawns");
 
   if (   (pieces(WHITE) & pieces(BLACK))
-      || (pieces(WHITE) | pieces(BLACK)) != pieces()
+      || (pieces(WHITE) | pieces(BLACK)) != pieces(ALL)
       || popcount(pieces(WHITE)) > 16
       || popcount(pieces(BLACK)) > 16)
       assert(0 && "pos_is_ok: Bitboards");

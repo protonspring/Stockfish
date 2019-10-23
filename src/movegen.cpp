@@ -71,7 +71,7 @@ namespace {
     // Single and double pawn pushes, no promotions
     if (Type != CAPTURES)
     {
-        emptySquares = (Type == QUIETS || Type == QUIET_CHECKS ? target : ~pos.pieces());
+        emptySquares = (Type == QUIETS || Type == QUIET_CHECKS ? target : ~pos.pieces(ALL));
 
         Bitboard b1 = shift<Up>(pawnsNotOn7)   & emptySquares;
         Bitboard b2 = shift<Up>(b1 & TRank3BB) & emptySquares;
@@ -121,7 +121,7 @@ namespace {
     if (pawnsOn7)
     {
         if (Type == CAPTURES)
-            emptySquares = ~pos.pieces();
+            emptySquares = ~pos.pieces(ALL);
 
         if (Type == EVASIONS)
             emptySquares &= target;
@@ -267,7 +267,7 @@ ExtMove* generate(const Position& pos, ExtMove* moveList) {
   Color us = pos.side_to_move();
 
   Bitboard target =  Type == CAPTURES     ?  pos.pieces(~us)
-                   : Type == QUIETS       ? ~pos.pieces()
+                   : Type == QUIETS       ? ~pos.pieces(ALL)
                    : Type == NON_EVASIONS ? ~pos.pieces(us) : 0;
 
   return us == WHITE ? generate_all<WHITE, Type>(pos, moveList, target)
@@ -298,7 +298,7 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
      if (pt == PAWN)
          continue; // Will be generated together with direct checks
 
-     Bitboard b = pos.attacks_from(pt, from) & ~pos.pieces();
+     Bitboard b = pos.attacks_from(pt, from) & ~pos.pieces(ALL);
 
      if (pt == KING)
          b &= ~PseudoAttacks[QUEEN][pos.square<KING>(~us)];
@@ -307,8 +307,8 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
          *moveList++ = make_move(from, pop_lsb(&b));
   }
 
-  return us == WHITE ? generate_all<WHITE, QUIET_CHECKS>(pos, moveList, ~pos.pieces())
-                     : generate_all<BLACK, QUIET_CHECKS>(pos, moveList, ~pos.pieces());
+  return us == WHITE ? generate_all<WHITE, QUIET_CHECKS>(pos, moveList, ~pos.pieces(ALL))
+                     : generate_all<BLACK, QUIET_CHECKS>(pos, moveList, ~pos.pieces(ALL));
 }
 
 
