@@ -188,8 +188,8 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   constexpr Color Them = (Us == WHITE ? BLACK : WHITE);
 
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
-  Bitboard ourPawns = b & pos.pieces(Us);
-  Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard ourPawns = b & pos.pieces(Us, ALL);
+  Bitboard theirPawns = b & pos.pieces(Them, ALL);
 
   Score bonus = make_score(5, 5);
 

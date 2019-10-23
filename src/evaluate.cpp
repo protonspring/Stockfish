@@ -300,7 +300,7 @@ namespace {
             if (bb & s)
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
 
-            else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
+            else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us, ALL))
                 score += Outpost;
 
             // Knight and Bishop bonus for being right behind a pawn
@@ -395,7 +395,7 @@ namespace {
           & (~attackedBy[Us][ALL] | attackedBy[Us][KING] | attackedBy[Us][QUEEN]);
 
     // Analyse the safe enemy's checks which are possible on next move
-    safe  = ~pos.pieces(Them);
+    safe  = ~pos.pieces(Them, ALL);
     safe &= ~attackedBy[Us][ALL] | (weak & attackedBy2[Them]);
 
     b1 = attacks_bb<ROOK  >(ksq, pos.pieces(ALL) ^ pos.pieces(Us, QUEEN));
@@ -491,7 +491,7 @@ namespace {
     Score score = SCORE_ZERO;
 
     // Non-pawn enemies
-    nonPawnEnemies = pos.pieces(Them) & ~pos.pieces(PAWN);
+    nonPawnEnemies = pos.pieces(Them, ALL) & ~pos.pieces(PAWN);
 
     // Squares strongly protected by the enemy, either because they defend the
     // square with a pawn, or because they defend the square twice and we don't.
@@ -502,7 +502,7 @@ namespace {
     defended = nonPawnEnemies & stronglyProtected;
 
     // Enemies not strongly protected and under our attack
-    weak = pos.pieces(Them) & ~stronglyProtected & attackedBy[Us][ALL];
+    weak = pos.pieces(Them, ALL) & ~stronglyProtected & attackedBy[Us][ALL];
 
     // Bonus according to the kind of attacking pieces
     if (defended | weak)
@@ -621,7 +621,7 @@ namespace {
 
                 bb = forward_file_bb(Them, s) & pos.pieces(ROOK, QUEEN);
 
-                if (!(pos.pieces(Them) & bb))
+                if (!(pos.pieces(Them, ALL) & bb))
                     unsafeSquares &= attackedBy[Them][ALL];
 
                 // If there are no enemy attacks on passed pawn span, assign a big bonus.
@@ -633,7 +633,7 @@ namespace {
                                                              0 ;
 
                 // Assign a larger bonus if the block square is defended
-                if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL] & blockSq))
+                if ((pos.pieces(Us, ALL) & bb) || (attackedBy[Us][ALL] & blockSq))
                     k += 5;
 
                 bonus += make_score(k * w, k * w);

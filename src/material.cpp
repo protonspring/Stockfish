@@ -63,7 +63,7 @@ namespace {
 
   // Helper used to detect a given material distribution
   bool is_KXK(const Position& pos, Color us) {
-    return  !more_than_one(pos.pieces(~us))
+    return  !more_than_one(pos.pieces(~us, ALL))
           && pos.non_pawn_material(us) >= RookValueMg;
   }
 

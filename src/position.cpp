@@ -349,8 +349,8 @@ void Position::set_castling_right(Color c, Square rfrom) {
 
 void Position::set_check_info(StateInfo* si) const {
 
-  si->blockersForKing[WHITE] = slider_blockers(pieces(BLACK), square<KING>(WHITE), si->pinners[BLACK]);
-  si->blockersForKing[BLACK] = slider_blockers(pieces(WHITE), square<KING>(BLACK), si->pinners[WHITE]);
+  si->blockersForKing[WHITE] = slider_blockers(pieces(BLACK, ALL), square<KING>(WHITE), si->pinners[BLACK]);
+  si->blockersForKing[BLACK] = slider_blockers(pieces(WHITE, ALL), square<KING>(BLACK), si->pinners[WHITE]);
 
   Square ksq = square<KING>(~sideToMove);
 
@@ -373,7 +373,7 @@ void Position::set_state(StateInfo* si) const {
   si->key = si->materialKey = 0;
   si->pawnKey = Zobrist::noPawns;
   si->nonPawnMaterial[WHITE] = si->nonPawnMaterial[BLACK] = VALUE_ZERO;
-  si->checkersBB = attackers_to(square<KING>(sideToMove)) & pieces(~sideToMove);
+  si->checkersBB = attackers_to(square<KING>(sideToMove)) & pieces(~sideToMove, ALL);
 
   set_check_info(si);
 
@@ -500,7 +500,7 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
     if (b && !more_than_one(b))
     {
         blockers |= b;
-        if (b & pieces(color_of(piece_on(s))))
+        if (b & pieces(color_of(piece_on(s)), ALL))
             pinners |= sniperSq;
     }
   }
@@ -563,7 +563,7 @@ bool Position::legal(Move m) const {
       Direction step = to > from ? WEST : EAST;
 
       for (Square s = to; s != from; s += step)
-          if (attackers_to(s) & pieces(~us))
+          if (attackers_to(s) & pieces(~us, ALL))
               return false;
 
       // In case of Chess960, verify that when moving the castling rook we do
@@ -576,7 +576,7 @@ bool Position::legal(Move m) const {
   // If the moving piece is a king, check whether the destination square is
   // attacked by the opponent.
   if (type_of(piece_on(from)) == KING)
-      return !(attackers_to(to) & pieces(~us));
+      return !(attackers_to(to) & pieces(~us, ALL));
 
   // A non-king move is legal if and only if it is not pinned or it
   // is moving along the ray towards or away from the king.
@@ -610,7 +610,7 @@ bool Position::pseudo_legal(const Move m) const {
       return false;
 
   // The destination square cannot be occupied by a friendly piece
-  if (pieces(us) & to)
+  if (pieces(us, ALL) & to)
       return false;
 
   // Handle the special case of a pawn move
@@ -621,7 +621,7 @@ bool Position::pseudo_legal(const Move m) const {
       if ((Rank8BB | Rank1BB) & to)
           return false;
 
-      if (   !(attacks_from<PAWN>(from, us) & pieces(~us) & to) // Not a capture
+      if (   !(attacks_from<PAWN>(from, us) & pieces(~us, ALL) & to) // Not a capture
           && !((from + pawn_push(us) == to) && empty(to))       // Not a single push
           && !(   (from + 2 * pawn_push(us) == to)              // Not a double push
                && (rank_of(from) == relative_rank(us, RANK_2))
@@ -649,7 +649,7 @@ bool Position::pseudo_legal(const Move m) const {
       }
       // In case of king moves under check we have to remove king so as to catch
       // invalid moves like b1a1 when opposite queen is on c1.
-      else if (attackers_to(to, pieces(ALL) ^ from) & pieces(~us))
+      else if (attackers_to(to, pieces(ALL) ^ from) & pieces(~us, ALL))
           return false;
   }
 
@@ -866,7 +866,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   st->key = k;
 
   // Calculate checkers bitboard (if move gives check)
-  st->checkersBB = givesCheck ? attackers_to(square<KING>(them)) & pieces(us) : 0;
+  st->checkersBB = givesCheck ? attackers_to(square<KING>(them)) & pieces(us, ALL) : 0;
 
   sideToMove = ~sideToMove;
 
@@ -1083,7 +1083,7 @@ bool Position::see_ge(Move m, Value threshold) const {
 
   while (true)
   {
-      stmAttackers = attackers & pieces(stm);
+      stmAttackers = attackers & pieces(stm, ALL);
 
       // Don't allow pinned pieces to attack (except the king) as long as
       // any pinners are on their original square.
@@ -1114,7 +1114,7 @@ bool Position::see_ge(Move m, Value threshold) const {
       // stm if we captured with the king when the opponent still has attackers.
       if (balance >= VALUE_ZERO)
       {
-          if (nextVictim == KING && (attackers & pieces(stm)))
+          if (nextVictim == KING && (attackers & pieces(stm, ALL)))
               stm = ~stm;
           break;
       }
@@ -1263,7 +1263,7 @@ bool Position::pos_is_ok() const {
 
   if (   pieceCount[W_KING] != 1
       || pieceCount[B_KING] != 1
-      || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove))
+      || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove, ALL))
       assert(0 && "pos_is_ok: Kings");
 
   if (   (pieces(PAWN) & (Rank1BB | Rank8BB))
@@ -1271,10 +1271,10 @@ bool Position::pos_is_ok() const {
       || pieceCount[B_PAWN] > 8)
       assert(0 && "pos_is_ok: Pawns");
 
-  if (   (pieces(WHITE) & pieces(BLACK))
-      || (pieces(WHITE) | pieces(BLACK)) != pieces(ALL)
-      || popcount(pieces(WHITE)) > 16
-      || popcount(pieces(BLACK)) > 16)
+  if (   (pieces(WHITE, ALL) & pieces(BLACK, ALL))
+      || (pieces(WHITE, ALL) | pieces(BLACK, ALL)) != pieces(ALL)
+      || popcount(pieces(WHITE, ALL)) > 16
+      || popcount(pieces(BLACK, ALL)) > 16)
       assert(0 && "pos_is_ok: Bitboards");
 
   for (PieceType p1 = PAWN; p1 <= KING; ++p1)

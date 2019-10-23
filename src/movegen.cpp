@@ -65,8 +65,8 @@ namespace {
     Bitboard pawnsOn7    = pos.pieces(Us, PAWN) &  TRank7BB;
     Bitboard pawnsNotOn7 = pos.pieces(Us, PAWN) & ~TRank7BB;
 
-    Bitboard enemies = (Type == EVASIONS ? pos.pieces(Them) & target:
-                        Type == CAPTURES ? target : pos.pieces(Them));
+    Bitboard enemies = (Type == EVASIONS ? pos.pieces(Them, ALL) & target:
+                        Type == CAPTURES ? target : pos.pieces(Them, ALL));
 
     // Single and double pawn pushes, no promotions
     if (Type != CAPTURES)
@@ -266,9 +266,9 @@ ExtMove* generate(const Position& pos, ExtMove* moveList) {
 
   Color us = pos.side_to_move();
 
-  Bitboard target =  Type == CAPTURES     ?  pos.pieces(~us)
+  Bitboard target =  Type == CAPTURES     ?  pos.pieces(~us, ALL)
                    : Type == QUIETS       ? ~pos.pieces(ALL)
-                   : Type == NON_EVASIONS ? ~pos.pieces(us) : 0;
+                   : Type == NON_EVASIONS ? ~pos.pieces(us, ALL) : 0;
 
   return us == WHITE ? generate_all<WHITE, Type>(pos, moveList, target)
                      : generate_all<BLACK, Type>(pos, moveList, target);
@@ -288,7 +288,7 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
   assert(!pos.checkers());
 
   Color us = pos.side_to_move();
-  Bitboard dc = pos.blockers_for_king(~us) & pos.pieces(us);
+  Bitboard dc = pos.blockers_for_king(~us) & pos.pieces(us, ALL);
 
   while (dc)
   {
@@ -334,7 +334,7 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
   }
 
   // Generate evasions for king, capture and non capture moves
-  Bitboard b = pos.attacks_from<KING>(ksq) & ~pos.pieces(us) & ~sliderAttacks;
+  Bitboard b = pos.attacks_from<KING>(ksq) & ~pos.pieces(us, ALL) & ~sliderAttacks;
   while (b)
       *moveList++ = make_move(ksq, pop_lsb(&b));
 
@@ -356,7 +356,7 @@ template<>
 ExtMove* generate<LEGAL>(const Position& pos, ExtMove* moveList) {
 
   Color us = pos.side_to_move();
-  Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
+  Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us, ALL);
   Square ksq = pos.square<KING>(us);
   ExtMove* cur = moveList;
 
