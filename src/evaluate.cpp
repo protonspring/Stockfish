@@ -717,13 +717,13 @@ namespace {
                            && !pawnsOnBothFlanks;
 
     // Compute the initiative bonus for the attacking side
-    Score complexity =  make_score( 7,   9) * pe->passed_count()
-                     +  make_score( 9,  11) * pos.count<PAWN>()
-                     +  make_score( 7,   9) * outflanking
-                     +  make_score(14,  18) * pawnsOnBothFlanks
-                     +  make_score(39,  49) * !pos.non_pawn_material()
-                     -  make_score(28,  36) * almostUnwinnable
-                     -  make_score(43, 103) ;
+    Score complexity =  make_score(11,   9) * pe->passed_count()
+                     +  make_score(13,  11) * pos.count<PAWN>()
+                     +  make_score(11,   9) * outflanking
+                     +  make_score(22,  18) * pawnsOnBothFlanks
+                     +  make_score(59,  49) * !pos.non_pawn_material()
+                     -  make_score(44,  36) * almostUnwinnable
+                     -  make_score(63, 103) ;
 
     // Now apply the bonus: note that we find the attacking side by extracting the
     // sign of the midgame or endgame values, and that we carefully cap the bonus
