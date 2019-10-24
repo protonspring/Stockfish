@@ -723,7 +723,7 @@ namespace {
                      +  make_score(14,  18) * pawnsOnBothFlanks
                      +  make_score(39,  49) * !pos.non_pawn_material()
                      -  make_score(28,  36) * almostUnwinnable
-                     -  make_score(103, 103) ;
+                     -  make_score(43, 103) ;
 
     // Now apply the bonus: note that we find the attacking side by extracting the
     // sign of the midgame or endgame values, and that we carefully cap the bonus
