@@ -646,6 +646,11 @@ namespace {
             || (pos.pieces(PAWN) & (s + Up)))
             bonus = bonus / 2;
 
+        // Scale down bonus if opponent has minors to sacrifice
+        if ((pos.count<KNIGHT>(Them) + pos.count<BISHOP>(Them)) > 1)
+            bonus = bonus / 2;
+
+
         score += bonus - PassedFile * map_to_queenside(f);
     }
 
