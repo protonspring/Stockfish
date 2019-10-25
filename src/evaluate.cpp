@@ -300,16 +300,15 @@ namespace {
             if (bb & s)
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
-                if (!pos.pieces(Them, BISHOP, KNIGHT))
-                    score += Outpost / 2;
+
+                // Scale down if enemy attacks the square with a minor
+                if ((PseudoAttacks[BISHOP][s] & pos.pieces(Them, BISHOP)) ||
+                     PseudoAttacks[KNIGHT][s] & pos.pieces(Them, KNIGHT))
+                    score -= Outpost / 4;
             }
 
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
-            {
                 score += Outpost;
-                if (!pos.pieces(Them, BISHOP, KNIGHT))
-                    score += Outpost / 2;
-            }
 
             // Knight and Bishop bonus for being right behind a pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
