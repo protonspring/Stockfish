@@ -460,6 +460,10 @@ namespace {
                  -   6 * mg_value(score) / 8
                  -   7;
 
+    // Divide kingDanger by # of safe squares king can move to
+    if (PseudoAttacks[KING][ksq] & ~(attackedBy[Them][ALL_PIECES] | pos.pieces(Us)))
+        kingDanger -= kingDanger / 8;
+
     // Transform the kingDanger units into a Score, and subtract it from the evaluation
     if (kingDanger > 100)
         score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
