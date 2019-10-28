@@ -387,7 +387,7 @@ void Position::set_state(StateInfo* si) const {
           si->pawnKey ^= Zobrist::psq[pc][s];
 
       else if (type_of(pc) != KING)
-          si->nonPawnMaterial[color_of(pc)] += PieceValue[MG][type_of(pc)];
+          si->nonPawnMaterial[color_of(pc)] += PieceValue[MG][pc];
   }
 
   if (si->epSquare != SQ_NONE)
@@ -785,7 +785,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
           st->pawnKey ^= Zobrist::psq[captured][capsq];
       }
       else
-          st->nonPawnMaterial[them] -= PieceValue[MG][type_of(captured)];
+          st->nonPawnMaterial[them] -= PieceValue[MG][captured];
 
       // Update board and piece lists
       remove_piece(captured, capsq);
@@ -849,7 +849,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
                             ^ Zobrist::psq[pc][pieceCount[pc]];
 
           // Update material
-          st->nonPawnMaterial[us] += PieceValue[MG][type_of(promotion)];
+          st->nonPawnMaterial[us] += PieceValue[MG][promotion];
       }
 
       // Update pawn hash key and prefetch access to pawnsTable
@@ -1061,7 +1061,7 @@ bool Position::see_ge(Move m, Value threshold) const {
 
   // The opponent may be able to recapture so this is the best result
   // we can hope for.
-  balance = PieceValue[MG][type_of(piece_on(to))] - threshold;
+  balance = PieceValue[MG][piece_on(to)] - threshold;
 
   if (balance < VALUE_ZERO)
       return false;
