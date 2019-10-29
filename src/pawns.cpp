@@ -45,10 +45,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    { V( -6+2), V( 81+2), V( 93+2), V( 58+2), V( 39+2), V( 18+2), V(  25+2) },
+    { V(-43+2), V( 61+2), V( 35+2), V(-49+2), V(-29+2), V(-11+2), V( -63+2) },
+    { V(-10+1), V( 75+1), V( 23+1), V( -2+1), V( 32+1), V(  3+1), V( -45+1) },
+    { V(-39+2), V(-13+2), V(-29+2), V(-52+2), V(-48+2), V(-67+2), V(-166+2) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
@@ -191,7 +191,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Score bonus = make_score(5, 5);
+  Score bonus = SCORE_ZERO;
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -203,7 +203,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = map_to_queenside(f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      bonus += make_score(ShelterStrength[d][ourRank], 2);
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
