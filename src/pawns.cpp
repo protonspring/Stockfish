@@ -203,12 +203,12 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = map_to_queenside(f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      bonus += make_score(ShelterStrength[d][ourRank], ShelterStrength[d][ourRank] / 4);
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
-          bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+          bonus -= make_score(UnblockedStorm[d][theirRank], UnblockedStorm[d][theirRank] / 4);
   }
 
   return bonus;
