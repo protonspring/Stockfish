@@ -447,9 +447,9 @@ namespace {
 
     int kingFlankAttacks = popcount(b1) + popcount(b2);
 
-    // Exclude supported pieces from blockers
+    // Exclude supported pawns from blockers
     Bitboard kingBlockers = pos.blockers_for_king(Us);
-    kingBlockers &= ~(pe->pawnAttacks[Us]);
+    kingBlockers &= ~(pos.pieces(Us, PAWN) & pe->pawnAttacks[Us]);
 
     kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
                  + 185 * popcount(kingRing[Us] & weak)
