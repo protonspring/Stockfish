@@ -87,6 +87,8 @@ namespace {
     e->kingSquares[Us] = SQ_NONE;
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
+    bool noPawnMoves = true;
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
@@ -104,6 +106,9 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(s);
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
+
+        if (lever || (!blocked && !leverPush))
+            e->blockedPosition = false;  //pawn can still move
 
         // A pawn is backward when it is behind all pawns of the same color on
         // the adjacent files and cannot safely advance.
@@ -172,6 +177,7 @@ Entry* probe(const Position& pos) {
       return e;
 
   e->key = key;
+  e->blockedPosition = true;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
 
