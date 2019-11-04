@@ -87,7 +87,7 @@ namespace {
     e->kingSquares[Us] = SQ_NONE;
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
-    bool noPawnMoves = true;
+    e->blockedPosition = pos.count<PAWN>() > 12 ? true : false;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
