@@ -176,7 +176,7 @@ Entry* probe(const Position& pos) {
       return e;
 
   e->key = key;
-  e->blockedPosition = pos.count<PAWN>() > 12 ? true : false;
+  e->blockedPosition = pos.count<PAWN>() > 11 ? true : false;
   e->scores[WHITE] = evaluate<WHITE>(pos, e);
   e->scores[BLACK] = evaluate<BLACK>(pos, e);
 
