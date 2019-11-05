@@ -197,11 +197,11 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
       if (more_than_one(b = ourPawns & file_bb(f)))
-          bonus += make_score(5,5);
+          bonus += make_score(10,0);
       int ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       if (more_than_one(b = theirPawns & file_bb(f)))
-          bonus -= make_score(5,5);
+          bonus -= make_score(10,0);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = map_to_queenside(f);
