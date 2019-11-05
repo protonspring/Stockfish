@@ -31,6 +31,7 @@ Bitboard SquareBB[SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+Bitboard BishopForwardView[COLOR_NB][SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -95,6 +96,24 @@ void Bitboards::init() {
                           PseudoAttacks[pt][s] |= to;
                   }
               }
+
+  for (Square s = SQ_A1; s <= SQ_H8; ++s)
+  {
+      BishopForwardView[WHITE][s] = square_bb(s);
+      for (int i = 0; i < 8; ++i)
+      {
+          BishopForwardView[WHITE][s] |= shift<NORTH>(BishopForwardView[WHITE][s])
+                                      |  shift<NORTH + EAST>(BishopForwardView[WHITE][s])
+                                      |  shift<NORTH + WEST>(BishopForwardView[WHITE][s]);
+      }
+      BishopForwardView[BLACK][s] = square_bb(s);
+      for (int i = 0; i < 8; ++i)
+      {
+          BishopForwardView[BLACK][s] |= shift<SOUTH>(BishopForwardView[BLACK][s])
+                                      |  shift<SOUTH + EAST>(BishopForwardView[BLACK][s])
+                                      |  shift<SOUTH + WEST>(BishopForwardView[BLACK][s]);
+      }
+  }
 
   Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
   Direction BishopDirections[] = { NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST };
