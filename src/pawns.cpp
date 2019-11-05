@@ -196,10 +196,12 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
+      if (more_than_one(b = ourPawns & file_bb(f)))
+          bonus += make_score(5,5);
       int ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
-      b = theirPawns & file_bb(f);
+      if (more_than_one(b = theirPawns & file_bb(f)))
+          bonus -= make_score(5,5);
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = map_to_queenside(f);
