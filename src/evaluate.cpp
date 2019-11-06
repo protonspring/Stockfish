@@ -241,7 +241,7 @@ namespace {
 
     Bitboard pinnedPawns = pos.blockers_for_king(Them);
     kingAttackersCount[Them] = popcount(kingRing[Us] &
-                                       pe->pawn_attacks(Them) & ~pinnedPawns);
+             pawn_attacks_bb<Them>(pos.pieces(Them, PAWN) & ~pinnedPawns));
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
 
     // Remove from kingRing[] the squares defended by two pawns
