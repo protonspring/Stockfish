@@ -239,7 +239,9 @@ namespace {
                            clamp(rank_of(ksq), RANK_2, RANK_7));
     kingRing[Us] = s | PseudoAttacks[KING][s];
 
-    kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
+    Bitboard pinnedPawns = pos.blockers_for_king(Them);
+    kingAttackersCount[Them] = popcount(kingRing[Us] &
+                                       pe->pawn_attacks(Them) & ~pinnedPawns);
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
 
     // Remove from kingRing[] the squares defended by two pawns
