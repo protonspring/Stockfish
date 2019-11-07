@@ -237,13 +237,12 @@ namespace {
     // Init our king safety tables
     Square s = make_square(clamp(file_of(ksq), FILE_B, FILE_G),
                            clamp(rank_of(ksq), RANK_2, RANK_7));
-    kingRing[Us] = s | PseudoAttacks[KING][s];
+
+    // Exclude double attacked squares from the king ring
+    kingRing[Us] = (s | PseudoAttacks[KING][s]) & ~dblAttackByPawn;
 
     kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
-
-    // Remove from kingRing[] the squares defended by two pawns
-    kingRing[Us] &= ~dblAttackByPawn;
   }
 
 
