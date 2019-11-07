@@ -239,7 +239,7 @@ namespace {
                            clamp(rank_of(ksq), RANK_2, RANK_7));
 
     // Exclude double attacked squares from the king ring
-    kingRing[Us] = (s | PseudoAttacks[KING][s]) & dblAttackByPawn;
+    kingRing[Us] = (s | PseudoAttacks[KING][s]) & ~dblAttackByPawn;
 
     kingAttackersCount[Them] = popcount(kingRing[Us] & pe->pawn_attacks(Them));
     kingAttacksCount[Them] = kingAttackersWeight[Them] = 0;
