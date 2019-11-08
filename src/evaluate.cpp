@@ -350,6 +350,13 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // bonus for a pawn lever and we're on that file
+            Bitboard pawnLever = pos.pieces(Us, PAWN) & pe->pawn_attacks(Them)
+                               & file_bb(s) & ~pos.pieces(Them, ROOK);
+
+            if (pawnLever)
+                score += make_score(10, 0);
         }
 
         if (Pt == QUEEN)
