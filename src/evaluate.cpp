@@ -352,11 +352,17 @@ namespace {
             }
 
             // bonus for a pawn lever and we're on that file
-            Bitboard pawnLever = pos.pieces(Us, PAWN) & pe->pawn_attacks(Them)
-                               & file_bb(s) & ~pos.pieces(Them, ROOK);
-
-            if (pawnLever)
-                score += make_score(10, 0);
+            if (popcount(pos.pieces(Us, PAWN) & file_bb(s)) == 1)
+            {
+                if (!(pos.pieces(Them, PAWN) & file_bb(s)))
+                {
+                    if (pos.pieces(Us, PAWN) & pe->pawn_attacks(Them) & file_bb(s))
+                    {
+                        if (!(pos.pieces(Them, ROOK) & file_bb(s)))
+                            score += make_score(10, 0);
+                    }
+                }
+            }
         }
 
         if (Pt == QUEEN)
