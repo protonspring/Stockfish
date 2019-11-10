@@ -215,9 +215,6 @@ namespace {
 
   template<Color Us, GenType Type>
   ExtMove* generate_all(const Position& pos, ExtMove* moveList, Bitboard target) {
-
-    constexpr CastlingRights OO  = Us & KING_SIDE;
-    constexpr CastlingRights OOO = Us & QUEEN_SIDE;
     constexpr bool Checks = Type == QUIET_CHECKS; // Reduce template instantations
 
     moveList = generate_pawn_moves<Us, Type>(pos, moveList, target);
@@ -234,7 +231,7 @@ namespace {
             *moveList++ = make_move(ksq, pop_lsb(&b));
 
         if (Type != CAPTURES)
-            for (CastlingRights cr : {OO, OOO})
+            for (CastlingRights cr : {Us & KING_SIDE, Us & QUEEN_SIDE})
                 if (pos.can_castle(cr) && !pos.castling_impeded(cr))
                     *moveList++ = make<CASTLING>(ksq, pos.castling_rook_square(cr));
     }
