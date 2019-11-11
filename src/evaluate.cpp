@@ -276,11 +276,19 @@ namespace {
         attackedBy[Us][Pt] |= b;
         attackedBy[Us][ALL_PIECES] |= b;
 
-        if (b & kingRing[Them])
+        Bitboard krSquares = b & kingRing[Them];
+        if (krSquares)
         {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
+
+            //more attack weight if queen supports an attacking minor piece
+            Square krSquare = pop_lsb(&krSquares);
+            if ((Pt == BISHOP) && (LineBB[s][krSquare] & pos.pieces(Us, QUEEN)))
+                kingAttackersWeight[Us] += 20;
+            if ((Pt == ROOK) && (LineBB[s][krSquare] & pos.pieces(Us, QUEEN)))
+                kingAttackersWeight[Us] += 20;
         }
 
         int mob = popcount(b & mobilityArea[Us]);
