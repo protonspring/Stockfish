@@ -32,10 +32,10 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
-  constexpr Score Backward      = S( 9, 24);
+  constexpr Score Backward      = S(-9, -24);
   constexpr Score BlockedStorm  = S(82, 82);
   constexpr Score Doubled       = S(11, 56);
-  constexpr Score Isolated      = S( 5, 15);
+  constexpr Score Isolated      = S( -5, -15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
 
@@ -76,6 +76,8 @@ namespace {
     Square s;
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
+    Score isoScore = score;
+    Score backScore = score;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -139,19 +141,23 @@ namespace {
         }
 
         else if (!neighbours)
-            score -=   Isolated
-                     + WeakUnopposed * !opposed;
+        {
+            isoScore += Isolated + isoScore / 4;
+            score -=  WeakUnopposed * !opposed;
+        }
 
         else if (backward)
-            score -=   Backward
-                     + WeakUnopposed * !opposed;
+        {
+            backScore += Backward; // + backScore / 4;
+            score -= WeakUnopposed * !opposed;
+        }
 
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
     }
 
-    return score;
+    return score + isoScore + backScore;
   }
 
 } // namespace
