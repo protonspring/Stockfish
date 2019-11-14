@@ -142,13 +142,13 @@ namespace {
 
         else if (!neighbours)
         {
-            isoScore += Isolated + isoScore / 4;
+            isoScore += Isolated; // + isoScore / 4;
             score -=  WeakUnopposed * !opposed;
         }
 
         else if (backward)
         {
-            backScore += Backward; // + backScore / 4;
+            backScore += Backward + backScore / 4;
             score -= WeakUnopposed * !opposed;
         }
 
