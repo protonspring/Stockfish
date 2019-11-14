@@ -564,6 +564,10 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Penalty if king supports more than one unsupported friendly pawn
+    if (more_than_one(PseudoAttacks[KING][pos.square<KING>(Us)] & pos.pieces(Us, PAWN) & attackedBy[Us][ALL_PIECES] & ~attackedBy2[Us] & ~pawn_attacks_bb<Us>(pos.pieces(Us, PAWN))))
+        score -= make_score(0, 10);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
