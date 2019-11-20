@@ -37,7 +37,9 @@ namespace {
   constexpr Score Doubled       = S(11, 56);
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
-  constexpr Score WeakUnopposed = S(13, 27);
+
+  constexpr Score WeakUnopposed[FILE_NB] = { S(11, 25), S(13, 27), S(15, 29),
+                           S(17,31), S(19,33), S(21,35), S(23,37), S(25,39)
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -77,6 +79,7 @@ namespace {
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
+    int weakCount = 0;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -140,11 +143,11 @@ namespace {
 
         else if (!neighbours)
             score -=   Isolated
-                     + WeakUnopposed * !opposed;
+                     + WeakUnopposed[weakCount++] * !opposed;
 
         else if (backward)
             score -=   Backward
-                     + WeakUnopposed * !opposed;
+                     + WeakUnopposed[weakCount++] * !opposed;
 
         if (!support)
             score -=   Doubled * doubled
