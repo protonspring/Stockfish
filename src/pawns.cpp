@@ -39,7 +39,7 @@ namespace {
   constexpr Score WeakLever     = S( 0, 56);
 
   constexpr Score WeakUnopposed[FILE_NB] = { S(11, 25), S(13, 27), S(15, 29),
-                           S(17,31), S(19,33), S(21,35), S(23,37), S(25,39)
+                           S(17,31), S(19,33), S(21,35), S(23,37), S(25,39) };
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
