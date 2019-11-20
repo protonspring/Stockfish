@@ -142,13 +142,17 @@ namespace {
         }
 
         else if (!neighbours)
-            score -=   Isolated
-                     + WeakUnopposed[weakCount++] * !opposed;
-
+        {
+            score -=   Isolated;
+            if (!opposed)
+                score -= WeakUnopposed[weakCount++];
+        }
         else if (backward)
-            score -=   Backward
-                     + WeakUnopposed[weakCount++] * !opposed;
-
+        {
+            score -=   Backward;
+            if (!opposed)
+                score -= WeakUnopposed[weakCount++];
+        }
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
