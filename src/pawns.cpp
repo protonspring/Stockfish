@@ -37,8 +37,6 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
-  constexpr Score Backward[FILE_NB] = { S( 9, 24), S(10, 30), S(12, 37), S(16,  48),
-                                        S(20, 61), S(26, 78), S(32, 97), S(40, 120) };
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -145,14 +143,18 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         else if (backward)
-            score -= Backward[backCount++] + WeakUnopposed * !opposed;
+        {
+            score -= WeakUnopposed * !opposed;
+            backCount++;
+        }
 
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
     }
 
-    return score;
+    int backValue = 8 + backCount * backCount / 2;
+    return score - make_score(backValue, backValue * 3);
   }
 
 } // namespace
