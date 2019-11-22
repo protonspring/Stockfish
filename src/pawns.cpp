@@ -32,12 +32,13 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
-  constexpr Score Backward      = S( 9, 24);
   constexpr Score BlockedStorm  = S(82, 82);
   constexpr Score Doubled       = S(11, 56);
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score Backward[FILE_NB] = { S( 9, 24), S(10, 30), S(12, 37), S(16,  48),
+                                        S(20, 61), S(26, 78), S(32, 97), S(40, 120) };
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -76,8 +77,8 @@ namespace {
     Square s;
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
-    Score backScore = score;
     const Square* pl = pos.squares<PAWN>(Us);
+    int backCount = 0;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -144,17 +145,14 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         else if (backward)
-        {
-            backScore -= Backward - backScore / 4;
-            score -= WeakUnopposed * !opposed;
-        }
+            score -= Backward[backCount++] + WeakUnopposed * !opposed;
 
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
     }
 
-    return score + backScore;
+    return score;
   }
 
 } // namespace
