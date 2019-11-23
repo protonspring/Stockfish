@@ -75,7 +75,7 @@ namespace {
     Bitboard lever, leverPush, blocked;
     Square s;
     bool backward, passed, doubled;
-    Score score = SCORE_ZERO;
+    Score score = SCORE_ZERO, backScore = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
@@ -143,15 +143,17 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         else if (backward)
-            score -=   Backward
-                     + WeakUnopposed * !opposed;
+        {
+            backScore -= Backward - backScore / 4;
+            score     -= WeakUnopposed * !opposed;
+        }
 
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
     }
 
-    return score;
+    return score + backScore;
   }
 
 } // namespace
