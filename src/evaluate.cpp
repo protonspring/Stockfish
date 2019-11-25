@@ -527,6 +527,11 @@ namespace {
 
     score += RestrictedPiece * popcount(b);
 
+    // Bonus if pawn moves are still available
+    Bitboard available = ~(pos.pieces() | pawn_attacks_bb<Them>(pos.pieces(Them, PAWN)));
+    if(shift<Up>(pos.pieces(Us, PAWN)) & available)
+        score += make_score(10, 0);
+
     // Protected or unattacked squares
     safe = ~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES];
 
