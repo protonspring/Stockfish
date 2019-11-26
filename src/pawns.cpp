@@ -77,6 +77,7 @@ namespace {
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
+    int weakCount = 0;
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -140,11 +141,11 @@ namespace {
 
         else if (!neighbours)
             score -=   Isolated
-                     + WeakUnopposed * !opposed;
+                     + (WeakUnopposed + make_score(2,2) * weakCount++) * !opposed;
 
         else if (backward)
             score -=   Backward
-                     + WeakUnopposed * !opposed;
+                     + (WeakUnopposed + make_score(2,2) * weakCount++) * !opposed;
 
         if (!support)
             score -=   Doubled * doubled
