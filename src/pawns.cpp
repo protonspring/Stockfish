@@ -141,11 +141,11 @@ namespace {
 
         else if (!neighbours)
             score -=   Isolated
-                     + (WeakUnopposed + make_score(2,2) * weakCount++) * !opposed;
+                     + (WeakUnopposed + make_score(4,0) * weakCount++) * !opposed;
 
         else if (backward)
             score -=   Backward
-                     + (WeakUnopposed + make_score(2,2) * weakCount++) * !opposed;
+                     + (WeakUnopposed + make_score(4,0) * weakCount++) * !opposed;
 
         if (!support)
             score -=   Doubled * doubled
