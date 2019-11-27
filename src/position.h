@@ -293,11 +293,6 @@ inline Bitboard Position::attacks_from(Square s) const {
         : PseudoAttacks[Pt][s];
 }
 
-template<>
-inline Bitboard Position::attacks_from<PAWN>(Square s, Color c) const {
-  return PawnAttacks[c][s];
-}
-
 inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
   return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
 }

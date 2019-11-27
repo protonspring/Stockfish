@@ -77,7 +77,6 @@ extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
-extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
 
 /// Magic holds all magic bitboards relevant data for a single square
@@ -184,6 +183,15 @@ template<Color C>
 constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
   return C == WHITE ? shift<NORTH_WEST>(b) & shift<NORTH_EAST>(b)
                     : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
+}
+
+template<Color C>
+inline Bitboard pawn_attacks(Square s) {
+  return pawn_attacks_bb<C>(square_bb(s));
+}
+
+inline Bitboard pawn_attacks(Color c, Square s) {
+  return c == WHITE ? pawn_attacks<WHITE>(s) : pawn_attacks<BLACK>(s);
 }
 
 
