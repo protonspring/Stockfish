@@ -40,7 +40,7 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int aOpposed[RANK_NB] = {10*0/8,10*7/8,10*8/8,10*12/8,10*29/8,10*48/8,10*86/8 };
+  constexpr int aOpposed[RANK_NB] = { 6*0/8, 6*7/8, 6*8/8, 6*12/8, 6*29/8, 6*48/8, 6*86/8 };
   constexpr int aPhalanx[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
   constexpr int aSupport[RANK_NB] = {21,21,21, 21, 21, 21, 21 };
 
