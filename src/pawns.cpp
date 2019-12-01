@@ -40,8 +40,8 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int    aBase[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
-  constexpr int aPhalanx[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  constexpr int    aBase[RANK_NB] = { 2*0, 2*7, 2*8, 2*12, 2*29, 2*48, 2*86 };
+  constexpr int aPhalanx[RANK_NB] = { 7*0/8, 7*7/8, 7*8/8, 7*12/8, 7*29/8, 7*48/8, 7*86/8 };
   constexpr int aOpposed[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
   //constexpr int aSupport[RANK_NB] = {21,21,21, 21, 21, 21, 21 };
 
@@ -135,7 +135,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v = 2 * aBase[r]
+            int v = aBase[r]
                   + bool(phalanx) * aPhalanx[r]
                   - bool(opposed) * aOpposed[r]
                   + (21 * popcount(support));
