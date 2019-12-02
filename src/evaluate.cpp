@@ -785,8 +785,12 @@ namespace {
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
     // Early exit if score is high
+    //Score score = pe->king_safety<Us>(pos);
+    Color sideToMove = pos.side_to_move();
+    Score safety = sideToMove == WHITE ? pe->king_safety<WHITE>(pos)
+                                       : pe->king_safety<BLACK>(pos);
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
+    if ((abs(v) > LazyThreshold + pos.non_pawn_material() / 64) && (mg_value(safety) > 75))
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
