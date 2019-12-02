@@ -35,7 +35,7 @@ namespace {
   // a given limit. The order of moves smaller than the limit is left unspecified.
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    std::sort(begin, end, [limit](ExtMove lhs, ExtMove rhs) {
+    std::stable_sort(begin, end, [limit](ExtMove lhs, ExtMove rhs) {
        return (rhs.value < limit ? -200000: rhs.value) <
               (lhs.value < limit ? -200000: lhs.value);});
   }
