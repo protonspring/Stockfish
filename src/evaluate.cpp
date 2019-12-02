@@ -790,7 +790,7 @@ namespace {
     Score safety = sideToMove == WHITE ? pe->king_safety<WHITE>(pos)
                                        : pe->king_safety<BLACK>(pos);
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if ((abs(v) > LazyThreshold + pos.non_pawn_material() / 64) && (mg_value(safety) > 40))
+    if ((abs(v) > LazyThreshold + pos.non_pawn_material() / 64) && (mg_value(safety) >100))
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
