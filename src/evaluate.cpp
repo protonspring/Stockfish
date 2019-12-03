@@ -782,12 +782,15 @@ namespace {
 
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
+    Color stm = pos.side_to_move();
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
+    Score safety = stm == WHITE ? pe->king_safety<WHITE>(pos) : -pe->king_safety<BLACK>(pos);
+    Value s = (mg_value(safety) + eg_value(safety)) / 2;
 
     // Early exit if score is high
     Value v = (mg_value(score) + eg_value(score)) / 2;
-    if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
-       return pos.side_to_move() == WHITE ? v : -v;
+    if ((abs(v + s) > LazyThreshold + pos.non_pawn_material() / 64))
+       return stm == WHITE ? v : -v;
 
     // Main evaluation begins here
 
