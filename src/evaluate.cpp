@@ -572,7 +572,7 @@ namespace {
 
     // Bonus for double xray attacks from minors on kings/queens
     if (XRAYattackedBy2[Us] & pos.pieces(Them, KING, QUEEN))
-        score += make_score(10,0);
+        score += make_score( 0, 10);
 
     if (T)
         Trace::add(THREAT, Us, score);
