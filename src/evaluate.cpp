@@ -184,6 +184,8 @@ namespace {
     // attackedBy2[color] are the squares attacked by at least 2 units of a given
     // color, including x-rays. But diagonal x-rays through pawns are not computed.
     Bitboard attackedBy2[COLOR_NB];
+    Bitboard XRAYattackedBy[COLOR_NB];
+    Bitboard XRAYattackedBy2[COLOR_NB];
 
     // kingRing[color] are the squares adjacent to the king plus some other
     // very near squares, depending on king position.
@@ -276,6 +278,12 @@ namespace {
         attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
         attackedBy[Us][Pt] |= b;
         attackedBy[Us][ALL_PIECES] |= b;
+
+        if ((Pt == BISHOP) || (Pt == ROOK))
+        {
+            XRAYattackedBy2[Us] |= XRAYattackedBy[Us] & PseudoAttacks[Pt][s];
+            XRAYattackedBy[Us] |= PseudoAttacks[Pt][s];
+        }
 
         if (b & kingRing[Them])
         {
@@ -561,6 +569,10 @@ namespace {
 
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
+
+    // Bonus for double xray attacks from minors on kings/queens
+    if (XRAYattackedBy2[Us] & pos.pieces(Them, KING, QUEEN))
+        score += make_score(10,0);
 
     if (T)
         Trace::add(THREAT, Us, score);
