@@ -562,6 +562,20 @@ namespace {
         score += SliderOnQueen * popcount(b & safe & attackedBy2[Us]);
     }
 
+    // Build all double x-ray attack squares from bishops and rooks
+    Bitboard singleAttacks = 0, dblAttacks = 0;
+    const Square* pl = pos.squares<BISHOP>(Us);
+    for(PieceType pt : {BISHOP, ROOK})
+        for (Square s = *pl; s != SQ_NONE; s = *++pl)
+        {
+            singleAttacks |= PseudoAttacks[pt][s];
+            dblAttacks |= singleAttacks & PseudoAttacks[pt][s];
+        }
+
+    // bonus for double x-ray attacks against enemy kings or queens
+    if (dblAttacks & pos.pieces(Them, KING, QUEEN))
+        score += make_score(20, 0);
+
     if (T)
         Trace::add(THREAT, Us, score);
 
