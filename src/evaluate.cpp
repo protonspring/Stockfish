@@ -574,7 +574,7 @@ namespace {
 
     // bonus for double x-ray attacks against enemy kings or queens
     if (dblAttacks & pos.pieces(Them, KING, QUEEN))
-        score += make_score(20, 0);
+        score += make_score(0, 10);
 
     if (T)
         Trace::add(THREAT, Us, score);
