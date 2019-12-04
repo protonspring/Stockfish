@@ -570,8 +570,8 @@ namespace {
     for (Square s = *pl; s != SQ_NONE; s = *++pl)
         bishopSingleAttacks |= PseudoAttacks[BISHOP][s];
 
-    const Square* pl = pos.squares<ROOK>(Us);
-    for (Square s = *pl; s != SQ_NONE; s = *++pl)
+    const Square* pl2 = pos.squares<ROOK>(Us);
+    for (Square s = *pl2; s != SQ_NONE; s = *++pl2)
         rookSingleAttacks |= PseudoAttacks[ROOK][s];
 
     // bonus for double x-ray attacks against enemy kings or queens
