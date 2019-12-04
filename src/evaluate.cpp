@@ -563,18 +563,20 @@ namespace {
     }
 
     // Build all double x-ray attack squares from bishops and rooks
-    Bitboard singleAttacks = 0, dblAttacks = 0;
+    Bitboard bishopSingleAttacks = 0;
+    Bitboard rookSingleAttacks = 0;
+
     const Square* pl = pos.squares<BISHOP>(Us);
-    for(PieceType pt : {BISHOP, ROOK})
-        for (Square s = *pl; s != SQ_NONE; s = *++pl)
-        {
-            dblAttacks |= singleAttacks & PseudoAttacks[pt][s];
-            singleAttacks |= PseudoAttacks[pt][s];
-        }
+    for (Square s = *pl; s != SQ_NONE; s = *++pl)
+        bishopSingleAttacks |= PseudoAttacks[BISHOP][s];
+
+    const Square* pl = pos.squares<ROOK>(Us);
+    for (Square s = *pl; s != SQ_NONE; s = *++pl)
+        rookSingleAttacks |= PseudoAttacks[ROOK][s];
 
     // bonus for double x-ray attacks against enemy kings or queens
-    if (dblAttacks & pos.pieces(Them, KING, QUEEN))
-        score += make_score(0, 10);
+    if (bishopSingleAttacks & rookSingleAttacks & pos.pieces(Them, KING, QUEEN))
+        score += make_score(10, 0);
 
     if (T)
         Trace::add(THREAT, Us, score);
