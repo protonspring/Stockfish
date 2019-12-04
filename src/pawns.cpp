@@ -144,7 +144,7 @@ namespace {
 
         else if (backward)
         {
-            backScore += Backward + backScore / 4;
+            backScore -= Backward - backScore / 4;
             score -= WeakUnopposed * !opposed;
         }
 
