@@ -568,8 +568,8 @@ namespace {
     for(PieceType pt : {BISHOP, ROOK})
         for (Square s = *pl; s != SQ_NONE; s = *++pl)
         {
-            singleAttacks |= PseudoAttacks[pt][s];
             dblAttacks |= singleAttacks & PseudoAttacks[pt][s];
+            singleAttacks |= PseudoAttacks[pt][s];
         }
 
     // bonus for double x-ray attacks against enemy kings or queens
