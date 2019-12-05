@@ -284,6 +284,12 @@ inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }
 inline T& operator++(T& d) { return d = T(int(d) + 1); }           \
 inline T& operator--(T& d) { return d = T(int(d) - 1); }
 
+#define ENABLE_BITWISE_OPERATORS_ON(T)                              \
+constexpr T operator&(int d1, T d2) { return T(int(d1) & int(d2));} \
+inline T& operator&=(T& d1, T d2) { return d1 = d1 & d2; }          \
+constexpr T operator|(int d1, T d2) { return T(int(d1) | int(d2));} \
+inline T& operator|=(T& d1, T d2) { return d1 = d1 | d2; }
+
 #define ENABLE_FULL_OPERATORS_ON(T)                                \
 ENABLE_BASE_OPERATORS_ON(T)                                        \
 constexpr T operator*(int i, T d) { return T(i * int(d)); }        \
@@ -295,6 +301,7 @@ inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
 ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Direction)
+ENABLE_BITWISE_OPERATORS_ON(CastlingRights)
 
 ENABLE_INCR_OPERATORS_ON(PieceType)
 ENABLE_INCR_OPERATORS_ON(Piece)
@@ -360,6 +367,10 @@ inline File map_to_queenside(File f) {
 
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
   return CastlingRights(int(c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & int(cr));
+}
+
+constexpr CastlingRights operator~(CastlingRights cr) {
+  return CastlingRights(~(int(cr)));
 }
 
 constexpr Value mate_in(int ply) {

@@ -330,7 +330,7 @@ Position& Position::set(const string& fenStr, bool isChess960, StateInfo* si, Th
 void Position::set_castling_right(Color c, Square rfrom) {
 
   Square kfrom = square<KING>(c);
-  int cr = c & (kfrom < rfrom ? KING_SIDE: QUEEN_SIDE);
+  CastlingRights cr = c & (kfrom < rfrom ? KING_SIDE: QUEEN_SIDE);
 
   st->castlingRights |= cr;
   castlingRightsMask[kfrom] |= cr;
@@ -812,7 +812,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   // Update castling rights if needed
   if (st->castlingRights && (castlingRightsMask[from] | castlingRightsMask[to]))
   {
-      int cr = castlingRightsMask[from] | castlingRightsMask[to];
+      CastlingRights cr = castlingRightsMask[from] | castlingRightsMask[to];
       k ^= Zobrist::castling[st->castlingRights & cr];
       st->castlingRights &= ~cr;
   }
