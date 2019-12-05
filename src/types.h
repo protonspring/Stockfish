@@ -366,7 +366,7 @@ inline File map_to_queenside(File f) {
 }
 
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
-  return CastlingRights(int(c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & int(cr));
+  return CastlingRights((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & cr);
 }
 
 constexpr CastlingRights operator~(CastlingRights cr) {

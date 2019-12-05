@@ -269,7 +269,7 @@ inline bool Position::is_on_semiopen_file(Color c, Square s) const {
 }
 
 inline bool Position::can_castle(CastlingRights cr) const {
-  return st->castlingRights & int(cr);
+  return st->castlingRights & cr;
 }
 
 inline CastlingRights Position::castling_rights(Color c) const {
