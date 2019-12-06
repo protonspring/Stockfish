@@ -632,6 +632,10 @@ namespace {
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
 
+                // Assign a larger bonus if we have more attacks on the block square
+                if ((attackedBy2[Us] & blockSq) && !(attackedBy2[Them] & blockSq))
+                    k += 3;
+
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
