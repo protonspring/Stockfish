@@ -40,7 +40,9 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  int aPhalanx[RANK_NB] = { 0, 3, 2, 15, 36, 53, 70 };
+  int aOpposed[RANK_NB] = { 0,14, 8, 13, 20, 35, 79 };
+  int aSupport[RANK_NB] = { 0, 6,15, 11, 35, 58, 73 };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -130,25 +132,12 @@ namespace {
             e->passedPawns[Us] |= s;
 
         // Score this pawn
-        if (support | phalanx)
-        {
-            int v =  Connected[r] * (2 + bool(phalanx) - bool(opposed))
-                   + 21 * popcount(support);
-
-            score += make_score(v, v * (r - 2) / 4);
-        }
-
-        else if (!neighbours)
-            score -=   Isolated - make_score(1,1) * r
-                     + WeakUnopposed * !opposed;
-
-        else if (backward)
-            score -=   Backward + make_score(1,1) * r
-                     + WeakUnopposed * !opposed;
-
-        if (!support)
-            score -=   Doubled * doubled - make_score(1,1) * r
-                     + WeakLever * more_than_one(lever);
+        if (support) score += make_score(aSupport[r], aSupport[r]);
+        else         score -=   Doubled * doubled + WeakLever * more_than_one(lever);
+        if (phalanx) score += make_score(aPhalanx[r], aPhalanx[r]);
+        if (opposed) score -= make_score(aOpposed[r], aOpposed[r]);
+        if (!neighbours) score -=   Isolated + WeakUnopposed * !opposed;
+        if (backward) score -=   Backward + WeakUnopposed * !opposed;
     }
 
     return score;
