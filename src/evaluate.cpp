@@ -634,7 +634,7 @@ namespace {
 
                 // Assign a larger bonus if we have more attacks on the block square
                 if ((attackedBy2[Us] & blockSq) && !(attackedBy2[Them] & blockSq))
-                    k += 2;
+                    k += 4;
 
                 bonus += make_score(k * w, k * w);
             }
