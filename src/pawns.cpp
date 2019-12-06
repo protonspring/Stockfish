@@ -139,15 +139,15 @@ namespace {
         }
 
         else if (!neighbours)
-            score -=   Isolated
+            score -=   Isolated - make_score(1,1) * r
                      + WeakUnopposed * !opposed;
 
         else if (backward)
-            score -=   Backward
+            score -=   Backward + make_score(1,1) * r
                      + WeakUnopposed * !opposed;
 
         if (!support)
-            score -=   Doubled * doubled
+            score -=   Doubled * doubled - make_score(1,1) * r
                      + WeakLever * more_than_one(lever);
     }
 
