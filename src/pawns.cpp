@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -40,7 +41,7 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int connected(Rank r) { return 5 + 6 * r * r * r / 16; }
+  constexpr int connected(Rank r) { return 6 + std::pow(0.75*r, 2.9); }
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
