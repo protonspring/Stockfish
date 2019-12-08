@@ -133,7 +133,7 @@ namespace {
         // Score this pawn
         if (support | phalanx)
             score += Connected[r] * (2 + bool(phalanx) - bool(opposed))
-                  +  make_score(21, 21) * popcount(support);
+                  +  make_score(21, 15) * popcount(support);
 
 
         else if (!neighbours)
