@@ -254,6 +254,7 @@ namespace {
 
     constexpr Color     Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Direction Down = -pawn_push(Us);
+    constexpr Direction Up   = -Down;
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
     const Square* pl = pos.squares<Pt>(Us);
@@ -291,7 +292,15 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus if piece is on an outpost square or can reach one
-            bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
+            Bitboard attackSpan = pe->pawn_attacks_span(Them);
+
+            // If neighbouring pawns are blocked, count their span as safe.
+            Bitboard bPawns = shift<Up>(pos.pieces(Us)) & pos.pieces(Them, PAWN) & adjacent_files_bb(s);
+            while(bPawns)
+               attackSpan &= ~pawn_attack_span(Them, pop_lsb(&bPawns));
+
+            //bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
+            bb = OutpostRanks & attackedBy[Us][PAWN] & ~attackSpan;
             if (bb & s)
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
 
