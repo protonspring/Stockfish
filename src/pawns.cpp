@@ -72,9 +72,9 @@ namespace {
     constexpr Direction Up   = pawn_push(Us);
 
     Bitboard neighbours, stoppers, support, phalanx, opposed;
-    Bitboard lever, leverPush, blocked;
+    Bitboard lever, leverPush;
     Square s;
-    bool backward, passed, doubled;
+    bool backward, passed, doubled, blocked;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -96,7 +96,7 @@ namespace {
 
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
-        blocked    = theirPawns & (s + Up);
+        blocked    = (theirPawns & (s + Up)) && !(theirPawns & pawn_attack_span(Them, s + Up));
         stoppers   = theirPawns & passed_pawn_span(Us, s);
         lever      = theirPawns & PawnAttacks[Us][s];
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
@@ -108,7 +108,7 @@ namespace {
         // A pawn is backward when it is behind all pawns of the same color on
         // the adjacent files and cannot safely advance.
         backward =  !(neighbours & forward_ranks_bb(Them, s + Up))
-                  && (leverPush | blocked);
+                  && (leverPush || blocked);
 
         // Compute additional span if pawn is not backward nor blocked
         if (!backward && !blocked)
@@ -121,7 +121,7 @@ namespace {
         passed =   !(stoppers ^ lever)
                 || (   !(stoppers ^ leverPush)
                     && popcount(phalanx) >= popcount(leverPush))
-                || (   stoppers == blocked && r >= RANK_5
+                || (   stoppers == square_bb(s + Up) && r >= RANK_5
                     && (shift<Up>(support) & ~(theirPawns | doubleAttackThem)));
 
         // Passed pawns will be properly scored later in evaluation when we have
