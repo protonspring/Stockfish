@@ -38,6 +38,7 @@ namespace {
   constexpr Score Isolated      = S( 5, 15);
   constexpr Score WeakLever     = S( 0, 56);
   constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score DeepProtected = S( 0, 10);
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
@@ -149,6 +150,10 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if ((r > RANK_4) && more_than_one(support)
+                         && !more_than_one(stoppers & pawn_attack_span(Us, s)))
+            score += DeepProtected;
     }
 
     return score;
