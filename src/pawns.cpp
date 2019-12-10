@@ -101,7 +101,7 @@ namespace {
         lever      = theirPawns & PawnAttacks[Us][s];
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
         doubled    = ourPawns   & (s - Up);
-        neighbours = ourPawns   & adjacent_files_bb(s);
+        neighbours = ourPawns   & (adjacent_files_bb(s) & (rank_bb(s - Up) | rank_bb(s) | rank_bb(s + Up)));
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
 
