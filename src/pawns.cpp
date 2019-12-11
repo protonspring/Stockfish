@@ -146,7 +146,7 @@ namespace {
             // more penalty if opponent pawns on each flank.
             if ((stoppers & shift<WEST>(file_bb(s))) &&
                 (stoppers & shift<EAST>(file_bb(s))))
-                score -= make_score(10, 0);
+                score -= make_score( 0,10);
         }
 
         else if (backward)
