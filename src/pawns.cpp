@@ -139,8 +139,15 @@ namespace {
         }
 
         else if (!neighbours)
+        {
             score -=   Isolated
                      + WeakUnopposed * !opposed;
+
+            // more penalty if opponent pawns on each flank.
+            if ((stoppers & shift<WEST>(file_bb(s))) &&
+                (stoppers & shift<EAST>(file_bb(s))))
+                score -= make_score(10, 0);
+        }
 
         else if (backward)
             score -=   Backward
