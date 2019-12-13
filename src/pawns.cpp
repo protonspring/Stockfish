@@ -40,10 +40,10 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  int Connected[RANK_NB] = { 0, 14, 16, 24, 58, 96, 172 };
-  int aPhalanx[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
-  int aOpposed[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
-  int aSupport[RANK_NB] = { 0, 21, 21, 21, 21, 21, 21 };
+  int Connected[RANK_NB] = { 0, 12, 16, 24, 54, 97, 208 };
+  int aPhalanx[RANK_NB] = { 0, 5, 8, 14, 29, 43, 86 };
+  int aOpposed[RANK_NB] = { 0, 2, 7, 13, 32, 48, 89 };
+  int aSupport[RANK_NB] = { 0, 23, 29, 18, 22, 20, 17 };
 
 TUNE(Connected, aPhalanx, aOpposed, aSupport);
 
