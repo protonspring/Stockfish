@@ -40,7 +40,24 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  //constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  //constexpr int Support[RANK_NB] = { 21, 21, 21, 21, 21, 21, 21 };
+  constexpr Score aConnected[RANK_NB] = {
+       S(0,0),
+       S( 7, 7*(1-2)/4),
+       S( 8, 8*(2-2)/4),
+       S(12,12*(3-2)/4),
+       S(29,29*(4-2)/4),
+       S(48,48*(5-2)/4),
+       S(86,86*(6-2)/4) };
+  constexpr Score aSupport[RANK_NB] = {
+       S(0, 0),
+       S(21, 21*(1-2)/4),
+       S(21, 21*(2-2)/4),
+       S(21, 21*(3-2)/4),
+       S(21, 21*(4-2)/4),
+       S(21, 21*(5-2)/4),
+       S(21, 21*(6-2)/4) };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -132,10 +149,22 @@ namespace {
         // Score this pawn
         if (support | phalanx)
         {
-            int v =  Connected[r] * (2 + bool(phalanx) - bool(opposed))
-                   + 21 * popcount(support);
+            //score += aConnected[r] * (2 + bool(phalanx) - bool(opposed))
+                   //+ aSupport[r] * popcount(support);
+            //int v = Connected[r] * (2 + bool(phalanx) - bool(opposed));
+            //int v2 = 21 * popcount(support);
+            //int v = Connected[r] * (2 + bool(phalanx) - bool(opposed))
+                  //+ Support[r] * popcount(support);
 
-            score += make_score(v, v * (r - 2) / 4);
+            //score += make_score(v, v * (r - 2) / 4) + aSupport[r] * popcount(support);
+            //score += make_score(v, v * (r - 2) / 4);
+            //score += make_score(v,   v * (r - 2) / 4)
+            score += aConnected[r] * (2 + bool(phalanx) - bool(opposed))
+                   //+ make_score(v2, v2 * (r - 2) / 4);
+            //score += make_score(v,   v * (r - 2) / 4)
+                   + aSupport[r] * popcount(support);
+
+            //score += make_score(v + v2, (v + v2) * (r - 2) / 4);
         }
 
         else if (!neighbours)
