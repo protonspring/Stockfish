@@ -40,10 +40,10 @@ namespace {
   constexpr Score WeakUnopposed = S(13, 27);
 
   // Connected pawn bonus
-  constexpr int Connected[RANK_NB] = { 0, 11, 13, 24, 46, 94, 201 };
-  constexpr int aPhalanx[RANK_NB] = { 0, 4, 7, 14, 32, 42, 91 };
-  constexpr int aOpposed[RANK_NB] = { 0, 2, 7, 13, 30, 46, 86 };
-  constexpr int aSupport[RANK_NB] = { 0, 17, 30, 16, 27, 20, 12 };
+  constexpr int Connected[RANK_NB] = { 0, 11, 13, 26, 48, 99, 190 };
+  constexpr int aPhalanx[RANK_NB] = { 0, 4, 7, 14, 34, 41, 94 };
+  constexpr int aOpposed[RANK_NB] = { 0, 2, 7, 14, 29, 49, 85 };
+  constexpr int aSupport[RANK_NB] = { 0, 15, 30, 17, 28, 21, 12 };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
