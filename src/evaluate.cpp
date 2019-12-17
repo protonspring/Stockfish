@@ -444,11 +444,30 @@ namespace {
     int kingFlankAttack = popcount(b1) + popcount(b2);
     int kingFlankDefense = popcount(b3);
 
+    bool trappedKing = false; //if king is trapped in the corner by own pieces
+    if ((FileABB | FileBBB) & ksq)
+    {
+      Bitboard insideSquares = shift<EAST>(PseudoAttacks[KING][ksq]) & ~PseudoAttacks[KING][ksq];
+
+      //penalize if there are no open squares
+      if (~pos.pieces(Us) & insideSquares) //all inside squares occupied
+          trappedKing = true;
+    }
+    else if ((FileGBB | FileHBB) & ksq)
+    {
+      Bitboard insideSquares = shift<WEST>(PseudoAttacks[KING][ksq]) & ~PseudoAttacks[KING][ksq];
+
+      //penalize if there are no open squares
+      if (~pos.pieces(Us) & insideSquares) //all inside squares occupied
+          trappedKing = true;
+    }
+
     kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
                  + 185 * popcount(kingRing[Us] & weak)
                  + 148 * popcount(unsafeChecks)
                  +  98 * popcount(pos.blockers_for_king(Us))
                  +  69 * kingAttacksCount[Them]
+                 +  50 * trappedKing
                  +   3 * kingFlankAttack * kingFlankAttack / 8
                  +       mg_value(mobility[Them] - mobility[Us])
                  - 873 * !pos.count<QUEEN>(Them)
