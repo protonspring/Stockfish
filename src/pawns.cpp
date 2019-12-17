@@ -190,25 +190,46 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard theirAttacks = pawn_attacks_bb<Them>(theirPawns);
 
   Score bonus = make_score(5, 5);
 
   File center = clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      int ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
-      b = theirPawns & file_bb(f);
-      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
       File d = map_to_queenside(f);
+      int ourRank = 0, theirRank = 0;
+      bool supportedEnemy = false;
+      Square s = SQ_NONE;
+      if ((b = ourPawns & file_bb(f)))
+      {
+        s = frontmost_sq(Them, b);
+
+        ourRank = relative_rank(Us, s);
+      }
+
       bonus += make_score(ShelterStrength[d][ourRank], 0);
+
+
+
+
+      if((b = theirPawns & file_bb(f)))
+      {
+          s = frontmost_sq(Them, b);
+
+          if (theirAttacks & s)
+            supportedEnemy = true;
+
+          theirRank = relative_rank(Us, s);
+      }
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+
+      if (supportedEnemy and (theirRank < RANK_4))
+          bonus -= make_score(20, 0);
   }
 
   return bonus;
