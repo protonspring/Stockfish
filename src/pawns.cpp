@@ -228,7 +228,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
 
-      if (supportedEnemy and (theirRank < RANK_4))
+      if (supportedEnemy and (theirRank < RANK_5))
           bonus -= make_score(40, 0);
   }
 
