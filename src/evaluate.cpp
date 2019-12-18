@@ -319,8 +319,8 @@ namespace {
                     score += LongDiagonalBishop;
 
                 // If along side another bishop
-                if (shift<Down>(b) & pos.pieces(Us, BISHOP))
-                    score += make_score( 0, 10);
+                if (shift<Down>(PseudoAttacks[BISHOP][s]) & pos.pieces(Us, BISHOP))
+                    score += make_score(10, 0);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
