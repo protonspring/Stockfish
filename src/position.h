@@ -403,10 +403,10 @@ inline Thread* Position::this_thread() const {
 inline void Position::put_piece(Piece pc, Square s) {
 
   board[s] = pc;
+  index[s] = count(pc);
   byTypeBB[ALL_PIECES] |= s;
   byTypeBB[type_of(pc)] |= s;
   byColorBB[color_of(pc)] |= s;
-  index[s] = count(pc) - 1;
   pieceList[pc][index[s]] = s;
   psq += PSQT::psq[pc][s];
 }
