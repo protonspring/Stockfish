@@ -1261,20 +1261,20 @@ bool Position::pos_is_ok() const {
   if (Fast)
       return true;
 
-  if (   count(WHITE, KING) != 1
-      || count(BLACK, KING) != 1
+  if (   count(W_KING) != 1
+      || count(B_KING) != 1
       || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove))
       assert(0 && "pos_is_ok: Kings");
 
   if (   (pieces(PAWN) & (Rank1BB | Rank8BB))
-      || count(WHITE, PAWN) > 8
-      || count(BLACK, PAWN) > 8)
+      || count(W_PAWN) > 8
+      || count(B_PAWN) > 8)
       assert(0 && "pos_is_ok: Pawns");
 
   if (   (pieces(WHITE) & pieces(BLACK))
       || (pieces(WHITE) | pieces(BLACK)) != pieces()
-      || popcount(pieces(WHITE)) > 16
-      || popcount(pieces(BLACK)) > 16)
+      || popcount(pieces(WHITE) > 16
+      || popcount(pieces(BLACK)) > 16))
       assert(0 && "pos_is_ok: Bitboards");
 
   for (PieceType p1 = PAWN; p1 <= KING; ++p1)
