@@ -1291,6 +1291,11 @@ bool Position::pos_is_ok() const {
   {
       if (count(pc) != std::count(board, board + SQUARE_NB, pc))
           assert(0 && "pos_is_ok: Pieces");
+
+      for (int i = 0; i < count(pc); ++i)
+          if (board[pieceList[pc][i]] != pc || index[pieceList[pc][i]] != i)
+              assert(0 && "pos_is_ok: Index");
+
   }
 
   for (Color c : { WHITE, BLACK })
