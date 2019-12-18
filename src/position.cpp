@@ -399,7 +399,7 @@ void Position::set_state(StateInfo* si) const {
   si->key ^= Zobrist::castling[si->castlingRights];
 
   for (Piece pc : Pieces)
-      for (int cnt = 0; cnt < pieceCount[pc]; ++cnt)
+      for (int cnt = 0; cnt < count(pc); ++cnt)
           si->materialKey ^= Zobrist::psq[pc][cnt];
 }
 
@@ -792,7 +792,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
 
       // Update material hash key and prefetch access to materialTable
       k ^= Zobrist::psq[captured][capsq];
-      st->materialKey ^= Zobrist::psq[captured][pieceCount[captured]];
+      st->materialKey ^= Zobrist::psq[captured][count(captured)];
       prefetch(thisThread->materialTable[st->materialKey]);
 
       // Reset rule 50 counter
@@ -845,8 +845,8 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
           // Update hash keys
           k ^= Zobrist::psq[pc][to] ^ Zobrist::psq[promotion][to];
           st->pawnKey ^= Zobrist::psq[pc][to];
-          st->materialKey ^=  Zobrist::psq[promotion][pieceCount[promotion]-1]
-                            ^ Zobrist::psq[pc][pieceCount[pc]];
+          st->materialKey ^=  Zobrist::psq[promotion][count(promotion)-1]
+                            ^ Zobrist::psq[pc][count(pc)];
 
           // Update material
           st->nonPawnMaterial[us] += PieceValue[MG][promotion];
@@ -1261,14 +1261,14 @@ bool Position::pos_is_ok() const {
   if (Fast)
       return true;
 
-  if (   pieceCount[W_KING] != 1
-      || pieceCount[B_KING] != 1
+  if (   count(WHITE, KING) != 1
+      || count(BLACK, KING) != 1
       || attackers_to(square<KING>(~sideToMove)) & pieces(sideToMove))
       assert(0 && "pos_is_ok: Kings");
 
   if (   (pieces(PAWN) & (Rank1BB | Rank8BB))
-      || pieceCount[W_PAWN] > 8
-      || pieceCount[B_PAWN] > 8)
+      || count(WHITE, PAWN) > 8
+      || count(BLACK, PAWN) > 8)
       assert(0 && "pos_is_ok: Pawns");
 
   if (   (pieces(WHITE) & pieces(BLACK))
@@ -1289,11 +1289,10 @@ bool Position::pos_is_ok() const {
 
   for (Piece pc : Pieces)
   {
-      if (   pieceCount[pc] != popcount(pieces(color_of(pc), type_of(pc)))
-          || pieceCount[pc] != std::count(board, board + SQUARE_NB, pc))
+      if (count(pc) != std::count(board, board + SQUARE_NB, pc))
           assert(0 && "pos_is_ok: Pieces");
 
-      for (int i = 0; i < pieceCount[pc]; ++i)
+      for (int i = 0; i < count(pc); ++i)
           if (board[pieceList[pc][i]] != pc || index[pieceList[pc][i]] != i)
               assert(0 && "pos_is_ok: Index");
   }
