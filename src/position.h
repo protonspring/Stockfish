@@ -424,7 +424,7 @@ inline void Position::remove_piece(Piece pc, Square s) {
   Square lastSquare = pieceList[pc][count(pc)];
   index[lastSquare] = index[s];
   pieceList[pc][index[lastSquare]] = lastSquare;
-  pieceList[pc][popcount(pieces(color_of(pc), type_of(pc)))] = SQ_NONE;
+  pieceList[pc][count(pc)] = SQ_NONE;
   psq -= PSQT::psq[pc][s];
 }
 
