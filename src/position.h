@@ -94,6 +94,7 @@ public:
   bool empty(Square s) const;
   template<PieceType Pt> int count(Color c) const;
   template<PieceType Pt> int count() const;
+  int count(const Piece pc) const;
   template<PieceType Pt> const Square* squares(Color c) const;
   template<PieceType Pt> Square square(Color c) const;
   bool is_on_semiopen_file(Color c, Square s) const;
@@ -183,7 +184,6 @@ private:
   Piece board[SQUARE_NB];
   Bitboard byTypeBB[PIECE_TYPE_NB];
   Bitboard byColorBB[COLOR_NB];
-  int pieceCount[PIECE_NB];
   Square pieceList[PIECE_NB][16];
   int index[SQUARE_NB];
   int castlingRightsMask[SQUARE_NB];
@@ -244,11 +244,15 @@ inline Bitboard Position::pieces(Color c, PieceType pt1, PieceType pt2) const {
 }
 
 template<PieceType Pt> inline int Position::count(Color c) const {
-  return pieceCount[make_piece(c, Pt)];
+  return popcount(pieces(c, Pt));
 }
 
 template<PieceType Pt> inline int Position::count() const {
-  return pieceCount[make_piece(WHITE, Pt)] + pieceCount[make_piece(BLACK, Pt)];
+  return popcount(pieces(Pt));
+}
+
+inline int Position::count(const Piece pc) const {
+  return popcount(pieces(color_of(pc), type_of(pc)));
 }
 
 template<PieceType Pt> inline const Square* Position::squares(Color c) const {
@@ -256,7 +260,7 @@ template<PieceType Pt> inline const Square* Position::squares(Color c) const {
 }
 
 template<PieceType Pt> inline Square Position::square(Color c) const {
-  assert(pieceCount[make_piece(c, Pt)] == 1);
+  assert(count<Pt>(c) == 1);
   return pieceList[make_piece(c, Pt)][0];
 }
 
@@ -368,8 +372,8 @@ inline int Position::rule50_count() const {
 }
 
 inline bool Position::opposite_bishops() const {
-  return   pieceCount[W_BISHOP] == 1
-        && pieceCount[B_BISHOP] == 1
+  return   count(W_BISHOP) == 1
+        && count(B_BISHOP) == 1
         && opposite_colors(square<BISHOP>(WHITE), square<BISHOP>(BLACK));
 }
 
@@ -399,12 +403,11 @@ inline Thread* Position::this_thread() const {
 inline void Position::put_piece(Piece pc, Square s) {
 
   board[s] = pc;
+  index[s] = count(pc);
   byTypeBB[ALL_PIECES] |= s;
   byTypeBB[type_of(pc)] |= s;
   byColorBB[color_of(pc)] |= s;
-  index[s] = pieceCount[pc]++;
   pieceList[pc][index[s]] = s;
-  pieceCount[make_piece(color_of(pc), ALL_PIECES)]++;
   psq += PSQT::psq[pc][s];
 }
 
@@ -418,11 +421,10 @@ inline void Position::remove_piece(Piece pc, Square s) {
   byTypeBB[type_of(pc)] ^= s;
   byColorBB[color_of(pc)] ^= s;
   /* board[s] = NO_PIECE;  Not needed, overwritten by the capturing one */
-  Square lastSquare = pieceList[pc][--pieceCount[pc]];
+  Square lastSquare = pieceList[pc][count(pc)];
   index[lastSquare] = index[s];
   pieceList[pc][index[lastSquare]] = lastSquare;
-  pieceList[pc][pieceCount[pc]] = SQ_NONE;
-  pieceCount[make_piece(color_of(pc), ALL_PIECES)]--;
+  pieceList[pc][count(pc)] = SQ_NONE;
   psq -= PSQT::psq[pc][s];
 }
 
