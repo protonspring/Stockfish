@@ -248,7 +248,7 @@ template<PieceType Pt> inline int Position::count(Color c) const {
 }
 
 template<PieceType Pt> inline int Position::count() const {
-  return pieceCount[make_piece(WHITE, Pt)] + pieceCount[make_piece(BLACK, Pt)];
+  return popcount(pieces(Pt));
 }
 
 template<PieceType Pt> inline const Square* Position::squares(Color c) const {
