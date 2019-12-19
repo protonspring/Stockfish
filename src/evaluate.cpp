@@ -320,7 +320,7 @@ namespace {
 
                 // If along side another bishop
                 if (shift<Down>(PseudoAttacks[BISHOP][s]) & pos.pieces(Us, BISHOP))
-                    score += make_score(0, 10);
+                    score += make_score(0, 4);
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
