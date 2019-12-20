@@ -196,10 +196,8 @@ inline Bitboard adjacent_files_bb(Square s) {
 /// rough_line_bb() return a line between the pieces, but not the piece squares
 
 inline Bitboard rough_line_bb(Square s1, Square s2) {
-  return    PseudoAttacks[BISHOP][s1] & s2
-         ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2])
-         :  PseudoAttacks[ROOK][s1] & s2
-         ? (PseudoAttacks[ROOK][s1] & PseudoAttacks[ROOK][s2])
+  return    PseudoAttacks[BISHOP][s1] & s2 ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2])
+         :  PseudoAttacks[ROOK][s1] & s2 ? (PseudoAttacks[ROOK][s1] & PseudoAttacks[ROOK][s2])
          : 0;
 }
 
@@ -213,8 +211,7 @@ inline Bitboard full_line_bb(Square s1, Square s2) {
 /// If the given squares are not on a same file/rank/diagonal, return 0.
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  return (rough_line_bb(s1, s2) | std::max(s1, s2))
-       & ((AllSquares << s1) ^ (AllSquares << s2));
+  return (rough_line_bb(s1, s2) | std::max(s1, s2)) & ((AllSquares << s1) ^ (AllSquares << s2));
 }
 
 /// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
