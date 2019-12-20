@@ -75,7 +75,6 @@ extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
-extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
@@ -194,13 +193,35 @@ inline Bitboard adjacent_files_bb(Square s) {
   return shift<EAST>(file_bb(s)) | shift<WEST>(file_bb(s));
 }
 
+/// rough_line_bb() return a line between the pieces, but not the piece squares
+
+inline Bitboard rough_line_bb(Square s1, Square s2) {
+  return    PseudoAttacks[BISHOP][s1] & s2
+         ? (PseudoAttacks[BISHOP][s1] & PseudoAttacks[BISHOP][s2])
+         :  PseudoAttacks[ROOK][s1] & s2
+         ? (PseudoAttacks[ROOK][s1] & PseudoAttacks[ROOK][s2])
+         : 0;
+}
+
+/// full_line_bb is a rough line that also includes the piece squares
+
+inline Bitboard full_line_bb(Square s1, Square s2) {
+  return rough_line_bb(s1, s2) | s1 | s2;
+}
 
 /// between_bb() returns squares that are linearly between the given squares
 /// If the given squares are not on a same file/rank/diagonal, return 0.
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  return LineBB[s1][s2] & ( (AllSquares << (s1 +  (s1 < s2)))
-                           ^(AllSquares << (s2 + !(s1 < s2))));
+  return (rough_line_bb(s1, s2) | std::max(s1, s2))
+       & ((AllSquares << s1) ^ (AllSquares << s2));
+}
+
+/// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
+/// straight or on a diagonal line.
+
+inline bool aligned(Square s1, Square s2, Square s3) {
+  return rough_line_bb(s1, s2) & s3;
 }
 
 
@@ -236,14 +257,6 @@ inline Bitboard pawn_attack_span(Color c, Square s) {
 
 inline Bitboard passed_pawn_span(Color c, Square s) {
   return forward_ranks_bb(c, s) & (adjacent_files_bb(s) | file_bb(s));
-}
-
-
-/// aligned() returns true if the squares s1, s2 and s3 are aligned either on a
-/// straight or on a diagonal line.
-
-inline bool aligned(Square s1, Square s2, Square s3) {
-  return LineBB[s1][s2] & s3;
 }
 
 
