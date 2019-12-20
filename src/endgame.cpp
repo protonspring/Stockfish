@@ -665,8 +665,6 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
   Bitboard b = pos.pieces(strongSide, PAWN);
   Square psq1 = pop_lsb(&b);
   Square psq2 = lsb(b);
-  Rank r1 = rank_of(psq1);
-  Rank r2 = rank_of(psq2);
   Square blockSq1, blockSq2;
 
   if (relative_rank(strongSide, psq1) > relative_rank(strongSide, psq2))
