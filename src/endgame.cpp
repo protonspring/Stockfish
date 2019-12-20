@@ -74,12 +74,40 @@ namespace {
     assert(pos.count<PAWN>(strongSide) == 1);
 
     if (file_of(pos.square<PAWN>(strongSide)) >= FILE_E)
-        sq = Square(sq ^ 7); // Mirror SQ_H1 -> SQ_A1
+        sq = Square(int(sq) ^ 7); // Mirror SQ_H1 -> SQ_A1
 
     return strongSide == WHITE ? sq : ~sq;
   }
 
 } // namespace
+
+
+namespace Endgames {
+
+  std::pair<Map<Value>, Map<ScaleFactor>> maps;
+
+  void init() {
+
+    add<KPK>("KPK");
+    add<KNNK>("KNNK");
+    add<KBNK>("KBNK");
+    add<KRKP>("KRKP");
+    add<KRKB>("KRKB");
+    add<KRKN>("KRKN");
+    add<KQKP>("KQKP");
+    add<KQKR>("KQKR");
+    add<KNNKP>("KNNKP");
+
+    add<KNPK>("KNPK");
+    add<KNPKB>("KNPKB");
+    add<KRPKR>("KRPKR");
+    add<KRPKB>("KRPKB");
+    add<KBPKB>("KBPKB");
+    add<KBPKN>("KBPKN");
+    add<KBPPKB>("KBPPKB");
+    add<KRPPKRP>("KRPPKRP");
+  }
+}
 
 
 /// Mate with KX vs K. This function is used to evaluate positions with
@@ -337,7 +365,7 @@ ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
       && pos.count<PAWN>(weakSide) >= 1)
   {
       // Get weakSide pawn that is closest to the home rank
-      Square weakPawnSq = backmost_sq(weakSide, pos.pieces(weakSide, PAWN));
+      Square weakPawnSq = frontmost_sq(strongSide, pos.pieces(weakSide, PAWN));
 
       Square strongKingSq = pos.square<KING>(strongSide);
       Square weakKingSq = pos.square<KING>(weakSide);
@@ -672,7 +700,7 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
         && opposite_colors(ksq, wbsq)
         && (   bbsq == blockSq2
             || (pos.attacks_from<BISHOP>(blockSq2) & pos.pieces(weakSide, BISHOP))
-            || distance(r1, r2) >= 2))
+            || distance<Rank>(psq1, psq2) >= 2))
         return SCALE_FACTOR_DRAW;
 
     else if (   ksq == blockSq2

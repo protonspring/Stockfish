@@ -46,6 +46,7 @@ struct StateInfo {
   Square epSquare;
 
   // Not copied when making a move (will be recomputed anyhow)
+  int repetition;
   Key        key;
   Bitboard   checkersBB;
   Piece      capturedPiece;
@@ -94,18 +95,19 @@ public:
   template<PieceType Pt> int count(Color c) const;
   template<PieceType Pt> int count() const;
   template<PieceType Pt> Square square(Color c) const;
-  int semiopen_file(Color c, File f) const;
+  bool is_on_semiopen_file(Color c, Square s) const;
 
   // Castling
   int castling_rights(Color c) const;
-  bool can_castle(CastlingRight cr) const;
-  bool castling_impeded(CastlingRight cr) const;
-  Square castling_rook_square(CastlingRight cr) const;
+  bool can_castle(CastlingRights cr) const;
+  bool castling_impeded(CastlingRights cr) const;
+  Square castling_rook_square(CastlingRights cr) const;
 
   // Checking
   Bitboard checkers() const;
   Bitboard blockers_for_king(Color c) const;
   Bitboard check_squares(PieceType pt) const;
+  bool is_discovery_check_on_king(Color c, Move m) const;
 
   // Attacks to/from a given square
   Bitboard attackers_to(Square s) const;
@@ -255,11 +257,11 @@ inline Square Position::ep_square() const {
   return st->epSquare;
 }
 
-inline int Position::semiopen_file(Color c, File f) const {
-  return !(pieces(c, PAWN) & file_bb(f));
+inline bool Position::is_on_semiopen_file(Color c, Square s) const {
+  return !(pieces(c, PAWN) & file_bb(s));
 }
 
-inline bool Position::can_castle(CastlingRight cr) const {
+inline bool Position::can_castle(CastlingRights cr) const {
   return st->castlingRights & cr;
 }
 
@@ -267,17 +269,18 @@ inline int Position::castling_rights(Color c) const {
   return st->castlingRights & (c == WHITE ? WHITE_CASTLING : BLACK_CASTLING);
 }
 
-inline bool Position::castling_impeded(CastlingRight cr) const {
+inline bool Position::castling_impeded(CastlingRights cr) const {
   return byTypeBB[ALL_PIECES] & castlingPath[cr];
 }
 
-inline Square Position::castling_rook_square(CastlingRight cr) const {
+inline Square Position::castling_rook_square(CastlingRights cr) const {
   return castlingRookSquare[cr];
 }
 
 template<PieceType Pt>
 inline Bitboard Position::attacks_from(Square s) const {
-  assert(Pt != PAWN);
+  static_assert(Pt != PAWN, "Pawn attacks need color");
+
   return  Pt == BISHOP || Pt == ROOK ? attacks_bb<Pt>(s, byTypeBB[ALL_PIECES])
         : Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
         : PseudoAttacks[Pt][s];
@@ -308,13 +311,17 @@ inline Bitboard Position::check_squares(PieceType pt) const {
   return st->checkSquares[pt];
 }
 
+inline bool Position::is_discovery_check_on_king(Color c, Move m) const {
+  return st->blockersForKing[c] & from_sq(m);
+}
+
 inline bool Position::pawn_passed(Color c, Square s) const {
   return !(pieces(~c, PAWN) & passed_pawn_span(c, s));
 }
 
 inline bool Position::advanced_pawn_push(Move m) const {
   return   type_of(moved_piece(m)) == PAWN
-        && relative_rank(sideToMove, from_sq(m)) > RANK_4;
+        && relative_rank(sideToMove, to_sq(m)) > RANK_5;
 }
 
 inline int Position::pawns_on_same_color_squares(Color c, Square s) const {
@@ -410,7 +417,9 @@ inline void Position::remove_piece(Piece pc, Square s) {
 
 inline void Position::move_piece(Piece pc, Square from, Square to) {
 
-  Bitboard fromTo = square_bb(from) | square_bb(to);
+  // index[from] is not updated and becomes stale. This works as long as index[]
+  // is accessed just by known occupied squares.
+  Bitboard fromTo = from | to;
   byTypeBB[ALL_PIECES] ^= fromTo;
   byTypeBB[type_of(pc)] ^= fromTo;
   byColorBB[color_of(pc)] ^= fromTo;
