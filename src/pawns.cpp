@@ -73,7 +73,6 @@ namespace {
 
     Bitboard neighbours, stoppers, support, phalanx, opposed;
     Bitboard lever, leverPush, blocked;
-    Square s;
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
 
@@ -87,11 +86,9 @@ namespace {
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
-    Bitboard pawns = ourPawns;
-    while(pawns)
+    for(Bitboard pawns = ourPawns; pawns;)
     {
         Square s = pop_lsb(&pawns);
-        File f = file_of(s);
         Rank r = relative_rank(Us, s);
 
         assert(pos.piece_on(s) == make_piece(Us, PAWN));

@@ -261,8 +261,7 @@ namespace {
 
     attackedBy[Us][Pt] = 0;
 
-    Bitboard p = pos.pieces(Us, Pt);
-    while(p)
+    for (Bitboard p = pos.pieces(Us, Pt); p; )
     {
         // Find attacked squares, including x-ray attacks for bishops and rooks
         Square s = pop_lsb(&p);

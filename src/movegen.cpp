@@ -186,9 +186,7 @@ namespace {
 
     static_assert(Pt != KING && Pt != PAWN, "Unsupported piece type in generate_moves()");
 
-
-    Bitboard p = pos.pieces(us, Pt);
-    while(p)
+    for(Bitboard p = pos.pieces(us, Pt); p;)
     {
         Square from = pop_lsb(&p);
         if (Checks)
