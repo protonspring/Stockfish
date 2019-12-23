@@ -286,7 +286,7 @@ namespace {
 
         // bonus for supporting own king ring
         if (b & kingRing[Us])
-            score += make_score(5,0);
+            score += make_score(0,5);
 
         int mob = popcount(b & mobilityArea[Us]);
 
