@@ -284,6 +284,10 @@ namespace {
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
+        // bonus for supporting own king ring
+        if (b & kingRing[Us])
+            score += make_score(5,0);
+
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
