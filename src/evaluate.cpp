@@ -451,7 +451,7 @@ namespace {
                  +  69 * kingAttacksCount[Them]
                  +   3 * kingFlankAttack * kingFlankAttack / 8
                  +       mg_value(mobility[Them] - mobility[Us])
-                 +  50 * (!pos.count<PAWN>(Us) && pos.count<PAWN>(Them))
+                 +  25 * (!pos.count<PAWN>(Us) && pos.count<PAWN>(Them))
                  - 873 * !pos.count<QUEEN>(Them)
                  - 100 * bool(attackedBy[Us][KNIGHT] & attackedBy[Us][KING])
                  -   6 * mg_value(score) / 8
