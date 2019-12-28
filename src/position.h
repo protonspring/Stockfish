@@ -265,7 +265,7 @@ inline Square Position::ep_square() const {
 }
 
 inline bool Position::is_on_semiopen_file(Color c, Square s) const {
-  return !(pieces(c, PAWN) & forward_file_bb(s));
+  return !(pieces(c, PAWN) & (forward_file_bb(c, s)));
 }
 
 inline bool Position::can_castle(CastlingRights cr) const {
