@@ -170,9 +170,8 @@ constexpr Bitboard shift(Bitboard b) {
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
 /// from the squares in the given bitboard.
 
-template<Color C>
-constexpr Bitboard pawn_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
+constexpr Bitboard pawn_attacks_bb(Color c, Bitboard b) {
+  return c == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
