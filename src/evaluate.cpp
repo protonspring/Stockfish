@@ -298,7 +298,7 @@ namespace {
 
                 //More bonus for blocking rooks or queens
                 if (pos.pieces(Them, ROOK, QUEEN) & forward_file_bb(Us, s))
-                    score += Outpost / 3;
+                    score += Outpost / 5;
             }
 
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
