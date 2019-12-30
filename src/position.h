@@ -83,8 +83,7 @@ public:
   const std::string fen() const;
 
   // Position representation
-  Bitboard pieces() const;
-  Bitboard pieces(PieceType pt) const;
+  Bitboard pieces(PieceType pt = ALL_PIECES) const;
   Bitboard pieces(PieceType pt1, PieceType pt2) const;
   Bitboard pieces(Color c) const;
   Bitboard pieces(Color c, PieceType pt) const;
@@ -207,20 +206,16 @@ inline Color Position::side_to_move() const {
   return sideToMove;
 }
 
-inline bool Position::empty(Square s) const {
-  return board[s] == NO_PIECE;
-}
-
 inline Piece Position::piece_on(Square s) const {
   return board[s];
 }
 
-inline Piece Position::moved_piece(Move m) const {
-  return board[from_sq(m)];
+inline bool Position::empty(Square s) const {
+  return piece_on(s) == NO_PIECE;
 }
 
-inline Bitboard Position::pieces() const {
-  return byTypeBB[ALL_PIECES];
+inline Piece Position::moved_piece(Move m) const {
+  return piece_on(from_sq(m));
 }
 
 inline Bitboard Position::pieces(PieceType pt) const {
@@ -228,7 +223,7 @@ inline Bitboard Position::pieces(PieceType pt) const {
 }
 
 inline Bitboard Position::pieces(PieceType pt1, PieceType pt2) const {
-  return byTypeBB[pt1] | byTypeBB[pt2];
+  return pieces(pt1) | pieces(pt2);
 }
 
 inline Bitboard Position::pieces(Color c) const {
@@ -236,11 +231,11 @@ inline Bitboard Position::pieces(Color c) const {
 }
 
 inline Bitboard Position::pieces(Color c, PieceType pt) const {
-  return byColorBB[c] & byTypeBB[pt];
+  return pieces(c) & pieces(pt);
 }
 
 inline Bitboard Position::pieces(Color c, PieceType pt1, PieceType pt2) const {
-  return byColorBB[c] & (byTypeBB[pt1] | byTypeBB[pt2]);
+  return pieces(c) & (pieces(pt1) | pieces(pt2));
 }
 
 template<PieceType Pt> inline int Position::count(Color c) const {
@@ -248,7 +243,7 @@ template<PieceType Pt> inline int Position::count(Color c) const {
 }
 
 template<PieceType Pt> inline int Position::count() const {
-  return pieceCount[make_piece(WHITE, Pt)] + pieceCount[make_piece(BLACK, Pt)];
+  return count<Pt>(WHITE) + count<Pt>(BLACK);
 }
 
 template<PieceType Pt> inline const Square* Position::squares(Color c) const {
