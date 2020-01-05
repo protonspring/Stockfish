@@ -24,7 +24,7 @@
 #include "bitboard.h"
 #include "misc.h"
 
-uint8_t PopCnt16[1 << 16];
+uint8_t PopCnt16[HasPopCnt?1:1<< 16];
 uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 Bitboard SquareBB[SQUARE_NB];
