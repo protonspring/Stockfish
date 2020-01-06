@@ -72,9 +72,9 @@ namespace {
     constexpr Direction Up   = pawn_push(Us);
 
     Bitboard neighbours, stoppers, support, phalanx, opposed;
-    Bitboard lever, leverPush, blocked;
+    Bitboard lever, leverPush, blocked, ahead;
     Square s;
-    bool backward, passed, doubled;
+    bool backward, passed, doubled, alone;
     Score score = SCORE_ZERO;
     const Square* pl = pos.squares<PAWN>(Us);
 
@@ -104,6 +104,8 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(s);
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
+        ahead      = neighbours & rank_bb(s + Up);
+        alone      = !(support | phalanx | ahead);
 
         // A pawn is backward when it is behind all pawns of the same color on
         // the adjacent files and cannot safely advance.
@@ -149,6 +151,9 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if (alone)
+            score -=   make_score(2,8);
     }
 
     return score;
