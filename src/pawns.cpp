@@ -153,7 +153,7 @@ namespace {
                      + WeakLever * more_than_one(lever);
 
         if (alone)
-            score -=   make_score(2,8);
+            score -=   make_score(7,0);
     }
 
     return score;
