@@ -112,6 +112,7 @@ namespace {
     ksq[BLACK] = Square((idx >>  6) & 0x3F);
     us         = Color ((idx >> 12) & 0x01);
     psq        = make_square(File((idx >> 13) & 0x3), Rank(RANK_7 - ((idx >> 15) & 0x7)));
+    Square queenSq = make_square(file_of(psq), RANK_8);
 
     // Check if two pieces are on the same square or if a king can be captured
     if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
@@ -120,12 +121,9 @@ namespace {
         || (us == WHITE && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
         result = INVALID;
 
-    // Immediate win if a pawn can be promoted without getting captured
-    else if (   us == WHITE
-             && rank_of(psq) == RANK_7
-             && ksq[us] != psq + NORTH
-             && (    distance(ksq[~us], psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq[us]] & (psq + NORTH))))
+    //WIN: black king can't catch the pawn OR white king defends it's promotion
+    else if (((distance(ksq[BLACK],queenSq) - (us == BLACK)) > distance(psq, queenSq))
+           || !(forward_file_bb(WHITE, psq) & ~PseudoAttacks[KING][ksq[WHITE]]  ))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
