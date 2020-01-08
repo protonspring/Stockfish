@@ -76,6 +76,7 @@ extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
+extern Bitboard BetweenBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
@@ -172,8 +173,7 @@ constexpr Bitboard shift(Bitboard b) {
 
 template<Color C>
 constexpr Bitboard pawn_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
+  return shift<pawn_push(C) + WEST>(b) | shift<pawn_push(C) + EAST>(b);
 }
 
 
@@ -182,8 +182,7 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
 
 template<Color C>
 constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) & shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
+  return shift<pawn_push(C) + WEST>(b) & shift<pawn_push(C) + EAST>(b);
 }
 
 
@@ -199,8 +198,9 @@ inline Bitboard adjacent_files_bb(Square s) {
 /// If the given squares are not on a same file/rank/diagonal, return 0.
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  return LineBB[s1][s2] & ( (AllSquares << (s1 +  (s1 < s2)))
-                           ^(AllSquares << (s2 + !(s1 < s2))));
+  //return LineBB[s1][s2] & ( (AllSquares << (s1 +  (s1 < s2)))
+                           //^(AllSquares << (s2 + !(s1 < s2))));
+  return BetweenBB[s1][s2];
 }
 
 
