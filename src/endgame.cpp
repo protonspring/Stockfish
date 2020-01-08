@@ -174,18 +174,34 @@ Value Endgame<KPK>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, VALUE_ZERO, 1));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
 
-  // Assume strongSide is white and the pawn is on files A-D
-  Square wksq = normalize(pos, strongSide, pos.square<KING>(strongSide));
-  Square bksq = normalize(pos, strongSide, pos.square<KING>(weakSide));
-  Square psq  = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
+  Color stm = pos.side_to_move();
+  Direction up = pawn_push(stm);
+  Square strongKsq = pos.square<KING>(strongSide);
+  Square weakKsq = pos.square<KING>(weakSide);
+  Square strongPsq = pos.square<PAWN>(strongSide);
+  //Bitboard notEdges = AllSquares ^ FileABB ^ FileHBB;
 
-  Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
-
-  if (!Bitbases::probe(wksq, psq, bksq, us))
+  // Weak king can take the pawn
+  if ((stm == weakSide) && (PseudoAttacks[KING][weakKsq] & strongPsq) && !(PseudoAttacks[KING][strongKsq] & strongPsq))
       return VALUE_DRAW;
 
-  Value result = VALUE_KNOWN_WIN + PawnValueEg + Value(rank_of(psq));
+  // some correspondence draws
+  if ((stm == weakSide) && ((strongPsq + up) == weakKsq) && ((strongPsq - up) == strongKsq))
+      return VALUE_DRAW;
 
+  if (stm == strongSide)
+  {
+      if (((strongPsq + up) == weakKsq) &&
+         (((strongPsq - (up + WEST) == strongKsq) || ((strongPsq + (up + EAST) == strongKsq)))))
+          return VALUE_DRAW;
+
+      if ((((strongKsq + EAST) == strongPsq) || ((strongKsq + WEST) == strongPsq))
+              && ((strongKsq + up + up) == weakKsq))
+          return VALUE_DRAW;
+  }
+
+  //Everything else wins.
+  Value result = VALUE_KNOWN_WIN + PawnValueEg + Value(relative_rank(strongSide, strongPsq));
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
@@ -790,17 +806,21 @@ ScaleFactor Endgame<KPKP>::operator()(const Position& pos) const {
 
   // Assume strongSide is white and the pawn is on files A-D
   Square wksq = normalize(pos, strongSide, pos.square<KING>(strongSide));
+  Square wpsq = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
   Square bksq = normalize(pos, strongSide, pos.square<KING>(weakSide));
-  Square psq  = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
+  Square bpsq = normalize(pos, strongSide, pos.square<PAWN>(weakSide));
+  Color stm = pos.side_to_move();
 
-  Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
+  // Identify some wins
 
-  // If the pawn has advanced to the fifth rank or further, and is not a
-  // rook pawn, it's too dangerous to assume that it's at least a draw.
-  if (rank_of(psq) >= RANK_5 && file_of(psq) != FILE_A)
+  if ((stm == weakSide) && (forward_ranks_bb(weakSide, wpsq) & bksq)
+                        && (relative_rank(strongSide, wpsq) >= relative_rank(weakSide, bpsq)))
       return SCALE_FACTOR_NONE;
 
-  // Probe the KPK bitbase with the weakest side's pawn removed. If it's a draw,
-  // it's probably at least a draw even with the pawn.
-  return Bitbases::probe(wksq, psq, bksq, us) ? SCALE_FACTOR_NONE : SCALE_FACTOR_DRAW;
+  if ((stm == strongSide) && (forward_ranks_bb(strongSide, wpsq) & wksq)
+                          && (relative_rank(weakSide, bpsq) >= relative_rank(strongSide, wpsq)))
+      return SCALE_FACTOR_NONE;
+
+  // Everything else is a draw
+  return SCALE_FACTOR_DRAW;
 }
