@@ -812,7 +812,6 @@ ScaleFactor Endgame<KPKP>::operator()(const Position& pos) const {
   Color stm = pos.side_to_move();
 
   // Identify some wins
-
   if ((stm == weakSide) && (forward_ranks_bb(weakSide, wpsq) & bksq)
                         && (relative_rank(strongSide, wpsq) >= relative_rank(weakSide, bpsq)))
       return SCALE_FACTOR_NONE;
