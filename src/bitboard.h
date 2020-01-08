@@ -76,6 +76,7 @@ extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
+extern Bitboard ForwardRanksBB[COLOR_NB][RANK_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
@@ -209,8 +210,7 @@ inline Bitboard between_bb(Square s1, Square s2) {
 /// forward_ranks_bb(BLACK, SQ_D3) will return the 16 squares on ranks 1 and 2.
 
 inline Bitboard forward_ranks_bb(Color c, Square s) {
-  return c == WHITE ? ~Rank1BB << 8 * (rank_of(s) - RANK_1)
-                    : ~Rank8BB >> 8 * (RANK_8 - rank_of(s));
+  return ForwardRanksBB[c][rank_of(s)];
 }
 
 
