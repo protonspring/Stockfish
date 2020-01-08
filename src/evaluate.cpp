@@ -705,7 +705,7 @@ namespace {
     int outflanking =  distance<File>(pos.square<KING>(WHITE), pos.square<KING>(BLACK))
                      - distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
 
-    bool infiltration = distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK)) < 5;
+    int infiltration = 2 * distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
 
     bool pawnsOnBothFlanks =   (pos.pieces(PAWN) & QueenSide)
                             && (pos.pieces(PAWN) & KingSide);
@@ -718,7 +718,7 @@ namespace {
     int complexity =   9 * pe->passed_count()
                     + 11 * pos.count<PAWN>()
                     +  9 * outflanking
-                    + 12 * infiltration
+                    +      infiltration
                     + 21 * pawnsOnBothFlanks
                     + 51 * !pos.non_pawn_material()
                     - 43 * almostUnwinnable
