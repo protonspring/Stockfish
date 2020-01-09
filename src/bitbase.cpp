@@ -60,9 +60,9 @@ namespace {
     KPKPosition() = default;
     explicit KPKPosition(unsigned idx);
     operator Result() const { return result; }
-    Result classify(Color Us, const std::vector<KPKPosition>& db);
+    Result classify(Color sideToMove, const std::vector<KPKPosition>& db);
 
-    Color us;
+    Color stm;
     Square ksq[COLOR_NB], psq;
     Result result;
   };
@@ -70,11 +70,11 @@ namespace {
 } // namespace
 
 
-bool Bitbases::probe(Square wksq, Square wpsq, Square bksq, Color us) {
+bool Bitbases::probe(Square wksq, Square wpsq, Square bksq, Color sideToMove) {
 
   assert(file_of(wpsq) <= FILE_D);
 
-  unsigned idx = index(us, bksq, wksq, wpsq);
+  unsigned idx = index(sideToMove, bksq, wksq, wpsq);
   return KPKBitbase[idx / 32] & (1 << (idx & 0x1F));
 }
 
@@ -92,8 +92,7 @@ void Bitbases::init() {
   // changed to either wins or draws (15 cycles needed).
   while (repeat)
       for (repeat = idx = 0; idx < MAX_INDEX; ++idx)
-          //repeat |= (db[idx] == UNKNOWN && db[idx].classify(db) != UNKNOWN);
-          repeat |= (db[idx] == UNKNOWN && db[idx].classify(db[idx].us, db) != UNKNOWN);
+          repeat |= (db[idx] == UNKNOWN && db[idx].classify(db[idx].stm, db) != UNKNOWN);
 
   // Map 32 results into one KPKBitbase[] entry
   for (idx = 0; idx < MAX_INDEX; ++idx)
@@ -108,28 +107,28 @@ namespace {
 
     ksq[WHITE] = Square((idx >>  0) & 0x3F);
     ksq[BLACK] = Square((idx >>  6) & 0x3F);
-    us         = Color ((idx >> 12) & 0x01);
+    stm        = Color ((idx >> 12) & 0x01);
     psq        = make_square(File((idx >> 13) & 0x3), Rank(RANK_7 - ((idx >> 15) & 0x7)));
 
     // Check if two pieces are on the same square or if a king can be captured
     if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
         || ksq[WHITE] == psq
         || ksq[BLACK] == psq
-        || (us == WHITE && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
+        || (stm == WHITE && (PawnAttacks[WHITE][psq] & ksq[BLACK])))
         result = INVALID;
 
     // Immediate win if a pawn can be promoted without getting captured
-    else if (   us == WHITE
+    else if (   stm == WHITE
              && rank_of(psq) == RANK_7
-             && ksq[us] != psq + NORTH
-             && (    distance(ksq[~us], psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq[us]] & (psq + NORTH))))
+             && ksq[stm] != psq + NORTH
+             && (    distance(ksq[~stm], psq + NORTH) > 1
+                 || (PseudoAttacks[KING][ksq[stm]] & (psq + NORTH))))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
-    else if (   us == BLACK
-             && (  !(PseudoAttacks[KING][ksq[us]] & ~(PseudoAttacks[KING][ksq[~us]] | PawnAttacks[~us][psq]))
-                 || (PseudoAttacks[KING][ksq[us]] & psq & ~PseudoAttacks[KING][ksq[~us]])))
+    else if (   stm == BLACK
+             && (  !(PseudoAttacks[KING][ksq[stm]] & ~(PseudoAttacks[KING][ksq[~stm]] | PawnAttacks[~stm][psq]))
+                 || (PseudoAttacks[KING][ksq[stm]] & psq & ~PseudoAttacks[KING][ksq[~stm]])))
         result = DRAW;
 
     // Position will be classified later
@@ -137,7 +136,7 @@ namespace {
         result = UNKNOWN;
   }
 
-  Result KPKPosition::classify(Color Us, const std::vector<KPKPosition>& db) {
+  Result KPKPosition::classify(Color sideToMove, const std::vector<KPKPosition>& db) {
 
     // White to move: If one move leads to a position classified as WIN, the result
     // of the current position is WIN. If all moves lead to positions classified
@@ -149,9 +148,10 @@ namespace {
     // as WIN, the position is classified as WIN, otherwise the current position is
     // classified as UNKNOWN.
 
-    Color  Them = (Us == WHITE ? BLACK : WHITE);
-    Result Good = (Us == WHITE ? WIN   : DRAW);
-    Result Bad  = (Us == WHITE ? DRAW  : WIN);
+    const Color    Us = sideToMove;
+    const Color  Them = ~sideToMove;
+    const Result Good = (Us == WHITE ? WIN   : DRAW);
+    const Result Bad  = (Us == WHITE ? DRAW  : WIN);
 
     Result r = INVALID;
     Bitboard b = PseudoAttacks[KING][ksq[Us]];
