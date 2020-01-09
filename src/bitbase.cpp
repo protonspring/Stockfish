@@ -21,6 +21,7 @@
 #include <cassert>
 #include <numeric>
 #include <vector>
+#include <iostream>
 
 #include "bitboard.h"
 #include "types.h"
@@ -60,10 +61,11 @@ namespace {
     KPKPosition() = default;
     explicit KPKPosition(unsigned idx);
     operator Result() const { return result; }
-    Result classify(const std::vector<KPKPosition>& db)
-    { return us == WHITE ? classify<WHITE>(db) : classify<BLACK>(db); }
+    //Result classify(Color Us, const std::vector<KPKPosition>& db)
+    //{ return us == WHITE ? classify<WHITE>(db) : classify<BLACK>(db); }
+    //{ return classify(Us, db); }
 
-    template<Color Us> Result classify(const std::vector<KPKPosition>& db);
+    Result classify(Color Us, const std::vector<KPKPosition>& db);
 
     Color us;
     Square ksq[COLOR_NB], psq;
@@ -95,7 +97,8 @@ void Bitbases::init() {
   // changed to either wins or draws (15 cycles needed).
   while (repeat)
       for (repeat = idx = 0; idx < MAX_INDEX; ++idx)
-          repeat |= (db[idx] == UNKNOWN && db[idx].classify(db) != UNKNOWN);
+          //repeat |= (db[idx] == UNKNOWN && db[idx].classify(db) != UNKNOWN);
+          repeat |= (db[idx] == UNKNOWN && db[idx].classify(db[idx].us, db) != UNKNOWN);
 
   // Map 32 results into one KPKBitbase[] entry
   for (idx = 0; idx < MAX_INDEX; ++idx)
@@ -139,8 +142,7 @@ namespace {
         result = UNKNOWN;
   }
 
-  template<Color Us>
-  Result KPKPosition::classify(const std::vector<KPKPosition>& db) {
+  Result KPKPosition::classify(Color Us, const std::vector<KPKPosition>& db) {
 
     // White to move: If one move leads to a position classified as WIN, the result
     // of the current position is WIN. If all moves lead to positions classified
@@ -152,9 +154,9 @@ namespace {
     // as WIN, the position is classified as WIN, otherwise the current position is
     // classified as UNKNOWN.
 
-    constexpr Color  Them = (Us == WHITE ? BLACK : WHITE);
-    constexpr Result Good = (Us == WHITE ? WIN   : DRAW);
-    constexpr Result Bad  = (Us == WHITE ? DRAW  : WIN);
+    Color  Them = (Us == WHITE ? BLACK : WHITE);
+    Result Good = (Us == WHITE ? WIN   : DRAW);
+    Result Bad  = (Us == WHITE ? DRAW  : WIN);
 
     Result r = INVALID;
     Bitboard b = PseudoAttacks[KING][ksq[Us]];
