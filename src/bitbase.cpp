@@ -124,8 +124,7 @@ namespace {
     else if (   us == WHITE
              && rank_of(psq) == RANK_7
              && ksq[us] != psq + NORTH
-             && (    distance(ksq[~us], psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq[us]] & (psq + NORTH))))
+             && (PseudoAttacks[KING][ksq[us]] & (psq + NORTH)))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
