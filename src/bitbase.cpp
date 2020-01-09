@@ -43,8 +43,8 @@ namespace {
   // bit    12: side to move (WHITE or BLACK)
   // bit 13-14: white pawn file (from FILE_A to FILE_D)
   // bit 15-17: white pawn RANK_7 - rank (from RANK_7 - RANK_7 to RANK_7 - RANK_2)
-  unsigned index(Color us, Square bksq, Square wksq, Square psq) {
-    return int(wksq) | (bksq << 6) | (us << 12) | (file_of(psq) << 13) | ((RANK_7 - rank_of(psq)) << 15);
+  unsigned index(Color sideToMove, Square bksq, Square wksq, Square psq) {
+    return int(wksq) | (bksq << 6) | (sideToMove << 12) | (file_of(psq) << 13) | ((RANK_7 - rank_of(psq)) << 15);
   }
 
   enum Result {
@@ -120,15 +120,15 @@ namespace {
     // Immediate win if a pawn can be promoted without getting captured
     else if (   stm == WHITE
              && rank_of(psq) == RANK_7
-             && ksq[stm] != psq + NORTH
-             && (    distance(ksq[~stm], psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq[stm]] & (psq + NORTH))))
+             && ksq[WHITE] != psq + NORTH
+             && (    distance(ksq[BLACK], psq + NORTH) > 1
+                 || (PseudoAttacks[KING][ksq[WHITE]] & (psq + NORTH))))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
     else if (   stm == BLACK
-             && (  !(PseudoAttacks[KING][ksq[stm]] & ~(PseudoAttacks[KING][ksq[~stm]] | PawnAttacks[~stm][psq]))
-                 || (PseudoAttacks[KING][ksq[stm]] & psq & ~PseudoAttacks[KING][ksq[~stm]])))
+             && (  !(PseudoAttacks[KING][ksq[BLACK]] & ~(PseudoAttacks[KING][ksq[WHITE]] | PawnAttacks[WHITE][psq]))
+                 || (PseudoAttacks[KING][ksq[BLACK]] & psq & ~PseudoAttacks[KING][ksq[WHITE]])))
         result = DRAW;
 
     // Position will be classified later
@@ -148,30 +148,30 @@ namespace {
     // as WIN, the position is classified as WIN, otherwise the current position is
     // classified as UNKNOWN.
 
-    const Color    Us = sideToMove;
-    const Color  Them = ~sideToMove;
-    const Result Good = (Us == WHITE ? WIN   : DRAW);
-    const Result Bad  = (Us == WHITE ? DRAW  : WIN);
+    const Color    us = sideToMove;
+    const Color  them = ~sideToMove;
+    const Result good = (us == WHITE ? WIN   : DRAW);
+    const Result  bad = (us == WHITE ? DRAW  : WIN);
 
     Result r = INVALID;
-    Bitboard b = PseudoAttacks[KING][ksq[Us]];
+    Bitboard b = PseudoAttacks[KING][ksq[us]];
 
     while (b)
-        r |= Us == WHITE ? db[index(Them, ksq[Them]  , pop_lsb(&b), psq)]
-                         : db[index(Them, pop_lsb(&b), ksq[Them]  , psq)];
+        r |= us == WHITE ? db[index(them, ksq[them]  , pop_lsb(&b), psq)]
+                         : db[index(them, pop_lsb(&b), ksq[them]  , psq)];
 
-    if (Us == WHITE)
+    if (us == WHITE)
     {
         if (rank_of(psq) < RANK_7)      // Single push
-            r |= db[index(Them, ksq[Them], ksq[Us], psq + NORTH)];
+            r |= db[index(them, ksq[them], ksq[us], psq + NORTH)];
 
         if (   rank_of(psq) == RANK_2   // Double push
-            && psq + NORTH != ksq[Us]
-            && psq + NORTH != ksq[Them])
-            r |= db[index(Them, ksq[Them], ksq[Us], psq + NORTH + NORTH)];
+            && psq + NORTH != ksq[us]
+            && psq + NORTH != ksq[them])
+            r |= db[index(them, ksq[them], ksq[us], psq + NORTH + NORTH)];
     }
 
-    return result = r & Good  ? Good  : r & UNKNOWN ? UNKNOWN : Bad;
+    return result = r & good ? good : r & UNKNOWN ? UNKNOWN : bad;
   }
 
 } // namespace
