@@ -21,7 +21,6 @@
 #include <cassert>
 #include <numeric>
 #include <vector>
-#include <iostream>
 
 #include "bitboard.h"
 #include "types.h"
@@ -61,10 +60,6 @@ namespace {
     KPKPosition() = default;
     explicit KPKPosition(unsigned idx);
     operator Result() const { return result; }
-    //Result classify(Color Us, const std::vector<KPKPosition>& db)
-    //{ return us == WHITE ? classify<WHITE>(db) : classify<BLACK>(db); }
-    //{ return classify(Us, db); }
-
     Result classify(Color Us, const std::vector<KPKPosition>& db);
 
     Color us;
