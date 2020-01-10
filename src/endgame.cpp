@@ -789,32 +789,54 @@ Value Endgame<KPKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, VALUE_ZERO, 1));
   assert(verify_material(pos, weakSide,   VALUE_ZERO, 1));
 
-  Color stm = pos.side_to_move();
-  Square ksq[COLOR_NB] = {pos.square<KING>(WHITE), pos.square<KING>(BLACK) };
-  Square psq[COLOR_NB] = {pos.square<PAWN>(WHITE), pos.square<PAWN>(BLACK) };
-  Square queenSq[COLOR_NB] = {make_square(file_of(psq[WHITE]), RANK_8),
+  //if the pawns don't block each other
+  if (!(passed_pawn_span(WHITE, pos.square<PAWN>(WHITE)) & pos.square<PAWN>(BLACK)))
+  {
+    Color stm = pos.side_to_move();
+    Square ksq[COLOR_NB] = {pos.square<KING>(WHITE), pos.square<KING>(BLACK) };
+    Square psq[COLOR_NB] = {pos.square<PAWN>(WHITE), pos.square<PAWN>(BLACK) };
+    Square queenSq[COLOR_NB] = {make_square(file_of(psq[WHITE]), RANK_8),
                               make_square(file_of(psq[BLACK]), RANK_1) };
 
-  int movesToPromote[COLOR_NB] = {100, 100};
+    int movesToPromote[COLOR_NB] = {100, 100};
 
-  for (Color c : {WHITE, BLACK})
-  {
-      // pawn can promote if enemy king can't catch it
-      if ((distance(ksq[~c], queenSq[c]) - (stm == ~c)) > distance(psq[c], queenSq[c]))
-          movesToPromote[c] = distance(psq[c], queenSq[c]);
+    for (Color c : {WHITE, BLACK})
+    {
+        // pawn can promote if enemy king can't catch it
+        if ((distance(ksq[~c], queenSq[c]) - (stm == ~c)) > distance(psq[c], queenSq[c]))
+            movesToPromote[c] = distance(psq[c], queenSq[c]);
+  
+        // Pawn can promote if friendly king protects the whole promote path.
+        else if (!((forward_file_bb(c, psq[c]) | psq[c]) & ~PseudoAttacks[KING][ksq[c]]))
+            movesToPromote[c] = distance(psq[c], queenSq[c]);
+    }
 
-      // Pawn can promote if friendly king protects the whole promote path.
-      else if (!((forward_file_bb(c, psq[c]) | psq[c]) & ~PseudoAttacks[KING][ksq[c]]))
-          movesToPromote[c] = distance(psq[c], queenSq[c]);
+    // If one side can promote first (a whole ply ahead, not just a move)
+    if (stm == WHITE && movesToPromote[WHITE] < movesToPromote[BLACK])
+        return QueenValueEg + PawnValueEg + Value(rank_of(psq[WHITE]));
+
+    if (stm == BLACK && movesToPromote[BLACK] < movesToPromote[WHITE])
+        return -QueenValueEg - PawnValueEg + Value(rank_of(psq[BLACK]));
   }
 
-  // If one side can promote first (a whole ply ahead, not just a move)
-  if (stm == WHITE && movesToPromote[WHITE] < movesToPromote[BLACK])
-      return QueenValueEg + PawnValueEg + Value(rank_of(psq[WHITE]));
+  // Default Analysis
+  // Assume strongSide is white and the pawn is on files A-D
+  Square wksq = normalize(pos, strongSide, pos.square<KING>(strongSide));
+  Square bksq = normalize(pos, strongSide, pos.square<KING>(weakSide));
+  Square wpsq  = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
 
-  if (stm == BLACK && movesToPromote[BLACK] < movesToPromote[WHITE])
-      return -QueenValueEg - PawnValueEg + Value(rank_of(psq[BLACK]));
+  Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
 
-  return stm == WHITE ? VALUE_DRAW + PawnValueEg + Value(rank_of(psq[WHITE]))
-                      : VALUE_DRAW - PawnValueEg + Value(rank_of(psq[BLACK]));
+  // If the pawn has advanced to the fifth rank or further, and is not a
+  // rook pawn, it's too dangerous to assume that it's at least a draw.
+  //if (rank_of(wpsq) >= RANK_5 && file_of(wpsq) != FILE_A)
+      //return SCALE_FACTOR_NONE;
+
+  // Probe the KPK bitbase with the weakest side's pawn removed. If it's a draw,
+  // it's probably at least a draw even with the pawn.
+  if (!Bitbases::probe(wksq, wpsq, bksq, us))
+      return VALUE_DRAW;
+
+  Value result = QueenValueEg + PawnValueEg + Value(rank_of(wpsq));
+  return WHITE == us ? result : -result;
 }
