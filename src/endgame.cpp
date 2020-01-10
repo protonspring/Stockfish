@@ -810,10 +810,10 @@ Value Endgame<KPKP>::operator()(const Position& pos) const {
 
   // If one side can promote first (a whole ply ahead, not just a move)
   if (stm == WHITE && movesToPromote[WHITE] < movesToPromote[BLACK])
-      return VALUE_DRAW + PawnValueEg + Value(rank_of(psq[WHITE]));
+      return VALUE_KNOWN_WIN + PawnValueEg + Value(rank_of(psq[WHITE]));
 
   if (stm == BLACK && movesToPromote[BLACK] < movesToPromote[WHITE])
-      return VALUE_DRAW - PawnValueEg + Value(rank_of(psq[WHITE]));
+      return -VALUE_KNOWN_WIN - PawnValueEg + Value(rank_of(psq[WHITE]));
 
   return VALUE_DRAW;
 }
