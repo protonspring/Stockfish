@@ -61,10 +61,10 @@ namespace {
     explicit KPKPosition(unsigned idx);
     operator Result() const { return result; }
     Result classify(const std::vector<KPKPosition>& db);
-    Color stm() { return Color((my_index >> 12) & 0x01); };
-    Square  my_psq() { return make_square(File((my_index >> 13) & 0x3),
-                              Rank(RANK_7 - ((my_index >> 15) & 0x7))); };
-    Square ksq(Color c) { return Square((my_index >> (6 * c)) & 0x3F); }
+    Color stm() const { return Color((my_index >> 12) & 0x01); };
+    Square  psq() const { return make_square(File((my_index >> 13) & 0x3),
+                           Rank(RANK_7 - ((my_index >> 15) & 0x7))); };
+    Square ksq(Color c) const { return Square((my_index >> (6 * c)) & 0x3F); }
 
     Result result;
     unsigned my_index;
@@ -109,29 +109,26 @@ namespace {
   KPKPosition::KPKPosition(unsigned idx) {
 
     my_index = idx;
-    //Square wksq = my_ksq(WHITE);
-    //Square bksq = my_ksq(BLACK);
-    Square psq        = my_psq();
 
     // Check if two pieces are on the same square or if a king can be captured
     if (   distance(ksq(WHITE), ksq(BLACK)) <= 1
-        || ksq(WHITE) == psq
-        || ksq(BLACK) == psq
-        || (stm() == WHITE && (PawnAttacks[WHITE][psq] & ksq(BLACK))))
+        || ksq(WHITE) == psq()
+        || ksq(BLACK) == psq()
+        || (stm() == WHITE && (PawnAttacks[WHITE][psq()] & ksq(BLACK))))
         result = INVALID;
 
     // Immediate win if a pawn can be promoted without getting captured
     else if (   stm() == WHITE
-             && rank_of(psq) == RANK_7
-             && ksq(WHITE) != psq + NORTH
-             && (    distance(ksq(BLACK), psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq(WHITE)] & (psq + NORTH))))
+             && rank_of(psq()) == RANK_7
+             && ksq(WHITE) != psq() + NORTH
+             && (    distance(ksq(BLACK), psq() + NORTH) > 1
+                 || (PseudoAttacks[KING][ksq(WHITE)] & (psq() + NORTH))))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
     else if (   stm() == BLACK
-             && (  !(PseudoAttacks[KING][ksq(BLACK)] & ~(PseudoAttacks[KING][ksq(WHITE)] | PawnAttacks[~stm()][psq]))
-                 || (PseudoAttacks[KING][ksq(BLACK)] & psq & ~PseudoAttacks[KING][ksq(WHITE)])))
+             && (  !(PseudoAttacks[KING][ksq(BLACK)] & ~(PseudoAttacks[KING][ksq(WHITE)] | PawnAttacks[~stm()][psq()]))
+                 || (PseudoAttacks[KING][ksq(BLACK)] & psq() & ~PseudoAttacks[KING][ksq(WHITE)])))
         result = DRAW;
 
     // Position will be classified later
@@ -152,24 +149,23 @@ namespace {
     // classified as UNKNOWN.
     const Result Good = (stm() == WHITE ? WIN   : DRAW);
     const Result Bad  = (stm() == WHITE ? DRAW  : WIN);
-    const Square psq = my_psq();
 
     Result r = INVALID;
     Bitboard b = PseudoAttacks[KING][ksq(stm())];
 
     while (b)
-        r |= stm() == WHITE ? db[index(BLACK, ksq(BLACK) , pop_lsb(&b), psq)]
-                          : db[index(WHITE, pop_lsb(&b),  ksq(WHITE), psq)];
+        r |= stm() == WHITE ? db[index(BLACK, ksq(BLACK) , pop_lsb(&b), psq())]
+                          : db[index(WHITE, pop_lsb(&b),  ksq(WHITE), psq())];
 
     if (stm() == WHITE)
     {
-        if (rank_of(psq) < RANK_7)      // Single push
-            r |= db[index(BLACK, ksq(BLACK), ksq(WHITE), psq + NORTH)];
+        if (rank_of(psq()) < RANK_7)      // Single push
+            r |= db[index(BLACK, ksq(BLACK), ksq(WHITE), psq() + NORTH)];
 
-        if (   rank_of(psq) == RANK_2   // Double push
-            && psq + NORTH != ksq(WHITE)
-            && psq + NORTH != ksq(BLACK))
-            r |= db[index(BLACK, ksq(BLACK), ksq(WHITE), psq + NORTH + NORTH)];
+        if (   rank_of(psq()) == RANK_2   // Double push
+            && psq() + NORTH != ksq(WHITE)
+            && psq() + NORTH != ksq(BLACK))
+            r |= db[index(BLACK, ksq(BLACK), ksq(WHITE), psq() + NORTH + NORTH)];
     }
 
     return result = r & Good  ? Good  : r & UNKNOWN ? UNKNOWN : Bad;
