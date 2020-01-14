@@ -21,7 +21,6 @@
 #include <cassert>
 #include <numeric>
 #include <vector>
-#include <bitset>
 
 #include "bitboard.h"
 #include "types.h"
@@ -31,8 +30,7 @@ namespace {
   // There are 24 possible pawn squares: files A to D and ranks from 2 to 7.
   // Positions with the pawn on files E to H will be mirrored before probing.
   constexpr unsigned MAX_INDEX = 2*24*64*64; // stm * psq * wksq * bksq = 196608
-
-  std::bitset<MAX_INDEX> KPKBitbase;
+  char KPKBitbase[MAX_INDEX];
 
   // A KPK bitbase index is an integer in [0, IndexMax] range
   //
@@ -77,7 +75,7 @@ bool Bitbases::probe(Square wksq, Square wpsq, Square bksq, Color us) {
 
   assert(file_of(wpsq) <= FILE_D);
 
-  return KPKBitbase.test(index(us, bksq, wksq, wpsq));
+  return bool(KPKBitbase[index(us, bksq, wksq, wpsq)]);
 }
 
 
@@ -99,7 +97,7 @@ void Bitbases::init() {
   // Populate the KPK bitbase.
   for (idx = 0; idx < MAX_INDEX; ++idx)
       if (db[idx] == WIN)
-          KPKBitbase.set(idx);
+          KPKBitbase[idx] = 1;
 }
 
 
