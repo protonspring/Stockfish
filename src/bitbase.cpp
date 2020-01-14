@@ -96,8 +96,7 @@ void Bitbases::init() {
 
   // Populate the KPK bitbase.
   for (idx = 0; idx < MAX_INDEX; ++idx)
-      if (db[idx] == WIN)
-          KPKBitbase[idx] = 1;
+      KPKBitbase[idx] = (db[idx] == WIN) ? 1 : 0;
 }
 
 
