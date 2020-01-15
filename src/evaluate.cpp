@@ -223,8 +223,6 @@ namespace {
 
     // Initialize attackedBy[] for king and pawns
     attackedBy[Us][KING] = pos.attacks_from<KING>(ksq);
-    attackedBy[Us][PAWN] = pawn_attacks_bb<Us>(pos.pieces(Us, PAWN));
-    attackedBy[Them][PAWN] = pawn_attacks_bb<Them>(pos.pieces(Them, PAWN));
     attackedBy[Us][ALL_PIECES] = attackedBy[Us][KING] | attackedBy[Us][PAWN];
     attackedBy2[Us] = dblAttackByPawn | (attackedBy[Us][KING] & attackedBy[Us][PAWN]);
 
@@ -793,7 +791,8 @@ namespace {
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
-
+    attackedBy[WHITE][PAWN] = pawn_attacks_bb<WHITE>(pos.pieces(WHITE, PAWN));
+    attackedBy[BLACK][PAWN] = pawn_attacks_bb<BLACK>(pos.pieces(BLACK, PAWN));
     initialize<WHITE>();
     initialize<BLACK>();
 
