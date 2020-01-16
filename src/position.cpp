@@ -594,8 +594,8 @@ bool Position::pseudo_legal(const Move m) const {
                && empty(to - pawn_push(us))))
           return false;
   }
-  else if (!(attacks_from(type_of(pc), from) & to))
-      return false;
+  else if (!(PseudoAttacks[type_of(pc)][from] & to) || (pieces() & between_bb(from, to)) )
+          return false;
 
   // Evasions generator already takes care to avoid some kind of illegal moves
   // and legal() relies on this. We therefore have to take care that the same
