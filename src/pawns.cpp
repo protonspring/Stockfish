@@ -87,6 +87,14 @@ namespace {
     e->kingSquares[Us] = SQ_NONE;
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
+    // Pawn Chain exponential bonus
+    int chainLength = 0;
+    Bitboard b = AllSquares;
+    while((b = pawn_attacks_bb<Us>(b) & ourPawns))
+        chainLength++;
+
+    score += make_score(0,2) * chainLength * chainLength;
+
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
     {
