@@ -93,7 +93,7 @@ namespace {
     while((b = pawn_attacks_bb<Us>(b) & ourPawns))
         chainLength++;
 
-    score += make_score(4,0) * chainLength;
+    score += make_score(6,0) * chainLength;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
