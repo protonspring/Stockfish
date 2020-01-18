@@ -98,7 +98,7 @@ namespace {
     }
 
     if (endsInCenter)
-        score += make_score(0,2) * chainLength * chainLength;
+        score += make_score(0,1) * chainLength * chainLength;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
