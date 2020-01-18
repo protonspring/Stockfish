@@ -88,17 +88,12 @@ namespace {
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
     // Pawn Chain exponential bonus
-    bool endsInCenter = false;
     int chainLength = 0;
     Bitboard b = AllSquares;
     while((b = pawn_attacks_bb<Us>(b) & ourPawns))
-    {
         chainLength++;
-        endsInCenter = bool(b & CenterFiles);
-    }
 
-    if (endsInCenter)
-        score += make_score(0,1) * chainLength * chainLength;
+    score += make_score(0,5) * chainLength;
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
