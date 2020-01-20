@@ -158,7 +158,7 @@ endif
 ifeq ($(COMP),gcc)
 	comp=gcc
 	CXX=g++
-	CXXFLAGS += -pedantic -Wextra -Wshadow
+	CXXFLAGS += -pedantic -Wextra -Wshadow -Wno-ignored-attributes
 
 	ifeq ($(ARCH),armv7)
 		ifeq ($(OS),Android)
@@ -196,7 +196,7 @@ ifeq ($(COMP),mingw)
 		CXX=g++
 	endif
 
-	CXXFLAGS += -Wextra -Wshadow
+	CXXFLAGS += -Wextra -Wshadow -Wno-ignored-attributes
 	LDFLAGS += -static
 endif
 
@@ -209,7 +209,7 @@ endif
 ifeq ($(COMP),clang)
 	comp=clang
 	CXX=clang++
-	CXXFLAGS += -pedantic -Wextra -Wshadow
+	CXXFLAGS += -pedantic -Wextra -Wshadow -Wno-ignored-attributes
 
 	ifneq ($(KERNEL),Darwin)
 	ifneq ($(KERNEL),OpenBSD)
