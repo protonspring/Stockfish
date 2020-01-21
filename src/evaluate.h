@@ -29,11 +29,11 @@ class Position;
 
 namespace Eval {
 
-constexpr Value Tempo = Value(28); // Must be visible to search
+constexpr int Tempo = 28;  // Must be visible to search
 
 std::string trace(const Position& pos);
 
-Value evaluate(const Position& pos);
+int evaluate(const Position& pos);
 }
 
 #endif // #ifndef EVALUATE_H_INCLUDED

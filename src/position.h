@@ -39,7 +39,7 @@ struct StateInfo {
   // Copied when making a move
   Key    pawnKey;
   Key    materialKey;
-  Value  nonPawnMaterial[COLOR_NB];
+  int    nonPawnMaterial[COLOR_NB];
   int    castlingRights;
   int    rule50;
   int    pliesFromNull;
@@ -141,7 +141,7 @@ public:
   void undo_null_move();
 
   // Static Exchange Evaluation
-  bool see_ge(Move m, Value threshold = VALUE_ZERO) const;
+  bool see_ge(Move m, int threshold = VALUE_ZERO) const;
 
   // Accessing hash keys
   Key key() const;
@@ -159,8 +159,8 @@ public:
   bool has_repeated() const;
   int rule50_count() const;
   Score psq_score() const;
-  Value non_pawn_material(Color c) const;
-  Value non_pawn_material() const;
+  int non_pawn_material(Color c) const;
+  int non_pawn_material() const;
 
   // Position consistency check, for debugging
   bool pos_is_ok() const;
@@ -355,11 +355,11 @@ inline Score Position::psq_score() const {
   return psq;
 }
 
-inline Value Position::non_pawn_material(Color c) const {
+inline int Position::non_pawn_material(Color c) const {
   return st->nonPawnMaterial[c];
 }
 
-inline Value Position::non_pawn_material() const {
+inline int Position::non_pawn_material() const {
   return st->nonPawnMaterial[WHITE] + st->nonPawnMaterial[BLACK];
 }
 

@@ -40,7 +40,7 @@ namespace Trace {
 
   Score scores[TERM_NB][COLOR_NB];
 
-  double to_cp(Value v) { return double(v) / PawnValueEg; }
+  double to_cp(int v) { return double(v) / PawnValueEg; }
 
   void add(int idx, Color c, Score s) {
     scores[idx][c] = s;
@@ -74,8 +74,8 @@ using namespace Trace;
 namespace {
 
   // Threshold for lazy and space evaluation
-  constexpr Value LazyThreshold  = Value(1400);
-  constexpr Value SpaceThreshold = Value(12222);
+  constexpr int LazyThreshold  = 1400;
+  constexpr int SpaceThreshold = 12222;
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
   constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 81, 52, 44, 10 };
@@ -158,7 +158,7 @@ namespace {
     Evaluation() = delete;
     explicit Evaluation(const Position& p) : pos(p) {}
     Evaluation& operator=(const Evaluation&) = delete;
-    Value value();
+    int value();
 
   private:
     template<Color Us> void initialize();
@@ -167,7 +167,7 @@ namespace {
     template<Color Us> Score threats() const;
     template<Color Us> Score passed() const;
     template<Color Us> Score space() const;
-    ScaleFactor scale_factor(Value eg) const;
+    ScaleFactor scale_factor(int eg) const;
     Score initiative(Score score) const;
 
     const Position& pos;
@@ -698,8 +698,8 @@ namespace {
   template<Tracing T>
   Score Evaluation<T>::initiative(Score score) const {
 
-    Value mg = mg_value(score);
-    Value eg = eg_value(score);
+    int mg = mg_value(score);
+    int eg = eg_value(score);
 
     int outflanking =  distance<File>(pos.square<KING>(WHITE), pos.square<KING>(BLACK))
                      - distance<Rank>(pos.square<KING>(WHITE), pos.square<KING>(BLACK));
@@ -740,7 +740,7 @@ namespace {
   // Evaluation::scale_factor() computes the scale factor for the winning side
 
   template<Tracing T>
-  ScaleFactor Evaluation<T>::scale_factor(Value eg) const {
+  ScaleFactor Evaluation<T>::scale_factor(int eg) const {
 
     Color strongSide = eg > VALUE_DRAW ? WHITE : BLACK;
     int sf = me->scale_factor(pos, strongSide);
@@ -766,7 +766,7 @@ namespace {
   // of view of the side to move.
 
   template<Tracing T>
-  Value Evaluation<T>::value() {
+  int Evaluation<T>::value() {
 
     assert(!pos.checkers());
 
@@ -788,7 +788,7 @@ namespace {
     score += pe->pawn_score(WHITE) - pe->pawn_score(BLACK);
 
     // Early exit if score is high
-    Value v = (mg_value(score) + eg_value(score)) / 2;
+    int v = (mg_value(score) + eg_value(score)) / 2;
     if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
        return pos.side_to_move() == WHITE ? v : -v;
 
@@ -839,7 +839,7 @@ namespace {
 /// evaluate() is the evaluator for the outer world. It returns a static
 /// evaluation of the position from the point of view of the side to move.
 
-Value Eval::evaluate(const Position& pos) {
+int Eval::evaluate(const Position& pos) {
   return Evaluation<NO_TRACE>(pos).value();
 }
 
@@ -857,7 +857,7 @@ std::string Eval::trace(const Position& pos) {
 
   pos.this_thread()->contempt = SCORE_ZERO; // Reset any dynamic contempt
 
-  Value v = Evaluation<TRACE>(pos).value();
+  int v = Evaluation<TRACE>(pos).value();
 
   v = pos.side_to_move() == WHITE ? v : -v; // Trace scores are from white's point of view
 
