@@ -28,35 +28,37 @@ using std::string;
 
 namespace {
 
+#define V Value
+
   // Table used to drive the king towards the edge of the board
   // in KX vs K and KQ vs KR endgames.
-  constexpr int PushToEdges[SQUARE_NB] = {
-    100, 90, 80, 70, 70, 80, 90, 100,
-     90, 70, 60, 50, 50, 60, 70,  90,
-     80, 60, 40, 30, 30, 40, 60,  80,
-     70, 50, 30, 20, 20, 30, 50,  70,
-     70, 50, 30, 20, 20, 30, 50,  70,
-     80, 60, 40, 30, 30, 40, 60,  80,
-     90, 70, 60, 50, 50, 60, 70,  90,
-    100, 90, 80, 70, 70, 80, 90, 100
+  constexpr Value PushToEdges[SQUARE_NB] = {
+    V(100), V(90), V(80), V(70), V(70), V(80), V(90), V(100),
+    V( 90), V(70), V(60), V(50), V(50), V(60), V(70), V( 90),
+    V( 80), V(60), V(40), V(30), V(30), V(40), V(60), V( 80),
+    V( 70), V(50), V(30), V(20), V(20), V(30), V(50), V( 70),
+    V( 70), V(50), V(30), V(20), V(20), V(30), V(50), V( 70),
+    V( 80), V(60), V(40), V(30), V(30), V(40), V(60), V( 80),
+    V( 90), V(70), V(60), V(50), V(50), V(60), V(70), V( 90),
+    V(100), V(90), V(80), V(70), V(70), V(80), V(90), V(100)
   };
 
   // Table used to drive the king towards a corner square of the
   // right color in KBN vs K endgames.
-  constexpr int PushToCorners[SQUARE_NB] = {
-     6400, 6080, 5760, 5440, 5120, 4800, 4480, 4160,
-     6080, 5760, 5440, 5120, 4800, 4480, 4160, 4480,
-     5760, 5440, 4960, 4480, 4480, 4000, 4480, 4800,
-     5440, 5120, 4480, 3840, 3520, 4480, 4800, 5120,
-     5120, 4800, 4480, 3520, 3840, 4480, 5120, 5440,
-     4800, 4480, 4000, 4480, 4480, 4960, 5440, 5760,
-     4480, 4160, 4480, 4800, 5120, 5440, 5760, 6080,
-     4160, 4480, 4800, 5120, 5440, 5760, 6080, 6400
+  constexpr Value PushToCorners[SQUARE_NB] = {
+     V(6400), V(6080), V(5760), V(5440), V(5120), V(4800), V(4480), V(4160),
+     V(6080), V(5760), V(5440), V(5120), V(4800), V(4480), V(4160), V(4480),
+     V(5760), V(5440), V(4960), V(4480), V(4480), V(4000), V(4480), V(4800),
+     V(5440), V(5120), V(4480), V(3840), V(3520), V(4480), V(4800), V(5120),
+     V(5120), V(4800), V(4480), V(3520), V(3840), V(4480), V(5120), V(5440),
+     V(4800), V(4480), V(4000), V(4480), V(4480), V(4960), V(5440), V(5760),
+     V(4480), V(4160), V(4480), V(4800), V(5120), V(5440), V(5760), V(6080),
+     V(4160), V(4480), V(4800), V(5120), V(5440), V(5760), V(6080), V(6400)
   };
 
   // Tables used to drive a piece towards or away from another piece
-  constexpr int PushClose[8] = { 0, 0, 100, 80, 60, 40, 20, 10 };
-  constexpr int PushAway [8] = { 0, 5, 20, 40, 60, 80, 90, 100 };
+  constexpr Value PushClose[8] = { V(0), V(0), V(100), V(80), V(60),V( 40),V( 20), V(10) };
+  constexpr Value PushAway [8] = { V(0), V(5), V(20), V(40), V(60), V(80), V(90), V(100) };
 
   // Pawn Rank based scaling factors used in KRPPKRP endgame
   constexpr int KRPPKRPScaleFactors[RANK_NB] = { 0, 9, 10, 14, 21, 44, 0, 0 };
@@ -137,7 +139,7 @@ Value Endgame<KXK>::operator()(const Position& pos) const {
       ||(pos.count<BISHOP>(strongSide) && pos.count<KNIGHT>(strongSide))
       || (   (pos.pieces(strongSide, BISHOP) & ~DarkSquares)
           && (pos.pieces(strongSide, BISHOP) &  DarkSquares)))
-      result = std::min(result + VALUE_KNOWN_WIN, VALUE_MATE_IN_MAX_PLY - 1);
+      result = std::min(result + VALUE_KNOWN_WIN, VALUE_MATE_IN_MAX_PLY - Value(1));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -210,13 +212,13 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
 
   // If the stronger side's king is in front of the pawn, it's a win
   if (forward_file_bb(WHITE, wksq) & psq)
-      result = RookValueEg - distance(wksq, psq);
+      result = RookValueEg - Value(distance(wksq, psq));
 
   // If the weaker side's king is too far from the pawn and the rook,
   // it's a win.
   else if (   distance(bksq, psq) >= 3 + (pos.side_to_move() == weakSide)
            && distance(bksq, rsq) >= 3)
-      result = RookValueEg - distance(wksq, psq);
+      result = RookValueEg - Value(distance(wksq, psq));
 
   // If the pawn is far advanced and supported by the defending king,
   // the position is drawish
@@ -224,12 +226,12 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
            && distance(bksq, psq) == 1
            && rank_of(wksq) >= RANK_4
            && distance(wksq, psq) > 2 + (pos.side_to_move() == strongSide))
-      result = Value(80) - 8 * distance(wksq, psq);
+      result = Value(80 - 8 * distance(wksq, psq));
 
   else
-      result =  Value(200) - 8 * (  distance(wksq, psq + SOUTH)
+      result =  Value(200 - (8 * (  distance(wksq, psq + SOUTH)
                                   - distance(bksq, psq + SOUTH)
-                                  - distance(psq, queeningSq));
+                                  - distance(psq, queeningSq))));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }

@@ -308,12 +308,6 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
 
-/// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(int(v) + i); }
-constexpr Value operator-(Value v, int i) { return Value(int(v) - i); }
-inline Value& operator+=(Value& v, int i) { return v = v + i; }
-inline Value& operator-=(Value& v, int i) { return v = v - i; }
-
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
 constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d)); }
@@ -367,11 +361,11 @@ constexpr CastlingRights operator&(Color c, CastlingRights cr) {
 }
 
 constexpr Value mate_in(int ply) {
-  return VALUE_MATE - ply;
+  return VALUE_MATE - Value(ply);
 }
 
 constexpr Value mated_in(int ply) {
-  return -VALUE_MATE + ply;
+  return -VALUE_MATE + Value(ply);
 }
 
 constexpr Square make_square(File f, Rank r) {
