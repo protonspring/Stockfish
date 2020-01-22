@@ -35,10 +35,9 @@ namespace {
   // a given limit. The order of moves smaller than the limit is left unspecified.
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int depth) {
 
-    ExtMove *sortNode = begin, *sortedEnd = begin;
-    int limit = sortNode->value;
+    int limit = -100000; //sortNode->value;
 
-    for (ExtMove *p = begin + 1; p < end; ++p)
+    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
         if (p->value >= limit)
         {
             ExtMove tmp = *p, *q;
@@ -47,8 +46,8 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
 
-            if (sortNode < (begin + depth))
-                limit = (sortNode++)->value;
+            if (sortedEnd >= (begin + depth))
+                limit = (begin[depth]).value; //(sortNode++)->value;
         }
   }
 
