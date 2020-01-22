@@ -40,7 +40,7 @@ const std::string pretty(Bitboard b);
 }
 
 constexpr Bitboard AllSquares = ~Bitboard(0);
-constexpr Bitboard ColorSquares[SQUARE_COLOR_NB] = {0x55AA55AA55AA55AA, 0xAA55AA55AA55AA55 };
+constexpr Bitboard ColorSquares[SQUARE_COLOR_NB] = {0xAA55AA55AA55AA55ULL, 0x55AA55AA55AA55AAULL }; //Dark, Light
 
 constexpr Bitboard FileABB = 0x0101010101010101ULL;
 constexpr Bitboard FileBBB = FileABB << 1;
@@ -129,8 +129,8 @@ constexpr bool more_than_one(Bitboard b) {
   return b & (b - 1);
 }
 
-constexpr bool square_color(Square s) {
-  return (s + rank_of(s)) & 1;
+constexpr SquareColor square_color(Square s) {
+  return SquareColor((s + rank_of(s)) & 1);
 }
 
 constexpr bool opposite_colors(Square s1, Square s2) {
