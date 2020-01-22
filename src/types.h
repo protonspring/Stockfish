@@ -132,6 +132,10 @@ enum Color {
   WHITE, BLACK, COLOR_NB = 2
 };
 
+enum SquareColor {
+  LIGHT, DARK, SQUARE_COLOR_NB = 2
+}
+
 enum CastlingRights {
   NO_CASTLING,
   WHITE_OO,

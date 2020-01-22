@@ -40,7 +40,7 @@ const std::string pretty(Bitboard b);
 }
 
 constexpr Bitboard AllSquares = ~Bitboard(0);
-constexpr Bitboard DarkSquares = 0xAA55AA55AA55AA55ULL;
+constexpr Bitboard ColorSquares[SQUARE_COLOR_NB] = {0x55AA55AA55AA55AA, 0xAA55AA55AA55AA55 };
 
 constexpr Bitboard FileABB = 0x0101010101010101ULL;
 constexpr Bitboard FileBBB = FileABB << 1;
