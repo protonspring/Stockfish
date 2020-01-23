@@ -33,9 +33,9 @@ namespace {
 
   // partial_insertion_sort() sorts moves in descending order up to and including
   // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
+  bool partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    bool sortOne = true;
+    bool s = false;
 
     for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
         if (p->value >= limit)
@@ -46,11 +46,10 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
 
-            sortOne = false;
+            s = true;
         }
 
-     if (sortOne)
-          std::swap(*begin, *std::max_element(begin, end));
+    return s;
   }
 
 } // namespace
@@ -213,18 +212,24 @@ top:
           endMoves = generate<QUIETS>(pos, cur);
 
           score<QUIETS>();
-          partial_insertion_sort(cur, endMoves, -3000 * depth);
+          sorted = partial_insertion_sort(cur, endMoves, -3000 * depth);
       }
 
       ++stage;
       /* fallthrough */
 
   case QUIET:
-      if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
+      if (!skipQuiets)
+      {
+          if (sorted && select<Next>([&](){return   *cur != refutations[0].move
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
-          return *(cur - 1);
+              return *(cur - 1);
+          else if (sorted && select<Best>([&](){return   *cur != refutations[0].move
+                                      && *cur != refutations[1].move
+                                      && *cur != refutations[2].move;}))
+              return *(cur - 1);
+      }
 
       // Prepare the pointers to loop over the bad captures
       cur = moves;
