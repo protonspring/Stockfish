@@ -35,8 +35,6 @@ namespace {
   // a given limit. The order of moves smaller than the limit is left unspecified.
   bool partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
 
-    bool s = false;
-
     for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
         if (p->value >= limit)
         {
@@ -45,11 +43,9 @@ namespace {
             for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
                 *q = *(q - 1);
             *q = tmp;
-
-            s = true;
         }
 
-    return s;
+    return begin->value >= limit;
   }
 
 } // namespace
