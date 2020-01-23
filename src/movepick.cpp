@@ -227,7 +227,7 @@ top:
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
               return *(cur - 1);
-          else if (!sorted && select<Best>([&](){return   *cur != refutations[0].move
+          else if (!sorted && select<Worst>([&](){return   *cur != refutations[0].move
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
               return *(cur - 1);
