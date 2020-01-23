@@ -28,9 +28,9 @@
 
 namespace {
 
-  // There are 24 possible pawn squares: files A to D and ranks from 2 to 7.
   // Positions with the pawn on files E to H will be mirrored before probing.
-  constexpr unsigned MAX_INDEX = 2*24*64*64; // stm * psq * wksq * bksq = 196608
+  // Pawn support is limited to 28 squares (Files A-D and Ranks 1-7).
+  constexpr unsigned MAX_INDEX = 2*28*64*64; // stm * psq * wksq * bksq = 229376
 
   std::bitset<MAX_INDEX> KPKBitbase;
 
@@ -42,9 +42,9 @@ namespace {
   // bit  6-11: black king square (from SQ_A1 to SQ_H8)
   // bit    12: side to move (WHITE or BLACK)
   // bit 13-14: white pawn file (from FILE_A to FILE_D)
-  // bit 15-17: white pawn RANK_7 - rank (from RANK_7 - RANK_7 to RANK_7 - RANK_2)
+  // bit 15-17: white pawn rank (from RANK_1 - RANK_7)
   unsigned index(Color stm, Square bksq, Square wksq, Square psq) {
-    return int(wksq) | (bksq << 6) | (stm << 12) | (file_of(psq) << 13) | ((RANK_7 - rank_of(psq)) << 15);
+    return int(wksq) | (bksq << 6) | (stm << 12) | (file_of(psq) << 13) | (rank_of(psq) << 15);
   }
 
   enum Result {
@@ -107,7 +107,7 @@ namespace {
     ksq[WHITE] = Square((idx >>  0) & 0x3F);
     ksq[BLACK] = Square((idx >>  6) & 0x3F);
     stm        = Color ((idx >> 12) & 0x01);
-    psq        = make_square(File((idx >> 13) & 0x3), Rank(RANK_7 - ((idx >> 15) & 0x7)));
+    psq        = make_square(File((idx >> 13) & 0x3), Rank(idx >> 15));
 
     // Check if two pieces are on the same square or if a king can be captured
     if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
