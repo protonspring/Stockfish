@@ -46,8 +46,8 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
 
-            if (sortedEnd >= (begin + depth))
-                limit = (begin[depth]).value; //(sortNode++)->value;
+            if (sortedEnd >= (begin + depth + 1))
+                limit = (begin[depth]).value;
         }
   }
 
