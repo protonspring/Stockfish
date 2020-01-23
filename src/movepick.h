@@ -112,7 +112,7 @@ typedef Stats<PieceToHistory, NOT_USED, PIECE_NB, SQUARE_NB> ContinuationHistory
 /// to get a cut-off first.
 class MovePicker {
 
-  enum PickType { Next, Best };
+  enum PickType { Next, Best, Worst };
 
 public:
   MovePicker(const MovePicker&) = delete;

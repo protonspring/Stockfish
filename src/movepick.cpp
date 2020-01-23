@@ -144,6 +144,8 @@ Move MovePicker::select(Pred filter) {
   {
       if (T == Best)
           std::swap(*cur, *std::max_element(cur, endMoves));
+      if (T == Worst)
+          std::swap(*cur, *std::min_element(cur, endMoves));
 
       if (*cur != ttMove && filter())
           return *cur++;
@@ -225,7 +227,7 @@ top:
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
               return *(cur - 1);
-          else if (sorted && select<Best>([&](){return   *cur != refutations[0].move
+          else if (!sorted && select<Best>([&](){return   *cur != refutations[0].move
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
               return *(cur - 1);
