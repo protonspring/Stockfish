@@ -35,10 +35,12 @@ namespace {
   // a given limit. The order of moves smaller than the limit is left unspecified.
   void partial_insertion_sort(ExtMove* begin, ExtMove* end, int depth) {
 
-    int limit = -100000; //sortNode->value;
+    int l, limit1 = -100000, limit2 = -3000 * depth;
 
     for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
+    {
+        l = std::min(limit1, limit2);
+        if (p->value >= l)
         {
             ExtMove tmp = *p, *q;
             *p = *++sortedEnd;
@@ -46,9 +48,11 @@ namespace {
                 *q = *(q - 1);
             *q = tmp;
 
-            if (sortedEnd >= (begin + depth + 1))
-                limit = (begin[depth]).value;
+            //always sort at least depth # of moves
+            if (sortedEnd >= (begin + depth))
+                limit1 = (begin[depth]).value;
         }
+    }
   }
 
 } // namespace
