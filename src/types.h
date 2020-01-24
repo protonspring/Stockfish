@@ -268,13 +268,13 @@ constexpr Score make_score(int mg, int eg) {
 inline Value eg_value(Score s) {
   //union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
   union { uint16_t u; int16_t s; } eg = { uint16_t(uint32_t(s + 0x8000) >> 16) };
-  return Value(eg.s);
+  return (eg.s);
 }
 
 inline Value mg_value(Score s) {
   //union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
   union { uint16_t u; int16_t s; } mg = { uint16_t(uint32_t(s)) };
-  return Value(mg.s);
+  return (mg.s);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -364,11 +364,11 @@ constexpr CastlingRights operator&(Color c, CastlingRights cr) {
 }
 
 constexpr Value mate_in(int ply) {
-  return Value(VALUE_MATE - ply);
+  return (VALUE_MATE - ply);
 }
 
 constexpr Value mated_in(int ply) {
-  return Value(-VALUE_MATE + ply);
+  return (-VALUE_MATE + ply);
 }
 
 constexpr Square make_square(File f, Rank r) {
