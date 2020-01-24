@@ -184,7 +184,7 @@ Value Endgame<KPK>::operator()(const Position& pos) const {
   if (!Bitbases::probe(wksq, psq, bksq, us))
       return VALUE_DRAW;
 
-  Value result = VALUE_KNOWN_WIN + PawnValueEg + (rank_of(psq));
+  Value result = VALUE_KNOWN_WIN + PawnValueEg + rank_of(psq);
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -210,7 +210,7 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
 
   // If the stronger side's king is in front of the pawn, it's a win
   if (forward_file_bb(WHITE, wksq) & psq)
-      result = (RookValueEg - distance(wksq, psq));
+      result = RookValueEg - distance(wksq, psq);
 
   // If the weaker side's king is too far from the pawn and the rook,
   // it's a win.
@@ -243,7 +243,7 @@ Value Endgame<KRKB>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, RookValueMg, 0));
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
-  Value result = (PushToEdges[pos.square<KING>(weakSide)]);
+  Value result = PushToEdges[pos.square<KING>(weakSide)];
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
@@ -258,7 +258,7 @@ Value Endgame<KRKN>::operator()(const Position& pos) const {
 
   Square bksq = pos.square<KING>(weakSide);
   Square bnsq = pos.square<KNIGHT>(weakSide);
-  Value result = (PushToEdges[bksq] + PushAway[distance(bksq, bnsq)]);
+  Value result = PushToEdges[bksq] + PushAway[distance(bksq, bnsq)];
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
@@ -277,12 +277,12 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
   Square loserKSq = pos.square<KING>(weakSide);
   Square pawnSq = pos.square<PAWN>(weakSide);
 
-  Value result = (PushClose[distance(winnerKSq, loserKSq)]);
+  Value result = PushClose[distance(winnerKSq, loserKSq)];
 
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
       || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
-      result = (result + (QueenValueEg - PawnValueEg));
+      result = result + (QueenValueEg - PawnValueEg);
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -326,7 +326,7 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
 
 /// Some cases of trivial draws
-template<> Value Endgame<KNNK>::operator()(const Position&) const { return (VALUE_DRAW); }
+template<> Value Endgame<KNNK>::operator()(const Position&) const { return VALUE_DRAW; }
 
 
 /// KB and one or more pawns vs K. It checks for draws with rook pawns and
