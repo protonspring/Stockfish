@@ -206,7 +206,11 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       bonus += make_score(ShelterStrength[d][ourRank], 0);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus -= BlockedStorm * int(theirRank == RANK_3);
+      {
+          Square theirPawn = make_square(f, Rank(theirRank));
+          if ((theirRank == RANK_3) && !(ourPawns & PawnAttacks[Them][theirPawn]))
+              bonus -= BlockedStorm;
+      }
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
   }
