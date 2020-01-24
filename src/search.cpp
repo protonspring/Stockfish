@@ -67,7 +67,7 @@ namespace {
   // Razor and futility margins
   constexpr int RazorMargin = 531;
   Value futility_margin(Depth d, bool improving) {
-    return (217 * (d - improving));
+    return 217 * (d - improving);
   }
 
   // Reductions lookup table, initialized at startup
@@ -306,7 +306,7 @@ void MainThread::search() {
 
   // Send again PV info if we have a new best thread
   if (bestThread != this)
-      sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, (-VALUE_INFINITE), (VALUE_INFINITE)) << sync_endl;
+      sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, -VALUE_INFINITE, VALUE_INFINITE) << sync_endl;
 
   sync_cout << "bestmove " << UCI::move(bestThread->rootMoves[0].pv[0], rootPos.is_chess960());
 
@@ -433,15 +433,15 @@ void Thread::search() {
           if (rootDepth >= 4)
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
-              delta = (21 + abs(previousScore) / 256);
-              alpha = std::max(previousScore - delta,int(-VALUE_INFINITE));
-              beta  = std::min(previousScore + delta, int(VALUE_INFINITE));
+              delta = 21 + abs(previousScore) / 256;
+              alpha = std::max(previousScore - delta, int(-VALUE_INFINITE));
+              beta  = std::min(previousScore + delta, int( VALUE_INFINITE));
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + (102 - ct / 2) * previousScore / (abs(previousScore) + 157);
 
-              contempt = (us == WHITE ?  make_score(dct, dct / 2)
-                                      : -make_score(dct, dct / 2));
+              contempt = us == WHITE ?  make_score(dct, dct / 2)
+                                     : -make_score(dct, dct / 2);
           }
 
           // Start with a small aspiration window and, in the case of a fail
@@ -480,7 +480,7 @@ void Thread::search() {
               if (bestValue <= alpha)
               {
                   beta = (alpha + beta) / 2;
-                  alpha = std::max((bestValue - delta), (-VALUE_INFINITE));
+                  alpha = std::max(bestValue - delta, -VALUE_INFINITE);
 
                   failedHighCnt = 0;
                   if (mainThread)
@@ -488,7 +488,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min((bestValue + delta), int(VALUE_INFINITE));
+                  beta = std::min(bestValue + delta, int(VALUE_INFINITE));
                   ++failedHighCnt;
               }
               else
@@ -662,8 +662,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max((mated_in(ss->ply)), alpha);
-        beta = std::min((mate_in(ss->ply+1)), beta);
+        alpha = std::max(mated_in(ss->ply), alpha);
+        beta = std::min(mate_in(ss->ply+1), beta);
         if (alpha >= beta)
             return alpha;
     }
@@ -795,7 +795,7 @@ namespace {
         // Never assume anything about values stored in TT
         ss->staticEval = eval = tte->eval();
         if (eval == VALUE_NONE)
-            ss->staticEval = eval = (evaluate(pos));
+            ss->staticEval = eval = evaluate(pos);
 
         if (eval == VALUE_DRAW)
             eval = value_draw(thisThread);
@@ -811,7 +811,7 @@ namespace {
         {
             int bonus = -(ss-1)->statScore / 512;
 
-            ss->staticEval = eval = (evaluate(pos) + bonus);
+            ss->staticEval = eval = evaluate(pos) + bonus;
         }
         else
             ss->staticEval = eval = -(ss-1)->staticEval + 2 * Eval::Tempo;
@@ -1387,7 +1387,7 @@ moves_loop: // When in check, search starts from here
     // Check for an immediate draw or maximum ply reached
     if (   pos.is_draw(ss->ply)
         || ss->ply >= MAX_PLY)
-        return (ss->ply >= MAX_PLY && !inCheck) ? (evaluate(pos)) : VALUE_DRAW;
+        return (ss->ply >= MAX_PLY && !inCheck) ? evaluate(pos) : VALUE_DRAW;
 
     assert(0 <= ss->ply && ss->ply < MAX_PLY);
 
@@ -1553,9 +1553,9 @@ moves_loop: // When in check, search starts from here
     // All legal moves have been searched. A special case: If we're in check
     // and no legal moves were found, it is checkmate.
     if (inCheck && bestValue == -VALUE_INFINITE)
-        return (mated_in(ss->ply)); // Plies to mate from the root
+        return mated_in(ss->ply); // Plies to mate from the root
 
-    tte->save(posKey, (value_to_tt(bestValue, ss->ply)), pvHit,
+    tte->save(posKey, value_to_tt(bestValue, ss->ply), pvHit,
               bestValue >= beta ? BOUND_LOWER :
               PvNode && bestValue > oldAlpha  ? BOUND_EXACT : BOUND_UPPER,
               ttDepth, bestMove, ss->staticEval);
@@ -1574,8 +1574,8 @@ moves_loop: // When in check, search starts from here
 
     assert(v != VALUE_NONE);
 
-    return ( v >= VALUE_MATE_IN_MAX_PLY  ? v + ply
-          : v <= VALUE_MATED_IN_MAX_PLY ? v - ply : v);
+    return  v >= VALUE_MATE_IN_MAX_PLY  ? v + ply
+          : v <= VALUE_MATED_IN_MAX_PLY ? v - ply : v;
   }
 
 
@@ -1692,7 +1692,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value topScore = rootMoves[0].score;
-    int delta = std::min(Value(topScore - rootMoves[multiPV - 1].score), PawnValueMg);
+    int delta = std::min(topScore - rootMoves[multiPV - 1].score, int(PawnValueMg));
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 
@@ -1774,7 +1774,7 @@ string UCI::pv(const Position& pos, Depth depth, Value alpha, Value beta) {
       Value v = updated ? rootMoves[i].score : rootMoves[i].previousScore;
 
       bool tb = TB::RootInTB && abs(v) < VALUE_MATE - MAX_PLY;
-      v = (tb ? rootMoves[i].tbScore : v);
+      v = tb ? rootMoves[i].tbScore : v;
 
       if (ss.rdbuf()->in_avail()) // Not at first line
           ss << "\n";

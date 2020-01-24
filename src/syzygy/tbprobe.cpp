@@ -84,7 +84,7 @@ int LeadPawnsSize[6][4];       // [leadPawnsCnt][FILE_A..FILE_D]
 bool pawns_comp(Square i, Square j) { return MapPawns[i] < MapPawns[j]; }
 int off_A1H8(Square sq) { return int(rank_of(sq)) - file_of(sq); }
 
-constexpr Value2 WDL_to_value[] = {
+constexpr Value WDL_to_value[] = {
    -VALUE_MATE + MAX_PLY + 1,
     VALUE_DRAW - 2,
     VALUE_DRAW,
@@ -1555,9 +1555,9 @@ bool Tablebases::root_probe(Position& pos, Search::RootMoves& rootMoves) {
         // 1 cp to cursed wins and let it grow to 49 cp as the positions gets
         // closer to a real win.
         m.tbScore =  r >= bound ? VALUE_MATE - MAX_PLY - 1
-                   : r >  0     ? Value2((std::max( 3, r - 800) * int(PawnValueEg)) / 200)
+                   : r >  0     ? (std::max( 3, r - 800) * int(PawnValueEg)) / 200
                    : r == 0     ? VALUE_DRAW
-                   : r > -bound ? Value2((std::min(-3, r + 800) * int(PawnValueEg)) / 200)
+                   : r > -bound ? (std::min(-3, r + 800) * int(PawnValueEg)) / 200
                    :             -VALUE_MATE + MAX_PLY + 1;
     }
 
