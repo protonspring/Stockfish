@@ -141,7 +141,7 @@ public:
   void undo_null_move();
 
   // Static Exchange Evaluation
-  bool see_ge(Move m, Value2 threshold = Value2(VALUE_ZERO)) const;
+  bool see_ge(Move m, Value2 threshold = (VALUE_ZERO)) const;
 
   // Accessing hash keys
   Key key() const;
@@ -360,7 +360,7 @@ inline Value2 Position::non_pawn_material(Color c) const {
 }
 
 inline Value2 Position::non_pawn_material() const {
-  return Value2(st->nonPawnMaterial[WHITE] + st->nonPawnMaterial[BLACK]);
+  return (st->nonPawnMaterial[WHITE] + st->nonPawnMaterial[BLACK]);
 }
 
 inline int Position::game_ply() const {

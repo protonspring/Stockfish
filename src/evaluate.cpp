@@ -776,7 +776,7 @@ namespace {
     // If we have a specialized evaluation function for the current material
     // configuration, call it and return.
     if (me->specialized_eval_exists())
-        return Value2(me->evaluate(pos));
+        return (me->evaluate(pos));
 
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
@@ -790,7 +790,7 @@ namespace {
     // Early exit if score is high
     int v = int((mg_value(score) + eg_value(score)) / 2);
     if (abs(v) > LazyThreshold + pos.non_pawn_material() / 64)
-       return Value2(pos.side_to_move() == WHITE ? v : -v);
+       return (pos.side_to_move() == WHITE ? v : -v);
 
     // Main evaluation begins here
 
@@ -829,7 +829,7 @@ namespace {
         Trace::add(TOTAL, score);
     }
 
-    return  Value2((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
+    return  ((pos.side_to_move() == WHITE ? v : -v) // Side to move point of view
            + Eval::Tempo);
   }
 
@@ -859,7 +859,7 @@ std::string Eval::trace(const Position& pos) {
 
   Value2 v = Evaluation<TRACE>(pos).value();
 
-  v = pos.side_to_move() == WHITE ? v : Value2(-v); // Trace scores are from white's point of view
+  v = pos.side_to_move() == WHITE ? v : (-v); // Trace scores are from white's point of view
 
   std::stringstream ss;
   ss << std::showpoint << std::noshowpos << std::fixed << std::setprecision(2)
