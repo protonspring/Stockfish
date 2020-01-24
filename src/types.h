@@ -168,9 +168,9 @@ enum Bound {
   BOUND_EXACT = BOUND_UPPER | BOUND_LOWER
 };
 
-typedef int16_t Value2;
+typedef int16_t Value;
 
-constexpr Value2
+constexpr Value
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
   VALUE_KNOWN_WIN = 10000,
@@ -202,7 +202,7 @@ enum Piece {
   PIECE_NB = 16
 };
 
-extern Value2 PieceValue[PHASE_NB][PIECE_NB];
+extern Value PieceValue[PHASE_NB][PIECE_NB];
 
 typedef int Depth;
 
@@ -265,16 +265,16 @@ constexpr Score make_score(int mg, int eg) {
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value2 eg_value(Score s) {
+inline Value eg_value(Score s) {
   //union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
   union { uint16_t u; int16_t s; } eg = { uint16_t(uint32_t(s + 0x8000) >> 16) };
-  return Value2(eg.s);
+  return Value(eg.s);
 }
 
-inline Value2 mg_value(Score s) {
+inline Value mg_value(Score s) {
   //union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
   union { uint16_t u; int16_t s; } mg = { uint16_t(uint32_t(s)) };
-  return Value2(mg.s);
+  return Value(mg.s);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
@@ -363,12 +363,12 @@ constexpr CastlingRights operator&(Color c, CastlingRights cr) {
   return CastlingRights((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & cr);
 }
 
-constexpr Value2 mate_in(int ply) {
-  return Value2(VALUE_MATE - ply);
+constexpr Value mate_in(int ply) {
+  return Value(VALUE_MATE - ply);
 }
 
-constexpr Value2 mated_in(int ply) {
-  return Value2(-VALUE_MATE + ply);
+constexpr Value mated_in(int ply) {
+  return Value(-VALUE_MATE + ply);
 }
 
 constexpr Square make_square(File f, Rank r) {

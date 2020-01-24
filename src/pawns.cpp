@@ -28,7 +28,7 @@
 
 namespace {
 
-  #define V Value2
+  #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
@@ -44,7 +44,7 @@ namespace {
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
-  constexpr Value2 ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
+  constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
     { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
     { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
     { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
@@ -55,7 +55,7 @@ namespace {
   // RANK_1 = 0 is used for files where the enemy has no pawn, or their pawn
   // is behind our king. Note that UnblockedStorm[0][1-2] accommodate opponent pawn
   // on edge, likely blocked by our king.
-  constexpr Value2 UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
+  constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
     { V( 85), V(-289), V(-166), V(97), V(50), V( 45), V( 50) },
     { V( 46), V( -25), V( 122), V(45), V(37), V(-10), V( 20) },
     { V( -6), V(  51), V( 168), V(34), V(-2), V(-22), V(-14) },

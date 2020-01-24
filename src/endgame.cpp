@@ -84,7 +84,7 @@ namespace {
 
 namespace Endgames {
 
-  std::pair<Map<Value2>, Map<ScaleFactor>> maps;
+  std::pair<Map<Value>, Map<ScaleFactor>> maps;
 
   void init() {
 
@@ -115,7 +115,7 @@ namespace Endgames {
 /// attacking side a bonus for driving the defending king towards the edge
 /// of the board, and for keeping the distance between the two kings small.
 template<>
-Value2 Endgame<KXK>::operator()(const Position& pos) const {
+Value Endgame<KXK>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
   assert(!pos.checkers()); // Eval is never called when in check
@@ -127,7 +127,7 @@ Value2 Endgame<KXK>::operator()(const Position& pos) const {
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
 
-  Value2 result =  pos.non_pawn_material(strongSide)
+  Value result =  pos.non_pawn_material(strongSide)
                 + pos.count<PAWN>(strongSide) * PawnValueEg
                 + PushToEdges[loserKSq]
                 + PushClose[distance(winnerKSq, loserKSq)];
@@ -146,7 +146,7 @@ Value2 Endgame<KXK>::operator()(const Position& pos) const {
 /// Mate with KBN vs K. This is similar to KX vs K, but we have to drive the
 /// defending king towards a corner square that our bishop attacks.
 template<>
-Value2 Endgame<KBNK>::operator()(const Position& pos) const {
+Value Endgame<KBNK>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, KnightValueMg + BishopValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
@@ -158,7 +158,7 @@ Value2 Endgame<KBNK>::operator()(const Position& pos) const {
   // If our bishop does not attack A1/H8, we flip the enemy king square
   // to drive to opposite corners (A8/H1).
 
-  Value2 result =  (VALUE_KNOWN_WIN
+  Value result =  (VALUE_KNOWN_WIN
                 + PushClose[distance(winnerKSq, loserKSq)]
                 + PushToCorners[opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq]);
 
@@ -169,7 +169,7 @@ Value2 Endgame<KBNK>::operator()(const Position& pos) const {
 
 /// KP vs K. This endgame is evaluated with the help of a bitbase
 template<>
-Value2 Endgame<KPK>::operator()(const Position& pos) const {
+Value Endgame<KPK>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, VALUE_ZERO, 1));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
@@ -184,7 +184,7 @@ Value2 Endgame<KPK>::operator()(const Position& pos) const {
   if (!Bitbases::probe(wksq, psq, bksq, us))
       return (VALUE_DRAW);
 
-  Value2 result = (VALUE_KNOWN_WIN + PawnValueEg + (rank_of(psq)));
+  Value result = (VALUE_KNOWN_WIN + PawnValueEg + (rank_of(psq)));
 
   return strongSide == pos.side_to_move() ? result : (-result);
 }
@@ -195,7 +195,7 @@ Value2 Endgame<KPK>::operator()(const Position& pos) const {
 /// far advanced with support of the king, while the attacking king is far
 /// away.
 template<>
-Value2 Endgame<KRKP>::operator()(const Position& pos) const {
+Value Endgame<KRKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, RookValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
@@ -206,7 +206,7 @@ Value2 Endgame<KRKP>::operator()(const Position& pos) const {
   Square psq  = relative_square(strongSide, pos.square<PAWN>(weakSide));
 
   Square queeningSq = make_square(file_of(psq), RANK_1);
-  Value2 result;
+  Value result;
 
   // If the stronger side's king is in front of the pawn, it's a win
   if (forward_file_bb(WHITE, wksq) & psq)
@@ -238,12 +238,12 @@ Value2 Endgame<KRKP>::operator()(const Position& pos) const {
 /// KR vs KB. This is very simple, and always returns drawish scores. The
 /// score is slightly bigger when the defending king is close to the edge.
 template<>
-Value2 Endgame<KRKB>::operator()(const Position& pos) const {
+Value Endgame<KRKB>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, RookValueMg, 0));
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
-  Value2 result = (PushToEdges[pos.square<KING>(weakSide)]);
+  Value result = (PushToEdges[pos.square<KING>(weakSide)]);
   return strongSide == pos.side_to_move() ? result : (-result);
 }
 
@@ -251,14 +251,14 @@ Value2 Endgame<KRKB>::operator()(const Position& pos) const {
 /// KR vs KN. The attacking side has slightly better winning chances than
 /// in KR vs KB, particularly if the king and the knight are far apart.
 template<>
-Value2 Endgame<KRKN>::operator()(const Position& pos) const {
+Value Endgame<KRKN>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, RookValueMg, 0));
   assert(verify_material(pos, weakSide, KnightValueMg, 0));
 
   Square bksq = pos.square<KING>(weakSide);
   Square bnsq = pos.square<KNIGHT>(weakSide);
-  Value2 result = (PushToEdges[bksq] + PushAway[distance(bksq, bnsq)]);
+  Value result = (PushToEdges[bksq] + PushAway[distance(bksq, bnsq)]);
   return strongSide == pos.side_to_move() ? result : (-result);
 }
 
@@ -268,7 +268,7 @@ Value2 Endgame<KRKN>::operator()(const Position& pos) const {
 /// with a king positioned next to it can be a draw, so in that case, we only
 /// use the distance between the kings.
 template<>
-Value2 Endgame<KQKP>::operator()(const Position& pos) const {
+Value Endgame<KQKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, QueenValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
@@ -277,7 +277,7 @@ Value2 Endgame<KQKP>::operator()(const Position& pos) const {
   Square loserKSq = pos.square<KING>(weakSide);
   Square pawnSq = pos.square<PAWN>(weakSide);
 
-  Value2 result = (PushClose[distance(winnerKSq, loserKSq)]);
+  Value result = (PushClose[distance(winnerKSq, loserKSq)]);
 
   if (   relative_rank(weakSide, pawnSq) != RANK_7
       || distance(loserKSq, pawnSq) != 1
@@ -293,7 +293,7 @@ Value2 Endgame<KQKP>::operator()(const Position& pos) const {
 /// defending king towards the edge. If we also take care to avoid null move for
 /// the defending side in the search, this is usually sufficient to win KQ vs KR.
 template<>
-Value2 Endgame<KQKR>::operator()(const Position& pos) const {
+Value Endgame<KQKR>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, QueenValueMg, 0));
   assert(verify_material(pos, weakSide, RookValueMg, 0));
@@ -301,7 +301,7 @@ Value2 Endgame<KQKR>::operator()(const Position& pos) const {
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
 
-  Value2 result = ( QueenValueEg
+  Value result = ( QueenValueEg
                 - RookValueEg
                 + PushToEdges[loserKSq]
                 + PushClose[distance(winnerKSq, loserKSq)]);
@@ -312,12 +312,12 @@ Value2 Endgame<KQKR>::operator()(const Position& pos) const {
 
 /// KNN vs KP. Simply push the opposing king to the corner
 template<>
-Value2 Endgame<KNNKP>::operator()(const Position& pos) const {
+Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
 
-  Value2 result =  (2 * KnightValueEg
+  Value result =  (2 * KnightValueEg
                 - PawnValueEg
                 + PushToEdges[pos.square<KING>(weakSide)]);
 
@@ -326,7 +326,7 @@ Value2 Endgame<KNNKP>::operator()(const Position& pos) const {
 
 
 /// Some cases of trivial draws
-template<> Value2 Endgame<KNNK>::operator()(const Position&) const { return (VALUE_DRAW); }
+template<> Value Endgame<KNNK>::operator()(const Position&) const { return (VALUE_DRAW); }
 
 
 /// KB and one or more pawns vs K. It checks for draws with rook pawns and

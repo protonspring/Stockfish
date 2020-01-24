@@ -22,7 +22,7 @@
 
 #include "types.h"
 
-Value2 PieceValue[PHASE_NB][PIECE_NB] = {
+Value PieceValue[PHASE_NB][PIECE_NB] = {
   { VALUE_ZERO, PawnValueMg, KnightValueMg, BishopValueMg, RookValueMg, QueenValueMg },
   { VALUE_ZERO, PawnValueEg, KnightValueEg, BishopValueEg, RookValueEg, QueenValueEg }
 };
