@@ -1783,7 +1783,7 @@ string UCI::pv(const Position& pos, Depth depth, Value alpha, Value beta) {
          << " depth "    << d
          << " seldepth " << rootMoves[i].selDepth
          << " multipv "  << i + 1
-         << " score "    << UCI::value((v));
+         << " score "    << UCI::value(v);
 
       if (!tb && i == pvIdx)
           ss << (v >= beta ? " lowerbound" : v <= alpha ? " upperbound" : "");
