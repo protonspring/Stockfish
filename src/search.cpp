@@ -67,7 +67,7 @@ namespace {
   // Razor and futility margins
   constexpr int RazorMargin = 531;
   Value2 futility_margin(Depth d, bool improving) {
-    return Value(217 * (d - improving));
+    return Value2(217 * (d - improving));
   }
 
   // Reductions lookup table, initialized at startup
@@ -1026,10 +1026,10 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Prune moves with negative SEE (~20 Elo)
-              if (!pos.see_ge(move, Value(-(32 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
+              if (!pos.see_ge(move, Value2(-(32 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
                   continue;
           }
-          else if (!pos.see_ge(move, Value(-194) * depth)) // (~25 Elo)
+          else if (!pos.see_ge(move, Value2(-194) * depth)) // (~25 Elo)
           {
               if (captureOrPromotion && captureCount < 32)
                   capturesSearched[captureCount++] = move;
@@ -1387,7 +1387,7 @@ moves_loop: // When in check, search starts from here
     // Check for an immediate draw or maximum ply reached
     if (   pos.is_draw(ss->ply)
         || ss->ply >= MAX_PLY)
-        return (ss->ply >= MAX_PLY && !inCheck) ? Value(evaluate(pos)) : VALUE_DRAW;
+        return (ss->ply >= MAX_PLY && !inCheck) ? Value2(evaluate(pos)) : VALUE_DRAW;
 
     assert(0 <= ss->ply && ss->ply < MAX_PLY);
 
@@ -1423,7 +1423,7 @@ moves_loop: // When in check, search starts from here
         {
             // Never assume anything about values stored in TT
             if ((ss->staticEval = bestValue = tte->eval()) == VALUE_NONE)
-                ss->staticEval = bestValue = Value(evaluate(pos));
+                ss->staticEval = bestValue = Value2(evaluate(pos));
 
             // Can ttValue be used as a better position evaluation?
             if (    ttValue != VALUE_NONE
@@ -1432,14 +1432,14 @@ moves_loop: // When in check, search starts from here
         }
         else
             ss->staticEval = bestValue =
-            (ss-1)->currentMove != MOVE_NULL ? Value(evaluate(pos))
+            (ss-1)->currentMove != MOVE_NULL ? Value2(evaluate(pos))
                                              : -(ss-1)->staticEval + 2 * Eval::Tempo;
 
         // Stand pat. Return immediately if static value is at least beta
         if (bestValue >= beta)
         {
             if (!ttHit)
-                tte->save(posKey, Value(value_to_tt(bestValue, ss->ply)), pvHit, BOUND_LOWER,
+                tte->save(posKey, Value2(value_to_tt(bestValue, ss->ply)), pvHit, BOUND_LOWER,
                           DEPTH_NONE, MOVE_NONE, ss->staticEval);
 
             return bestValue;
@@ -1553,9 +1553,9 @@ moves_loop: // When in check, search starts from here
     // All legal moves have been searched. A special case: If we're in check
     // and no legal moves were found, it is checkmate.
     if (inCheck && bestValue == -VALUE_INFINITE)
-        return Value(mated_in(ss->ply)); // Plies to mate from the root
+        return Value2(mated_in(ss->ply)); // Plies to mate from the root
 
-    tte->save(posKey, Value(value_to_tt(bestValue, ss->ply)), pvHit,
+    tte->save(posKey, Value2(value_to_tt(bestValue, ss->ply)), pvHit,
               bestValue >= beta ? BOUND_LOWER :
               PvNode && bestValue > oldAlpha  ? BOUND_EXACT : BOUND_UPPER,
               ttDepth, bestMove, ss->staticEval);
@@ -1583,7 +1583,7 @@ moves_loop: // When in check, search starts from here
   // from the transposition table (which refers to the plies to mate/be mated
   // from current position) to "plies to mate/be mated from the root".
 
-  Value2 value_from_tt(Value v, int ply, int r50c) {
+  Value2 value_from_tt(Value2 v, int ply, int r50c) {
 
     return  v == VALUE_NONE             ? VALUE_NONE
           : v >= VALUE_MATE_IN_MAX_PLY  ? VALUE_MATE - v > 99 - r50c ? VALUE_MATE_IN_MAX_PLY  : v - ply
@@ -1692,7 +1692,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value2 topScore = rootMoves[0].score;
-    int delta = std::min(Value(topScore - rootMoves[multiPV - 1].score), PawnValueMg);
+    int delta = std::min(Value2(topScore - rootMoves[multiPV - 1].score), PawnValueMg);
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 
@@ -1783,7 +1783,7 @@ string UCI::pv(const Position& pos, Depth depth, Value2 alpha, Value2 beta) {
          << " depth "    << d
          << " seldepth " << rootMoves[i].selDepth
          << " multipv "  << i + 1
-         << " score "    << UCI::value(Value(v));
+         << " score "    << UCI::value(Value2(v));
 
       if (!tb && i == pvIdx)
           ss << (v >= beta ? " lowerbound" : v <= alpha ? " upperbound" : "");

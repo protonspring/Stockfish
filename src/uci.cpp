@@ -254,7 +254,7 @@ void UCI::loop(int argc, char* argv[]) {
 /// mate <y>  Mate in y moves, not plies. If the engine is getting mated
 ///           use negative values for y.
 
-string UCI::value(Value v) {
+string UCI::value(Value2 v) {
 
   assert(-VALUE_INFINITE < v && v < VALUE_INFINITE);
 

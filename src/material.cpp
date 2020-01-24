@@ -129,7 +129,7 @@ Entry* probe(const Position& pos) {
 
   Value2 npm_w = Value2(pos.non_pawn_material(WHITE));
   Value2 npm_b = Value2(pos.non_pawn_material(BLACK));
-  Value2 npm   = Value2(clamp(Value(npm_w + npm_b), EndgameLimit, MidgameLimit));
+  Value2 npm   = Value2(clamp(Value2(npm_w + npm_b), EndgameLimit, MidgameLimit));
 
   // Map total non-pawn material into [PHASE_ENDGAME, PHASE_MIDGAME]
   e->gamePhase = Phase(((npm - EndgameLimit) * PHASE_MIDGAME) / (MidgameLimit - EndgameLimit));

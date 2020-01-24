@@ -184,7 +184,7 @@ Value2 Endgame<KPK>::operator()(const Position& pos) const {
   if (!Bitbases::probe(wksq, psq, bksq, us))
       return Value2(VALUE_DRAW);
 
-  Value2 result = Value2(VALUE_KNOWN_WIN + PawnValueEg + Value(rank_of(psq)));
+  Value2 result = Value2(VALUE_KNOWN_WIN + PawnValueEg + Value2(rank_of(psq)));
 
   return strongSide == pos.side_to_move() ? result : Value2(-result);
 }

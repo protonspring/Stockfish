@@ -171,7 +171,8 @@ enum Bound {
 typedef int16_t Value2;
 //enum Value2 : int16_t { };
 
-enum Value : int16_t {
+//enum Value : int16_t {
+constexpr Value2
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
   VALUE_KNOWN_WIN = 10000,
@@ -188,8 +189,7 @@ enum Value : int16_t {
   RookValueMg   = 1276,  RookValueEg   = 1380,
   QueenValueMg  = 2538,  QueenValueEg  = 2682,
 
-  MidgameLimit  = 15258, EndgameLimit  = 3915
-};
+  MidgameLimit  = 15258, EndgameLimit  = 3915;
 
 //typedef Value Value2;
 
@@ -206,7 +206,7 @@ enum Piece {
   PIECE_NB = 16
 };
 
-extern Value PieceValue[PHASE_NB][PIECE_NB];
+extern Value2 PieceValue[PHASE_NB][PIECE_NB];
 
 typedef int Depth;
 
@@ -298,7 +298,7 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-ENABLE_FULL_OPERATORS_ON(Value)
+//ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
 ENABLE_INCR_OPERATORS_ON(PieceType)
@@ -314,10 +314,10 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_BASE_OPERATORS_ON
 
 /// Additional operators to add integers to a Value
-constexpr Value operator+(Value v, int i) { return Value(Value2(int(v) + i)); }
-constexpr Value operator-(Value v, int i) { return Value(Value2(int(v) - i)); }
-inline Value& operator+=(Value& v, int i) { return v = Value(Value2(v + i)); }
-inline Value& operator-=(Value& v, int i) { return v = Value(Value2(v - i)); }
+//constexpr Value operator+(Value v, int i) { return Value(Value2(int(v) + i)); }
+//constexpr Value operator-(Value v, int i) { return Value(Value2(int(v) - i)); }
+//inline Value& operator+=(Value& v, int i) { return v = Value(Value2(v + i)); }
+//inline Value& operator-=(Value& v, int i) { return v = Value(Value2(v - i)); }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
