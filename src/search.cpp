@@ -846,8 +846,6 @@ namespace {
         &&  pos.non_pawn_material(us)
         && (ss->ply >= thisThread->nmpMinPly || us != thisThread->nmpColor))
     {
-        if (eval < beta)
-           std::cout << "<" << eval << "," << beta<< ">" << std::endl;
         assert(eval - beta >= 0);
 
         // Null move dynamic reduction based on depth and value
