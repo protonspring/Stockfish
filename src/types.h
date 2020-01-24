@@ -169,9 +169,7 @@ enum Bound {
 };
 
 typedef int16_t Value2;
-//enum Value2 : int16_t { };
 
-//enum Value : int16_t {
 constexpr Value2
   VALUE_ZERO      = 0,
   VALUE_DRAW      = 0,
@@ -190,8 +188,6 @@ constexpr Value2
   QueenValueMg  = 2538,  QueenValueEg  = 2682,
 
   MidgameLimit  = 15258, EndgameLimit  = 3915;
-
-//typedef Value Value2;
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
@@ -259,46 +255,48 @@ enum Rank : int {
 /// The least significant 16 bits are used to store the middlegame value and the
 /// upper 16 bits are used to store the endgame value. We have to take care to
 /// avoid left-shifting a signed int to avoid undefined behavior.
-enum Score : int { SCORE_ZERO };
+enum Score : int32_t { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
+  //return Score((int32_t)((unsigned int)eg << 16) + mg);
+  return Score((int32_t)((uint32_t)eg << 16) + mg);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
 inline Value2 eg_value(Score s) {
-  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
+  //union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
+  union { uint16_t u; int16_t s; } eg = { uint16_t(uint32_t(s + 0x8000) >> 16) };
   return Value2(eg.s);
 }
 
 inline Value2 mg_value(Score s) {
-  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
+  //union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
+  union { uint16_t u; int16_t s; } mg = { uint16_t(uint32_t(s)) };
   return Value2(mg.s);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
-constexpr T operator+(T d1, T d2) { return T(int(d1) + int(d2)); } \
-constexpr T operator-(T d1, T d2) { return T(int(d1) - int(d2)); } \
-constexpr T operator-(T d) { return T(-int(d)); }                  \
+constexpr T operator+(T d1, T d2) { return T(int32_t(d1) + int32_t(d2)); } \
+constexpr T operator-(T d1, T d2) { return T(int32_t(d1) - int32_t(d2)); } \
+constexpr T operator-(T d) { return T(-int32_t(d)); }                  \
 inline T& operator+=(T& d1, T d2) { return d1 = d1 + d2; }         \
 inline T& operator-=(T& d1, T d2) { return d1 = d1 - d2; }
 
 #define ENABLE_INCR_OPERATORS_ON(T)                                \
-inline T& operator++(T& d) { return d = T(int(d) + 1); }           \
-inline T& operator--(T& d) { return d = T(int(d) - 1); }
+inline T& operator++(T& d) { return d = T(int32_t(d) + 1); }           \
+inline T& operator--(T& d) { return d = T(int32_t(d) - 1); }
 
 #define ENABLE_FULL_OPERATORS_ON(T)                                \
 ENABLE_BASE_OPERATORS_ON(T)                                        \
-constexpr T operator*(int i, T d) { return T(i * int(d)); }        \
-constexpr T operator*(T d, int i) { return T(int(d) * i); }        \
-constexpr T operator/(T d, int i) { return T(int(d) / i); }        \
-constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
-inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
-inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
+constexpr T operator*(int32_t i, T d) { return T(i * int32_t(d)); }        \
+constexpr T operator*(T d, int32_t i) { return T(int32_t(d) * i); }        \
+constexpr T operator/(T d, int32_t i) { return T(int32_t(d) / i); }        \
+constexpr int operator/(T d1, T d2) { return int(d1) / int32_t(d2); }  \
+inline T& operator*=(T& d, int32_t i) { return d = T(int32_t(d) * i); }    \
+inline T& operator/=(T& d, int32_t i) { return d = T(int32_t(d) / i); }
 
-//ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Direction)
 
 ENABLE_INCR_OPERATORS_ON(PieceType)
@@ -312,12 +310,6 @@ ENABLE_BASE_OPERATORS_ON(Score)
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
 #undef ENABLE_BASE_OPERATORS_ON
-
-/// Additional operators to add integers to a Value
-//constexpr Value operator+(Value v, int i) { return Value(Value2(int(v) + i)); }
-//constexpr Value operator-(Value v, int i) { return Value(Value2(int(v) - i)); }
-//inline Value& operator+=(Value& v, int i) { return v = Value(Value2(v + i)); }
-//inline Value& operator-=(Value& v, int i) { return v = Value(Value2(v - i)); }
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
