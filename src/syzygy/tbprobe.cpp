@@ -762,7 +762,7 @@ Ret do_probe_table(const Position& pos, T* entry, WDLScore wdl, ProbeState* resu
     // piece is below RANK_5.
     if (rank_of(squares[0]) > RANK_4)
         for (int i = 0; i < size; ++i)
-            squares[i] ^= int(SQ_A8); // Vertical flip: SQ_A8 -> SQ_A1
+            squares[i] ^= 56; // Vertical flip: SQ_A8 -> SQ_A1
 
     // Look for the first piece of the leading group not on the A1-D4 diagonal
     // and ensure it is mapped below the diagonal.
