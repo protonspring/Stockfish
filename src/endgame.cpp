@@ -158,12 +158,12 @@ Value Endgame<KBNK>::operator()(const Position& pos) const {
   // If our bishop does not attack A1/H8, we flip the enemy king square
   // to drive to opposite corners (A8/H1).
 
-  Value result =  (VALUE_KNOWN_WIN
+  Value result =  VALUE_KNOWN_WIN
                 + PushClose[distance(winnerKSq, loserKSq)]
-                + PushToCorners[opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq]);
+                + PushToCorners[opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq];
 
   assert(abs(result) < VALUE_MATE_IN_MAX_PLY);
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -182,11 +182,11 @@ Value Endgame<KPK>::operator()(const Position& pos) const {
   Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
 
   if (!Bitbases::probe(wksq, psq, bksq, us))
-      return (VALUE_DRAW);
+      return VALUE_DRAW;
 
-  Value result = (VALUE_KNOWN_WIN + PawnValueEg + (rank_of(psq)));
+  Value result = VALUE_KNOWN_WIN + PawnValueEg + (rank_of(psq));
 
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -216,7 +216,7 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
   // it's a win.
   else if (   distance(bksq, psq) >= 3 + (pos.side_to_move() == weakSide)
            && distance(bksq, rsq) >= 3)
-      result = (RookValueEg - distance(wksq, psq));
+      result = RookValueEg - distance(wksq, psq);
 
   // If the pawn is far advanced and supported by the defending king,
   // the position is drawish
@@ -224,14 +224,14 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
            && distance(bksq, psq) == 1
            && rank_of(wksq) >= RANK_4
            && distance(wksq, psq) > 2 + (pos.side_to_move() == strongSide))
-      result = (80 - 8 * distance(wksq, psq));
+      result = 80 - 8 * distance(wksq, psq);
 
   else
-      result =  (200 - 8 * (  distance(wksq, psq + SOUTH)
+      result =  200 - 8 * (  distance(wksq, psq + SOUTH)
                                   - distance(bksq, psq + SOUTH)
-                                  - distance(psq, queeningSq)));
+                                  - distance(psq, queeningSq));
 
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -244,7 +244,7 @@ Value Endgame<KRKB>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
   Value result = (PushToEdges[pos.square<KING>(weakSide)]);
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -259,7 +259,7 @@ Value Endgame<KRKN>::operator()(const Position& pos) const {
   Square bksq = pos.square<KING>(weakSide);
   Square bnsq = pos.square<KNIGHT>(weakSide);
   Value result = (PushToEdges[bksq] + PushAway[distance(bksq, bnsq)]);
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -284,7 +284,7 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
       || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
       result = (result + (QueenValueEg - PawnValueEg));
 
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -301,12 +301,12 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
 
-  Value result = ( QueenValueEg
+  Value result =  QueenValueEg
                 - RookValueEg
                 + PushToEdges[loserKSq]
-                + PushClose[distance(winnerKSq, loserKSq)]);
+                + PushClose[distance(winnerKSq, loserKSq)];
 
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
@@ -317,11 +317,11 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
 
-  Value result =  (2 * KnightValueEg
+  Value result =  2 * KnightValueEg
                 - PawnValueEg
-                + PushToEdges[pos.square<KING>(weakSide)]);
+                + PushToEdges[pos.square<KING>(weakSide)];
 
-  return strongSide == pos.side_to_move() ? result : (-result);
+  return strongSide == pos.side_to_move() ? result : -result;
 }
 
 
