@@ -2,7 +2,7 @@
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
   Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
   Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
-  Copyright (C) 2015-2019 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
+  Copyright (C) 2015-2020 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
 
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #ifndef ENDGAME_H_INCLUDED
 #define ENDGAME_H_INCLUDED
 
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <string>
 #include <type_traits>
@@ -98,7 +98,7 @@ struct Endgame : public EndgameBase<T> {
 namespace Endgames {
 
   template<typename T> using Ptr = std::unique_ptr<EndgameBase<T>>;
-  template<typename T> using Map = std::map<Key, Ptr<T>>;
+  template<typename T> using Map = std::unordered_map<Key, Ptr<T>>;
 
   extern std::pair<Map<Value2>, Map<ScaleFactor>> maps;
 
@@ -119,7 +119,8 @@ namespace Endgames {
 
   template<typename T>
   const EndgameBase<T>* probe(Key key) {
-    return map<T>().count(key) ? map<T>()[key].get() : nullptr;
+    auto it = map<T>().find(key);
+    return it != map<T>().end() ? it->second.get() : nullptr;
   }
 }
 
