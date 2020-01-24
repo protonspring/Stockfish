@@ -282,7 +282,7 @@ void MainThread::search() {
 
       // Find out minimum score
       for (Thread* th: Threads)
-          minScore = std::min(minScore, th->rootMoves[0].score);
+          minScore = std::min(int(minScore), int(th->rootMoves[0].score));
 
       // Vote according to score and depth, and select the best thread
       for (Thread* th : Threads)
@@ -434,8 +434,8 @@ void Thread::search() {
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
               delta = 21 + abs(previousScore) / 256;
-              alpha = std::max(previousScore - delta, int(-VALUE_INFINITE));
-              beta  = std::min(previousScore + delta, int( VALUE_INFINITE));
+              alpha = std::max(int(previousScore - delta), int(-VALUE_INFINITE));
+              beta  = std::min(int(previousScore + delta), int( VALUE_INFINITE));
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + (102 - ct / 2) * previousScore / (abs(previousScore) + 157);
@@ -450,7 +450,7 @@ void Thread::search() {
           int failedHighCnt = 0;
           while (true)
           {
-              Depth adjustedDepth = std::max(1, rootDepth - failedHighCnt - searchAgainCounter);
+              Depth adjustedDepth = std::max(1, int(rootDepth - failedHighCnt - searchAgainCounter));
               bestValue = ::search<PV>(rootPos, ss, alpha, beta, adjustedDepth, false);
 
               // Bring the best move to the front. It is critical that sorting
@@ -480,7 +480,7 @@ void Thread::search() {
               if (bestValue <= alpha)
               {
                   beta = (alpha + beta) / 2;
-                  alpha = std::max(bestValue - delta, -VALUE_INFINITE);
+                  alpha = std::max(int(bestValue - delta), int(-VALUE_INFINITE));
 
                   failedHighCnt = 0;
                   if (mainThread)
@@ -488,7 +488,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min(bestValue + delta, int(VALUE_INFINITE));
+                  beta = std::min(int(bestValue + delta), int(VALUE_INFINITE));
                   ++failedHighCnt;
               }
               else
@@ -662,8 +662,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max(mated_in(ss->ply), alpha);
-        beta = std::min(mate_in(ss->ply+1), beta);
+        alpha = std::max(int(mated_in(ss->ply)), int(alpha));
+        beta = std::min(int(mate_in(ss->ply+1)), int(beta));
         if (alpha >= beta)
             return alpha;
     }
@@ -775,7 +775,7 @@ namespace {
                 if (PvNode)
                 {
                     if (b == BOUND_LOWER)
-                        bestValue = value, alpha = std::max(alpha, bestValue);
+                        bestValue = value, alpha = std::max(int(alpha), int(bestValue));
                     else
                         maxValue = value;
                 }
@@ -892,7 +892,7 @@ namespace {
         &&  depth >= 5
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
-        Value raisedBeta = std::min(beta + 189 - 45 * improving, int(VALUE_INFINITE));
+        Value raisedBeta = std::min(int(beta + 189 - 45 * improving), int(VALUE_INFINITE));
         MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
@@ -1334,7 +1334,7 @@ moves_loop: // When in check, search starts from here
         update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, stat_bonus(depth));
 
     if (PvNode)
-        bestValue = std::min(bestValue, maxValue);
+        bestValue = std::min(int(bestValue), int(maxValue));
 
     if (!excludedMove)
         tte->save(posKey, value_to_tt(bestValue, ss->ply), ttPv,
@@ -1484,13 +1484,13 @@ moves_loop: // When in check, search starts from here
 
           if (futilityValue <= alpha)
           {
-              bestValue = std::max(bestValue, futilityValue);
+              bestValue = std::max(int(bestValue), int(futilityValue));
               continue;
           }
 
           if (futilityBase <= alpha && !pos.see_ge(move, VALUE_ZERO + 1))
           {
-              bestValue = std::max(bestValue, futilityBase);
+              bestValue = std::max(int(bestValue), int(futilityBase));
               continue;
           }
       }
@@ -1690,7 +1690,7 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value topScore = rootMoves[0].score;
-    int delta = std::min(topScore - rootMoves[multiPV - 1].score, int(PawnValueMg));
+    int delta = std::min(int(topScore - rootMoves[multiPV - 1].score), int(PawnValueMg));
     int weakness = 120 - 2 * level;
     int maxScore = -VALUE_INFINITE;
 
