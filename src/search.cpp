@@ -282,7 +282,7 @@ void MainThread::search() {
 
       // Find out minimum score
       for (Thread* th: Threads)
-          minScore = std::min(minScore, th->rootMoves[0].score);
+          minScore = std::min<Value>(minScore, th->rootMoves[0].score);
 
       // Vote according to score and depth, and select the best thread
       for (Thread* th : Threads)
@@ -365,7 +365,7 @@ void Thread::search() {
   // for match (TC 60+0.6) results spanning a wide range of k values.
   PRNG rng(now());
   double floatLevel = Options["UCI_LimitStrength"] ?
-                        clamp(std::pow((Options["UCI_Elo"] - 1346.6) / 143.4, 1 / 0.806), 0.0, 20.0) :
+                        clamp<float>(std::pow((Options["UCI_Elo"] - 1346.6) / 143.4, 1 / 0.806), 0.0, 20.0) :
                         double(Options["Skill Level"]);
   int intLevel = int(floatLevel) +
                  ((floatLevel - int(floatLevel)) * 1024 > rng.rand<unsigned>() % 1024  ? 1 : 0);
@@ -374,9 +374,9 @@ void Thread::search() {
   // When playing with strength handicap enable MultiPV search that we will
   // use behind the scenes to retrieve a set of possible moves.
   if (skill.enabled())
-      multiPV = std::max(multiPV, (size_t)4);
+      multiPV = std::max<size_t>(multiPV, 4);
 
-  multiPV = std::min(multiPV, rootMoves.size());
+  multiPV = std::min<size_t>(multiPV, rootMoves.size());
   ttHitAverage = ttHitAverageWindow * ttHitAverageResolution / 2;
 
   int ct = int(Options["Contempt"]) * PawnValueEg / 100; // From centipawns
@@ -434,8 +434,8 @@ void Thread::search() {
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
               delta = Value(21 + abs(previousScore) / 256);
-              alpha = std::max(previousScore - delta,-VALUE_INFINITE);
-              beta  = std::min(previousScore + delta, VALUE_INFINITE);
+              alpha = std::max<Value>(previousScore - delta,-VALUE_INFINITE);
+              beta  = std::min<Value>(previousScore + delta, VALUE_INFINITE);
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + (102 - ct / 2) * previousScore / (abs(previousScore) + 157);
@@ -480,7 +480,7 @@ void Thread::search() {
               if (bestValue <= alpha)
               {
                   beta = (alpha + beta) / 2;
-                  alpha = std::max(bestValue - delta, -VALUE_INFINITE);
+                  alpha = std::max<Value>(bestValue - delta, -VALUE_INFINITE);
 
                   failedHighCnt = 0;
                   if (mainThread)
@@ -488,7 +488,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min(bestValue + delta, VALUE_INFINITE);
+                  beta = std::min<Value>(bestValue + delta, VALUE_INFINITE);
                   ++failedHighCnt;
               }
               else
@@ -538,7 +538,7 @@ void Thread::search() {
       {
           double fallingEval = (332 +  6 * (mainThread->previousScore - bestValue)
                                     +  6 * (mainThread->iterValue[iterIdx]  - bestValue)) / 704.0;
-          fallingEval = clamp(fallingEval, 0.5, 1.5);
+          fallingEval = clamp<float>(fallingEval, 0.5, 1.5);
 
           // If the bestMove is stable over several iterations, reduce time accordingly
           timeReduction = lastBestMoveDepth + 9 < completedDepth ? 1.94 : 0.91;
@@ -662,8 +662,8 @@ namespace {
         // because we will never beat the current alpha. Same logic but with reversed
         // signs applies also in the opposite condition of being mated instead of giving
         // mate. In this case return a fail-high score.
-        alpha = std::max(mated_in(ss->ply), alpha);
-        beta = std::min(mate_in(ss->ply+1), beta);
+        alpha = std::max<Value>(mated_in(ss->ply), alpha);
+        beta = std::min<Value>(mate_in(ss->ply+1), beta);
         if (alpha >= beta)
             return alpha;
     }
@@ -766,7 +766,7 @@ namespace {
                     || (b == BOUND_LOWER ? value >= beta : value <= alpha))
                 {
                     tte->save(posKey, value_to_tt(value, ss->ply), ttPv, b,
-                              std::min(MAX_PLY - 1, depth + 6),
+                              std::min<Depth>(MAX_PLY - 1, depth + 6),
                               MOVE_NONE, VALUE_NONE);
 
                     return value;
@@ -775,7 +775,7 @@ namespace {
                 if (PvNode)
                 {
                     if (b == BOUND_LOWER)
-                        bestValue = value, alpha = std::max(alpha, bestValue);
+                        bestValue = value, alpha = std::max<Value>(alpha, bestValue);
                     else
                         maxValue = value;
                 }
@@ -849,7 +849,7 @@ namespace {
         assert(eval - beta >= 0);
 
         // Null move dynamic reduction based on depth and value
-        Depth R = (854 + 68 * depth) / 258 + std::min(int(eval - beta) / 192, 3);
+        Depth R = (854 + 68 * depth) / 258 + std::min<Depth>((eval - beta) / 192, 3);
 
         ss->currentMove = MOVE_NULL;
         ss->continuationHistory = &thisThread->continuationHistory[0][0][NO_PIECE][0];
@@ -892,7 +892,7 @@ namespace {
         &&  depth >= 5
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
-        Value raisedBeta = std::min(beta + 189 - 45 * improving, VALUE_INFINITE);
+        Value raisedBeta = std::min<Value>(beta + 189 - 45 * improving, VALUE_INFINITE);
         MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
@@ -1005,7 +1005,7 @@ moves_loop: // When in check, search starts from here
               && !givesCheck)
           {
               // Reduced depth of the next LMR search
-              int lmrDepth = std::max(newDepth - reduction(improving, depth, moveCount), 0);
+              int lmrDepth = std::max<int>(newDepth - reduction(improving, depth, moveCount), 0);
 
               // Countermoves based pruning (~20 Elo)
               if (   lmrDepth < 4 + ((ss-1)->statScore > 0 || (ss-1)->moveCount == 1)
@@ -1024,7 +1024,7 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Prune moves with negative SEE (~20 Elo)
-              if (!pos.see_ge(move, Value(-(32 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
+              if (!pos.see_ge(move, Value(-(32 - std::min<int>(lmrDepth, 18)) * lmrDepth * lmrDepth)))
                   continue;
           }
           else if (!pos.see_ge(move, Value(-194) * depth)) // (~25 Elo)
@@ -1194,7 +1194,7 @@ moves_loop: // When in check, search starts from here
           else if (depth < 8 && moveCount > 2)
               r++;
 
-          Depth d = clamp(newDepth - r, 1, newDepth);
+          Depth d = clamp<Depth>(newDepth - r, 1, newDepth);
 
           value = -search<NonPV>(pos, ss+1, -(alpha+1), -alpha, d, true);
 
@@ -1334,7 +1334,7 @@ moves_loop: // When in check, search starts from here
         update_continuation_histories(ss-1, pos.piece_on(prevSq), prevSq, stat_bonus(depth));
 
     if (PvNode)
-        bestValue = std::min(bestValue, maxValue);
+        bestValue = std::min<Value>(bestValue, maxValue);
 
     if (!excludedMove)
         tte->save(posKey, value_to_tt(bestValue, ss->ply), ttPv,
@@ -1484,13 +1484,13 @@ moves_loop: // When in check, search starts from here
 
           if (futilityValue <= alpha)
           {
-              bestValue = std::max(bestValue, futilityValue);
+              bestValue = std::max<Value>(bestValue, futilityValue);
               continue;
           }
 
           if (futilityBase <= alpha && !pos.see_ge(move, VALUE_ZERO + 1))
           {
-              bestValue = std::max(bestValue, futilityBase);
+              bestValue = std::max<Value>(bestValue, futilityBase);
               continue;
           }
       }
@@ -1690,9 +1690,9 @@ moves_loop: // When in check, search starts from here
 
     // RootMoves are already sorted by score in descending order
     Value topScore = rootMoves[0].score;
-    int delta = std::min(topScore - rootMoves[multiPV - 1].score, PawnValueMg);
+    Value delta = std::min<Value>(topScore - rootMoves[multiPV - 1].score, PawnValueMg);
     int weakness = 120 - 2 * level;
-    int maxScore = -VALUE_INFINITE;
+    Value maxScore = -VALUE_INFINITE;
 
     // Choose best move. For each move score we add two terms, both dependent on
     // weakness. One is deterministic and bigger for weaker levels, and one is
@@ -1724,7 +1724,7 @@ void MainThread::check_time() {
       return;
 
   // When using nodes, ensure checking rate is not lower than 0.1% of nodes
-  callsCnt = Limits.nodes ? std::min(1024, int(Limits.nodes / 1024)) : 1024;
+  callsCnt = Limits.nodes ? std::min<int>(1024, int(Limits.nodes / 1024)) : 1024;
 
   static TimePoint lastInfoTime = now();
 
@@ -1757,7 +1757,7 @@ string UCI::pv(const Position& pos, Depth depth, Value alpha, Value beta) {
   TimePoint elapsed = Time.elapsed() + 1;
   const RootMoves& rootMoves = pos.this_thread()->rootMoves;
   size_t pvIdx = pos.this_thread()->pvIdx;
-  size_t multiPV = std::min((size_t)Options["MultiPV"], rootMoves.size());
+  size_t multiPV = std::min<size_t>(Options["MultiPV"], rootMoves.size());
   uint64_t nodesSearched = Threads.nodes_searched();
   uint64_t tbHits = Threads.tb_hits() + (TB::RootInTB ? rootMoves.size() : 0);
 
