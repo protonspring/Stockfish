@@ -67,7 +67,7 @@ namespace {
   // Razor and futility margins
   constexpr int RazorMargin = 531;
   Value futility_margin(Depth d, bool improving) {
-    return Value(217 * (d - improving));
+    return 217 * (d - improving);
   }
 
   // Reductions lookup table, initialized at startup
@@ -89,7 +89,7 @@ namespace {
 
   // Add a small random component to draw evaluations to avoid 3fold-blindness
   Value value_draw(Thread* thisThread) {
-    return VALUE_DRAW + Value(2 * (thisThread->nodes & 1) - 1);
+    return VALUE_DRAW + 2 * (thisThread->nodes & 1) - 1;
   }
 
   // Skill structure is used to implement strength limit
@@ -433,7 +433,7 @@ void Thread::search() {
           if (rootDepth >= 4)
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
-              delta = Value(21 + abs(previousScore) / 256);
+              delta = 21 + abs(previousScore) / 256;
               alpha = std::max(previousScore - delta,-VALUE_INFINITE);
               beta  = std::min(previousScore + delta, Value(VALUE_INFINITE));
 
@@ -1024,10 +1024,10 @@ moves_loop: // When in check, search starts from here
                   continue;
 
               // Prune moves with negative SEE (~20 Elo)
-              if (!pos.see_ge(move, Value(-(32 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth)))
+              if (!pos.see_ge(move, -(32 - std::min(lmrDepth, 18)) * lmrDepth * lmrDepth))
                   continue;
           }
-          else if (!pos.see_ge(move, Value(-194) * depth)) // (~25 Elo)
+          else if (!pos.see_ge(move, -194 * depth)) // (~25 Elo)
           {
               if (captureOrPromotion && captureCount < 32)
                   capturesSearched[captureCount++] = move;
