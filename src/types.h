@@ -169,26 +169,43 @@ enum Bound {
 };
 
 typedef int Value;
+constexpr Value VALUE_ZERO      = 0;
+constexpr Value VALUE_DRAW      = 0;
+constexpr Value VALUE_KNOWN_WIN = 10000;
+constexpr Value VALUE_MATE      = 32000;
+constexpr Value VALUE_INFINITE2 = 32001;
+constexpr Value VALUE_NONE      = 32002;
 
-enum : Value {
-  VALUE_ZERO      = 0,
-  VALUE_DRAW      = 0,
-  VALUE_KNOWN_WIN = 10000,
-  VALUE_MATE      = 32000,
-  VALUE_INFINITE  = 32001,
-  VALUE_NONE      = 32002,
+constexpr Value VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY;
+constexpr Value VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY;
 
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
+constexpr Value
+PawnValueMg   = 128,   PawnValueEg   = 213,
+KnightValueMg = 781,   KnightValueEg = 854,
+BishopValueMg = 825,   BishopValueEg = 915,
+RookValueMg   = 1276,  RookValueEg   = 1380,
+QueenValueMg  = 2538,  QueenValueEg  = 2682,
+MidgameLimit  = 15258, EndgameLimit  = 3915;
 
-  PawnValueMg   = 128,   PawnValueEg   = 213,
-  KnightValueMg = 781,   KnightValueEg = 854,
-  BishopValueMg = 825,   BishopValueEg = 915,
-  RookValueMg   = 1276,  RookValueEg   = 1380,
-  QueenValueMg  = 2538,  QueenValueEg  = 2682,
+//enum : Value {
+//VALUE_ZERO      = 0,
+//VALUE_DRAW      = 0,
+//VALUE_KNOWN_WIN = 10000,
+//VALUE_MATE      = 32000,
+//VALUE_INFINITE  = 32001,
+//VALUE_NONE      = 32002,
 
-  MidgameLimit  = 15258, EndgameLimit  = 3915
-};
+  //VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
+  //VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
+
+  //PawnValueMg   = 128,   PawnValueEg   = 213,
+  //KnightValueMg = 781,   KnightValueEg = 854,
+  //BishopValueMg = 825,   BishopValueEg = 915,
+  //RookValueMg   = 1276,  RookValueEg   = 1380,
+  //QueenValueMg  = 2538,  QueenValueEg  = 2682,
+
+  //MidgameLimit  = 15258, EndgameLimit  = 3915
+//};
 
 enum PieceType {
   NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,

@@ -306,7 +306,7 @@ void MainThread::search() {
 
   // Send again PV info if we have a new best thread
   if (bestThread != this)
-      sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, -VALUE_INFINITE, VALUE_INFINITE) << sync_endl;
+      sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, -VALUE_INFINITE2, VALUE_INFINITE2) << sync_endl;
 
   sync_cout << "bestmove " << UCI::move(bestThread->rootMoves[0].pv[0], rootPos.is_chess960());
 
@@ -343,12 +343,12 @@ void Thread::search() {
 
   ss->pv = pv;
 
-  bestValue = delta = alpha = -VALUE_INFINITE;
-  beta = VALUE_INFINITE;
+  bestValue = delta = alpha = -VALUE_INFINITE2;
+  beta = VALUE_INFINITE2;
 
   if (mainThread)
   {
-      if (mainThread->previousScore == VALUE_INFINITE)
+      if (mainThread->previousScore == VALUE_INFINITE2)
           for (int i=0; i<4; ++i)
               mainThread->iterValue[i] = VALUE_ZERO;
       else
@@ -434,8 +434,8 @@ void Thread::search() {
           {
               Value previousScore = rootMoves[pvIdx].previousScore;
               delta = Value(21 + abs(previousScore) / 256);
-              alpha = std::max<Value>(previousScore - delta,-VALUE_INFINITE);
-              beta  = std::min<Value>(previousScore + delta, VALUE_INFINITE);
+              alpha = std::max(previousScore - delta,-VALUE_INFINITE2);
+              beta  = std::min(previousScore + delta, Value(VALUE_INFINITE2));
 
               // Adjust contempt based on root move's previousScore (dynamic contempt)
               int dct = ct + (102 - ct / 2) * previousScore / (abs(previousScore) + 157);
@@ -480,7 +480,7 @@ void Thread::search() {
               if (bestValue <= alpha)
               {
                   beta = (alpha + beta) / 2;
-                  alpha = std::max(bestValue - delta, -VALUE_INFINITE);
+                  alpha = std::max(bestValue - delta, -VALUE_INFINITE2);
 
                   failedHighCnt = 0;
                   if (mainThread)
@@ -488,7 +488,7 @@ void Thread::search() {
               }
               else if (bestValue >= beta)
               {
-                  beta = std::min<Value>(bestValue + delta, VALUE_INFINITE);
+                  beta = std::min<Value>(bestValue + delta, Value(VALUE_INFINITE2));
                   ++failedHighCnt;
               }
               else
@@ -499,7 +499,7 @@ void Thread::search() {
 
               delta += delta / 4 + 5;
 
-              assert(alpha >= -VALUE_INFINITE && beta <= VALUE_INFINITE);
+              assert(alpha >= -VALUE_INFINITE2 && beta <= VALUE_INFINITE2);
           }
 
           // Sort the PV lines searched so far and update the GUI
@@ -613,7 +613,7 @@ namespace {
     if (depth <= 0)
         return qsearch<NT>(pos, ss, alpha, beta);
 
-    assert(-VALUE_INFINITE <= alpha && alpha < beta && beta <= VALUE_INFINITE);
+    assert(-VALUE_INFINITE2 <= alpha && alpha < beta && beta <= VALUE_INFINITE2);
     assert(PvNode || (alpha == beta - 1));
     assert(0 < depth && depth < MAX_PLY);
     assert(!(PvNode && cutNode));
@@ -636,8 +636,8 @@ namespace {
     priorCapture = pos.captured_piece();
     Color us = pos.side_to_move();
     moveCount = captureCount = quietCount = ss->moveCount = 0;
-    bestValue = -VALUE_INFINITE;
-    maxValue = VALUE_INFINITE;
+    bestValue = -VALUE_INFINITE2;
+    maxValue = VALUE_INFINITE2;
 
     // Check for the available remaining time
     if (thisThread == Threads.main())
@@ -892,7 +892,7 @@ namespace {
         &&  depth >= 5
         &&  abs(beta) < VALUE_MATE_IN_MAX_PLY)
     {
-        Value raisedBeta = std::min<Value>(beta + 189 - 45 * improving, VALUE_INFINITE);
+        Value raisedBeta = std::min<Value>(beta + 189 - 45 * improving, VALUE_INFINITE2);
         MovePicker mp(pos, ttMove, raisedBeta - ss->staticEval, &thisThread->captureHistory);
         int probCutCount = 0;
 
@@ -1234,7 +1234,7 @@ moves_loop: // When in check, search starts from here
       // Step 18. Undo move
       pos.undo_move(move);
 
-      assert(value > -VALUE_INFINITE && value < VALUE_INFINITE);
+      assert(value > -VALUE_INFINITE2 && value < VALUE_INFINITE2);
 
       // Step 19. Check for a new best move
       // Finished searching the move. If a stop occurred, the return value of
@@ -1270,7 +1270,7 @@ moves_loop: // When in check, search starts from here
               // All other moves but the PV are set to the lowest value: this
               // is not a problem when sorting because the sort is stable and the
               // move position in the list is preserved - just the PV is pushed up.
-              rm.score = -VALUE_INFINITE;
+              rm.score = -VALUE_INFINITE2;
       }
 
       if (value > bestValue)
@@ -1342,7 +1342,7 @@ moves_loop: // When in check, search starts from here
                   PvNode && bestMove ? BOUND_EXACT : BOUND_UPPER,
                   depth, bestMove, ss->staticEval);
 
-    assert(bestValue > -VALUE_INFINITE && bestValue < VALUE_INFINITE);
+    assert(bestValue > -VALUE_INFINITE2 && bestValue < VALUE_INFINITE2);
 
     return bestValue;
   }
@@ -1355,7 +1355,7 @@ moves_loop: // When in check, search starts from here
 
     constexpr bool PvNode = NT == PV;
 
-    assert(alpha >= -VALUE_INFINITE && alpha < beta && beta <= VALUE_INFINITE);
+    assert(alpha >= -VALUE_INFINITE2 && alpha < beta && beta <= VALUE_INFINITE2);
     assert(PvNode || (alpha == beta - 1));
     assert(depth <= 0);
 
@@ -1413,7 +1413,7 @@ moves_loop: // When in check, search starts from here
     if (inCheck)
     {
         ss->staticEval = VALUE_NONE;
-        bestValue = futilityBase = -VALUE_INFINITE;
+        bestValue = futilityBase = -VALUE_INFINITE2;
     }
     else
     {
@@ -1526,7 +1526,7 @@ moves_loop: // When in check, search starts from here
       value = -qsearch<NT>(pos, ss+1, -beta, -alpha, depth - 1);
       pos.undo_move(move);
 
-      assert(value > -VALUE_INFINITE && value < VALUE_INFINITE);
+      assert(value > -VALUE_INFINITE2 && value < VALUE_INFINITE2);
 
       // Check for a new best move
       if (value > bestValue)
@@ -1550,7 +1550,7 @@ moves_loop: // When in check, search starts from here
 
     // All legal moves have been searched. A special case: If we're in check
     // and no legal moves were found, it is checkmate.
-    if (inCheck && bestValue == -VALUE_INFINITE)
+    if (inCheck && bestValue == -VALUE_INFINITE2)
         return mated_in(ss->ply); // Plies to mate from the root
 
     tte->save(posKey, value_to_tt(bestValue, ss->ply), pvHit,
@@ -1558,7 +1558,7 @@ moves_loop: // When in check, search starts from here
               PvNode && bestValue > oldAlpha  ? BOUND_EXACT : BOUND_UPPER,
               ttDepth, bestMove, ss->staticEval);
 
-    assert(bestValue > -VALUE_INFINITE && bestValue < VALUE_INFINITE);
+    assert(bestValue > -VALUE_INFINITE2 && bestValue < VALUE_INFINITE2);
 
     return bestValue;
   }
@@ -1692,7 +1692,7 @@ moves_loop: // When in check, search starts from here
     Value topScore = rootMoves[0].score;
     int delta = std::min<int>(topScore - rootMoves[multiPV - 1].score, PawnValueMg);
     int weakness = 120 - 2 * level;
-    int maxScore = -VALUE_INFINITE;
+    int maxScore = -VALUE_INFINITE2;
 
     // Choose best move. For each move score we add two terms, both dependent on
     // weakness. One is deterministic and bigger for weaker levels, and one is
@@ -1763,7 +1763,7 @@ string UCI::pv(const Position& pos, Depth depth, Value alpha, Value beta) {
 
   for (size_t i = 0; i < multiPV; ++i)
   {
-      bool updated = rootMoves[i].score != -VALUE_INFINITE;
+      bool updated = rootMoves[i].score != -VALUE_INFINITE2;
 
       if (depth == 1 && !updated)
           continue;

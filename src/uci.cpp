@@ -256,7 +256,7 @@ void UCI::loop(int argc, char* argv[]) {
 
 string UCI::value(Value v) {
 
-  assert(-VALUE_INFINITE < v && v < VALUE_INFINITE);
+  assert(-VALUE_INFINITE2 < v && v < VALUE_INFINITE2);
 
   stringstream ss;
 
