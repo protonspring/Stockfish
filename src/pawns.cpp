@@ -247,7 +247,7 @@ Score Entry::do_king_safety(const Position& pos) {
 
   // Weaker shelter if king supports weak pawns
   Bitboard b = PseudoAttacks[KING][ksq] & weakPawns[Us];
-  shelter += make_score(0,8) * popcount(b);
+  shelter += make_score(8,0) * popcount(b);
 
   // In endgame we like to bring our king near our closest pawn
   Bitboard pawns = pos.pieces(Us, PAWN);
