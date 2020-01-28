@@ -238,7 +238,7 @@ Score Entry::do_king_safety(const Position& pos) {
 
   // Bonus for being by pawns
   Bitboard pawns = pos.pieces(Us, PAWN);
-  shelter += make_score(0,3) * popcount(BigKingBlock[ksq] & pawns);
+  shelter += make_score(4,0) * popcount(BigKingBlock[ksq] & pawns);
 
   // In endgame we like to bring our king near our closest pawn
   int minPawnDist = pawns ? 8 : 0;
