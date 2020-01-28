@@ -139,12 +139,20 @@ namespace {
         }
 
         else if (!neighbours)
+        {
             score -=   Isolated
                      + WeakUnopposed * !opposed;
 
+            e->weakPawns[Us] |= s;
+        }
+
         else if (backward)
+        {
             score -=   Backward
                      + WeakUnopposed * !opposed;
+
+            e->weakPawns[Us] |= s;
+        }
 
         if (!support)
             score -=   Doubled * doubled
@@ -235,6 +243,11 @@ Score Entry::do_king_safety(const Position& pos) {
 
   if (pos.can_castle(Us & QUEEN_SIDE))
       shelter = std::max(shelter, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)), compare);
+
+
+  // Weaker shelter if king supports weak pawns
+  Bitboard b = PseudoAttacks[KING][ksq] & weakPawns[Us];
+  shelter -= make_score(8,0) * popcount(b);
 
   // In endgame we like to bring our king near our closest pawn
   Bitboard pawns = pos.pieces(Us, PAWN);
