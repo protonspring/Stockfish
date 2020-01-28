@@ -31,6 +31,7 @@ Bitboard SquareBB[SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+Bitboard BigKingBlock[SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -116,6 +117,14 @@ void Bitboards::init() {
               if (PseudoAttacks[pt][s1] & s2)
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
+
+  //Populate BigKingBlock
+  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+      for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
+      {
+          if (distance(s1, s2) < 3)
+              BigKingBlock[s1] |= s2;
+      }
 }
 
 
