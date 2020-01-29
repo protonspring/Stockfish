@@ -39,6 +39,28 @@ const std::string pretty(Bitboard b);
 
 }
 
+/// popcount() counts the number of non-zero bits in a bitboard
+
+inline int popcount(Bitboard b) {
+
+#ifndef USE_POPCNT
+
+  union { Bitboard bb; uint16_t u[4]; } v = { b };
+  return PopCnt16[v.u[0]] + PopCnt16[v.u[1]] + PopCnt16[v.u[2]] + PopCnt16[v.u[3]];
+
+#elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
+
+  return (int)_mm_popcnt_u64(b);
+
+#else // Assumed gcc or compatible compiler
+
+  return __builtin_popcountll(b);
+
+#endif
+}
+
+
+
 constexpr Bitboard AllSquares = ~Bitboard(0);
 constexpr Bitboard DarkSquares = 0xAA55AA55AA55AA55ULL;
 
@@ -72,10 +94,10 @@ constexpr Bitboard KingFlank[FILE_NB] = {
 };
 
 extern uint8_t PopCnt16[1 << 16];
-extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
+extern Bitboard PathBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
@@ -199,8 +221,7 @@ inline Bitboard adjacent_files_bb(Square s) {
 /// If the given squares are not on a same file/rank/diagonal, return 0.
 
 inline Bitboard between_bb(Square s1, Square s2) {
-  return LineBB[s1][s2] & ( (AllSquares << (s1 +  (s1 < s2)))
-                           ^(AllSquares << (s2 + !(s1 < s2))));
+  return PseudoAttacks[QUEEN][s1] & s2 ? PathBB[s1][s2] : 0;
 }
 
 
@@ -253,7 +274,11 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 template<typename T1 = Square> inline int distance(Square x, Square y);
 template<> inline int distance<File>(Square x, Square y) { return std::abs(file_of(x) - file_of(y)); }
 template<> inline int distance<Rank>(Square x, Square y) { return std::abs(rank_of(x) - rank_of(y)); }
-template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
+template<> inline int distance<Square>(Square x, Square y) {
+  //assert(x != y);
+
+  return x != y ? (popcount(PathBB[x][y] + 1)) : 0;
+}
 
 template<class T> constexpr const T& clamp(const T& v, const T& lo, const T&  hi) {
   return v < lo ? lo : v > hi ? hi : v;
@@ -280,27 +305,6 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
   default    : return PseudoAttacks[pt][s];
   }
-}
-
-
-/// popcount() counts the number of non-zero bits in a bitboard
-
-inline int popcount(Bitboard b) {
-
-#ifndef USE_POPCNT
-
-  union { Bitboard bb; uint16_t u[4]; } v = { b };
-  return PopCnt16[v.u[0]] + PopCnt16[v.u[1]] + PopCnt16[v.u[2]] + PopCnt16[v.u[3]];
-
-#elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
-
-  return (int)_mm_popcnt_u64(b);
-
-#else // Assumed gcc or compatible compiler
-
-  return __builtin_popcountll(b);
-
-#endif
 }
 
 
