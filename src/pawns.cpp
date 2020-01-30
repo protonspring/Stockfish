@@ -245,7 +245,7 @@ Score Entry::do_king_safety(const Position& pos) {
       minKingPawnDistance += closeness * closeness;
   }
 
-  return shelter + make_score(0, minKingPawnDistance);
+  return shelter + make_score(0, minKingPawnDistance / 8);
 }
 
 // Explicit template instantiation
