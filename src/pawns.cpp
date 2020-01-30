@@ -239,7 +239,7 @@ Score Entry::do_king_safety(const Position& pos) {
   // In endgame we like to bring our king near our closest pawn
   Bitboard pawns = pos.pieces(Us, PAWN);
   while(pawns)
-      shelter -= make_score(0, 2 * distance(ksq, pop_lsb(&pawns)));
+      shelter -= make_score(0, 3 * distance(ksq, pop_lsb(&pawns)));
 
   return shelter;
 }
