@@ -141,12 +141,12 @@ enum CastlingRights {
 
   KING_SIDE      = WHITE_OO  | BLACK_OO,
   QUEEN_SIDE     = WHITE_OOO | BLACK_OOO,
-  WHITE_CASTLING = WHITE_OO  | WHITE_OOO,
-  BLACK_CASTLING = BLACK_OO  | BLACK_OOO,
-  ANY_CASTLING   = WHITE_CASTLING | BLACK_CASTLING,
+  ANY_CASTLING   = KING_SIDE | QUEEN_SIDE,
 
   CASTLING_RIGHT_NB = 16
 };
+
+constexpr int CRbyColor[2] = { WHITE_OO | WHITE_OOO, BLACK_OO | BLACK_OOO};
 
 enum Phase {
   PHASE_ENDGAME,
@@ -363,7 +363,7 @@ inline File map_to_queenside(File f) {
 }
 
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
-  return CastlingRights((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & cr);
+  return CastlingRights(CRbyColor[c] & cr);
 }
 
 constexpr Value mate_in(int ply) {
