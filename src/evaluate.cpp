@@ -644,6 +644,10 @@ namespace {
         score += bonus - PassedFile * map_to_queenside(file_of(s));
     }
 
+    //Bonus for having a most advanced passed pawn
+    if(pe->passedRank[Us] > pe->passedRank[Them])
+        score += make_score(10, 0);
+
     if (T)
         Trace::add(PASSED, Us, score);
 
