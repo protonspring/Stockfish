@@ -646,7 +646,7 @@ namespace {
 
     //Bonus for having a most advanced passed pawn
     if(pe->passedRank[Us] > pe->passedRank[Them])
-        score += make_score(10, 0);
+        score += make_score( 0, 10);
 
     if (T)
         Trace::add(PASSED, Us, score);
