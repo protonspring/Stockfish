@@ -65,12 +65,6 @@ constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
 constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
 constexpr Bitboard Center      = (FileDBB | FileEBB) & (Rank4BB | Rank5BB);
 
-constexpr Bitboard KingFlank[FILE_NB] = {
-  QueenSide ^ FileDBB, QueenSide, QueenSide,
-  CenterFiles, CenterFiles,
-  KingSide, KingSide, KingSide ^ FileEBB
-};
-
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
@@ -165,6 +159,11 @@ constexpr Bitboard shift(Bitboard b) {
         : D == SOUTH_EAST ? (b & ~FileHBB) >> 7 : D == SOUTH_WEST ? (b & ~FileABB) >> 9
         : 0;
 }
+
+constexpr Bitboard KingFlank[FILE_NB] = {
+  shift<WEST>(QueenSide), QueenSide, shift<EAST>(QueenSide), CenterFiles,
+  CenterFiles, shift<WEST>(KingSide), KingSide, shift<EAST>(KingSide)
+};
 
 
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
