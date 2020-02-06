@@ -31,21 +31,6 @@ namespace {
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
-  // partial_insertion_sort() sorts moves in descending order up to and including
-  // a given limit. The order of moves smaller than the limit is left unspecified.
-  void partial_insertion_sort(ExtMove* begin, ExtMove* end, int limit) {
-
-    for (ExtMove *sortedEnd = begin, *p = begin + 1; p < end; ++p)
-        if (p->value >= limit)
-        {
-            ExtMove tmp = *p, *q;
-            *p = *++sortedEnd;
-            for (q = sortedEnd; q != begin && *(q - 1) < tmp; --q)
-                *q = *(q - 1);
-            *q = tmp;
-        }
-  }
-
 } // namespace
 
 
@@ -111,11 +96,13 @@ void MovePicker::score() {
                    + (*captureHistory)[pos.moved_piece(m)][to_sq(m)][type_of(pos.piece_on(to_sq(m)))];
 
       else if (Type == QUIETS)
-          m.value =      (*mainHistory)[pos.side_to_move()][from_to(m)]
+      {
+          m.value =  std::max((*mainHistory)[pos.side_to_move()][from_to(m)]
                    + 2 * (*continuationHistory[0])[pos.moved_piece(m)][to_sq(m)]
                    + 2 * (*continuationHistory[1])[pos.moved_piece(m)][to_sq(m)]
                    + 2 * (*continuationHistory[3])[pos.moved_piece(m)][to_sq(m)]
-                   +     (*continuationHistory[5])[pos.moved_piece(m)][to_sq(m)];
+                   +     (*continuationHistory[5])[pos.moved_piece(m)][to_sq(m)], -3000 * depth);
+      }
 
       else // Type == EVASIONS
       {
@@ -206,7 +193,8 @@ top:
           endMoves = generate<QUIETS>(pos, cur);
 
           score<QUIETS>();
-          partial_insertion_sort(cur, endMoves, -3000 * depth);
+          std::sort(cur, endMoves, [](const ExtMove& f, const ExtMove& s)
+                       { return f.value > s.value; });
       }
 
       ++stage;
