@@ -242,7 +242,7 @@ Score Entry::do_king_safety(const Position& pos) {
   while(pawns)
       pawnDistance -= 2 * distance(ksq, pop_lsb(&pawns));
 
-  return shelter + make_score(0, 17 * pawnDistance / 16);
+  return shelter + make_score(0, 13 * pawnDistance / 16);
 }
 
 // Explicit template instantiation
