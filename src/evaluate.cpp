@@ -125,10 +125,10 @@ namespace {
   constexpr Score PassedRank[RANK_NB] = {
     S(0, 0), S(10, 28), S(17, 33), S(15, 41), S(62, 72), S(168, 177), S(276, 260)
   };
-  constexpr Score PassedRankBase = make_score(12, 33);
-  constexpr Score PassedRankSlope = make_score(80, 70);
 
   // Assorted bonuses and penalties
+  constexpr Score PassedRankBase     = S( 12, 33);
+  constexpr Score PassedRankSlope    = S( 80, 70);
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score FlankAttacks       = S(  8,  0);
@@ -594,14 +594,13 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        //Score bonus = PassedRankBase + (r < 4 ? 0 : PassedRankSlope * (r - 3));
-        Score bonus = PassedRankBase;// + (r < 4 ? 0 : PassedRankSlope * (r - 3));
+        Score bonus = PassedRankBase;
 
         if (r > RANK_3)
         {
-            bonus += PassedRankSlope * (r - 3);
             int w = 5 * r - 13;
             Square blockSq = s + Up;
+            bonus += PassedRankSlope * (r - 3);
 
             // Adjust bonus based on the king's proximity
             bonus += make_score(0, (  (king_proximity(Them, blockSq) * 19) / 4
