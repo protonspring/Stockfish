@@ -121,12 +121,10 @@ namespace {
     S(0, 0), S(3, 44), S(38, 71), S(38, 61), S(0, 38), S(51, 38)
   };
 
-  // PassedRank[Rank] contains a bonus according to the rank of a passed pawn
-  constexpr Score PassedRank[RANK_NB] = {
-    S(0, 0), S(10, 28), S(17, 33), S(15, 41), S(62, 72), S(168, 177), S(276, 260)
-  };
-  constexpr Score PassedRankBase = make_score(12, 33);
-  constexpr Score PassedRankSlope = make_score(80, 70);
+  // PassedRank Bonuses
+  constexpr Score PassedRankBase   = S( 14,  35);
+  constexpr Score PassedRankSlope  = S(110,  95);
+  constexpr Score PassedRankOffset = S(393, 337);
 
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
@@ -594,12 +592,11 @@ namespace {
 
         int r = relative_rank(Us, s);
 
-        //Score bonus = PassedRankBase + (r < 4 ? 0 : PassedRankSlope * (r - 3));
-        Score bonus = PassedRankBase;// + (r < 4 ? 0 : PassedRankSlope * (r - 3));
+        Score bonus = PassedRankBase;
 
         if (r > RANK_3)
         {
-            bonus += PassedRankSlope * (r - 3);
+            bonus += PassedRankSlope * r - PassedRankOffset;
             int w = 5 * r - 13;
             Square blockSq = s + Up;
 
