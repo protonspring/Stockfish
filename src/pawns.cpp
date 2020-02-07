@@ -190,6 +190,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard b = pos.pieces(PAWN) & ~forward_ranks_bb(Them, ksq);
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
+  Bitboard theirAttacks = pawn_attacks_bb<Them>(theirPawns);
 
   Score bonus = make_score(5, 5);
 
@@ -209,6 +210,10 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+
+      // more penalty if enemy pawns in the shelter are supported
+      if (theirRank && (theirAttacks & frontmost_sq(Them, b)))
+          bonus -= make_score(4, 0);
   }
 
   return bonus;
