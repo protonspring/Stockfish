@@ -184,29 +184,29 @@ void Bitboards::init() {
                Square s2 = s1;
                while(rank_of(s2 += EAST) == rank_of(s1))
                {
-                 if (!(occupied & s2)) b2 |= s2;
-                 else break;
+                 b2 |= s2;
+                 if (occupied & s2) break;
                  //std::cout << "<E>";
                }
                s2 = s1;
                while(rank_of(s2 += WEST) == rank_of(s1))
                {
-                 if (!(occupied & s2)) b2 |= s2;
-                 else break;
+                 b2 |= s2;
+                 if ((occupied & s2)) break;
                  //std::cout << "<W>";
                }
                s2 = s1;
                while(rank_of(s2 += NORTH) <= RANK_8)
                {
-                 if (!(occupied & s2)) b2 |= s2;
-                 else break;
+                 b2 |= s2;
+                 if ((occupied & s2)) break;
                  //std::cout << "<N>";
                }
                s2 = s1;
                while(rank_of(s2 += SOUTH) >= RANK_1)
                {
-                 if (!(occupied & s2)) b2 |= s2;
-                 else break;
+                 b2 |= s2;
+                 if ((occupied & s2)) break;
                  //std::cout << "<S>";
                }
     
