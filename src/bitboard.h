@@ -106,7 +106,6 @@ struct Magic {
 
 //extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
-extern std::unordered_map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
 extern std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {

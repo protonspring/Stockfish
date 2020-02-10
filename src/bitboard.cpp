@@ -20,7 +20,7 @@
 
 #include <algorithm>
 #include <bitset>
-#include <iostream>
+//#include <iostream>
 
 #include "bitboard.h"
 #include "misc.h"
@@ -37,7 +37,6 @@ Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
 
 //given occupied, return attacks
-std::unordered_map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
 std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 namespace {
@@ -201,49 +200,6 @@ void Bitboards::init() {
                //std::cout << "<rook attacks>" << Bitboards::pretty(b2);
                (RookAttacks[s1])[occupied] = b2;
            }
-
-/*
-           //std::cout << std::endl << "<moving on to bishops bitboard. . . .>";
-           // Bishops table
-           b2 = 0;
-           s2 = s1;
-           while(true)
-             if (file_of(s2 + EAST) < FILE_H && (rank_of(s2 + NORTH) < RANK_8)
-                                             && (!(occupied & (s2 += NORTH_EAST))))
-                 b2 |= s2;
-             else
-                 break;
-           //std::cout << "<NORTH_EAST>";
-
-           while(true)
-             if (file_of(s2 + WEST) > FILE_A && (rank_of(s2 + NORTH) < RANK_8)
-                                             && (!(occupied & (s2 += NORTH_WEST))))
-                 b2 |= s2;
-             else
-                 break;
-           //std::cout << "<NORTH_WEST>";
-
-           while(true)
-             if (file_of(s2 + EAST) < FILE_H && (rank_of(s2 + SOUTH) > RANK_1)
-                                             && (!(occupied & (s2 += SOUTH_EAST))))
-                 b2 |= s2;
-             else
-                 break;
-           //std::cout << "<SOUTH_EAST>";
-
-           while(true)
-             if (file_of(s2 + WEST) > FILE_A && (rank_of(s2 + SOUTH) > RANK_1)
-                                             && (!(occupied & (s2 += SOUTH_WEST))))
-                 b2 |= s2;
-             else
-                 break;
-           //std::cout << "<SOUTH_WEST>";
-
-           //std::cout << Bitboards::pretty(occupied);
-           //std::cout << Bitboards::pretty(b2);
-
-           (BishopAttacks[s1])[occupied & PseudoAttacks[BISHOP][s1]] = b2;
-*/
       }
   }
 
@@ -264,7 +220,11 @@ void Bitboards::init() {
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
 
-  std::cout << "<DONE WITH BITBOARD INIT.>" << std::endl;
+
+  //for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+      //std::cout << std::endl << (RookAttacks[s1]).size();
+
+  //std::cout << "<DONE WITH BITBOARD INIT.>" << std::endl;
 }
 
 
