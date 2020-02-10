@@ -33,7 +33,7 @@ Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
-Magic RookMagics[SQUARE_NB];
+//Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
 
 //given occupied, return attacks
@@ -42,7 +42,7 @@ std::map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 namespace {
 
-  Bitboard RookTable[0x19000];  // To store rook attacks
+  //Bitboard RookTable[0x19000];  // To store rook attacks
   Bitboard BishopTable[0x1480]; // To store bishop attacks
 
   void init_magics(Bitboard table[], Magic magics[], Direction directions[]);
@@ -130,27 +130,14 @@ void Bitboards::init() {
          PseudoAttacks[KNIGHT][s] |= landing_square_bb(s, step);
   }
 
-  Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
-  Direction BishopDirections[] = { NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST };
 
-  init_magics(RookTable, RookMagics, RookDirections);
-  init_magics(BishopTable, BishopMagics, BishopDirections);
 
-  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
-  {
-      PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb<BISHOP>(s1, 0);
-      PseudoAttacks[QUEEN][s1] |= PseudoAttacks[  ROOK][s1] = attacks_bb<  ROOK>(s1, 0);
 
-      for (PieceType pt : { BISHOP, ROOK })
-          for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
-              if (PseudoAttacks[pt][s1] & s2)
-                  LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
-  }
 
-  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
-  {
-     (RookAttacks[s1])[0] = PseudoAttacks[ROOK][s1];
-  }
+  //for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+  //{
+     //(RookAttacks[s1])[0] = PseudoAttacks[ROOK][s1];
+  //}
 
   // fun with maps
   for(Bitboard b1 = 0; b1 < (1ULL << 8); ++b1)
@@ -258,6 +245,23 @@ void Bitboards::init() {
            (BishopAttacks[s1])[occupied & PseudoAttacks[BISHOP][s1]] = b2;
 */
       }
+  }
+
+  //Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
+  Direction BishopDirections[] = { NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST };
+
+  //init_magics(RookTable, RookMagics, RookDirections);
+  init_magics(BishopTable, BishopMagics, BishopDirections);
+
+  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+  {
+      PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb<BISHOP>(s1, 0);
+      PseudoAttacks[QUEEN][s1] |= PseudoAttacks[  ROOK][s1] = attacks_bb<  ROOK>(s1, 0);
+
+      for (PieceType pt : { BISHOP, ROOK })
+          for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
+              if (PseudoAttacks[pt][s1] & s2)
+                  LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
 
   std::cout << "<DONE WITH BITBOARD INIT.>" << std::endl;
