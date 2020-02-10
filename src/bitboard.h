@@ -104,9 +104,10 @@ struct Magic {
   }
 };
 
-//extern Magic RookMagics[SQUARE_NB];
+extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
-extern std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
+extern std::unordered_map<Bitboard, Bitboard> RookHorizAttacks[FILE_NB];
+extern std::unordered_map<Bitboard, Bitboard> RookVertAttacks[RANK_NB];
 
 inline Bitboard square_bb(Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
@@ -268,24 +269,31 @@ template<class T> constexpr const T& clamp(const T& v, const T& lo, const T&  hi
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
-  if (Pt == ROOK)
-     return (RookAttacks[s])[occupied & PseudoAttacks[ROOK][s]];
+  //if (Pt == ROOK)
+     //return (RookAttacks[s])[occupied & PseudoAttacks[ROOK][s]];
 
   //const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
 
-  /*
+  
   if (Pt == ROOK)
   {
-     Bitboard b1 = (RookAttacks[s])[occupied & PseudoAttacks[ROOK][s]];
-     Bitboard b2 = m.attacks[m.index(occupied)];
+     //Bitboard b1 = (RookAttacks[s])[occupied & PseudoAttacks[ROOK][s]];
+     Bitboard vertKey = (occupied & file_bb(file_of(s))) >> file_of(s);
+     Bitboard horizKey = (occupied & rank_bb(rank_of(s))) >> (8 * rank_of(s));
 
-     if (b1 != b2)
-         std::cout << "<" << s << ">" << Bitboards::pretty(occupied) << ","
-                                      << Bitboards::pretty(b1)
-                                      << Bitboards::pretty(b2)
-                                      << std::endl << std::endl;
+     //Bitboard b1 = (( RookVertAttacks[rank_of(s)])[vertKey] << file_of(s)) |
+                   //((RookHorizAttacks[file_of(s)])[horizKey] << (8 * rank_of(s)));
+     return (( RookVertAttacks[rank_of(s)])[vertKey] << file_of(s)) |
+            ((RookHorizAttacks[file_of(s)])[horizKey] << (8 * rank_of(s)));
+
+     //Bitboard b2 = m.attacks[m.index(occupied)];
+
+     //if (b1 != b2)
+         //std::cout << "<" << s << ">" << Bitboards::pretty(occupied) << ","
+                                      //<< Bitboards::pretty(b1)
+                                      //<< Bitboards::pretty(b2)
+                                      //<< std::endl << std::endl;
   }
-  */
 
   const Magic& m = BishopMagics[s];
   return m.attacks[m.index(occupied)];

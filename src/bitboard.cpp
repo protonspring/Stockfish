@@ -20,7 +20,7 @@
 
 #include <algorithm>
 #include <bitset>
-//#include <iostream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "misc.h"
@@ -33,15 +33,16 @@ Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
-//Magic RookMagics[SQUARE_NB];
+Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
 
 //given occupied, return attacks
-std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
+std::unordered_map<Bitboard, Bitboard> RookHorizAttacks[FILE_NB];
+std::unordered_map<Bitboard, Bitboard> RookVertAttacks[RANK_NB];
 
 namespace {
 
-  //Bitboard RookTable[0x19000];  // To store rook attacks
+  Bitboard RookTable[0x19000];  // To store rook attacks
   Bitboard BishopTable[0x1480]; // To store bishop attacks
 
   void init_magics(Bitboard table[], Magic magics[], Direction directions[]);
@@ -91,7 +92,6 @@ Bitboard flipDiagA1H8(Bitboard x) {
    return x;
 }
 
-
 /// Bitboards::init() initializes various bitboard tables. It is called at
 /// startup and relies on global objects to be already zero-initialized.
 
@@ -112,8 +112,7 @@ void Bitboards::init() {
       PawnAttacks[WHITE][s] = pawn_attacks_bb<WHITE>(square_bb(s));
       PawnAttacks[BLACK][s] = pawn_attacks_bb<BLACK>(square_bb(s));
   }
-
-  // Helper returning the target bitboard of a step from a square
+// Helper returning the target bitboard of a step from a square
   auto landing_square_bb = [&](Square s, int step)
   {
       Square to = Square(s + step);
@@ -129,84 +128,72 @@ void Bitboards::init() {
          PseudoAttacks[KNIGHT][s] |= landing_square_bb(s, step);
   }
 
-
-
-
-
-  //for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
-  //{
-     //(RookAttacks[s1])[0] = PseudoAttacks[ROOK][s1];
-  //}
-
   // fun with maps
-  for(Bitboard b1 = 0; b1 < (1ULL << 8); ++b1)
+  for(Bitboard occupied = 0; occupied < (1ULL << 8); ++occupied)
   {
-      //std::cout << "<b1 = " << b1 << ">" << Bitboards::pretty(b1);
+      //std::cout << "<occupied = " << occupied << ">" << Bitboards::pretty(occupied);
 
-      for(Bitboard vert = 0; vert < (1ULL <<  8); ++vert)
+      for(int f = FILE_A; f <= FILE_H; ++f)
       {
-          Bitboard fbb = flipVertical(flipDiagA1H8(vert));
+          //std::cout << "<file: " << f << ">" << std::endl;
+          Square s1 = make_square(File(f), RANK_1);
+          Bitboard attacks = 0;
 
-          //std::cout << "<vert>" << Bitboards::pretty(vert);
-          //std::cout << "<fbb>" << Bitboards::pretty(fbb);
-
-          for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+          Square s2 = s1;
+          while((s2 += EAST) <= SQ_H1)
           {
-               File f = file_of(s1);
-               Rank r = rank_of(s1);
+            attacks |= s2;
+            if (occupied & s2) break;
+            //std::cout << "<E: " << s2 << "," << file_of(s2) << ">";
+          }
 
-               //make a bitboard
-               //std::cout << "<b1>"  << Bitboards::pretty(b1);
-               //std::cout << "<fbb>" << Bitboards::pretty(fbb);
-               Bitboard occupied = b1 << (8 * r);
-               occupied |= fbb << f;
+          s2 = s1;
+          while((s2 += WEST) >= SQ_A1)
+          {
+            attacks |= s2;
+            if (occupied & s2) break;
+            //std::cout << "<E>";
+          }
 
-               //std::cout << "<Processing square: " << s1 << ">" << std::endl;
-               //std::cout << "<occupied>" << Bitboards::pretty(occupied);
+          //std::cout << "<file: " << f << ">" << Bitboards::pretty(attacks);
 
-               // Rooks table
-               //std::cout << std::endl;
-               Bitboard b2 = 0;
-               Square s2 = s1;
-               while(rank_of(s2 += EAST) == rank_of(s1))
-               {
-                 b2 |= s2;
-                 if (occupied & s2) break;
-                 //std::cout << "<E>";
-               }
-               s2 = s1;
-               while(rank_of(s2 += WEST) == rank_of(s1))
-               {
-                 b2 |= s2;
-                 if ((occupied & s2)) break;
-                 //std::cout << "<W>";
-               }
-               s2 = s1;
-               while(rank_of(s2 += NORTH) <= RANK_8)
-               {
-                 b2 |= s2;
-                 if ((occupied & s2)) break;
-                 //std::cout << "<N>";
-               }
-               s2 = s1;
-               while(rank_of(s2 += SOUTH) >= RANK_1)
-               {
-                 b2 |= s2;
-                 if ((occupied & s2)) break;
-                 //std::cout << "<S>";
-               }
-    
-               //std::cout << "<occupied>" << Bitboards::pretty(occupied);
-               //std::cout << "<rook attacks>" << Bitboards::pretty(b2);
-               (RookAttacks[s1])[occupied] = b2;
-           }
+          (RookHorizAttacks[f])[occupied] = attacks;
+      }
+
+      Bitboard vert = flipVertical(flipDiagA1H8(occupied));
+
+      for(int r = RANK_1; r <= RANK_8; ++r)
+      {
+          //std::cout << "<file: " << f << ">" << std::endl;
+          Square s1 = make_square(FILE_A, Rank(r));
+          Bitboard attacks = 0;
+
+          Square s2 = s1;
+          while((s2 += NORTH) <= SQ_A8)
+          {
+            attacks |= s2;
+            if (vert & s2) break;
+            //std::cout << "<N: " << s2 << "," << rank_of(s2) << ">";
+          }
+
+          s2 = s1;
+          while((s2 += SOUTH) >= SQ_A1)
+          {
+            attacks |= s2;
+            if (vert & s2) break;
+            //std::cout << "<S: " << s2 << "," << rank_of(s2) << ">";
+          }
+
+          //std::cout << "<rank: " << r << ">" << Bitboards::pretty(attacks);
+
+          (RookVertAttacks[r])[vert] = attacks;
       }
   }
 
-  //Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
+  Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
   Direction BishopDirections[] = { NORTH_EAST, SOUTH_EAST, SOUTH_WEST, NORTH_WEST };
 
-  //init_magics(RookTable, RookMagics, RookDirections);
+  init_magics(RookTable, RookMagics, RookDirections);
   init_magics(BishopTable, BishopMagics, BishopDirections);
 
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
