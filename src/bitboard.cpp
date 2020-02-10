@@ -20,7 +20,6 @@
 
 #include <algorithm>
 #include <bitset>
-#include <map>
 #include <iostream>
 
 #include "bitboard.h"
@@ -148,6 +147,11 @@ void Bitboards::init() {
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
 
+  for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
+  {
+     (RookAttacks[s1])[0] = PseudoAttacks[ROOK][s1];
+  }
+
   // fun with maps
   for(Bitboard b1 = 0; b1 < (1ULL << 8); ++b1)
   {
@@ -161,7 +165,6 @@ void Bitboards::init() {
           //std::cout << "<fbb>" << Bitboards::pretty(fbb);
 
           for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
-          //for (Square s1 = SQ_D4; s1 <= SQ_D5; ++s1)
           {
                File f = file_of(s1);
                Rank r = rank_of(s1);
@@ -207,9 +210,9 @@ void Bitboards::init() {
                  //std::cout << "<S>";
                }
     
-               //std::cout << Bitboards::pretty(occupied);
-               //std::cout << Bitboards::pretty(b2);
-               //(RookAttacks[s1])[occupied & PseudoAttacks[ROOK][s1]] = b2;
+               //std::cout << "<occupied>" << Bitboards::pretty(occupied);
+               //std::cout << "<rook attacks>" << Bitboards::pretty(b2);
+               (RookAttacks[s1])[occupied] = b2;
            }
 
 /*

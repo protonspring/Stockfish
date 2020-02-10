@@ -22,6 +22,8 @@
 #define BITBOARD_H_INCLUDED
 
 #include <string>
+#include <map>
+#include <iostream>
 
 #include "types.h"
 
@@ -104,6 +106,8 @@ struct Magic {
 
 extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
+extern std::map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
+extern std::map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
@@ -265,7 +269,25 @@ template<class T> constexpr const T& clamp(const T& v, const T& lo, const T&  hi
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
+  if (Pt == ROOK)
+     return (RookAttacks[s])[occupied];
+
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
+
+/*
+  if (Pt == ROOK)
+  {
+     Bitboard b1 = (RookAttacks[s])[occupied];
+     Bitboard b2 = m.attacks[m.index(occupied)];
+
+     if (b1 != b2)
+         std::cout << "<" << s << ">" << Bitboards::pretty(occupied) << ","
+                                      << Bitboards::pretty(b1)
+                                      << Bitboards::pretty(b2)
+                                      << std::endl << std::endl;
+  }
+*/
+
   return m.attacks[m.index(occupied)];
 }
 
