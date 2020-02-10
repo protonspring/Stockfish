@@ -37,8 +37,8 @@ Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
 
 //given occupied, return attacks
-std::map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
-std::map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
+std::unordered_map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
+std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 namespace {
 

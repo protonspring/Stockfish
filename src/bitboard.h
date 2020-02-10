@@ -22,7 +22,7 @@
 #define BITBOARD_H_INCLUDED
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 
 #include "types.h"
@@ -106,8 +106,8 @@ struct Magic {
 
 //extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
-extern std::map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
-extern std::map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
+extern std::unordered_map<Bitboard, Bitboard> BishopAttacks[SQUARE_NB];
+extern std::unordered_map<Bitboard, Bitboard> RookAttacks[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
