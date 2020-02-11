@@ -85,7 +85,7 @@ namespace {
   // History and stats update bonus, based on depth
   int stat_bonus(Depth d) {
     float v = float(d)/8 - 1.2;
-    return 4000 * v / sqrt(1 + v * v) + 3000;
+    return 4000 * v / std::sqrt(1 + v * v) + 3000;
   }
 
   // Add a small random component to draw evaluations to avoid 3fold-blindness
