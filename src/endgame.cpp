@@ -317,21 +317,16 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
 
-  Square psq = pos.square<PAWN>(weakSide);
-  Bitboard PawnFF = forward_file_bb(weakSide, psq);
   Value result;
 
   //There are some win possibilities if strongSide can block the weakSide
   //pawn with a knight and push the weak king to a corner.
-  if (pos.pieces(KNIGHT) & PawnFF)
-  {
+  if (pos.pieces(KNIGHT) & forward_file_bb(weakSide, pos.square<PAWN>(weakSide)))
       result = 2 * KnightValueEg - PawnValueEg
              + 4 * PushToEdges[pos.square<KING>(weakSide)];
-  }
-  else  //DRAWISH
-  {
+
+  else //Very drawish
       result = PawnValueEg + PushToEdges[pos.square<KING>(weakSide)];
-  }
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
