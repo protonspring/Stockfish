@@ -310,7 +310,13 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
 }
 
 
-/// KNN vs KP. Simply push the opposing king to the corner
+/// KNN vs KP.  Here, the weakSide pawn opens up some mate opportunities for
+//  StrongSide, but is DRAW if the pawn is taken.  See Troitzky, et al.
+//Strongside can win here if it can
+//1. Block the weakSide pawn with a knight (as early as possible).
+//2. Stalemate the King in a corner.
+//3. Release the pawn to avoid stalemate, and mate the king with the
+//   other knight before the pawn promotes.
 template<>
 Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
@@ -318,15 +324,16 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
 
   Value result;
+  Square psq = pos.square<PAWN>(weakSide);
 
-  //There are some win possibilities if strongSide can block the weakSide
-  //pawn with a knight and push the weak king to a corner.
-  if (pos.pieces(KNIGHT) & forward_file_bb(weakSide, pos.square<PAWN>(weakSide)))
+  if (pos.pieces(KNIGHT) & forward_file_bb(weakSide, psq))
       result = 2 * KnightValueEg - PawnValueEg
+             - 30 * relative_rank(weakSide, psq)
              + 4 * PushToEdges[pos.square<KING>(weakSide)];
 
-  else //Very drawish
-      result = PawnValueEg + PushToEdges[pos.square<KING>(weakSide)];
+  else //Draw
+      result = PawnValueEg + PushToEdges[pos.square<KING>(weakSide)]
+             - 10 * relative_rank(weakSide, psq);
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
