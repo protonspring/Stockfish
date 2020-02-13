@@ -327,9 +327,9 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
   Square psq = pos.square<PAWN>(weakSide);
 
   if (pos.pieces(KNIGHT) & forward_file_bb(weakSide, psq))
-      result = 2 * KnightValueEg - PawnValueEg
+      result = KnightValueEg - PawnValueEg
              - 30 * relative_rank(weakSide, psq)
-             + 4 * PushToEdges[pos.square<KING>(weakSide)];
+             +  4 *  PushToEdges[pos.square<KING>(weakSide)];
 
   else //Draw
       result = PawnValueEg + PushToEdges[pos.square<KING>(weakSide)]
