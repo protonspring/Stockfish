@@ -322,11 +322,12 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, 2 * KnightValueMg, 0));
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
+  Square psq = pos.square<PAWN>(weakSide);
 
-  Value result =  2 * KnightValueEg
-                - PawnValueEg
-                + PushToEdges[pos.square<KING>(weakSide)]
-                - 10 * relative_rank(weakSide, pos.square<PAWN>(weakSide));
+  Value result =      PawnValueEg
+               +  2 * PushToEdges[pos.square<KING>(weakSide)]
+               + 20 * bool(pos.pieces(KNIGHT) & forward_file_bb(weakSide, psq))
+               - 10 * relative_rank(weakSide, pos.square<PAWN>(weakSide));
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
