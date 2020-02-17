@@ -310,8 +310,8 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
 }
 
 
-/// KNN vs KP. Very drawish, but very few mate opportunities if weakSide
-//  King can be pressed into a corner.
+/// KNN vs KP. Very drawish, but there are some mates if we can press the
+//  weakSide King to a corner before the pawn advances too much.
 template<>
 Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
