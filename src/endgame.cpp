@@ -274,15 +274,44 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide, VALUE_ZERO, 1));
 
   Square winnerKSq = pos.square<KING>(strongSide);
+  Square queenSq = pos.square<QUEEN>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
   Square pawnSq = pos.square<PAWN>(weakSide);
+  Square queeningSq = make_square(file_of(pawnSq),relative_rank(weakSide, RANK_8));
+  Rank pawnRank = relative_rank(weakSide, pawnSq);
+  Value result = VALUE_DRAW;
 
-  Value result = Value(PushClose[distance(winnerKSq, loserKSq)]);
+  if ((pawnRank <= RANK_5) || (distance(loserKSq, pawnSq) > 2))
+      result = VALUE_KNOWN_WIN - distance(winnerKSq, queeningSq)
+                               - distance(queenSq, queeningSq)
+                               - 10 * pawnRank;
 
-  if (   relative_rank(weakSide, pawnSq) != RANK_7
-      || distance(loserKSq, pawnSq) != 1
-      || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
-      result += QueenValueEg - PawnValueEg;
+  else if (pawnRank == RANK_6)
+  {
+      //just don't let the pawn promote and try to move pieces to queeningSq
+      result = QueenValueEg - distance(winnerKSq, queeningSq)
+                            - distance(queenSq, queeningSq);
+
+  }
+  else //RANK_7
+  {
+      //Central or knight pawns
+      if (((FileBBB | FileDBB | FileEBB | FileGBB) & pawnSq) &&
+              !(adjacent_files_bb(pawnSq) & winnerKSq))
+          result = QueenValueEg - distance(winnerKSq, queeningSq)
+                                - distance(queenSq, queeningSq);
+
+      //rook pawns and Bishop Pawns
+      else //if ((FileABB | FileCBB FileHBB) & pawnSq)
+      {
+          if (distance(winnerKSq, queeningSq) < 5)
+              result = QueenValueEg - distance(winnerKSq, queeningSq)
+                                    - distance(queenSq, queeningSq);
+          else
+              result = PawnValueEg - distance(winnerKSq, queeningSq)
+                                   - distance(queenSq, queeningSq);
+      }
+  }
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
