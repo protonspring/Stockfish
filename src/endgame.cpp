@@ -280,9 +280,9 @@ Value Endgame<KQKP>::operator()(const Position& pos) const {
   Value result = Value(PushClose[distance(winnerKSq, loserKSq)]);
 
   if (   relative_rank(weakSide, pawnSq) != RANK_7
-      || distance(loserKSq, pawnSq) != 1
+      || distance(loserKSq, pawnSq) > 1
       || !((FileABB | FileCBB | FileFBB | FileHBB) & pawnSq))
-      result += QueenValueEg - PawnValueEg;
+      result += 2 * QueenValueEg - PawnValueEg;
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
@@ -301,10 +301,9 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
   Square winnerKSq = pos.square<KING>(strongSide);
   Square loserKSq = pos.square<KING>(weakSide);
 
-  Value result =  QueenValueEg
-                - RookValueEg
-                + PushToEdges[loserKSq]
-                + PushClose[distance(winnerKSq, loserKSq)];
+  Value result =      QueenValueEg
+                + 4 * PushToEdges[loserKSq]
+                + 4 * PushClose[distance(winnerKSq, loserKSq)];
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
