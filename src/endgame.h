@@ -44,7 +44,6 @@ enum EndgameCode {
   KRKP,  // KR vs KP
   KRKB,  // KR vs KB
   KRKN,  // KR vs KN
-  KQKP,  // KQ vs KP
   KQKR,  // KQ vs KR
 
   SCALING_FUNCTIONS,
