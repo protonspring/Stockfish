@@ -97,6 +97,10 @@ namespace Endgames {
     add<KQKP>("KQKP");
     add<KQKR>("KQKR");
     add<KNNKP>("KNNKP");
+    add<KNKP>("KNKP");
+    add<KNKPP>("KNKPP");
+    add<KBKP>("KBKP");
+    add<KBKPP>("KBKPP");
 
     add<KNPK>("KNPK");
     add<KNPKB>("KNPKB");
@@ -328,6 +332,34 @@ Value Endgame<KNNKP>::operator()(const Position& pos) const {
 
 /// Some cases of trivial draws
 template<> Value Endgame<KNNK>::operator()(const Position&) const { return VALUE_DRAW; }
+
+template<> Value Endgame<KNKP>::operator()(const Position& pos) const { 
+    Value result = VALUE_DRAW - 10 * relative_rank(weakSide, pos.square<PAWN>(weakSide));
+
+    return strongSide == pos.side_to_move() ? result : -result;
+}
+
+template<> Value Endgame<KNKPP>::operator()(const Position& pos) const { 
+    Value result = VALUE_DRAW
+                 - 10 * relative_rank(weakSide, pos.squares<PAWN>(weakSide)[0])
+                 - 10 * relative_rank(weakSide, pos.squares<PAWN>(weakSide)[1]);
+
+    return strongSide == pos.side_to_move() ? result : -result;
+}
+
+template<> Value Endgame<KBKP>::operator()(const Position& pos) const { 
+    Value result = VALUE_DRAW - 10 * relative_rank(weakSide, pos.square<PAWN>(weakSide));
+
+    return strongSide == pos.side_to_move() ? result : -result;
+}
+
+template<> Value Endgame<KBKPP>::operator()(const Position& pos) const { 
+    Value result = VALUE_DRAW
+                 - 10 * relative_rank(weakSide, pos.squares<PAWN>(weakSide)[0])
+                 - 10 * relative_rank(weakSide, pos.squares<PAWN>(weakSide)[1]);
+
+    return strongSide == pos.side_to_move() ? result : -result;
+}
 
 
 /// KB and one or more pawns vs K. It checks for draws with rook pawns and
