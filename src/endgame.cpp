@@ -442,7 +442,7 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   return ScaleFactor(25
           +  6 * relative_rank(strongSide, psq)
           -  3 * distance(strongksq, queeningSq)
-          +  3 * distance(psq, queeningSq));
+          +  3 * distance(weakksq, queeningSq));
 }
 
 template<>
