@@ -439,7 +439,7 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   Square psq = pos.square<PAWN>(strongSide);
   Square queeningSq = make_square(file_of(psq), relative_rank(strongSide, RANK_8));
 
-  return ScaleFactor(25
+  return ScaleFactor(27
           +  6 * relative_rank(strongSide, psq)
           -  3 * distance(strongksq, queeningSq)
           +  3 * distance(weakksq, queeningSq));
