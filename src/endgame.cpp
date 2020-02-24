@@ -439,8 +439,8 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
   Square psq = pos.square<PAWN>(strongSide);
   Square queeningSq = make_square(file_of(psq), relative_rank(strongSide, RANK_8));
 
-  return ScaleFactor(40 -  8 * distance(strongksq, queeningSq)
-                        + 13 * distance(weakksq, queeningSq));
+  return ScaleFactor(std::max(0, 40 -  8 * distance(strongksq, queeningSq)
+                                    + 13 * distance(weakksq, queeningSq)));
 }
 
 template<>
