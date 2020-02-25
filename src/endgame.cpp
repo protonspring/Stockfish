@@ -489,16 +489,6 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
                          - 8 * distance(wpsq, queeningSq)
                          - 2 * distance(wksq, queeningSq));
 
-  // If the pawn is not far advanced and the defending king is somewhere in
-  // the pawn's path, it's probably a draw.
-  if (r <= RANK_4 && bksq > wpsq)
-  {
-      if (file_of(bksq) == file_of(wpsq))
-          return ScaleFactor(10);
-      if (   distance<File>(bksq, wpsq) == 1
-          && distance(wksq, bksq) > 2)
-          return ScaleFactor(24 - 2 * distance(wksq, bksq));
-  }
   return SCALE_FACTOR_NONE;
 }
 
