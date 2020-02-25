@@ -468,15 +468,6 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
       && (!tempo || distance(wksq, wpsq) >= 2))
       return SCALE_FACTOR_DRAW;
 
-  // White pawn on a7 and rook on a8 is a draw if black's king is on g7 or h7
-  // and the black rook is behind the pawn.
-  if (   wpsq == SQ_A7
-      && wrsq == SQ_A8
-      && (bksq == SQ_H7 || bksq == SQ_G7)
-      && file_of(brsq) == FILE_A
-      && (rank_of(brsq) <= RANK_3 || file_of(wksq) >= FILE_D || rank_of(wksq) <= RANK_5))
-      return SCALE_FACTOR_DRAW;
-
   // If the defending king blocks the pawn and the attacking king is too far
   // away, it's a draw.
   if (   r <= RANK_5
