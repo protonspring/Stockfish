@@ -485,17 +485,6 @@ ScaleFactor Endgame<KRPKR>::operator()(const Position& pos) const {
       && distance(wksq, brsq) - tempo >= 2)
       return SCALE_FACTOR_DRAW;
 
-  // Pawn on the 7th rank supported by the rook from behind usually wins if the
-  // attacking king is closer to the queening square than the defending king,
-  // and the defending king cannot gain tempi by threatening the attacking rook.
-  if (   r == RANK_7
-      && f != FILE_A
-      && file_of(wrsq) == f
-      && wrsq != queeningSq
-      && (distance(wksq, queeningSq) < distance(bksq, queeningSq) - 2 + tempo)
-      && (distance(wksq, queeningSq) < distance(bksq, wrsq) + tempo))
-      return ScaleFactor(SCALE_FACTOR_MAX - 2 * distance(wksq, queeningSq));
-
   // Similar to the above, but with the pawn further back
   if (   f != FILE_A
       && file_of(wrsq) == f
