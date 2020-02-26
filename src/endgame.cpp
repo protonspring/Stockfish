@@ -56,7 +56,7 @@ namespace {
 
   // Tables used to drive a piece towards or away from another piece
   constexpr int PushClose[8] = { 0, 0, 100, 80, 60, 40, 20, 10 };
-  constexpr int PushAway(int d) { return 50 * d; }
+  constexpr int PushAway(int d) { return 150 * d; }
 
   // Pawn Rank based scaling factors used in KRPPKRP endgame
   constexpr int KRPPKRPScaleFactors[RANK_NB] = { 0, 9, 10, 14, 21, 44, 0, 0 };
