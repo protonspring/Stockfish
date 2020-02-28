@@ -32,7 +32,8 @@ namespace {
   // in KX vs K and KQ vs KR endgames.
   constexpr int PushToEdges(Square s)
   {
-      return 17 * (int(abs(rank_of(s) - 3.5)) + int(abs(file_of(s) - 3.5)));
+      return 20 + 14 * ((abs(2 * rank_of(s) - 7) / 2) +
+                        (abs(2 * file_of(s) - 7) / 2));
   }
 
   // Table used to drive the king towards a corner square of the
