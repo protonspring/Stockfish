@@ -30,10 +30,10 @@ namespace {
 
   // Table used to drive the king towards the edge of the board
   // in KX vs K and KQ vs KR endgames.
-  constxpr int PushToEdges(Square s)
+  constexpr int PushToEdges(Square s)
   {
-      return v = 20 + 14 * int(abs(rank_of(s) - 3.5))
-                    + 14 * int(abs(file_of(s) - 3.5));
+      return 20 + 14 * int(abs(rank_of(s) - 3.5))
+                + 14 * int(abs(file_of(s) - 3.5));
   }
 
   // Table used to drive the king towards a corner square of the
