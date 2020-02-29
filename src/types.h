@@ -360,8 +360,8 @@ constexpr Piece operator~(Piece pc) {
   return Piece(pc ^ 8); // Swap color of piece B_KNIGHT -> W_KNIGHT
 }
 
-inline File map_to_queenside(File f) {
-  return std::min(f, File(FILE_H - f)); // Map files ABCDEFGH to files ABCDDCBA
+constexpr File map_to_queenside(File f) {
+  return f < FILE_E ? f : File(FILE_H - f);
 }
 
 constexpr CastlingRights operator&(Color c, CastlingRights cr) {
