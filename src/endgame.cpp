@@ -30,10 +30,9 @@ namespace {
 
   // Used to drive the king towards the edge of the board
   // in KX vs K and KQ vs KR endgames.
-  inline int PushToEdges(Square s) {
-      int x = 2 * rank_of(s) - 7;
-      int y = 2 * file_of(s) - 7;
-      return x * x + y * y;
+  constexpr int PushToEdges(Square s) {
+      return 16 + (2 * rank_of(s) - 7) * (2 * rank_of(s) - 7)
+                + (2 * file_of(s) - 7) * (2 * file_of(s) - 7);
   }
 
   // Table used to drive the king towards a corner square of the
