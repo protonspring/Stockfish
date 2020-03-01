@@ -44,7 +44,7 @@ namespace {
   // Table used to drive the king towards a corner square of the
   // right color in KBN vs K endgames.
   constexpr int PushToCorners(Square s) {
-     return 4160 + 320 * abs(7 - rank_of(s) - file_of(s));
+     return abs(7 - rank_of(s) - file_of(s));
   }
 
   // Tables used to drive a piece towards or away from another piece
@@ -153,7 +153,7 @@ Value Endgame<KBNK>::operator()(const Position& pos) const {
 
   Value result =  VALUE_KNOWN_WIN
                 + PushClose[distance(winnerKSq, loserKSq)]
-                + PushToCorners(opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq);
+                + 320 * PushToCorners(opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq);
 
   assert(abs(result) < VALUE_TB_WIN_IN_MAX_PLY);
   return strongSide == pos.side_to_move() ? result : -result;
