@@ -43,9 +43,8 @@ namespace {
 
   // Table used to drive the king towards a corner square of the
   // right color in KBN vs K endgames.
-  inline int PushToCorners(Square s) {
-     int r = 7 - rank_of(s), f = file_of(s);
-     return 4160 + 320 * (f > r ? f - r : r - f);
+  constexpr int PushToCorners(Square s) {
+     return 4160 + 320 * abs(7 - rank_of(s) - file_of(s));
   }
 
   // Tables used to drive a piece towards or away from another piece
