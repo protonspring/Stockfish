@@ -151,7 +151,7 @@ Value Endgame<KBNK>::operator()(const Position& pos) const {
   // If our bishop does not attack A1/H8, we flip the enemy king square
   // to drive to opposite corners (A8/H1).
 
-  Value result =  VALUE_KNOWN_WIN
+  Value result =  (VALUE_KNOWN_WIN + 4160)
                 + PushClose[distance(winnerKSq, loserKSq)]
                 + 320 * PushToCorners(opposite_colors(bishopSq, SQ_A1) ? ~loserKSq : loserKSq);
 
