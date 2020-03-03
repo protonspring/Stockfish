@@ -331,6 +331,14 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
+            else //KNIGHT
+            {
+                Bitboard targets = pos.pieces(Them) ^ pos.pieces(Them, KNIGHT, PAWN);
+
+                // If knight forks two or more more valuable pieces
+                if (more_than_one(PseudoAttacks[KNIGHT][s] & targets))
+                        score += make_score(10,0);
+            }
         }
 
         if (Pt == ROOK)
