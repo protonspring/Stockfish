@@ -333,7 +333,7 @@ namespace {
             }
             else //KNIGHT
             {
-                Bitboard targets = pos.pieces(Them) ^ pos.pieces(Them, KNIGHT, PAWN);
+                Bitboard targets = pos.pieces(Them, KING, QUEEN) | pos.pieces(Them, ROOK);
 
                 // If knight forks two or more more valuable pieces
                 if (more_than_one(PseudoAttacks[KNIGHT][s] & targets))
