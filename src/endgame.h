@@ -52,7 +52,6 @@ enum EndgameCode {
   KQKRPs,  // KQ vs KR and pawns
   KRPKR,   // KRP vs KR
   KRPKB,   // KRP vs KB
-  KRPPKRP, // KRPP vs KRP
   KPsK,    // K and pawns vs K
   KBPKB,   // KBP vs KB
   KBPPKB,  // KBPP vs KB

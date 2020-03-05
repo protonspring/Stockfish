@@ -58,9 +58,6 @@ namespace {
   inline int push_close(Square s1, Square s2) { return 140 - 20 * distance(s1, s2); }
   inline int push_away(Square s1, Square s2) { return 120 - push_close(s1, s2); }
 
-  // Pawn Rank based scaling factors used in KRPPKRP endgame
-  constexpr int KRPPKRPScaleFactors(int r) { return 9 + r * r; }
-
 #ifndef NDEBUG
   bool verify_material(const Position& pos, Color c, Value npm, int pawnsCnt) {
     return pos.non_pawn_material(c) == npm && pos.count<PAWN>(c) == pawnsCnt;
@@ -105,7 +102,6 @@ namespace Endgames {
     add<KBPKB>("KBPKB");
     add<KBPKN>("KBPKN");
     add<KBPPKB>("KBPPKB");
-    add<KRPPKRP>("KRPPKRP");
   }
 }
 
@@ -563,34 +559,6 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
           return ScaleFactor(8);
   }
 
-  return SCALE_FACTOR_NONE;
-}
-
-/// KRPP vs KRP. There is just a single rule: if the stronger side has no passed
-/// pawns and the defending king is actively placed, the position is drawish.
-template<>
-ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
-
-  assert(verify_material(pos, strongSide, RookValueMg, 2));
-  assert(verify_material(pos, weakSide,   RookValueMg, 1));
-
-  Square wpsq1 = pos.squares<PAWN>(strongSide)[0];
-  Square wpsq2 = pos.squares<PAWN>(strongSide)[1];
-  Square bksq = pos.square<KING>(weakSide);
-
-  // Does the stronger side have a passed pawn?
-  if (pos.pawn_passed(strongSide, wpsq1) || pos.pawn_passed(strongSide, wpsq2))
-      return SCALE_FACTOR_NONE;
-
-  Rank r = std::max(relative_rank(strongSide, wpsq1), relative_rank(strongSide, wpsq2));
-
-  if (   distance<File>(bksq, wpsq1) <= 1
-      && distance<File>(bksq, wpsq2) <= 1
-      && relative_rank(strongSide, bksq) > r)
-  {
-      assert(r > RANK_1 && r < RANK_7);
-      return ScaleFactor(KRPPKRPScaleFactors(r));
-  }
   return SCALE_FACTOR_NONE;
 }
 
