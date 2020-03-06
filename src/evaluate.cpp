@@ -339,6 +339,11 @@ namespace {
             if (file_bb(s) & pos.pieces(QUEEN))
                 score += RookOnQueenFile;
 
+            // Bonus for home rank rooks on the same file as an enemy rook
+            if ((relative_rank(Us, s) == RANK_1) &&
+                    (file_bb(s) & pos.pieces(Them, ROOK)))
+                score += make_score(7,0);
+
             // Bonus for rook on an open or semi-open file
             if (pos.is_on_semiopen_file(Us, s))
                 score += RookOnFile[pos.is_on_semiopen_file(Them, s)];
