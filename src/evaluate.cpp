@@ -295,7 +295,7 @@ namespace {
             if (bb & s)
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
-                int d = 4 - distance(s, pos.square<KING>(Them));
+                int d = 8 - 2 * distance(s, pos.square<KING>(Them));
                 score += make_score(d,d);
             }
 
