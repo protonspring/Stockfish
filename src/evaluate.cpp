@@ -296,7 +296,7 @@ namespace {
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
                 int d = distance(s, pos.square<KING>(Them));
-                score -= make_score(d, d) * 2;
+                score += make_score(8-d,8-d);
             }
 
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
