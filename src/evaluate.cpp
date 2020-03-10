@@ -337,7 +337,7 @@ namespace {
 
                 // If knight forks two or more more valuable pieces
                 if (more_than_one(PseudoAttacks[KNIGHT][s] & targets))
-                        score += make_score( 0, 15);
+                        score += make_score( 15, 0);
             }
         }
 
