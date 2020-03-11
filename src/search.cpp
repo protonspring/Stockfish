@@ -179,15 +179,15 @@ namespace {
             cnt = 1, nodes++;
         else
         {
-            pos.do_move(m, st);
+            pos.do_move(m.move, st);
 
-	    MoveList ml2;
-        ml2.reserve(MAX_MOVES);
-	    generate<LEGAL>(pos, ml2);
+	        MoveList ml2;
+            ml2.reserve(MAX_MOVES);
+	        generate<LEGAL>(pos, ml2);
 
             cnt = leaf ? ml2.size() : perft<false>(pos, depth - 1);
             nodes += cnt;
-            pos.undo_move(m);
+            pos.undo_move(m.move);
         }
         if (Root)
             sync_cout << UCI::move(m, pos.is_chess960()) << ": " << cnt << sync_endl;
@@ -1326,6 +1326,8 @@ moves_loop: // When in check, search starts from here
     MoveList moveList;
     moveList.reserve(MAX_MOVES);
     generate<LEGAL>(pos, moveList);
+
+    //std::cout << "< step 20: # of moves: " << moveList.size() << ">" << std::endl;
 
     assert(moveCount || !inCheck || excludedMove || !moveList.size());
 
