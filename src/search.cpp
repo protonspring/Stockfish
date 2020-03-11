@@ -1856,8 +1856,12 @@ bool RootMove::extract_ponder_from_tt(Position& pos) {
     if (ttHit)
     {
         Move m = tte->move(); // Local copy to be SMP safe
-	if (std::find(moveList.begin(), moveList.end(), m) != moveList.end())
-            pv.push_back(m);
+	for(MoveList::iterator it = moveList.begin(); it < moveList.end(); ++it)
+            if (it->move == m)
+	    {
+                pv.push_back(m);
+		break;
+	    }
     }
 
     pos.undo_move(pv[0]);
