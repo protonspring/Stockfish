@@ -567,7 +567,8 @@ bool Position::pseudo_legal(const Move m) const {
   // Use a slower but simpler function for uncommon cases
   if (type_of(m) != NORMAL)
   {
-      MoveList moveList(MAX_MOVES);
+      MoveList moveList;
+      moveList.reserve(MAX_MOVES);
       generate<LEGAL>(*this, moveList);
 
       for(MoveList::iterator it = moveList.begin(); it < moveList.end(); ++it)
@@ -1126,7 +1127,8 @@ bool Position::see_ge(Move m, Value threshold) const {
 
 bool Position::is_draw(int ply) const {
 
-  MoveList moveList(MAX_MOVES);
+  MoveList moveList;
+  moveList.reserve(MAX_MOVES);
   generate<LEGAL>(*this, moveList);
 
   if (st->rule50 > 99 && (!checkers() || moveList.size()))

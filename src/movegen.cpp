@@ -19,6 +19,7 @@
 */
 
 #include <cassert>
+#include <iostream>
 
 #include "movegen.h"
 #include "position.h"
@@ -347,14 +348,20 @@ void generate<LEGAL>(const Position& pos, MoveList &moveList) {
   Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
   Square ksq = pos.square<KING>(us);
 
+  //std::cout << "<Size before generate: " << moveList.size() << ">" << std::endl;
+
   if (pos.checkers()) generate<EVASIONS    >(pos, moveList);
   else                generate<NON_EVASIONS>(pos, moveList);
 
   for (std::vector<ExtMove>::iterator cur = moveList.begin(); cur < moveList.end(); ++cur)
+  {
+      //std::cout << "<move: " << from_sq(cur->move) << "," << to_sq(cur->move) << ">" << std::endl;
       if (   (pinned || from_sq(cur->move) == ksq || type_of(cur->move) == ENPASSANT)
           && !pos.legal(cur->move))
       {
           *cur = moveList.back();
           moveList.pop_back();
       }
+  }
+  //std::cout << "<DONE>" << std::endl;
 }
