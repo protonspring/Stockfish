@@ -147,8 +147,8 @@ Move MovePicker::select(MoveList &moveList, Pred filter)
 {
   while (cur < moveList.end())
   {
-      //if (T == Best)
-          //std::swap(*cur, *std::max_element(cur, moveList.end()));
+      if (T == Best)
+          std::swap(*cur, *std::max_element(cur, moveList.end()));
 
       if (cur->move != ttMove && filter())
           return *cur++;
@@ -176,6 +176,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
+      moves.clear();
       generate<CAPTURES>(pos, moves);
       cur = moves.begin();
 
