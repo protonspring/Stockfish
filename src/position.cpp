@@ -24,6 +24,7 @@
 #include <cstring> // For std::memset, std::memcmp
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "misc.h"
@@ -565,7 +566,16 @@ bool Position::pseudo_legal(const Move m) const {
 
   // Use a slower but simpler function for uncommon cases
   if (type_of(m) != NORMAL)
-      return MoveList<LEGAL>(*this).contains(m);
+  {
+      MoveList2 ml2(MAX_MOVES);
+      generate<LEGAL>(*this, ml2.data());
+
+      for(unsigned x = 0; x < MoveList<LEGAL>(*this).size(); ++x)
+	      if (ml2[x] == m)
+		      return true;
+      
+      return false;
+  }
 
   // Is not a promotion, so promotion piece must be empty
   if (promotion_type(m) - KNIGHT != NO_PIECE_TYPE)
