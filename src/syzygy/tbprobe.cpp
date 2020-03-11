@@ -1464,11 +1464,11 @@ int Tablebases::probe_dtz(Position& pos, ProbeState* result) {
     MoveList moveList(MAX_MOVES);
     generate<LEGAL>(pos, moveList);
 
-    for (const Move& move : moveList)
+    for (const auto& emove : moveList)
     {
-        bool zeroing = pos.capture(move) || type_of(pos.moved_piece(move)) == PAWN;
+        bool zeroing = pos.capture(emove.move) || type_of(pos.moved_piece(emove.move)) == PAWN;
 
-        pos.do_move(move, st);
+        pos.do_move(emove.move, st);
 
         // For zeroing moves we want the dtz of the move _before_ doing it,
         // otherwise we will get the dtz of the next move sequence. Search the
@@ -1493,7 +1493,7 @@ int Tablebases::probe_dtz(Position& pos, ProbeState* result) {
         if (dtz < minDTZ && sign_of(dtz) == sign_of(wdl))
             minDTZ = dtz;
 
-        pos.undo_move(move);
+        pos.undo_move(emove.move);
 
         if (*result == FAIL)
             return 0;

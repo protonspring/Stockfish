@@ -190,8 +190,8 @@ void ThreadPool::start_thinking(Position& pos, StateListPtr& states,
 
   for (const auto& m : moveList)
       if (   limits.searchmoves.empty()
-          || std::count(limits.searchmoves.begin(), limits.searchmoves.end(), m))
-          rootMoves.emplace_back(m);
+          || std::count(limits.searchmoves.begin(), limits.searchmoves.end(), m.move))
+          rootMoves.emplace_back(m.move);
 
   if (!rootMoves.empty())
       Tablebases::rank_root_moves(pos, rootMoves);
