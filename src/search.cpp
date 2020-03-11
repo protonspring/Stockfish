@@ -169,14 +169,21 @@ namespace {
     uint64_t cnt, nodes = 0;
     const bool leaf = (depth == 2);
 
-    for (const auto& m : MoveList<LEGAL>(pos))
+    MoveList moveList(MAX_MOVES);
+    generate<LEGAL>(pos, moveList);
+
+    for (const auto& m : moveList)
     {
         if (Root && depth <= 1)
             cnt = 1, nodes++;
         else
         {
             pos.do_move(m, st);
-            cnt = leaf ? MoveList<LEGAL>(pos).size() : perft<false>(pos, depth - 1);
+
+	    MoveList ml2(MAX_MOVES);
+	    generate<LEGAL>(pos, ml2);
+
+            cnt = leaf ? ml2.size() : perft<false>(pos, depth - 1);
             nodes += cnt;
             pos.undo_move(m);
         }
@@ -1314,7 +1321,10 @@ moves_loop: // When in check, search starts from here
     // must be a mate or a stalemate. If we are in a singular extension search then
     // return a fail low score.
 
-    assert(moveCount || !inCheck || excludedMove || !MoveList<LEGAL>(pos).size());
+    MoveList moveList(MAX_MOVES);
+    generate<LEGAL>(pos, moveList);
+
+    assert(moveCount || !inCheck || excludedMove || !moveList.size());
 
     if (!moveCount)
         bestValue = excludedMove ? alpha
@@ -1840,10 +1850,13 @@ bool RootMove::extract_ponder_from_tt(Position& pos) {
     pos.do_move(pv[0], st);
     TTEntry* tte = TT.probe(pos.key(), ttHit);
 
+    MoveList moveList(MAX_MOVES);
+    generate<LEGAL>(pos, moveList);
+
     if (ttHit)
     {
         Move m = tte->move(); // Local copy to be SMP safe
-        if (MoveList<LEGAL>(pos).contains(m))
+	if (std::find(moveList.begin(), moveList.end(), m) != moveList.end())
             pv.push_back(m);
     }
 

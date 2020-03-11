@@ -104,7 +104,9 @@ Value Endgame<KXK>::operator()(const Position& pos) const {
   assert(!pos.checkers()); // Eval is never called when in check
 
   // Stalemate detection with lone king
-  if (pos.side_to_move() == weakSide && !MoveList<LEGAL>(pos).size())
+  MoveList moveList(MAX_MOVES);
+  generate<LEGAL>(pos, moveList);
+  if (pos.side_to_move() == weakSide && !moveList.size())
       return VALUE_DRAW;
 
   Square winnerKSq = pos.square<KING>(strongSide);

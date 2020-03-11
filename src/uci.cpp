@@ -312,9 +312,9 @@ Move UCI::to_move(const Position& pos, string& str) {
   if (str.length() == 5) // Junior could send promotion piece in uppercase
       str[4] = char(tolower(str[4]));
 
-  MoveList2 ml(MAX_MOVES);
-  generate<LEGAL>(pos, ml.data());
-  for (const auto& m : ml)
+  MoveList moveList(MAX_MOVES);
+  generate<LEGAL>(pos, moveList);
+  for (const auto& m : moveList)
       if (str == UCI::move(m, pos.is_chess960()))
           return m;
 

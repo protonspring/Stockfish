@@ -247,7 +247,7 @@ namespace {
 /// Returns a pointer to the end of the move list.
 
 template<GenType Type>
-void generate(const Position& pos, MostList &moveList) {
+void generate(const Position& pos, MoveList &moveList) {
 
   static_assert(Type == CAPTURES || Type == QUIETS || Type == NON_EVASIONS, "Unsupported type in generate()");
   assert(!pos.checkers());
@@ -258,7 +258,7 @@ void generate(const Position& pos, MostList &moveList) {
                    : Type == QUIETS       ? ~pos.pieces()
                    : Type == NON_EVASIONS ? ~pos.pieces(us) : 0;
 
-  if (us == WHITE) generate_all<WHITE, Type>(pos, moveList, target)
+  if (us == WHITE) generate_all<WHITE, Type>(pos, moveList, target);
   else             generate_all<BLACK, Type>(pos, moveList, target);
 }
 
@@ -271,7 +271,7 @@ template void generate<NON_EVASIONS>(const Position&, MoveList&);
 /// generate<QUIET_CHECKS> generates all pseudo-legal non-captures and knight
 /// underpromotions that give check. Returns a pointer to the end of the move list.
 template<>
-ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
+void generate<QUIET_CHECKS>(const Position& pos, MoveList &moveList) {
 
   assert(!pos.checkers());
 
@@ -295,8 +295,8 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
          moveList.push_back(make_move(from, pop_lsb(&b)));
   }
 
-  if (us == WHITE) generate_all<WHITE, QUIET_CHECKS>(pos, moveList, ~pos.pieces())
-  else generate_all<BLACK, QUIET_CHECKS>(pos, moveList, ~pos.pieces());
+  if (us == WHITE) generate_all<WHITE, QUIET_CHECKS>(pos, moveList, ~pos.pieces());
+  else             generate_all<BLACK, QUIET_CHECKS>(pos, moveList, ~pos.pieces());
 }
 
 
@@ -333,8 +333,8 @@ void generate<EVASIONS>(const Position& pos, MoveList& moveList) {
   Square checksq = lsb(pos.checkers());
   Bitboard target = between_bb(checksq, ksq) | checksq;
 
-  if (us == WHITE) generate_all<WHITE, EVASIONS>(pos, moveList, target)
-  else generate_all<BLACK, EVASIONS>(pos, moveList, target);
+  if (us == WHITE) generate_all<WHITE, EVASIONS>(pos, moveList, target);
+  else             generate_all<BLACK, EVASIONS>(pos, moveList, target);
 }
 
 
@@ -346,16 +346,16 @@ void generate<LEGAL>(const Position& pos, MoveList &moveList) {
   Color us = pos.side_to_move();
   Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
   Square ksq = pos.square<KING>(us);
-  ExtMove* cur = moveList;
+  //ExtMove* cur = moveList;
 
-  if (pos.checkers()) generate<EVASIONS    >(pos, moveList)
-  else generate<NON_EVASIONS>(pos, moveList);
+  if (pos.checkers()) generate<EVASIONS    >(pos, moveList);
+  else                generate<NON_EVASIONS>(pos, moveList);
 
   for (std::vector<ExtMove>::iterator cur = moveList.begin(); cur < moveList.end(); ++cur)
-      if (   (pinned || from_sq(*cur) == ksq || type_of(*cur) == ENPASSANT)
-          && !pos.legal(*cur))
+      if (   (pinned || from_sq(cur->move) == ksq || type_of(cur->move) == ENPASSANT)
+          && !pos.legal(cur->move))
       {
-          *cur = v.back();
-          v.pop_back();
+          *cur = moveList.back();
+          moveList.pop_back();
       }
 }

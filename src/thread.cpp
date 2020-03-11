@@ -184,7 +184,11 @@ void ThreadPool::start_thinking(Position& pos, StateListPtr& states,
   Search::Limits = limits;
   Search::RootMoves rootMoves;
 
-  for (const auto& m : MoveList<LEGAL>(pos))
+  MoveList moveList;
+  moveList.reserve(MAX_MOVES);
+  generate<LEGAL>(pos, moveList);
+
+  for (const auto& m : moveList)
       if (   limits.searchmoves.empty()
           || std::count(limits.searchmoves.begin(), limits.searchmoves.end(), m))
           rootMoves.emplace_back(m);

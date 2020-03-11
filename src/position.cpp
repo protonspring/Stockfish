@@ -567,12 +567,12 @@ bool Position::pseudo_legal(const Move m) const {
   // Use a slower but simpler function for uncommon cases
   if (type_of(m) != NORMAL)
   {
-      MoveList2 ml2(MAX_MOVES);
-      generate<LEGAL>(*this, ml2.data());
+      MoveList moveList(MAX_MOVES);
+      generate<LEGAL>(*this, moveList);
 
-      for(unsigned x = 0; x < MoveList<LEGAL>(*this).size(); ++x)
-	      if (ml2[x] == m)
-		      return true;
+      for(MoveList::iterator it = moveList.begin(); it < moveList.end(); ++it)
+	  if (it->move == m)
+	      return true;
       
       return false;
   }
@@ -1126,7 +1126,10 @@ bool Position::see_ge(Move m, Value threshold) const {
 
 bool Position::is_draw(int ply) const {
 
-  if (st->rule50 > 99 && (!checkers() || MoveList<LEGAL>(*this).size()))
+  MoveList moveList(MAX_MOVES);
+  generate<LEGAL>(*this, moveList);
+
+  if (st->rule50 > 99 && (!checkers() || moveList.size()))
       return true;
 
   // Return a draw score if a position repeats once earlier but strictly

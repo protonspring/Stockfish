@@ -138,10 +138,10 @@ public:
   Move next_move(bool skipQuiets = false);
 
 private:
-  template<PickType T, typename Pred> Move select(Pred);
+  template<PickType T, typename Pred> Move select(MoveList&, Pred);
   template<GenType> void score();
-  ExtMove* begin() { return cur; }
-  ExtMove* end() { return endMoves; }
+  //ExtMove* begin() { return cur; }
+  //ExtMove* end() { return endMoves; }
 
   const Position& pos;
   const ButterflyHistory* mainHistory;
@@ -149,13 +149,17 @@ private:
   const CapturePieceToHistory* captureHistory;
   const PieceToHistory** continuationHistory;
   Move ttMove;
-  ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
+  //ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
+  //ExtMove *cur, *endMoves;
+  MoveList::iterator cur;
   int stage;
   Square recaptureSquare;
   Value threshold;
   Depth depth;
   int ply;
-  ExtMove moves[MAX_MOVES];
+  MoveList moves;
+  MoveList badCaptures;
+  MoveList refutations;
 };
 
 #endif // #ifndef MOVEPICK_H_INCLUDED
