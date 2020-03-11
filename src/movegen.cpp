@@ -346,7 +346,6 @@ void generate<LEGAL>(const Position& pos, MoveList &moveList) {
   Color us = pos.side_to_move();
   Bitboard pinned = pos.blockers_for_king(us) & pos.pieces(us);
   Square ksq = pos.square<KING>(us);
-  //ExtMove* cur = moveList;
 
   if (pos.checkers()) generate<EVASIONS    >(pos, moveList);
   else                generate<NON_EVASIONS>(pos, moveList);

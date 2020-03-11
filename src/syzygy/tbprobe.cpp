@@ -1192,17 +1192,17 @@ WDLScore search(Position& pos, ProbeState* result) {
 
     size_t totalCount = moveList.size(), moveCount = 0;
 
-    for (const Move& move : moveList)
+    for (const auto& em : moveList)
     {
-        if (   !pos.capture(move)
-            && (!CheckZeroingMoves || type_of(pos.moved_piece(move)) != PAWN))
+        if (   !pos.capture(em.move)
+            && (!CheckZeroingMoves || type_of(pos.moved_piece(em.move)) != PAWN))
             continue;
 
         moveCount++;
 
-        pos.do_move(move, st);
+        pos.do_move(em.move, st);
         value = -search<false>(pos, result);
-        pos.undo_move(move);
+        pos.undo_move(em.move);
 
         if (*result == FAIL)
             return WDLDraw;

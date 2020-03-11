@@ -147,8 +147,8 @@ Move MovePicker::select(MoveList &moveList, Pred filter)
 {
   while (cur < moveList.end())
   {
-      if (T == Best)
-          std::swap(*cur, *std::max_element(cur, moveList.end()));
+      //if (T == Best)
+          //std::swap(*cur, *std::max_element(cur, moveList.end()));
 
       if (cur->move != ttMove && filter())
           return *cur++;
@@ -185,7 +185,7 @@ top:
 
   case GOOD_CAPTURE:
       if (select<Best>(moves, [&](){
-                       return pos.see_ge(*cur, Value(-55 * cur->value / 1024)) ?
+                       return pos.see_ge(cur->move, Value(-55 * cur->value / 1024)) ?
                               // Move losing capture to endBadCaptures to be tried later
                               true : (badCaptures.push_back(*cur), false); }))
           return *(cur - 1);
@@ -202,9 +202,9 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>(refutations, [&](){ return    *cur != MOVE_NONE
-                                    && !pos.capture(*cur)
-                                    &&  pos.pseudo_legal(*cur); }))
+      if (select<Next>(refutations, [&](){ return    cur->move != MOVE_NONE
+                                    && !pos.capture(cur->move)
+                                    &&  pos.pseudo_legal(cur->move); }))
           return *(cur - 1);
       ++stage;
       /* fallthrough */
@@ -254,11 +254,11 @@ top:
       return select<Best>(moves, [](){ return true; });
 
   case PROBCUT:
-      return select<Best>(moves, [&](){ return pos.see_ge(*cur, threshold); });
+      return select<Best>(moves, [&](){ return pos.see_ge(cur->move, threshold); });
 
   case QCAPTURE:
       if (select<Best>(moves, [&](){ return   depth > DEPTH_QS_RECAPTURES
-                                    || to_sq(*cur) == recaptureSquare; }))
+                                    || to_sq(cur->move) == recaptureSquare; }))
           return *(cur - 1);
 
       // If we did not find any move and we do not try checks, we have finished
