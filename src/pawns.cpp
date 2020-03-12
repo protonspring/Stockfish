@@ -191,7 +191,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Score bonus;
+  Value bonus = VALUE_ZERO;
 
   File center = Utility::clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -203,15 +203,15 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = edge_distance(f);
-      bonus += make_score(ShelterStrength[d][ourRank], 2);
+      bonus += ShelterStrength[d][ourRank];
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
-          bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+          bonus -= UnblockedStorm[d][theirRank];
   }
 
-  return bonus;
+  return make_score(bonus, 5);
 }
 
 
