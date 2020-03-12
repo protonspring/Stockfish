@@ -45,10 +45,10 @@ namespace {
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
   constexpr Value ShelterStrength[int(FILE_NB) / 2][RANK_NB] = {
-    { V( -6), V( 81), V( 93), V( 58), V( 39), V( 18), V(  25) },
-    { V(-43), V( 61), V( 35), V(-49), V(-29), V(-11), V( -63) },
-    { V(-10), V( 75), V( 23), V( -2), V( 32), V(  3), V( -45) },
-    { V(-39), V(-13), V(-29), V(-52), V(-48), V(-67), V(-166) }
+    { V(  0), V( 87), V( 99), V( 64), V( 45), V( 24), V(  31) },
+    { V(  0), V(104), V( 78), V( -6), V( 14), V( 32), V( -20) },
+    { V(  0), V( 85), V( 33), V(  8), V( 42), V( 13), V( -35) },
+    { V(  0), V( 27), V( 11), V(-12), V( -8), V(-27), V(-126) }
   };
 
   // Danger of enemy pawns moving toward our king by [distance from edge][rank].
@@ -56,10 +56,10 @@ namespace {
   // is behind our king. Note that UnblockedStorm[0][1-2] accommodate opponent pawn
   // on edge, likely blocked by our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 85), V(-289), V(-166), V(97), V(50), V( 45), V( 50) },
-    { V( 46), V( -25), V( 122), V(45), V(37), V(-10), V( 20) },
-    { V( -6), V(  51), V( 168), V(34), V(-2), V(-22), V(-14) },
-    { V(-15), V( -11), V( 101), V( 4), V(11), V(-15), V(-29) }
+    { V( 91), V(-283), V(-160), V(103), V(56), V( 51), V( 56) },
+    { V( 89), V(  18), V( 165), V( 88), V(80), V( 33), V( 63) },
+    { V(  4), V(  61), V( 178), V( 44), V( 8), V(-12), V( -4) },
+    { V( 25), V(  29), V( 140), V( 43), V(50), V( 24), V( 11) }
   };
 
   #undef S
@@ -196,14 +196,17 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   File center = Utility::clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
-      b = ourPawns & file_bb(f);
-      int ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
-      b = theirPawns & file_bb(f);
-      int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
-
       File d = edge_distance(f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      int ourRank = 0, theirRank = 0;
+
+      if((b = ourPawns & file_bb(f)))
+      {
+         ourRank = relative_rank(Us, frontmost_sq(Them, b));
+         bonus += make_score(ShelterStrength[d][ourRank], 0);
+      }
+
+      if ((b = theirPawns & file_bb(f)))
+          theirRank = relative_rank(Us, frontmost_sq(Them, b));
 
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
