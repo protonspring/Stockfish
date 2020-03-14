@@ -152,7 +152,7 @@ namespace {
 
         //Bonus for blocked pawns on RANK_6
         if (blocked && relative_rank(Us, s) == RANK_6)
-            score += make_score(20, 0);
+            score += make_score( 0,20);
     }
 
     return score;
