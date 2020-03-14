@@ -41,6 +41,7 @@ namespace {
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  inline Score BlockedScore(Rank r) { return make_score(5,5) * r - make_score(20, 20); }
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -150,9 +151,9 @@ namespace {
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
 
-        //Bonus for blocked pawns on RANK_6
-        if (blocked && relative_rank(Us, s) == RANK_6)
-            score += make_score( 0,20);
+        //Bonus/Penalty for blocked pawns (-20 -> 20)
+        if (blocked)
+           score += BlockedScore(r);
     }
 
     return score;
