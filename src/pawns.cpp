@@ -149,6 +149,10 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        //Bonus for blocked pawns on RANK_6
+        if (blocked && relative_rank(Us, s) == RANK_6)
+            score += make_score(20, 20);
     }
 
     return score;
