@@ -198,7 +198,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   {
       File d = edge_distance(f);
       int ourRank = 0, theirRank = 0;
-      Square psq = SQ_A1;
+      Square psq = SQ_NONE;
 
       b = ourPawns & file_bb(f);
       ourRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
@@ -210,7 +210,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
           theirRank = relative_rank(Us, psq);
       }
 
-      if (ourPawns & (psq + pawn_push(Them)))
+      if ((psq != SQ_NONE) && (ourPawns & (psq + pawn_push(Them))))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
