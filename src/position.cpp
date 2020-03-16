@@ -348,7 +348,7 @@ void Position::set_state(StateInfo* si) const {
       Piece pc = piece_on(s);
       si->key ^= Zobrist::psq[pc][s];
 
-      if (type_of(pc) == PAWN)
+      if ((type_of(pc) == PAWN) || (type_of(pc) == KING))
           si->pawnKey ^= Zobrist::psq[pc][s];
 
       else if (type_of(pc) != KING)
@@ -362,6 +362,7 @@ void Position::set_state(StateInfo* si) const {
       si->key ^= Zobrist::side;
 
   si->key ^= Zobrist::castling[si->castlingRights];
+  si->pawnKey ^= Zobrist::castling[si->castlingRights];
 
   for (Piece pc : Pieces)
       for (int cnt = 0; cnt < pieceCount[pc]; ++cnt)
@@ -725,6 +726,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       do_castling<true>(us, from, to, rfrom, rto);
 
       k ^= Zobrist::psq[captured][rfrom] ^ Zobrist::psq[captured][rto];
+      st->pawnKey ^= Zobrist::psq[captured][rfrom] ^ Zobrist::psq[captured][rto];
       captured = NO_PIECE;
   }
 
@@ -782,6 +784,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   {
       int cr = castlingRightsMask[from] | castlingRightsMask[to];
       k ^= Zobrist::castling[st->castlingRights & cr];
+      st->pawnKey ^= Zobrist::castling[st->castlingRights & cr];
       st->castlingRights &= ~cr;
   }
 
@@ -826,6 +829,10 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       // Reset rule 50 draw counter
       st->rule50 = 0;
   }
+
+  // If the moving piece is a KING, update the pawnKey
+  if (type_of(pc) == KING)
+      st->pawnKey ^= Zobrist::psq[pc][from] ^ Zobrist::psq[pc][to];
 
   // Set capture piece
   st->capturedPiece = captured;
