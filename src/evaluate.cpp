@@ -295,8 +295,12 @@ namespace {
             if (bb & s)
             {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
-                int d = 8 - 2 * distance(s, pos.square<KING>(Them));
-                score += make_score(d,d);
+
+                if (Pt == KNIGHT)
+                {
+                    int d = 16 - 4 * distance(s, pos.square<KING>(Them));
+                    score += make_score(0,d);
+                }
             }
 
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
