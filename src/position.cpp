@@ -348,10 +348,10 @@ void Position::set_state(StateInfo* si) const {
       Piece pc = piece_on(s);
       si->key ^= Zobrist::psq[pc][s];
 
-      if (type_of(pc) == PAWN)
+      if ((type_of(pc) == PAWN) || (type_of(pc) == KING))
           si->pawnKey ^= Zobrist::psq[pc][s];
 
-      else if (type_of(pc) != KING)
+      else
           si->nonPawnMaterial[color_of(pc)] += PieceValue[MG][pc];
   }
 
@@ -826,6 +826,10 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
       // Reset rule 50 draw counter
       st->rule50 = 0;
   }
+
+  // If the moving piece is a king, update the pawnKey
+  if (type_of(pc) == KING)
+      st->pawnKey ^= Zobrist::psq[pc][from] ^ Zobrist::psq[pc][to];
 
   // Set capture piece
   st->capturedPiece = captured;
