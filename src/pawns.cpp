@@ -236,16 +236,15 @@ Score Entry::do_king_safety(const Position& pos) {
   if (pos.can_castle(Us & QUEEN_SIDE))
       shelter = std::max(shelter, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)), compare);
 
-  // In endgame we like to bring our king near our closest pawn
+  // In endgame we like to bring our king near pawns
   Bitboard pawns = pos.pieces(Us, PAWN);
-  int minPawnDist = pawns ? 8 : 0;
 
-  if (pawns & PseudoAttacks[KING][ksq])
-      minPawnDist = 1;
-  else while (pawns)
-      minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
+  Bitboard block = PseudoAttacks[KING][ksq];
+  block |= shift<NORTH>(block) | shift<SOUTH>(block);
+  block |= shift<EAST>(block) | shift<WEST>(block);
 
-  return shelter - make_score(0, 16 * minPawnDist);
+  //return shelter - make_score(0, 20 * bool(pawns & block));
+  //return shelter - make_score(0, 15 * popcount(pawns & block));
 }
 
 // Explicit template instantiation
