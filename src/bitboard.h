@@ -106,7 +106,7 @@ extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
   assert(s >= SQ_A1 && s <= SQ_H8);
-  return PseudoAttacks[0][s];
+  return PseudoAttacks[NO_PIECE_TYPE][s];
 }
 
 /// Overloads of bitwise operators between a Bitboard and a Square for testing
