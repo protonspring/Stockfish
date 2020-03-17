@@ -237,14 +237,11 @@ Score Entry::do_king_safety(const Position& pos) {
       shelter = std::max(shelter, evaluate_shelter<Us>(pos, relative_square(Us, SQ_C1)), compare);
 
   // In endgame we like to bring our king near pawns
-  Bitboard pawns = pos.pieces(Us, PAWN);
-
   Bitboard block = PseudoAttacks[KING][ksq];
   block |= shift<NORTH>(block) | shift<SOUTH>(block);
   block |= shift<EAST>(block) | shift<WEST>(block);
 
-  return shelter - make_score(0, 20 * bool(pawns & block));
-  //return shelter - make_score(0, 15 * popcount(pawns & block));
+  return shelter - make_score(0, 15 * popcount(pos.pieces(Us, PAWN) & block));
 }
 
 // Explicit template instantiation
