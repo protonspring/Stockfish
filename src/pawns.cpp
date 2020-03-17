@@ -243,7 +243,7 @@ Score Entry::do_king_safety(const Position& pos) {
   block |= shift<NORTH>(block) | shift<SOUTH>(block);
   block |= shift<EAST>(block) | shift<WEST>(block);
 
-  //return shelter - make_score(0, 20 * bool(pawns & block));
+  return shelter - make_score(0, 20 * bool(pawns & block));
   //return shelter - make_score(0, 15 * popcount(pawns & block));
 }
 
