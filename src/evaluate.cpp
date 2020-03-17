@@ -299,7 +299,7 @@ namespace {
                 if (Pt == KNIGHT)
                 {
                     int d = distance(s, pos.square<KING>(Them));
-                    score += make_score(19 - 4 * d, 0);
+                    score += make_score(13 - 4 * d, 0);
                 }
             }
 
