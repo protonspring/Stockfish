@@ -265,20 +265,20 @@ enum Rank : int {
 enum Score : int { SCORE_ZERO };
 
 constexpr Score make_score(int mg, int eg) {
-  return Score((int)((unsigned int)eg << 16) + mg);
+  return Score((int)((unsigned int)mg << 16) + eg);
 }
 
 /// Extracting the signed lower and upper 16 bits is not so trivial because
 /// according to the standard a simple cast to short is implementation defined
 /// and so is a right shift of a signed integer.
-inline Value eg_value(Score s) {
-  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s + 0x8000) >> 16) };
-  return Value(eg.s);
+inline Value mg_value(Score s) {
+  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s + 0x8000) >> 16) };
+  return Value(mg.s);
 }
 
-inline Value mg_value(Score s) {
-  union { uint16_t u; int16_t s; } mg = { uint16_t(unsigned(s)) };
-  return Value(mg.s);
+inline Value eg_value(Score s) {
+  union { uint16_t u; int16_t s; } eg = { uint16_t(unsigned(s)) };
+  return Value(eg.s);
 }
 
 #define ENABLE_BASE_OPERATORS_ON(T)                                \
