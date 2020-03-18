@@ -110,12 +110,9 @@ void Bitboards::init() {
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
   {
       for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
-      {
-          if (attacks_bb(BISHOP, s1, 0) & s2)
-              LineBB[s1][s2] = (attacks_bb(BISHOP, s1, 0) & attacks_bb(BISHOP, s2, 0)) | s1 | s2;
-          if (attacks_bb(ROOK, s1, 0) & s2)
-              LineBB[s1][s2] = (attacks_bb(ROOK, s1, 0) & attacks_bb(ROOK, s2, 0)) | s1 | s2;
-      }
+          for(PieceType pt : {BISHOP, ROOK})
+              if (attacks_bb(pt, s1, 0) & s2)
+                  LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
 }
 
