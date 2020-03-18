@@ -296,7 +296,6 @@ inline Bitboard Position::attacks_from(Square s) const {
         : Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
         : Pt == KNIGHT ? KnightAttacks[s]
         : KingAttacks[s];
-        //seudoAttacks[Pt][s];
 }
 
 template<>
