@@ -263,13 +263,13 @@ inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 /// piece of type Pt (bishop or rook) placed on 's'.
 
 template<PieceType Pt>
-inline Bitboard attacks_bb(Square s, Bitboard occupied) {
+inline Bitboard attacks_bb(Square s, Bitboard occupied = 0) {
 
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
   return m.attacks[m.index(occupied)];
 }
 
-inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
+inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
 
   assert(pt != PAWN);
 
