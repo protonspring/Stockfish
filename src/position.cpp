@@ -455,7 +455,7 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
   pinners = 0;
 
   // Snipers are sliders that attack 's' when a piece and other snipers are removed
-  Bitboard snipers = (  (PseudoAttacks[  ROOK][s] & pieces(QUEEN, ROOK))
+  Bitboard snipers = (  (rook_attacks(s) & pieces(QUEEN, ROOK))
                       | (PseudoAttacks[BISHOP][s] & pieces(QUEEN, BISHOP))) & sliders;
   Bitboard occupancy = pieces() ^ snipers;
 
@@ -670,7 +670,7 @@ bool Position::gives_check(Move m) const {
       Square kto = relative_square(sideToMove, rfrom > kfrom ? SQ_G1 : SQ_C1);
       Square rto = relative_square(sideToMove, rfrom > kfrom ? SQ_F1 : SQ_D1);
 
-      return   (PseudoAttacks[ROOK][rto] & square<KING>(~sideToMove))
+      return   (rook_attacks(rto) & square<KING>(~sideToMove))
             && (attacks_bb<ROOK>(rto, (pieces() ^ kfrom ^ rfrom) | rto | kto) & square<KING>(~sideToMove));
   }
   default:
