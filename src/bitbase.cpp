@@ -120,13 +120,13 @@ namespace {
              && rank_of(psq) == RANK_7
              && ksq[stm] != psq + NORTH
              && (    distance(ksq[~stm], psq + NORTH) > 1
-                 || (PseudoAttacks[KING][ksq[stm]] & (psq + NORTH))))
+                 || (KingAttacks[ksq[stm]] & (psq + NORTH))))
         result = WIN;
 
     // Immediate draw if it is a stalemate or a king captures undefended pawn
     else if (   stm == BLACK
-             && (  !(PseudoAttacks[KING][ksq[stm]] & ~(PseudoAttacks[KING][ksq[~stm]] | PawnAttacks[~stm][psq]))
-                 || (PseudoAttacks[KING][ksq[stm]] & psq & ~PseudoAttacks[KING][ksq[~stm]])))
+             && (  !(KingAttacks[ksq[stm]] & ~(KingAttacks[ksq[~stm]] | PawnAttacks[~stm][psq]))
+                 || (KingAttacks[ksq[stm]] & psq & ~KingAttacks[ksq[~stm]])))
         result = DRAW;
 
     // Position will be classified later
@@ -149,7 +149,7 @@ namespace {
     const Result Bad  = (stm == WHITE ? DRAW  : WIN);
 
     Result r = INVALID;
-    Bitboard b = PseudoAttacks[KING][ksq[stm]];
+    Bitboard b = KingAttacks[ksq[stm]];
 
     while (b)
         r |= stm == WHITE ? db[index(BLACK, ksq[BLACK] , pop_lsb(&b), psq)]
