@@ -192,7 +192,7 @@ namespace {
         if (Checks)
         {
             if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
-                && !(PseudoAttacks[Pt][from] & target & pos.check_squares(Pt)))
+                && !(pseudo_attacks(Pt, from) & target & pos.check_squares(Pt)))
                 continue;
 
             if (pos.blockers_for_king(~us) & from)
@@ -290,7 +290,7 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
      Bitboard b = pos.attacks_from(pt, from) & ~pos.pieces();
 
      if (pt == KING)
-         b &= ~PseudoAttacks[QUEEN][pos.square<KING>(~us)];
+         b &= ~pseudo_attacks(QUEEN, pos.square<KING>(~us));
 
      while (b)
          *moveList++ = make_move(from, pop_lsb(&b));

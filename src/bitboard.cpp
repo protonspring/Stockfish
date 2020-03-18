@@ -96,16 +96,10 @@ void Bitboards::init() {
   for (Square s = SQ_A1; s <= SQ_H8; ++s)
   {
       for (int step : {-9, -8, -7, -1, 1, 7, 8, 9} )
-      {
-         PseudoAttacks[KING][s] |= landing_square_bb(s, step);
          KingAttacks[s] |= landing_square_bb(s, step);
-      }
 
       for (int step : {-17, -15, -10, -6, 6, 10, 15, 17} )
-      {
-         PseudoAttacks[KNIGHT][s] |= landing_square_bb(s, step);
          KnightAttacks[s] |= landing_square_bb(s, step);
-      }
   }
 
   Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
@@ -117,7 +111,6 @@ void Bitboards::init() {
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
   {
       PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb<BISHOP>(s1, 0);
-      PseudoAttacks[ROOK][s1] |= rook_attacks(s1);
       PseudoAttacks[QUEEN][s1] |= rook_attacks(s1);
 
       for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
