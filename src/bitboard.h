@@ -78,12 +78,13 @@ constexpr Bitboard KingFlank[FILE_NB] = {
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
-extern Bitboard SquareBB[SQUARE_NB];
-extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
-extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 extern Bitboard KingAttacks[SQUARE_NB];
 extern Bitboard KnightAttacks[SQUARE_NB];
+extern Bitboard DiagLeftBB[SQUARE_NB];
+extern Bitboard DiagRightBB[SQUARE_NB];
+extern Bitboard SquareBB[SQUARE_NB];
+extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 
 
 /// Magic holds all magic bitboards relevant data for a single square
@@ -288,22 +289,6 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
   default    : return KingAttacks[s];
   }
-}
-
-constexpr Bitboard rook_attacks(Square s) { return file_bb(s) | rank_bb(s); }
-
-inline Bitboard pseudo_attacks(PieceType pt, Square s) {
-
-    assert(pt != PAWN);
-
-    switch(pt)
-    {
-        case ROOK  : return rook_attacks(s);
-        case KNIGHT: return KnightAttacks[s];
-        case BISHOP: return PseudoAttacks[BISHOP][s];
-        case QUEEN : return pseudo_attacks(BISHOP, s) | rook_attacks(s);
-        default    : return KingAttacks[s];
-    }
 }
 
 /// popcount() counts the number of non-zero bits in a bitboard

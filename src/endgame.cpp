@@ -537,7 +537,7 @@ ScaleFactor Endgame<KRPKB>::operator()(const Position& pos) const {
       // the corner
       if (   rk == RANK_6
           && distance(psq + 2 * push, ksq) <= 1
-          && (pseudo_attacks(BISHOP, bsq) & (psq + push))
+          && (attacks_bb(BISHOP, bsq, 0) & (psq + push))
           && distance<File>(bsq, psq) >= 2)
           return ScaleFactor(8);
   }
