@@ -259,7 +259,7 @@ template<> inline int distance<Square>(Square x, Square y) { return SquareDistan
 inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
 inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 
-inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
+inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
 
   assert(pt != PAWN);
 
