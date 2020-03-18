@@ -230,7 +230,7 @@ namespace {
     mobilityArea[Us] = ~(b | pos.pieces(Us, KING, QUEEN) | pos.blockers_for_king(Us) | pe->pawn_attacks(Them));
 
     // Initialize attackedBy[] for king and pawns
-    attackedBy[Us][KING] = pos.attacks_from(KING, ksq);
+    attackedBy[Us][KING] = attacks_bb(KING, ksq);
     attackedBy[Us][PAWN] = pe->pawn_attacks(Us);
     attackedBy[Us][ALL_PIECES] = attackedBy[Us][KING] | attackedBy[Us][PAWN];
     attackedBy2[Us] = dblAttackByPawn | (attackedBy[Us][KING] & attackedBy[Us][PAWN]);
@@ -428,7 +428,7 @@ namespace {
         unsafeChecks |= b2 & attackedBy[Them][BISHOP];
 
     // Enemy knights checks
-    knightChecks = pos.attacks_from(KNIGHT, ksq) & attackedBy[Them][KNIGHT];
+    knightChecks = attacks_bb(KNIGHT, ksq) & attackedBy[Them][KNIGHT];
 
     if (knightChecks & safe)
         kingDanger += KnightSafeCheck;
@@ -554,7 +554,7 @@ namespace {
         Square s = pos.square<QUEEN>(Them);
         safe = mobilityArea[Us] & ~stronglyProtected;
 
-        b = attackedBy[Us][KNIGHT] & pos.attacks_from(KNIGHT, s);
+        b = attackedBy[Us][KNIGHT] & attacks_bb(KNIGHT, s);
 
         score += KnightOnQueen * popcount(b & safe);
 
