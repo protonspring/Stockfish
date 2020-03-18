@@ -177,6 +177,10 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+    return PawnAttacks[c][s];
+}
+
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
 /// given color from the squares in the given bitboard.
@@ -272,6 +276,7 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
   default    : return KingAttacks[s];
   }
 }
+
 
 /// popcount() counts the number of non-zero bits in a bitboard
 

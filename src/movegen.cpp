@@ -40,7 +40,7 @@ namespace {
 
     // Knight promotion is the only promotion that can give a direct check
     // that's not already included in the queen promotion.
-    if (Type == QUIET_CHECKS && (KnightAttacks[to] & ksq))
+    if (Type == QUIET_CHECKS && (attacks_bb(KNIGHT, to) & ksq))
         *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
     else
         (void)ksq; // Silence a warning under MSVC
@@ -84,8 +84,8 @@ namespace {
 
         if (Type == QUIET_CHECKS)
         {
-            b1 &= pos.attacks_from<PAWN>(ksq, Them);
-            b2 &= pos.attacks_from<PAWN>(ksq, Them);
+            b1 &= pos.pawn_attacks_from(ksq, Them);
+            b2 &= pos.pawn_attacks_from(ksq, Them);
 
             // Add pawn pushes which give discovered check. This is possible only
             // if the pawn is not on the same file as the enemy king, because we
@@ -166,7 +166,7 @@ namespace {
             if (Type == EVASIONS && !(target & (pos.ep_square() - Up)))
                 return moveList;
 
-            b1 = pawnsNotOn7 & pos.attacks_from<PAWN>(pos.ep_square(), Them);
+            b1 = pawnsNotOn7 & pos.pawn_attacks_from(pos.ep_square(), Them);
 
             assert(b1);
 
@@ -199,7 +199,7 @@ namespace {
                 continue;
         }
 
-        Bitboard b = pos.attacks_from<Pt>(from) & target;
+        Bitboard b = pos.attacks_from(Pt, from) & target;
 
         if (Checks)
             b &= pos.check_squares(Pt);
@@ -225,7 +225,7 @@ namespace {
     if (Type != QUIET_CHECKS && Type != EVASIONS)
     {
         Square ksq = pos.square<KING>(Us);
-        Bitboard b = pos.attacks_from<KING>(ksq) & target;
+        Bitboard b = pos.attacks_from(KING, ksq) & target;
         while (b)
             *moveList++ = make_move(ksq, pop_lsb(&b));
 
@@ -323,7 +323,7 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
   }
 
   // Generate evasions for king, capture and non capture moves
-  Bitboard b = pos.attacks_from<KING>(ksq) & ~pos.pieces(us) & ~sliderAttacks;
+  Bitboard b = pos.attacks_from(KING, ksq) & ~pos.pieces(us) & ~sliderAttacks;
   while (b)
       *moveList++ = make_move(ksq, pop_lsb(&b));
 
