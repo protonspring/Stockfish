@@ -263,23 +263,29 @@ inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
 /// piece of type Pt (bishop or rook) placed on 's'.
 
-template<PieceType Pt>
-inline Bitboard attacks_bb(Square s, Bitboard occupied) {
-
-  const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
-  return m.attacks[m.index(occupied)];
-}
-
-inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
+inline Bitboard attacks_bb(PieceType pt, Square s) {
 
   assert(pt != PAWN);
 
   switch (pt)
   {
-  case BISHOP: return attacks_bb<BISHOP>(s, occupied);
-  case ROOK  : return occupied ? attacks_bb<  ROOK>(s, occupied)
-                               : (file_bb(s) | rank_bb(s));
-  case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
+  case BISHOP: return BishopAttacks[s];
+  case ROOK  : return file_bb(s) | rank_bb(s);
+  case QUEEN : return BishopAttacks[s] | file_bb(s) | rank_bb(s);
+  case KNIGHT: return KnightAttacks[s];
+  default    : return KingAttacks[s];
+  }
+}
+
+inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
+
+  assert(pt != PAWN);
+
+  switch (pt)
+  {
+  case BISHOP: return BishopMagics[s].attacks[BishopMagics[s].index(occupied)];
+  case ROOK  : return RookMagics[  s].attacks[RookMagics[  s].index(occupied)];
+  case QUEEN : return attacks_bb(BISHOP, s, occupied) | attacks_bb(ROOK, s, occupied);
   case KNIGHT: return KnightAttacks[s];
   default    : return KingAttacks[s];
   }
