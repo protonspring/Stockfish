@@ -480,12 +480,12 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
 
 Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
 
-  return  (attacks_bb(PAWN, s, BLACK)      & pieces(WHITE, PAWN))
-        | (attacks_bb(PAWN, s, WHITE)      & pieces(BLACK, PAWN))
+  return  (attacks_bb(  PAWN, s, BLACK)    & pieces(WHITE, PAWN))
+        | (attacks_bb(  PAWN, s, WHITE)    & pieces(BLACK, PAWN))
         | (attacks_bb(KNIGHT, s)           & pieces(KNIGHT))
-        | (attacks_bb(  ROOK, s, occupied) & pieces(  ROOK, QUEEN))
+        | (attacks_bb(  ROOK, s, occupied) & pieces(ROOK, QUEEN))
         | (attacks_bb(BISHOP, s, occupied) & pieces(BISHOP, QUEEN))
-        | (attacks_bb(KING, s)             & pieces(KING));
+        | (attacks_bb(  KING, s)           & pieces(KING));
 }
 
 
