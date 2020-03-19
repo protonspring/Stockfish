@@ -113,8 +113,6 @@ public:
   // Attacks to/from a given square
   Bitboard attackers_to(Square s) const;
   Bitboard attackers_to(Square s, Bitboard occupied) const;
-  Bitboard attacks_from(PieceType pt, Square s) const; //non-pawns
-  Bitboard attacks_from(PieceType pt, Square s, Color c) const; // pawns
   Bitboard slider_blockers(Bitboard sliders, Square s, Bitboard& pinners) const;
 
   // Properties of moves
@@ -285,16 +283,6 @@ inline Square Position::castling_rook_square(CastlingRights cr) const {
   assert(cr == WHITE_OO || cr == WHITE_OOO || cr == BLACK_OO || cr == BLACK_OOO);
 
   return castlingRookSquare[cr];
-}
-
-inline Bitboard Position::attacks_from(PieceType pt, Square s, Color c) const {
-    assert(pt == PAWN);
-    return pt == PAWN ? PawnAttacks[c][s] : 0;
-}
-
-inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
-    assert(pt != PAWN);
-    return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
 }
 
 inline Bitboard Position::attackers_to(Square s) const {
