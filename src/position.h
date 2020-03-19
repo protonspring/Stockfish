@@ -113,9 +113,8 @@ public:
   // Attacks to/from a given square
   Bitboard attackers_to(Square s) const;
   Bitboard attackers_to(Square s, Bitboard occupied) const;
-  Bitboard attacks_from(PieceType pt, Square s) const;
-  template<PieceType> Bitboard attacks_from(Square s) const;
-  template<PieceType> Bitboard attacks_from(Square s, Color c) const;
+  Bitboard attacks_from(PieceType pt, Square s) const; //non-pawns
+  Bitboard attacks_from(PieceType pt, Square s, Color c) const; // pawns
   Bitboard slider_blockers(Bitboard sliders, Square s, Bitboard& pinners) const;
 
   // Properties of moves
@@ -288,24 +287,14 @@ inline Square Position::castling_rook_square(CastlingRights cr) const {
   return castlingRookSquare[cr];
 }
 
-template<PieceType Pt>
-inline Bitboard Position::attacks_from(Square s) const {
-  static_assert(Pt != PAWN, "Pawn attacks need color");
-
-  //return  Pt == BISHOP || Pt == ROOK ? attacks_bb(Pt, s, byTypeBB[ALL_PIECES])
-        //: Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
-        //: Pt == KING   ? KingAttacks[s]
-        //: KnightAttacks[s];
-  return attacks_bb(Pt, s, byTypeBB[ALL_PIECES]);
-}
-
-template<>
-inline Bitboard Position::attacks_from<PAWN>(Square s, Color c) const {
-  return PawnAttacks[c][s];
+inline Bitboard Position::attacks_from(PieceType pt, Square s, Color c) const {
+    assert(pt == PAWN);
+    return pt == PAWN ? PawnAttacks[c][s] : 0;
 }
 
 inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
-  return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
+    assert(pt != PAWN);
+    return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
 }
 
 inline Bitboard Position::attackers_to(Square s) const {

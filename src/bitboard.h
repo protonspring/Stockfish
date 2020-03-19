@@ -291,6 +291,11 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   }
 }
 
+inline Bitboard attacks_bb(PieceType pt, Square s, Color c) {
+    assert (pt == PAWN);
+    return pt == PAWN ? PawnAttacks[c][s] : 0;
+}
+
 
 /// popcount() counts the number of non-zero bits in a bitboard
 
