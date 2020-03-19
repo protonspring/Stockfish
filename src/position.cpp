@@ -455,8 +455,8 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
   pinners = 0;
 
   // Snipers are sliders that attack 's' when a piece and other snipers are removed
-  Bitboard snipers = (  (attacks_bb(ROOK, s) & pieces(QUEEN, ROOK))
-                      | (BishopAttacks[s] & pieces(QUEEN, BISHOP))) & sliders;
+  Bitboard snipers = (  (attacks_bb(  ROOK, s) & pieces(QUEEN, ROOK))
+                      | (attacks_bb(BISHOP, s) & pieces(QUEEN, BISHOP))) & sliders;
   Bitboard occupancy = pieces() ^ snipers;
 
   while (snipers)
