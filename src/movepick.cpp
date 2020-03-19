@@ -56,10 +56,12 @@ namespace {
 /// ordering is at the current node.
 
 /// MovePicker constructor for the main search
-MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh, const LowPlyHistory* lp,
-                       const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers, int pl)
-           : pos(p), mainHistory(mh), lowPlyHistory(lp), captureHistory(cph), continuationHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) , ply(pl) {
+MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
+      const LowPlyHistory* lp, const CapturePieceToHistory* cph, const PieceToHistory** ch,
+      Move cm, Move* killers, int pl)
+           : pos(p), mainHistory(mh), lowPlyHistory(lp), captureHistory(cph),
+             continuationHistory(ch), depth(d), ply(pl),
+             moves{{killers[0], 0}, {killers[1], 0}, {cm, 0}} {
 
   assert(d > 0);
 
@@ -71,7 +73,8 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for quiescence search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
+           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
+             recaptureSquare(rs), depth(d) {
 
   assert(d <= 0);
 
@@ -166,7 +169,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
+      cur = endBadCaptures = &moves[3];
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
@@ -180,13 +183,13 @@ top:
                               true : (*endBadCaptures++ = *cur, false); }))
           return *(cur - 1);
 
-      // Prepare the pointers to loop over the refutations array
-      cur = std::begin(refutations);
-      endMoves = std::end(refutations);
+      // Prepare the pointers to loop over the refutations
+      cur = moves;
+      endMoves = &moves[3];
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
+      if (   moves[0].move == moves[2].move
+          || moves[1].move == moves[2].move)
           --endMoves;
 
       ++stage;
@@ -215,13 +218,13 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
-                                      && *cur != refutations[1].move
-                                      && *cur != refutations[2].move;}))
+          && select<Next>([&](){return   *cur != moves[0].move
+                                      && *cur != moves[1].move
+                                      && *cur != moves[2].move;}))
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
-      cur = moves;
+      cur = &moves[3];
       endMoves = endBadCaptures;
 
       ++stage;
@@ -231,7 +234,7 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      cur = moves;
+      cur = &moves[3];
       endMoves = generate<EVASIONS>(pos, cur);
 
       score<EVASIONS>();
@@ -257,7 +260,7 @@ top:
       /* fallthrough */
 
   case QCHECK_INIT:
-      cur = moves;
+      cur = &moves[3];
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;
