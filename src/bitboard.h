@@ -65,12 +65,6 @@ constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
 constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
 constexpr Bitboard Center      = (FileDBB | FileEBB) & (Rank4BB | Rank5BB);
 
-constexpr Bitboard KingFlank[FILE_NB] = {
-  QueenSide ^ FileDBB, QueenSide, QueenSide,
-  CenterFiles, CenterFiles,
-  KingSide, KingSide, KingSide ^ FileEBB
-};
-
 extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
@@ -192,6 +186,11 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 
 inline Bitboard adjacent_files_bb(Square s) {
   return shift<EAST>(file_bb(s)) | shift<WEST>(file_bb(s));
+}
+
+inline king_flank(Square ksq) {
+    Bitboard b = file_bb(ksq) | adjacent_files_bb(ksq);
+    return b | (file_of(ksq) < FILE_E) ? shift<EAST>(b) : shift<WEST>(b);
 }
 
 
