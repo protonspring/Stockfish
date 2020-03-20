@@ -188,7 +188,7 @@ inline Bitboard adjacent_files_bb(Square s) {
   return shift<EAST>(file_bb(s)) | shift<WEST>(file_bb(s));
 }
 
-constexpr king_flank(Square ksq) {
+inline king_flank(Square ksq) {
     return adjacent_files_bb(ksq) |
            adjacent_files_bb(ksq + ((QueenSide & ksq) ? EAST : WEST));
 }
