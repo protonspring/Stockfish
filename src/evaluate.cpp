@@ -293,7 +293,7 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus for supporting advanced pawns.
-            score += make_score(10, 0) *
+            score += make_score(0, 10) *
                      bool(forwardRanks & b & pos.pieces(Us, PAWN));
 
             // Bonus if piece is on an outpost square or can reach one
