@@ -256,8 +256,8 @@ namespace {
     constexpr Direction Down = -pawn_push(Us);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
-    constexpr forwardRanks = (Us == WHITE ? Rank5BB|Rank6BB|Rank7BB|Rank8BB :
-                                            Rank4BB|Rank3BB|Rank2BB|Rank1BB);
+    constexpr Bitboard forwardRanks = (Us == WHITE ? Rank5BB|Rank6BB|Rank7BB|Rank8BB :
+                                                     Rank4BB|Rank3BB|Rank2BB|Rank1BB);
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -292,9 +292,10 @@ namespace {
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
-            // Bonus for supporting advanced pawns.
-            score += make_score(0, 10) *
-                     bool(forwardRanks & b & pos.pieces(Us, PAWN));
+            // Bonus for supporting squares in front of advanced pawns.
+            score += make_score(10, 0) *
+                     bool(forwardRanks & b & shift<pawn_push(Us)>(pos.pieces(Us, PAWN))
+                                           & ~pos.pieces(Them, PAWN));
 
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
