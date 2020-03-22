@@ -744,11 +744,12 @@ ScaleFactor Endgame<KNPKB>::operator()(const Position& pos) const {
   Square pawnSq = pos.square<PAWN>(strongSide);
   Square bishopSq = pos.square<BISHOP>(weakSide);
   Square weakKingSq = pos.square<KING>(weakSide);
+  Square queeningSq = make_square(file_of(pawnSq), RANK_8);
 
   // King needs to get close to promoting pawn to prevent knight from blocking.
   // Rules for this are very tricky, so just approximate.
   if (forward_file_bb(strongSide, pawnSq) & pos.attacks_from<BISHOP>(bishopSq))
-      return ScaleFactor(distance(weakKingSq, pawnSq));
+      return ScaleFactor(8 * distance(weakKingSq, queeningSq));
 
   return SCALE_FACTOR_NONE;
 }
