@@ -293,7 +293,7 @@ namespace {
         if (Pt == BISHOP || Pt == KNIGHT)
         {
             // Bonus for supporting squares in front of advanced pawns.
-            score += make_score(10, 0) *
+            score += make_score( 0, 10) *
                      bool(forwardRanks & b & shift<pawn_push(Us)>(pos.pieces(Us, PAWN))
                                            & ~pos.pieces(Them, PAWN));
 
