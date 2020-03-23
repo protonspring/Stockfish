@@ -258,6 +258,22 @@ enum Rank : int {
 };
 
 
+struct Score2 {
+    int32_t mid_game;
+    int32_t end_game;
+
+    Score2(int32_t m, int32_t e) : mid_game(m), end_game(e) {}
+    int32_t mg() const { return mid_game; }
+    int32_t eg() const { return end_game; }
+    //s_Score operator+=(const s_Score& s2) { mg += s2.mg; eg += s2.eg; return *this; }
+    void add_mg(int32_t m) { mid_game += m; }
+    void add_eg(int32_t e) { end_game += e; }
+    void add_score(int32_t m, int32_t e) { add_mg(m); add_eg(e); }
+    void add_score(const Score2& s2) { add_mg(s2.mg()); add_eg(s2.eg()); }
+};
+
+//s_Score operator+(s_Score lhs, const s_Score& rhs) { return lhs += rhs; }
+
 /// Score enum stores a middlegame and an endgame value in a single integer (enum).
 /// The least significant 16 bits are used to store the middlegame value and the
 /// upper 16 bits are used to store the endgame value. We have to take care to

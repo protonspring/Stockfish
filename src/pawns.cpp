@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 
 #include "bitboard.h"
 #include "pawns.h"
@@ -191,7 +192,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   Bitboard ourPawns = b & pos.pieces(Us);
   Bitboard theirPawns = b & pos.pieces(Them);
 
-  Score bonus = make_score(5, 5);
+  Score2 bonus(5, 5);
 
   File center = Utility::clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
@@ -203,15 +204,21 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       int theirRank = b ? relative_rank(Us, frontmost_sq(Them, b)) : 0;
 
       File d = edge_distance(f);
-      bonus += make_score(ShelterStrength[d][ourRank], 0);
+      bonus.add_mg(ShelterStrength[d][ourRank]);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus -= BlockedStorm * int(theirRank == RANK_3);
+      {
+          Score s2 = BlockedStorm * int(theirRank == RANK_3);
+          bonus.add_score(-mg_value(s2), -eg_value(s2));
+      }
       else
-          bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+      {
+          bonus.add_mg(-UnblockedStorm[d][theirRank]);
+      }
   }
 
-  return bonus;
+  return make_score(bonus.mg(), bonus.eg());
+  //return bonus;
 }
 
 
