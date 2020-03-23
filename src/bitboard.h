@@ -106,7 +106,7 @@ extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
-  assert(s >= SQ_A1 && s <= SQ_H8);
+  assert(is_ok(s));
   return SquareBB[s];
 }
 
@@ -166,6 +166,11 @@ constexpr Bitboard shift(Bitboard b) {
         : 0;
 }
 
+
+inline Bitboard pawn_attacks(Color c, Square s) {
+  assert(is_ok(s));
+  return PawnAttacks[c][s];
+}
 
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
 /// from the squares in the given bitboard.
@@ -264,13 +269,15 @@ inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
+  assert(is_ok(s) && ((Pt == ROOK) || (Pt == BISHOP)));
+
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
   return m.attacks[m.index(occupied)];
 }
 
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
 
-  assert(pt != PAWN);
+  assert((pt != PAWN) && is_ok(s));
 
   switch (pt)
   {
@@ -279,6 +286,11 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
   default    : return PseudoAttacks[pt][s];
   }
+}
+
+inline Bitboard attacks_bb(PieceType pt, Square s, Color c) {
+    assert((pt == PAWN) && is_ok(s));
+    return pt == PAWN ? PawnAttacks[c][s] : 0;
 }
 
 

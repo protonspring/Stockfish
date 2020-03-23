@@ -319,7 +319,7 @@ void Position::set_check_info(StateInfo* si) const {
 
   Square ksq = square<KING>(~sideToMove);
 
-  si->checkSquares[PAWN]   = PawnAttacks[~sideToMove][ksq];
+  si->checkSquares[PAWN]   = attacks_bb(PAWN, ksq, ~sideToMove);
   si->checkSquares[KNIGHT] = attacks_bb(KNIGHT, ksq);
   si->checkSquares[BISHOP] = attacks_bb(BISHOP, ksq, pieces());
   si->checkSquares[ROOK]   = attacks_bb(ROOK, ksq, pieces());
@@ -480,12 +480,12 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
 
 Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
 
-  return  (PawnAttacks[BLACK][s]           & pieces(WHITE, PAWN))
-        | (PawnAttacks[WHITE][s]           & pieces(BLACK, PAWN))
-        | (attacks_bb(KNIGHT, s)         & pieces(KNIGHT))
+  return  (attacks_bb(PAWN, s, BLACK)      & pieces(WHITE, PAWN))
+        | (attacks_bb(PAWN, s, WHITE)      & pieces(BLACK, PAWN))
+        | (attacks_bb(KNIGHT, s)           & pieces(KNIGHT))
         | (attacks_bb<  ROOK>(s, occupied) & pieces(  ROOK, QUEEN))
         | (attacks_bb<BISHOP>(s, occupied) & pieces(BISHOP, QUEEN))
-        | (attacks_bb(KING, s)           & pieces(KING));
+        | (attacks_bb(KING, s)             & pieces(KING));
 }
 
 
@@ -588,7 +588,7 @@ bool Position::pseudo_legal(const Move m) const {
       if ((Rank8BB | Rank1BB) & to)
           return false;
 
-      if (   !(PawnAttacks[us][from] & pieces(~us) & to) // Not a capture
+      if (   !(attacks_bb(PAWN, from, us) & pieces(~us) & to) // Not a capture
           && !((from + pawn_push(us) == to) && empty(to))       // Not a single push
           && !(   (from + 2 * pawn_push(us) == to)              // Not a double push
                && (rank_of(from) == relative_rank(us, RANK_2))
@@ -794,7 +794,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   {
       // Set en-passant square if the moved pawn can be captured
       if (   (int(to) ^ int(from)) == 16
-          && (PawnAttacks[us][to - pawn_push(us)] & pieces(them, PAWN)))
+          && (attacks_bb(PAWN, to - pawn_push(us), us) & pieces(them, PAWN)))
       {
           st->epSquare = to - pawn_push(us);
           k ^= Zobrist::enpassant[file_of(st->epSquare)];

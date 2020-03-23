@@ -84,8 +84,8 @@ namespace {
 
         if (Type == QUIET_CHECKS)
         {
-            b1 &= PawnAttacks[Them][ksq];
-            b2 &= PawnAttacks[Them][ksq];
+            b1 &= attacks_bb(PAWN, ksq, Them);
+            b2 &= attacks_bb(PAWN, ksq, Them);
 
             // Add pawn pushes which give discovered check. This is possible only
             // if the pawn is not on the same file as the enemy king, because we
@@ -166,7 +166,7 @@ namespace {
             if (Type == EVASIONS && !(target & (pos.ep_square() - Up)))
                 return moveList;
 
-            b1 = pawnsNotOn7 & PawnAttacks[Them][pos.ep_square()];
+            b1 = pawnsNotOn7 & attacks_bb(PAWN, pos.ep_square(), Them);
 
             assert(b1);
 

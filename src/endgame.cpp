@@ -394,7 +394,7 @@ ScaleFactor Endgame<KQKRPs>::operator()(const Position& pos) const {
       &&  relative_rank(weakSide, rsq) == RANK_3
       && (  pos.pieces(weakSide, PAWN)
           & attacks_bb(KING, kingSq)
-          & PawnAttacks[strongSide][rsq]))
+          & attacks_bb(PAWN, rsq, strongSide)))
           return SCALE_FACTOR_DRAW;
 
   return SCALE_FACTOR_NONE;
