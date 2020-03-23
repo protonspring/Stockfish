@@ -106,7 +106,7 @@ extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
-  assert(s >= SQ_A1 && s <= SQ_H8);
+  assert(is_ok(s));
   return SquareBB[s];
 }
 
@@ -176,6 +176,11 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+  assert(is_ok(s));
+  return PawnAttacks[c][s];
+}
+
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
 /// given color from the squares in the given bitboard.
@@ -185,6 +190,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
   return C == WHITE ? shift<NORTH_WEST>(b) & shift<NORTH_EAST>(b)
                     : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
 }
+
 
 
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
@@ -260,9 +266,16 @@ inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
 /// piece of type Pt (bishop or rook) placed on 's'.
+inline Bitboard pseudo_attacks_bb(PieceType pt, Square s) {
+
+  assert((pt != PAWN) && is_ok(s));
+  return PseudoAttacks[pt][s];
+}
 
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
+
+  assert(is_ok(s) && ((Pt == ROOK) || (Pt == BISHOP)));
 
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
   return m.attacks[m.index(occupied)];
@@ -270,14 +283,14 @@ inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
 
-  assert(pt != PAWN);
+  assert((pt != PAWN) && is_ok(s));
 
   switch (pt)
   {
   case BISHOP: return attacks_bb<BISHOP>(s, occupied);
   case ROOK  : return attacks_bb<  ROOK>(s, occupied);
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[pt][s];
+  default    : return pseudo_attacks_bb(pt, s);
   }
 }
 
