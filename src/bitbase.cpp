@@ -112,7 +112,7 @@ namespace {
     if (   distance(ksq[WHITE], ksq[BLACK]) <= 1
         || ksq[WHITE] == psq
         || ksq[BLACK] == psq
-        || (stm == WHITE && (pawn_attacks(WHITE, psq) & ksq[BLACK])))
+        || (stm == WHITE && (attacks_bb(PAWN, psq, WHITE) & ksq[BLACK])))
         result = INVALID;
 
     // Immediate win if a pawn can be promoted without getting captured

@@ -167,11 +167,6 @@ constexpr Bitboard shift(Bitboard b) {
 }
 
 
-inline Bitboard pawn_attacks(Color c, Square s) {
-  assert(is_ok(s));
-  return PawnAttacks[c][s];
-}
-
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
 /// from the squares in the given bitboard.
 
