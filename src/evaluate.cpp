@@ -331,6 +331,19 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //Look for discoverable rook/king pins
+                if (LineBB[s][pos.square<KING>(Them)] & pos.pieces(Them, ROOK))
+                {
+                    //if we have pawns in the way and they aren't blocked
+                    Bitboard pawns = between_bb(s, pos.square<KING>(Them)) & pos.pieces(Us, PAWN);
+                    if (pawns && !more_than_one(pawns)) //one pawn blocks
+                    {
+                        // if we can move this pawn, it's good.
+                        if (pos.empty(lsb(pawns) + pawn_push(Us)))
+                            score += make_score(10,0);
+                    }
+                }
             }
         }
 
