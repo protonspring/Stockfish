@@ -138,8 +138,8 @@ public:
   Move next_move(bool skipQuiets = false);
 
 private:
-  template<PickType T, typename Pred> Move select(Pred);
-  template<GenType> void score();
+  template<typename Pred> Move select(PickType T, Pred);
+  void score(GenType Type);
   ExtMove* begin() { return cur; }
   ExtMove* end() { return endMoves; }
 

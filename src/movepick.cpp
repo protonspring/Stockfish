@@ -100,10 +100,9 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 /// MovePicker::score() assigns a numerical value to each move in a list, used
 /// for sorting. Captures are ordered by Most Valuable Victim (MVV), preferring
 /// captures with a good history. Quiets moves are ordered using the histories.
-template<GenType Type>
-void MovePicker::score() {
+void MovePicker::score(GenType Type) {
 
-  static_assert(Type == CAPTURES || Type == QUIETS || Type == EVASIONS, "Wrong type");
+  assert(Type == CAPTURES || Type == QUIETS || Type == EVASIONS);
 
   for (auto& m : *this)
       if (Type == CAPTURES)
@@ -132,8 +131,8 @@ void MovePicker::score() {
 
 /// MovePicker::select() returns the next move satisfying a predicate function.
 /// It never returns the TT move.
-template<MovePicker::PickType T, typename Pred>
-Move MovePicker::select(Pred filter) {
+template<typename Pred>
+Move MovePicker::select(PickType T, Pred filter) {
 
   while (cur < endMoves)
   {
@@ -169,12 +168,12 @@ top:
       cur = endBadCaptures = moves;
       endMoves = generate<CAPTURES>(pos, cur);
 
-      score<CAPTURES>();
+      score(CAPTURES);
       ++stage;
       goto top;
 
   case GOOD_CAPTURE:
-      if (select<Best>([&](){
+      if (select(Best, [&](){
                        return pos.see_ge(*cur, Value(-55 * cur->value / 1024)) ?
                               // Move losing capture to endBadCaptures to be tried later
                               true : (*endBadCaptures++ = *cur, false); }))
@@ -193,7 +192,7 @@ top:
       /* fallthrough */
 
   case REFUTATION:
-      if (select<Next>([&](){ return    *cur != MOVE_NONE
+      if (select(Next, [&](){ return    *cur != MOVE_NONE
                                     && !pos.capture(*cur)
                                     &&  pos.pseudo_legal(*cur); }))
           return *(cur - 1);
@@ -206,7 +205,7 @@ top:
           cur = endBadCaptures;
           endMoves = generate<QUIETS>(pos, cur);
 
-          score<QUIETS>();
+          score(QUIETS);
           partial_insertion_sort(cur, endMoves, -3000 * depth);
       }
 
@@ -215,7 +214,7 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
+          && select(Next, [&](){return   *cur != refutations[0].move
                                       && *cur != refutations[1].move
                                       && *cur != refutations[2].move;}))
           return *(cur - 1);
@@ -228,24 +227,24 @@ top:
       /* fallthrough */
 
   case BAD_CAPTURE:
-      return select<Next>([](){ return true; });
+      return select(Next, [](){ return true; });
 
   case EVASION_INIT:
       cur = moves;
       endMoves = generate<EVASIONS>(pos, cur);
 
-      score<EVASIONS>();
+      score(EVASIONS);
       ++stage;
       /* fallthrough */
 
   case EVASION:
-      return select<Best>([](){ return true; });
+      return select(Best, [](){ return true; });
 
   case PROBCUT:
-      return select<Best>([&](){ return pos.see_ge(*cur, threshold); });
+      return select(Best, [&](){ return pos.see_ge(*cur, threshold); });
 
   case QCAPTURE:
-      if (select<Best>([&](){ return   depth > DEPTH_QS_RECAPTURES
+      if (select(Best, [&](){ return   depth > DEPTH_QS_RECAPTURES
                                     || to_sq(*cur) == recaptureSquare; }))
           return *(cur - 1);
 
@@ -264,7 +263,7 @@ top:
       /* fallthrough */
 
   case QCHECK:
-      return select<Next>([](){ return true; });
+      return select(Next, [](){ return true; });
   }
 
   assert(false);
