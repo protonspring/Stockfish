@@ -379,8 +379,44 @@ template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
   if (Pt == ROOK)
   {
-      Bitboard attacks = 0;
+      Bitboard attacks = square_bb(s);
+      Bitboard o2 = occupied & ~square_bb(s);
 
+      if (file_bb(s) & o2)
+      {
+          Square s2 = make_square(file_of(s), RANK_8);
+          for(Square x = s + NORTH; x <= s2; x += NORTH)
+              if (o2 & x) { s2 = x; break;}
+
+          Square s3 = make_square(file_of(s), RANK_1);
+          for(Square x = s + SOUTH; x >= s3; x += SOUTH)
+              if (o2 & x) { s3 = x; break;}
+
+          attacks |= between_bb(s2, s3) | s2 | s3;
+      }
+      else attacks |= file_bb(s);
+
+
+      if (rank_bb(s) & o2 )
+      {
+          Square s2 = make_square(FILE_H, rank_of(s));
+          for(Square x = s + EAST; x <= s2; x += EAST)
+              if (o2 & x) { s2 = x; break; }
+
+          Square s3 = make_square(FILE_A, rank_of(s));
+          for(Square x = s + WEST; x >= s3; x += WEST)
+              if (o2 & x) { s3 = x; break; }
+
+          attacks |= between_bb(s2, s3) | s2 | s3;
+      }
+      else attacks |= rank_bb(s);
+
+      attacks &= ~square_bb(s);
+
+      //std::cout << "<" << s << Bitboards::pretty(occupied)
+                            //<< Bitboards::pretty(attacks);
+
+      /*
       Bitboard line = forward_file_bb(WHITE, s);
       Bitboard temp = line & occupied;
       attacks |= temp ? between_bb(s, lsb(temp)) | lsb(temp) : line;
@@ -398,6 +434,7 @@ inline Bitboard attacks_bb(Square s, Bitboard occupied) {
       line = between_bb(s, edge) | edge;
       temp = line & occupied;
       attacks |= temp ? between_bb(s, msb(temp)) | msb(temp) : line;
+      */
 
       return attacks & ~square_bb(s);
   }
