@@ -382,7 +382,7 @@ namespace {
     const Square ksq = pos.square(KING, Us);
 
     // Init the score with king shelter and enemy pawns storm
-    Score score = pe->king_safety<Us>(pos);
+    Score score = pe->king_safety(Us, pos);
 
     // Attacked squares defended at most once by our queen or king
     weak =  attackedBy[Them][ALL_PIECES]
