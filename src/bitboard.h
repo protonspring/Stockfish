@@ -176,6 +176,11 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+  assert(is_ok(s));
+  return PawnAttacks[c][s];
+}
+
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
 /// given color from the squares in the given bitboard.
