@@ -76,12 +76,12 @@ void Bitboards::init() {
 
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
       for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
-          SquareDistance[s1][s2] = std::max(distance<File>(s1, s2), distance<Rank>(s1, s2));
+          SquareDistance[s1][s2] = std::max(file_distance(s1, s2), rank_distance(s1, s2));
 
   for (Square s = SQ_A1; s <= SQ_H8; ++s)
   {
-      PawnAttacks[WHITE][s] = pawn_attacks_bb<WHITE>(square_bb(s));
-      PawnAttacks[BLACK][s] = pawn_attacks_bb<BLACK>(square_bb(s));
+      PawnAttacks[WHITE][s] = pawn_attacks_bb(WHITE, square_bb(s));
+      PawnAttacks[BLACK][s] = pawn_attacks_bb(BLACK, square_bb(s));
   }
 
   // Helper returning the target bitboard of a step from a square
@@ -108,8 +108,8 @@ void Bitboards::init() {
 
   for (Square s1 = SQ_A1; s1 <= SQ_H8; ++s1)
   {
-      PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb<BISHOP>(s1, 0);
-      PseudoAttacks[QUEEN][s1] |= PseudoAttacks[  ROOK][s1] = attacks_bb<  ROOK>(s1, 0);
+      PseudoAttacks[QUEEN][s1]  = PseudoAttacks[BISHOP][s1] = attacks_bb(BISHOP, s1, 0);
+      PseudoAttacks[QUEEN][s1] |= PseudoAttacks[  ROOK][s1] = attacks_bb(  ROOK, s1, 0);
 
       for (PieceType pt : { BISHOP, ROOK })
           for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)

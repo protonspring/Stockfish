@@ -156,8 +156,7 @@ inline Bitboard file_bb(Square s) {
 
 /// shift() moves a bitboard one or two steps as specified by the direction D
 
-template<Direction D>
-constexpr Bitboard shift(Bitboard b) {
+constexpr Bitboard shift(Direction D, Bitboard b) {
   return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
         : D == NORTH+NORTH?  b             <<16 : D == SOUTH+SOUTH?  b             >>16
         : D == EAST       ? (b & ~FileHBB) << 1 : D == WEST       ? (b & ~FileABB) >> 1
@@ -170,20 +169,18 @@ constexpr Bitboard shift(Bitboard b) {
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
 /// from the squares in the given bitboard.
 
-template<Color C>
-constexpr Bitboard pawn_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
+constexpr Bitboard pawn_attacks_bb(Color C, Bitboard b) {
+  return C == WHITE ? shift(NORTH_WEST, b) | shift(NORTH_EAST, b)
+                    : shift(SOUTH_WEST, b) | shift(SOUTH_EAST, b);
 }
 
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
 /// given color from the squares in the given bitboard.
 
-template<Color C>
-constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
-  return C == WHITE ? shift<NORTH_WEST>(b) & shift<NORTH_EAST>(b)
-                    : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
+constexpr Bitboard pawn_double_attacks_bb(Color C, Bitboard b) {
+  return C == WHITE ? shift(NORTH_WEST, b) & shift(NORTH_EAST, b)
+                    : shift(SOUTH_WEST, b) & shift(SOUTH_EAST, b);
 }
 
 
@@ -191,7 +188,7 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
 /// adjacent files of the given one.
 
 inline Bitboard adjacent_files_bb(Square s) {
-  return shift<EAST>(file_bb(s)) | shift<WEST>(file_bb(s));
+  return shift(EAST, file_bb(s)) | shift(WEST, file_bb(s));
 }
 
 
@@ -249,24 +246,11 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 
 /// distance() functions return the distance between x and y, defined as the
 /// number of steps for a king in x to reach y.
-
-template<typename T1 = Square> inline int distance(Square x, Square y);
-template<> inline int distance<File>(Square x, Square y) { return std::abs(file_of(x) - file_of(y)); }
-template<> inline int distance<Rank>(Square x, Square y) { return std::abs(rank_of(x) - rank_of(y)); }
-template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
-
+inline int file_distance(Square x, Square y) { return std::abs(file_of(x) - file_of(y)); }
+inline int rank_distance(Square x, Square y) { return std::abs(rank_of(x) - rank_of(y)); }
+inline int distance(Square x, Square y) { return SquareDistance[x][y]; }
 inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
 inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
-
-/// attacks_bb() returns a bitboard representing all the squares attacked by a
-/// piece of type Pt (bishop or rook) placed on 's'.
-
-template<PieceType Pt>
-inline Bitboard attacks_bb(Square s, Bitboard occupied) {
-
-  const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
-  return m.attacks[m.index(occupied)];
-}
 
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
 
@@ -274,9 +258,9 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
 
   switch (pt)
   {
-  case BISHOP: return attacks_bb<BISHOP>(s, occupied);
-  case ROOK  : return attacks_bb<  ROOK>(s, occupied);
-  case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
+  case BISHOP: return BishopMagics[s].attacks[BishopMagics[s].index(occupied)];
+  case ROOK  : return RookMagics[s].attacks[RookMagics[s].index(occupied)];
+  case QUEEN : return attacks_bb(BISHOP, s, occupied) | attacks_bb(ROOK, s, occupied);
   default    : return PseudoAttacks[pt][s];
   }
 }
