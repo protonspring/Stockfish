@@ -22,6 +22,7 @@
 #define BITBOARD_H_INCLUDED
 
 #include <string>
+#include <iostream>
 
 #include "types.h"
 
@@ -258,29 +259,6 @@ template<> inline int distance<Square>(Square x, Square y) { return SquareDistan
 inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
 inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 
-/// attacks_bb() returns a bitboard representing all the squares attacked by a
-/// piece of type Pt (bishop or rook) placed on 's'.
-
-template<PieceType Pt>
-inline Bitboard attacks_bb(Square s, Bitboard occupied) {
-
-  const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
-  return m.attacks[m.index(occupied)];
-}
-
-inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
-
-  assert(pt != PAWN);
-
-  switch (pt)
-  {
-  case BISHOP: return attacks_bb<BISHOP>(s, occupied);
-  case ROOK  : return attacks_bb<  ROOK>(s, occupied);
-  case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[pt][s];
-  }
-}
-
 
 /// popcount() counts the number of non-zero bits in a bitboard
 
@@ -388,5 +366,58 @@ inline Square frontmost_sq(Color c, Bitboard b) {
   assert(b);
   return c == WHITE ? msb(b) : lsb(b);
 }
+
+/// attacks_bb() returns a bitboard representing all the squares attacked by a
+/// piece of type Pt (bishop or rook) placed on 's'.
+
+inline Bitboard get_magic_bb(PieceType pt, Square s, Bitboard occupied) {
+  const Magic& m = pt == ROOK ? RookMagics[s] : BishopMagics[s];
+  return m.attacks[m.index(occupied)];
+}
+
+template<PieceType Pt>
+inline Bitboard attacks_bb(Square s, Bitboard occupied) {
+  if (Pt == ROOK)
+  {
+      Bitboard attacks = 0;
+
+      Bitboard line = forward_file_bb(WHITE, s);
+      Bitboard temp = line & occupied;
+      attacks |= temp ? between_bb(s, lsb(temp)) | lsb(temp) : line;
+      
+      line = forward_file_bb(BLACK, s);
+      temp = line & occupied;
+      attacks |= temp ? between_bb(s, msb(temp)) | msb(temp) : line;
+
+      Square edge = make_square(FILE_H, rank_of(s));
+      line = between_bb(s, edge) | edge;
+      temp = line & occupied;
+      attacks |= temp ? between_bb(s, lsb(temp)) | lsb(temp) : line;
+
+      edge = make_square(FILE_A, rank_of(s));
+      line = between_bb(s, edge) | edge;
+      temp = line & occupied;
+      attacks |= temp ? between_bb(s, msb(temp)) | msb(temp) : line;
+
+      return attacks & ~square_bb(s);
+  }
+
+  const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
+  return m.attacks[m.index(occupied)];
+}
+
+inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
+
+  assert(pt != PAWN);
+
+  switch (pt)
+  {
+  case BISHOP: return attacks_bb<BISHOP>(s, occupied);
+  case ROOK  : return attacks_bb<  ROOK>(s, occupied);
+  case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
+  default    : return PseudoAttacks[pt][s];
+  }
+}
+
 
 #endif // #ifndef BITBOARD_H_INCLUDED
