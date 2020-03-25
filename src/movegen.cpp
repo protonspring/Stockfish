@@ -29,19 +29,19 @@ namespace {
   ExtMove* make_promotions(ExtMove* moveList, Square to, Square ksq) {
 
     if (Type == CAPTURES || Type == EVASIONS || Type == NON_EVASIONS)
-        *moveList++ = make<PROMOTION>(to - D, to, QUEEN);
+        *moveList++ = make(PROMOTION, to - D, to, QUEEN);
 
     if (Type == QUIETS || Type == EVASIONS || Type == NON_EVASIONS)
     {
-        *moveList++ = make<PROMOTION>(to - D, to, ROOK);
-        *moveList++ = make<PROMOTION>(to - D, to, BISHOP);
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        *moveList++ = make(PROMOTION, to - D, to, ROOK);
+        *moveList++ = make(PROMOTION, to - D, to, BISHOP);
+        *moveList++ = make(PROMOTION, to - D, to, KNIGHT);
     }
 
     // Knight promotion is the only promotion that can give a direct check
     // that's not already included in the queen promotion.
     if (Type == QUIET_CHECKS && (PseudoAttacks[KNIGHT][to] & ksq))
-        *moveList++ = make<PROMOTION>(to - D, to, KNIGHT);
+        *moveList++ = make(PROMOTION, to - D, to, KNIGHT);
     else
         (void)ksq; // Silence a warning under MSVC
 
@@ -171,7 +171,7 @@ namespace {
             assert(b1);
 
             while (b1)
-                *moveList++ = make<ENPASSANT>(pop_lsb(&b1), pos.ep_square());
+                *moveList++ = make(ENPASSANT, pop_lsb(&b1), pos.ep_square());
         }
     }
 
@@ -232,7 +232,7 @@ namespace {
         if ((Type != CAPTURES) && pos.can_castle(Us & ANY_CASTLING))
             for(CastlingRights cr : { Us & KING_SIDE, Us & QUEEN_SIDE } )
                 if (!pos.castling_impeded(cr) && pos.can_castle(cr))
-                    *moveList++ = make<CASTLING>(ksq, pos.castling_rook_square(cr));
+                    *moveList++ = make(CASTLING, ksq, pos.castling_rook_square(cr));
     }
 
     return moveList;
