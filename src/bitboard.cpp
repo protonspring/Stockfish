@@ -113,7 +113,7 @@ void Bitboards::init() {
 
       for (PieceType pt : { BISHOP, ROOK })
           for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
-              if (PseudoAttacks[pt][s1] & s2)
+              if (pseudo_attacks_bb(pt, s1) & s2)
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
   }
 }
