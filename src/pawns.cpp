@@ -76,7 +76,7 @@ namespace {
     Square s;
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
-    const Square* pl = pos.squares<PAWN>(Us);
+    const Square* pl = pos.squares(PAWN, Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -221,7 +221,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
 template<Color Us>
 Score Entry::do_king_safety(const Position& pos) {
 
-  Square ksq = pos.square<KING>(Us);
+  Square ksq = pos.square(KING, Us);
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
   auto compare = [](Score a, Score b) { return mg_value(a) < mg_value(b); };

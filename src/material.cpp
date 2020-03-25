@@ -69,14 +69,14 @@ namespace {
 
   bool is_KBPsK(const Position& pos, Color us) {
     return   pos.non_pawn_material(us) == BishopValueMg
-          && pos.count<PAWN  >(us) >= 1;
+          && pos.count(PAWN  , us) >= 1;
   }
 
   bool is_KQKRPs(const Position& pos, Color us) {
-    return  !pos.count<PAWN>(us)
+    return  !pos.count(PAWN, us)
           && pos.non_pawn_material(us) == QueenValueMg
-          && pos.count<ROOK>(~us) == 1
-          && pos.count<PAWN>(~us) >= 1;
+          && pos.count(ROOK, ~us) == 1
+          && pos.count(PAWN, ~us) >= 1;
   }
 
   /// imbalance() calculates the imbalance by comparing the piece count of each
@@ -171,19 +171,19 @@ Entry* probe(const Position& pos) {
 
   if (npm_w + npm_b == VALUE_ZERO && pos.pieces(PAWN)) // Only pawns on the board
   {
-      if (!pos.count<PAWN>(BLACK))
+      if (!pos.count(PAWN, BLACK))
       {
-          assert(pos.count<PAWN>(WHITE) >= 2);
+          assert(pos.count(PAWN, WHITE) >= 2);
 
           e->scalingFunction[WHITE] = &ScaleKPsK[WHITE];
       }
-      else if (!pos.count<PAWN>(WHITE))
+      else if (!pos.count(PAWN, WHITE))
       {
-          assert(pos.count<PAWN>(BLACK) >= 2);
+          assert(pos.count(PAWN, BLACK) >= 2);
 
           e->scalingFunction[BLACK] = &ScaleKPsK[BLACK];
       }
-      else if (pos.count<PAWN>(WHITE) == 1 && pos.count<PAWN>(BLACK) == 1)
+      else if (pos.count(PAWN, WHITE) == 1 && pos.count(PAWN, BLACK) == 1)
       {
           // This is a special case because we set scaling functions
           // for both colors instead of only one.
@@ -195,11 +195,11 @@ Entry* probe(const Position& pos) {
   // Zero or just one pawn makes it difficult to win, even with a small material
   // advantage. This catches some trivial draws like KK, KBK and KNK and gives a
   // drawish scale factor for cases such as KRKBP and KmmKm (except for KBBKN).
-  if (!pos.count<PAWN>(WHITE) && npm_w - npm_b <= BishopValueMg)
+  if (!pos.count(PAWN, WHITE) && npm_w - npm_b <= BishopValueMg)
       e->factor[WHITE] = uint8_t(npm_w <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_b <= BishopValueMg ? 4 : 14);
 
-  if (!pos.count<PAWN>(BLACK) && npm_b - npm_w <= BishopValueMg)
+  if (!pos.count(PAWN, BLACK) && npm_b - npm_w <= BishopValueMg)
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
 
@@ -207,10 +207,10 @@ Entry* probe(const Position& pos) {
   // for the bishop pair "extended piece", which allows us to be more flexible
   // in defining bishop pair bonuses.
   const int pieceCount[COLOR_NB][PIECE_TYPE_NB] = {
-  { pos.count<BISHOP>(WHITE) > 1, pos.count<PAWN>(WHITE), pos.count<KNIGHT>(WHITE),
-    pos.count<BISHOP>(WHITE)    , pos.count<ROOK>(WHITE), pos.count<QUEEN >(WHITE) },
-  { pos.count<BISHOP>(BLACK) > 1, pos.count<PAWN>(BLACK), pos.count<KNIGHT>(BLACK),
-    pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
+  { pos.count(BISHOP, WHITE) > 1, pos.count(PAWN, WHITE), pos.count(KNIGHT, WHITE),
+    pos.count(BISHOP, WHITE)    , pos.count(ROOK, WHITE), pos.count(QUEEN, WHITE) },
+  { pos.count(BISHOP, BLACK) > 1, pos.count(PAWN, BLACK), pos.count(KNIGHT, BLACK),
+    pos.count(BISHOP, BLACK)    , pos.count(ROOK, BLACK), pos.count(QUEEN , BLACK) } };
 
   e->value = int16_t((imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
   return e;

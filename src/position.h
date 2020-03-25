@@ -92,10 +92,10 @@ public:
   Piece piece_on(Square s) const;
   Square ep_square() const;
   bool empty(Square s) const;
-  template<PieceType Pt> int count(Color c) const;
-  template<PieceType Pt> int count() const;
-  template<PieceType Pt> const Square* squares(Color c) const;
-  template<PieceType Pt> Square square(Color c) const;
+  int count(PieceType Pt, Color c) const;
+  int count(PieceType Pt) const;
+  const Square* squares(PieceType Pt, Color c) const;
+  Square square(PieceType Pt, Color c) const;
   bool is_on_semiopen_file(Color c, Square s) const;
 
   // Castling
@@ -114,8 +114,7 @@ public:
   Bitboard attackers_to(Square s) const;
   Bitboard attackers_to(Square s, Bitboard occupied) const;
   Bitboard attacks_from(PieceType pt, Square s) const;
-  template<PieceType> Bitboard attacks_from(Square s) const;
-  template<PieceType> Bitboard attacks_from(Square s, Color c) const;
+  Bitboard attacks_from_pawn(Square s, Color c) const;
   Bitboard slider_blockers(Bitboard sliders, Square s, Bitboard& pinners) const;
 
   // Properties of moves
@@ -176,8 +175,7 @@ private:
   void put_piece(Piece pc, Square s);
   void remove_piece(Square s);
   void move_piece(Square from, Square to);
-  template<bool Do>
-  void do_castling(Color us, Square from, Square& to, Square& rfrom, Square& rto);
+  void do_castling(bool Do, Color us, Square from, Square& to, Square& rfrom, Square& rto);
 
   // Data members
   Piece board[SQUARE_NB];
@@ -243,19 +241,19 @@ inline Bitboard Position::pieces(Color c, PieceType pt1, PieceType pt2) const {
   return byColorBB[c] & (byTypeBB[pt1] | byTypeBB[pt2]);
 }
 
-template<PieceType Pt> inline int Position::count(Color c) const {
+inline int Position::count(PieceType Pt, Color c) const {
   return pieceCount[make_piece(c, Pt)];
 }
 
-template<PieceType Pt> inline int Position::count() const {
+inline int Position::count(PieceType Pt) const {
   return pieceCount[make_piece(WHITE, Pt)] + pieceCount[make_piece(BLACK, Pt)];
 }
 
-template<PieceType Pt> inline const Square* Position::squares(Color c) const {
+inline const Square* Position::squares(PieceType Pt, Color c) const {
   return pieceList[make_piece(c, Pt)];
 }
 
-template<PieceType Pt> inline Square Position::square(Color c) const {
+inline Square Position::square(PieceType Pt, Color c) const {
   assert(pieceCount[make_piece(c, Pt)] == 1);
   return pieceList[make_piece(c, Pt)][0];
 }
@@ -288,22 +286,16 @@ inline Square Position::castling_rook_square(CastlingRights cr) const {
   return castlingRookSquare[cr];
 }
 
-template<PieceType Pt>
-inline Bitboard Position::attacks_from(Square s) const {
-  static_assert(Pt != PAWN, "Pawn attacks need color");
+inline Bitboard Position::attacks_from(PieceType Pt, Square s) const {
+  assert(Pt != PAWN);
 
   return  Pt == BISHOP || Pt == ROOK ? attacks_bb(Pt, s, byTypeBB[ALL_PIECES])
-        : Pt == QUEEN  ? attacks_from<ROOK>(s) | attacks_from<BISHOP>(s)
+        : Pt == QUEEN  ? attacks_from(ROOK, s) | attacks_from(BISHOP, s)
         : PseudoAttacks[Pt][s];
 }
 
-template<>
-inline Bitboard Position::attacks_from<PAWN>(Square s, Color c) const {
+inline Bitboard Position::attacks_from_pawn(Square s, Color c) const {
   return PawnAttacks[c][s];
-}
-
-inline Bitboard Position::attacks_from(PieceType pt, Square s) const {
-  return attacks_bb(pt, s, byTypeBB[ALL_PIECES]);
 }
 
 inline Bitboard Position::attackers_to(Square s) const {
@@ -374,7 +366,7 @@ inline int Position::rule50_count() const {
 inline bool Position::opposite_bishops() const {
   return   pieceCount[W_BISHOP] == 1
         && pieceCount[B_BISHOP] == 1
-        && opposite_colors(square<BISHOP>(WHITE), square<BISHOP>(BLACK));
+        && opposite_colors(square(BISHOP, WHITE), square(BISHOP, BLACK));
 }
 
 inline bool Position::is_chess960() const {
