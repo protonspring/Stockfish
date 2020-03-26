@@ -433,18 +433,10 @@ inline void Position::remove_piece(Square s) {
 
 inline void Position::move_piece(Square from, Square to) {
 
-  // index[from] is not updated and becomes stale. This works as long as index[]
-  // is accessed just by known occupied squares.
   Piece pc = board[from];
-  Bitboard fromTo = from | to;
-  byTypeBB[ALL_PIECES] ^= fromTo;
-  byTypeBB[type_of(pc)] ^= fromTo;
-  byColorBB[color_of(pc)] ^= fromTo;
+  remove_piece(from);
   board[from] = NO_PIECE;
-  board[to] = pc;
-  index[to] = index[from];
-  pieceList[pc][index[to]] = to;
-  psq += PSQT::psq[pc][to] - PSQT::psq[pc][from];
+  put_piece(pc, to);
 }
 
 inline void Position::do_move(Move m, StateInfo& newSt) {
