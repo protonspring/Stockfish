@@ -156,7 +156,7 @@ enum Phase {
 
 enum ScaleFactor {
   SCALE_FACTOR_DRAW    = 0,
-  SCALE_FACTOR_NORMAL  = 40,
+  SCALE_FACTOR_NORMAL  = 75,
   SCALE_FACTOR_MAX     = 128,
   SCALE_FACTOR_NONE    = 255
 };
