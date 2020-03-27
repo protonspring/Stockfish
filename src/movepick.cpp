@@ -63,9 +63,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > 0);
 
-  stage = pos.checkers() ? EVASION_TT : MAIN_TT;
-  ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  stage = pos.checkers() ? EVASION_TT : CAPTURE_INIT;
+  moves[0] = ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
+  if (stage == EVASION_TT)
+    stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for quiescence search
@@ -168,7 +169,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      if ((stage == PROBCUT_INIT) && (moves[0] != MOVE_NONE))
+      if (((stage == PROBCUT_INIT) || (stage == CAPTURE_INIT)) && (moves[0] != MOVE_NONE))
       {
           moves[0] = MOVE_NONE;
           return ttMove;
