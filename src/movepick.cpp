@@ -27,7 +27,7 @@ namespace {
   enum Stages {
     MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
     EVASION_TT, EVASION_INIT, EVASION,
-    PROBCUT_TT, PROBCUT_INIT, PROBCUT,
+    PROBCUT_INIT, PROBCUT,
     QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
@@ -89,12 +89,15 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 
   assert(!pos.checkers());
 
-  stage = PROBCUT_TT;
-  ttMove =   ttm
-          && pos.capture(ttm)
-          && pos.pseudo_legal(ttm)
-          && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  stage = PROBCUT_INIT;
+  moves[0] = ttMove =   ttm
+              && pos.capture(ttm)
+              && pos.pseudo_legal(ttm)
+              && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
+
+  //if (ttMove != MOVE_NONE)
+      //moves[0] = ttMove;
+  //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -159,13 +162,17 @@ top:
   case MAIN_TT:
   case EVASION_TT:
   case QSEARCH_TT:
-  case PROBCUT_TT:
       ++stage;
       return ttMove;
 
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
+      if ((stage == PROBCUT_INIT) && (moves[0] != MOVE_NONE))
+      {
+          moves[0] = MOVE_NONE;
+          return ttMove;
+      }
       cur = endBadCaptures = moves;
       endMoves = generate<CAPTURES>(pos, cur);
 
