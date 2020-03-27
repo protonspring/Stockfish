@@ -24,6 +24,7 @@
 #include <string>
 
 #include "types.h"
+#include "misc.h"
 
 namespace Bitbases {
 
@@ -177,8 +178,9 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
 
 template<Color C>
 inline Bitboard pawn_attacks_bb(Square s) {
-  const Bitboard k = PseudoAttacks[KING][s] & rank_bb(s);
-  return (C == WHITE) ? shift<NORTH>(k) : shift<SOUTH>(k);
+  Rank r = Utility::clamp(C == WHITE ? Rank(rank_of(s) + 1)
+                                     : Rank(rank_of(s) - 1), RANK_1, RANK_8);
+  return PseudoAttacks[BISHOP][s] & rank_bb(r);
 }
 
 inline Bitboard pawn_attacks_bb(Color c, Square s) {
