@@ -76,11 +76,12 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d <= 0);
 
-  stage = pos.checkers() ? EVASION_TT : QSEARCH_TT;
-  ttMove =   ttm
+  stage = pos.checkers() ? EVASION_TT : QCAPTURE_INIT;
+  moves[0] = ttMove =   ttm
           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
           && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  stage += (ttMove == MOVE_NONE);
+  if (stage == EVASION_TT)
+     stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
@@ -169,7 +170,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      if (((stage == PROBCUT_INIT) || (stage == CAPTURE_INIT)) && (moves[0] != MOVE_NONE))
+      if (((stage == PROBCUT_INIT) || (stage == CAPTURE_INIT) || (stage  == QCAPTURE_INIT)) && (moves[0] != MOVE_NONE))
       {
           moves[0] = MOVE_NONE;
           return ttMove;
