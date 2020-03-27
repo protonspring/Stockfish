@@ -63,10 +63,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > 0);
 
-  stage = pos.checkers() ? EVASION_TT : CAPTURE_INIT;
+  stage = pos.checkers() ? EVASION_INIT : CAPTURE_INIT;
   moves[0] = ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  if (stage == EVASION_TT)
-    stage += (ttMove == MOVE_NONE);
+  //if (stage == EVASION_TT)
+    //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for quiescence search
@@ -76,12 +76,12 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d <= 0);
 
-  stage = pos.checkers() ? EVASION_TT : QCAPTURE_INIT;
+  stage = pos.checkers() ? EVASION_INIT : QCAPTURE_INIT;
   moves[0] = ttMove =   ttm
           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
           && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  if (stage == EVASION_TT)
-     stage += (ttMove == MOVE_NONE);
+  //if (stage == EVASION_TT)
+     //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
@@ -240,6 +240,11 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
+      if (((stage == EVASION_INIT)) && (moves[0] != MOVE_NONE))
+      {
+          moves[0] = MOVE_NONE;
+          return ttMove;
+      }
       cur = moves;
       endMoves = generate<EVASIONS>(pos, cur);
 
