@@ -25,10 +25,10 @@
 namespace {
 
   enum Stages {
-    MAIN_TT, CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
-    EVASION_TT, EVASION_INIT, EVASION,
+    CAPTURE_INIT, GOOD_CAPTURE, REFUTATION, QUIET_INIT, QUIET, BAD_CAPTURE,
+    EVASION_INIT, EVASION,
     PROBCUT_INIT, PROBCUT,
-    QSEARCH_TT, QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
+    QCAPTURE_INIT, QCAPTURE, QCHECK_INIT, QCHECK
   };
 
   // partial_insertion_sort() sorts moves in descending order up to and including
@@ -65,8 +65,6 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   stage = pos.checkers() ? EVASION_INIT : CAPTURE_INIT;
   moves[0] = ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  //if (stage == EVASION_TT)
-    //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for quiescence search
@@ -80,8 +78,6 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
   moves[0] = ttMove =   ttm
           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
           && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
-  //if (stage == EVASION_TT)
-     //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
@@ -96,10 +92,6 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
               && pos.capture(ttm)
               && pos.pseudo_legal(ttm)
               && pos.see_ge(ttm, threshold) ? ttm : MOVE_NONE;
-
-  //if (ttMove != MOVE_NONE)
-      //moves[0] = ttMove;
-  //stage += (ttMove == MOVE_NONE);
 }
 
 /// MovePicker::score() assigns a numerical value to each move in a list, used
@@ -161,20 +153,15 @@ Move MovePicker::next_move(bool skipQuiets) {
 top:
   switch (stage) {
 
-  case MAIN_TT:
-  case EVASION_TT:
-  case QSEARCH_TT:
-      ++stage;
-      return ttMove;
-
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      if (((stage == PROBCUT_INIT) || (stage == CAPTURE_INIT) || (stage  == QCAPTURE_INIT)) && (moves[0] != MOVE_NONE))
+      if (moves[0] != MOVE_NONE)
       {
           moves[0] = MOVE_NONE;
           return ttMove;
       }
+
       cur = endBadCaptures = moves;
       endMoves = generate<CAPTURES>(pos, cur);
 
@@ -240,11 +227,12 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      if (((stage == EVASION_INIT)) && (moves[0] != MOVE_NONE))
+      if (moves[0] != MOVE_NONE)
       {
           moves[0] = MOVE_NONE;
           return ttMove;
       }
+
       cur = moves;
       endMoves = generate<EVASIONS>(pos, cur);
 
