@@ -78,6 +78,7 @@ extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
+extern Bitboard PawnAttacks[SQUARE_NB];
 
 
 /// Magic holds all magic bitboards relevant data for a single square
@@ -178,9 +179,8 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
 
 template<Color C>
 inline Bitboard pawn_attacks_bb(Square s) {
-  Rank r = Utility::clamp(C == WHITE ? Rank(rank_of(s) + 1)
-                                     : Rank(rank_of(s) - 1), RANK_1, RANK_8);
-  return PseudoAttacks[BISHOP][s] & rank_bb(r);
+  return C == WHITE ? (shift<NORTH>(PawnAttacks[s]))
+                    : (shift<SOUTH>(PawnAttacks[s]));
 }
 
 inline Bitboard pawn_attacks_bb(Color c, Square s) {
