@@ -59,9 +59,15 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh, const LowPlyHistory* lp,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers, int pl)
            : pos(p), mainHistory(mh), lowPlyHistory(lp), captureHistory(cph), continuationHistory(ch),
-             depth(d), ply(pl), moves{{killers[0], 0}, {killers[1], 0}, {cm, 0}} {
+             depth(d), ply(pl) {
 
   assert(d > 0);
+
+  endRefutations = moves;
+  if (killers[0] != MOVE_NONE) *endRefutations++ = killers[0];
+  if (killers[1] != MOVE_NONE) *endRefutations++ = killers[1];
+  if ((cm != MOVE_NONE) && (cm != killers[0]) && (cm != killers[1]))
+      *endRefutations++ = cm;
 
   stage = pos.checkers() ? EVASION_TT : MAIN_TT;
   ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE;
@@ -184,11 +190,6 @@ top:
       cur = moves;
       endMoves = endRefutations;
 
-      // If the countermove is the same as a killer, skip it
-      if (   moves[0].move == moves[2].move
-          || moves[1].move == moves[2].move)
-          --endMoves;
-
       ++stage;
       /* fallthrough */
 
@@ -214,10 +215,10 @@ top:
       /* fallthrough */
 
   case QUIET:
-      if (   !skipQuiets
-          && select<Next>([&](){return   *cur != moves[0].move
-                                      && *cur != moves[1].move
-                                      && *cur != moves[2].move;}))
+      if (   !skipQuiets && select<Next>([&](){
+                  for(ExtMove* p = moves; p < endRefutations; ++p)
+                     if (p->move == *cur) return false;
+                  return true;}))
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
@@ -231,7 +232,7 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      cur = endRefutations;
+      cur = moves;
       endMoves = generate<EVASIONS>(pos, cur);
 
       score<EVASIONS>();
@@ -257,7 +258,7 @@ top:
       /* fallthrough */
 
   case QCHECK_INIT:
-      cur = endRefutations;
+      cur = moves;
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;
