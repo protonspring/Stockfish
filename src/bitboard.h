@@ -167,7 +167,7 @@ constexpr Bitboard shift(Bitboard b) {
 
 
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
-/// from the squares in the given bitboard.
+/// from the square or squares in the given bitboard.
 
 template<Color C>
 constexpr Bitboard pawn_attacks_bb(Bitboard b) {
@@ -175,9 +175,15 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
-inline Bitboard pawn_attacks_bb(Color c, Square s) {
-  return c == WHITE ? shift<NORTH>(PseudoAttacks[PAWN][s])
+template<Color C>
+inline Bitboard pawn_attacks_bb(Square s) {
+  return C == WHITE ? shift<NORTH>(PseudoAttacks[PAWN][s])
                     : shift<SOUTH>(PseudoAttacks[PAWN][s]);
+}
+
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+  return c == WHITE ? pawn_attacks_bb<WHITE>(s)
+                    : pawn_attacks_bb<BLACK>(s);
 }
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
