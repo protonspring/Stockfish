@@ -175,9 +175,9 @@ top:
                               true : (*endBadCaptures++ = *cur, false); }))
           return *(cur - 1);
 
-      // Prepare the pointers to loop over the refutations array
-      cur = moves; //std::begin(moves);
-      endMoves = endRefutations; //std::end();
+      // Prepare the pointers to loop over the refutations
+      cur = moves;
+      endMoves = endRefutations;
 
       // If the countermove is the same as a killer, skip it
       if (   moves[0].move == moves[2].move
