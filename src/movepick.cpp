@@ -63,6 +63,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d > 0);
 
+  endRefutations = moves + 3;
   stage = pos.checkers() ? EVASION_INIT : CAPTURE_INIT;
   useTTM = ((ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE));
 }
@@ -74,6 +75,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 
   assert(d <= 0);
 
+  endRefutations = moves + 3;
   stage = pos.checkers() ? EVASION_INIT : QCAPTURE_INIT;
   useTTM = ((ttMove =   (ttm
           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
@@ -87,6 +89,7 @@ MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePiece
 
   assert(!pos.checkers());
 
+  endRefutations = moves + 3;
   stage = PROBCUT_INIT;
   useTTM = ((ttMove =   ttm
                       && pos.capture(ttm)
@@ -158,7 +161,7 @@ top:
   case QCAPTURE_INIT:
       if (!(useTTM = !useTTM)) return ttMove; //if set, unset and return ttm
 
-      cur = endBadCaptures = moves;
+      cur = endBadCaptures = endRefutations;
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
@@ -213,7 +216,7 @@ top:
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
-      cur = moves;
+      cur = endRefutations;
       endMoves = endBadCaptures;
 
       ++stage;
@@ -225,7 +228,7 @@ top:
   case EVASION_INIT:
       if (!(useTTM = !useTTM)) return ttMove; //if set, unset and return ttm
 
-      cur = moves;
+      cur = endRefutations;
       endMoves = generate<EVASIONS>(pos, cur);
 
       score<EVASIONS>();
@@ -251,7 +254,7 @@ top:
       /* fallthrough */
 
   case QCHECK_INIT:
-      cur = moves;
+      cur = endRefutations;
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;

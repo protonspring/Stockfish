@@ -150,7 +150,7 @@ private:
   const PieceToHistory** continuationHistory;
   Move ttMove;
   bool useTTM;
-  ExtMove refutations[3], *cur, *endMoves, *endBadCaptures;
+  ExtMove refutations[3], *cur, *endMoves, *endBadCaptures, *endRefutations;
   int stage;
   Square recaptureSquare;
   Value threshold;
