@@ -59,11 +59,10 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh, const LowPlyHistory* lp,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers, int pl)
            : pos(p), mainHistory(mh), lowPlyHistory(lp), captureHistory(cph), continuationHistory(ch),
-             moves{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) , ply(pl) {
+             endRefutations(moves + 3), depth(d), ply(pl), moves{{killers[0], 0}, {killers[1], 0}, {cm, 0}} {
 
   assert(d > 0);
 
-  endRefutations = moves + 3;
   stage = pos.checkers() ? EVASION_INIT : CAPTURE_INIT;
   useTTM = ((ttMove = ttm && pos.pseudo_legal(ttm) ? ttm : MOVE_NONE));
 }
@@ -71,11 +70,11 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for quiescence search
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Square rs)
-           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch), recaptureSquare(rs), depth(d) {
+           : pos(p), mainHistory(mh), captureHistory(cph), continuationHistory(ch),
+             endRefutations(moves + 3), recaptureSquare(rs), depth(d) {
 
   assert(d <= 0);
 
-  endRefutations = moves + 3;
   stage = pos.checkers() ? EVASION_INIT : QCAPTURE_INIT;
   useTTM = ((ttMove =   (ttm
           && (depth > DEPTH_QS_RECAPTURES || to_sq(ttm) == recaptureSquare)
@@ -85,11 +84,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
 /// than or equal to the given threshold.
 MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePieceToHistory* cph)
-           : pos(p), captureHistory(cph), threshold(th) {
+           : pos(p), captureHistory(cph), endRefutations(moves + 3), threshold(th) {
 
   assert(!pos.checkers());
 
-  endRefutations = moves + 3;
   stage = PROBCUT_INIT;
   useTTM = ((ttMove =   ttm
                       && pos.capture(ttm)
