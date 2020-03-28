@@ -30,7 +30,6 @@ uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 Bitboard SquareBB[SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
-Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -78,12 +77,6 @@ void Bitboards::init() {
       for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
           SquareDistance[s1][s2] = std::max(distance<File>(s1, s2), distance<Rank>(s1, s2));
 
-  for (Square s = SQ_A1; s <= SQ_H8; ++s)
-  {
-      PawnAttacks[WHITE][s] = pawn_attacks_bb<WHITE>(square_bb(s));
-      PawnAttacks[BLACK][s] = pawn_attacks_bb<BLACK>(square_bb(s));
-  }
-
   // Helper returning the target bitboard of a step from a square
   auto landing_square_bb = [&](Square s, int step)
   {
@@ -98,6 +91,8 @@ void Bitboards::init() {
 
       for (int step : {-17, -15, -10, -6, 6, 10, 15, 17} )
          PseudoAttacks[KNIGHT][s] |= landing_square_bb(s, step);
+
+      PseudoAttacks[PAWN][s] = PseudoAttacks[KING][s] & rank_bb(s);
   }
 
   Direction RookDirections[] = { NORTH, EAST, SOUTH, WEST };
