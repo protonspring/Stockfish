@@ -59,7 +59,7 @@ namespace {
 MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHistory* mh, const LowPlyHistory* lp,
                        const CapturePieceToHistory* cph, const PieceToHistory** ch, Move cm, Move* killers, int pl)
            : pos(p), mainHistory(mh), lowPlyHistory(lp), captureHistory(cph), continuationHistory(ch),
-             refutations{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) , ply(pl) {
+             moves{{killers[0], 0}, {killers[1], 0}, {cm, 0}}, depth(d) , ply(pl) {
 
   assert(d > 0);
 
@@ -176,12 +176,12 @@ top:
           return *(cur - 1);
 
       // Prepare the pointers to loop over the refutations array
-      cur = std::begin(refutations);
-      endMoves = std::end(refutations);
+      cur = moves; //std::begin(moves);
+      endMoves = endRefutations; //std::end();
 
       // If the countermove is the same as a killer, skip it
-      if (   refutations[0].move == refutations[2].move
-          || refutations[1].move == refutations[2].move)
+      if (   moves[0].move == moves[2].move
+          || moves[1].move == moves[2].move)
           --endMoves;
 
       ++stage;
@@ -210,9 +210,9 @@ top:
 
   case QUIET:
       if (   !skipQuiets
-          && select<Next>([&](){return   *cur != refutations[0].move
-                                      && *cur != refutations[1].move
-                                      && *cur != refutations[2].move;}))
+          && select<Next>([&](){return   *cur != moves[0].move
+                                      && *cur != moves[1].move
+                                      && *cur != moves[2].move;}))
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
