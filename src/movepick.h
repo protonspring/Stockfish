@@ -156,6 +156,7 @@ private:
   Depth depth;
   int ply;
   ExtMove moves[MAX_MOVES];
+  ExtMove* endRefutations = (moves + 3);
 };
 
 #endif // #ifndef MOVEPICK_H_INCLUDED

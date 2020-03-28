@@ -166,7 +166,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
+      cur = endBadCaptures = endRefutations;
       endMoves = generate<CAPTURES>(pos, cur);
 
       score<CAPTURES>();
@@ -221,7 +221,7 @@ top:
           return *(cur - 1);
 
       // Prepare the pointers to loop over the bad captures
-      cur = moves;
+      cur = endRefutations;
       endMoves = endBadCaptures;
 
       ++stage;
@@ -231,7 +231,7 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      cur = moves;
+      cur = endRefutations;
       endMoves = generate<EVASIONS>(pos, cur);
 
       score<EVASIONS>();
@@ -257,7 +257,7 @@ top:
       /* fallthrough */
 
   case QCHECK_INIT:
-      cur = moves;
+      cur = endRefutations;
       endMoves = generate<QUIET_CHECKS>(pos, cur);
 
       ++stage;
