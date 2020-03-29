@@ -636,7 +636,7 @@ namespace {
                     k += 5;
 
                 // Larger bonus if the opponent king can't catch this pawn.
-                if (distance(s, queeningSquare) < distance(pos.square<KING>(Them), queeningSquare))
+                if (distance(s, queeningSq) < distance(pos.square<KING>(Them), queeningSq))
                     k += 1;
 
                 bonus += make_score(k * w, k * w);
