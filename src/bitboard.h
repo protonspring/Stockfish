@@ -249,14 +249,9 @@ inline bool aligned(Square s1, Square s2, Square s3) {
 
 /// distance() functions return the distance between x and y, defined as the
 /// number of steps for a king in x to reach y.
-
-template<typename T1 = Square> inline int distance(Square x, Square y);
-template<> inline int distance<File>(Square x, Square y) { return std::abs(file_of(x) - file_of(y)); }
-template<> inline int distance<Rank>(Square x, Square y) { return std::abs(rank_of(x) - rank_of(y)); }
-template<> inline int distance<Square>(Square x, Square y) { return SquareDistance[x][y]; }
-
-inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
-inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
+inline int distance(int x, int y) { return std::abs(x - y); }
+inline int distance(Square x, Square y) { return SquareDistance[x][y]; }
+inline int edge_distance(int x) { return std::min(x, 7 - x); }
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
 /// piece of type Pt (bishop or rook) placed on 's'.
