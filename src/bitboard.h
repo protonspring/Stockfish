@@ -268,9 +268,25 @@ inline Bitboard attacks_bb(Square s, Bitboard occupied) {
   return m.attacks[m.index(occupied)];
 }
 
+template<PieceType Pt>
+inline Bitboard pseudo_attacks_bb(Square s) {
+    assert((Pt != PAWN) && (is_ok(s)));
+    return Pt == ROOK   ? file_bb(s) | rank_bb(s) :
+           Pt == KNIGHT ? PseudoAttacks[KNIGHT][s] :
+           Pt == BISHOP ? PseudoAttacks[BISHOP][s] :
+           Pt == QUEEN  ? pseudo_attacks_bb<ROOK>(s) | pseudo_attacks_bb<BISHOP>(s):
+           PseudoAttacks[KING][s];
+}
+
 inline Bitboard pseudo_attacks_bb(PieceType pt, Square s) {
-    assert(is_ok(s));
-    return PseudoAttacks[pt][s];
+  switch (pt)
+  {
+  case ROOK  : return pseudo_attacks_bb<ROOK>(s);
+  case KNIGHT: return pseudo_attacks_bb<KNIGHT>(s);
+  case BISHOP: return pseudo_attacks_bb<BISHOP>(s);
+  case QUEEN : return pseudo_attacks_bb<QUEEN>(s);
+  default    : return pseudo_attacks_bb<KING>(s);
+  }
 }
 
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
@@ -282,7 +298,8 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case BISHOP: return attacks_bb<BISHOP>(s, occupied);
   case ROOK  : return attacks_bb<  ROOK>(s, occupied);
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return pseudo_attacks_bb(pt, s);
+  case KNIGHT: return pseudo_attacks_bb<KNIGHT>(s);
+  default    : return pseudo_attacks_bb<KING>(s);
   }
 }
 
