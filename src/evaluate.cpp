@@ -602,6 +602,7 @@ namespace {
         {
             int w = 5 * r - 13;
             Square blockSq = s + Up;
+            Square queeningSq = make_square(file_of(s), relative_rank(Us, RANK_8));
 
             // Adjust bonus based on the king's proximity
             bonus += make_score(0, (  (king_proximity(Them, blockSq) * 19) / 4
@@ -633,6 +634,10 @@ namespace {
                 // Assign a larger bonus if the block square is defended
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
+
+                // Larger bonus if the opponent king can't catch this pawn.
+                if (distance(s, queeningSquare) < distance(pos.square<KING>(Them), queeningSquare))
+                    k += 1;
 
                 bonus += make_score(k * w, k * w);
             }
