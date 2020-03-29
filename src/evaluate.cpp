@@ -639,7 +639,7 @@ namespace {
 
                 // Larger bonus if the opponent king can't catch this pawn.
                 if (distance(s, queeningSq) < distance(pos.square<KING>(Them), queeningSq))
-                    bonus += make_score(0, 25);
+                    bonus += make_score(0, 20);
             }
         } // r > RANK_3
 
