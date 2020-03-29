@@ -635,11 +635,11 @@ namespace {
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
 
+                bonus += make_score(k * w, k * w);
+
                 // Larger bonus if the opponent king can't catch this pawn.
                 if (distance(s, queeningSq) < distance(pos.square<KING>(Them), queeningSq))
-                    k += 2;
-
-                bonus += make_score(k * w, k * w);
+                    bonus += make_score(0, 10);
             }
         } // r > RANK_3
 
