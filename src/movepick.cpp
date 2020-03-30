@@ -81,11 +81,10 @@ MovePicker::MovePicker(const Position& p, Move ttm, Depth d, const ButterflyHist
 /// MovePicker constructor for ProbCut: we generate captures with SEE greater
 /// than or equal to the given threshold.
 MovePicker::MovePicker(const Position& p, Move ttm, Value th, const CapturePieceToHistory* cph)
-           : pos(p), captureHistory(cph), ttMove(ttm), threshold(th) {
+           : pos(p), captureHistory(cph), ttMove(ttm), stage(PROBCUT_INIT), threshold(th) {
 
   assert(!pos.checkers());
 
-  stage = PROBCUT_INIT;
   useTTM = (ttMove && pos.capture(ttMove)
                    && pos.pseudo_legal(ttMove)
                    && pos.see_ge(ttMove, threshold));
