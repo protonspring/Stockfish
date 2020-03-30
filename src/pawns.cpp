@@ -114,17 +114,17 @@ namespace {
         if (!backward && !blocked)
             e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
-        // A pawn is passed if one of the three following conditions is true:
+        // A pawn is passed if there are no friendly pawns in front of it AND
+        // one of the three following conditions is true:
         // (a) there is no stoppers except some levers
         // (b) the only stoppers are the leverPush, but we outnumber them
         // (c) there is only one front stopper which can be levered.
-        passed =   !(stoppers ^ lever)
+        passed = !(forward_file_bb(Us, s) & ourPawns) &&
+                (!(stoppers ^ lever)
                 || (   !(stoppers ^ leverPush)
                     && popcount(phalanx) >= popcount(leverPush))
                 || (   stoppers == blocked && r >= RANK_5
-                    && (shift<Up>(support) & ~(theirPawns | doubleAttackThem)));
-
-        passed &= !(forward_file_bb(Us, s) & ourPawns);
+                    && (shift<Up>(support) & ~(theirPawns | doubleAttackThem))));
 
         // Passed pawns will be properly scored later in evaluation when we have
         // full attack info.
