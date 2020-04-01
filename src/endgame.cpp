@@ -238,7 +238,7 @@ Value Endgame<KRKN>::operator()(const Position& pos) const {
 
   Square bksq = pos.square<KING>(weakSide);
   Square bnsq = pos.square<KNIGHT>(weakSide);
-  Value result = Value(push_to_edge(bksq) + push_away(bksq, bnsq));
+  Value result = Value(10*push_to_edge(bksq) + 10*push_away(bksq, bnsq));
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
