@@ -73,7 +73,6 @@ namespace Endgames {
     add<KNNK>("KNNK");
     add<KBNK>("KBNK");
     add<KRKP>("KRKP");
-    add<KRKB>("KRKB");
     add<KRKN>("KRKN");
     add<KQKP>("KQKP");
     add<KQKR>("KQKR");
@@ -211,19 +210,6 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
                                   - distance(bksq, psq + SOUTH)
                                   - distance(psq, queeningSq));
 
-  return strongSide == pos.side_to_move() ? result : -result;
-}
-
-
-/// KR vs KB. This is very simple, and always returns drawish scores. The
-/// score is slightly bigger when the defending king is close to the edge.
-template<>
-Value Endgame<KRKB>::operator()(const Position& pos) const {
-
-  assert(verify_material(pos, strongSide, RookValueMg, 0));
-  assert(verify_material(pos, weakSide, BishopValueMg, 0));
-
-  Value result = Value(push_to_edge(pos.square<KING>(weakSide)));
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
