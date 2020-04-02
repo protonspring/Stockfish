@@ -113,13 +113,11 @@ namespace {
     Bitboard attacks = 0;
 
     for (int i = 0; i < 4; ++i)
-        for (Square s = sq; safe_destination(s, directions[i]);)
-        {
+    {
+        Square s = sq;
+        while(safe_destination(s, directions[i]) && !(occupied & s))
             attacks |= (s += directions[i]);
-
-            if (occupied & s)
-                break;
-        }
+    }
 
     return attacks;
   }
