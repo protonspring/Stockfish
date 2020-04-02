@@ -319,7 +319,7 @@ void Position::set_check_info(StateInfo* si) const {
 
   Square ksq = square<KING>(~sideToMove);
 
-  si->checkSquares[PAWN]   = attacks_bb(PAWN, ksq, ~sideToMove);
+  si->checkSquares[PAWN]   = pawn_attacks_bb(~sideToMove, ksq);
   si->checkSquares[KNIGHT] = attacks_bb(KNIGHT, ksq);
   si->checkSquares[BISHOP] = attacks_bb(BISHOP, ksq, pieces());
   si->checkSquares[ROOK]   = attacks_bb(ROOK, ksq, pieces());
@@ -480,8 +480,8 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
 
 Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
 
-  return  (attacks_bb(PAWN, s, BLACK)      & pieces(WHITE, PAWN))
-        | (attacks_bb(PAWN, s, WHITE)      & pieces(BLACK, PAWN))
+  return  (pawn_attacks_bb(BLACK, s)       & pieces(WHITE, PAWN))
+        | (pawn_attacks_bb(WHITE, s)       & pieces(BLACK, PAWN))
         | (attacks_bb(KNIGHT, s)           & pieces(KNIGHT))
         | (attacks_bb<  ROOK>(s, occupied) & pieces(  ROOK, QUEEN))
         | (attacks_bb<BISHOP>(s, occupied) & pieces(BISHOP, QUEEN))
@@ -588,7 +588,7 @@ bool Position::pseudo_legal(const Move m) const {
       if ((Rank8BB | Rank1BB) & to)
           return false;
 
-      if (   !(attacks_bb(PAWN, from, us) & pieces(~us) & to) // Not a capture
+      if (   !(pawn_attacks_bb(us, from) & pieces(~us) & to) // Not a capture
           && !((from + pawn_push(us) == to) && empty(to))       // Not a single push
           && !(   (from + 2 * pawn_push(us) == to)              // Not a double push
                && (rank_of(from) == relative_rank(us, RANK_2))
@@ -666,7 +666,7 @@ bool Position::gives_check(Move m) const {
   case CASTLING:
   {
       Square kfrom = from;
-      Square rfrom = to; // Castling is encoded as 'King captures the rook'
+      Square rfrom = to; // Castling is encoded as 'king captures the rook'
       Square kto = relative_square(sideToMove, rfrom > kfrom ? SQ_G1 : SQ_C1);
       Square rto = relative_square(sideToMove, rfrom > kfrom ? SQ_F1 : SQ_D1);
 
@@ -794,7 +794,7 @@ void Position::do_move(Move m, StateInfo& newSt, bool givesCheck) {
   {
       // Set en-passant square if the moved pawn can be captured
       if (   (int(to) ^ int(from)) == 16
-          && (attacks_bb(PAWN, to - pawn_push(us), us) & pieces(them, PAWN)))
+          && (pawn_attacks_bb(us, to - pawn_push(us)) & pieces(them, PAWN)))
       {
           st->epSquare = to - pawn_push(us);
           k ^= Zobrist::enpassant[file_of(st->epSquare)];

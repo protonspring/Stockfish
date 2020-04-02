@@ -80,7 +80,6 @@ namespace Endgames {
     add<KNNKP>("KNNKP");
 
     add<KNPK>("KNPK");
-    add<KNPKB>("KNPKB");
     add<KRPKR>("KRPKR");
     add<KRPKB>("KRPKB");
     add<KBPKB>("KBPKB");
@@ -394,7 +393,7 @@ ScaleFactor Endgame<KQKRPs>::operator()(const Position& pos) const {
       &&  relative_rank(weakSide, rsq) == RANK_3
       && (  pos.pieces(weakSide, PAWN)
           & attacks_bb(KING, kingSq)
-          & attacks_bb(PAWN, rsq, strongSide)))
+          & pawn_attacks_bb(strongSide, rsq)))
           return SCALE_FACTOR_DRAW;
 
   return SCALE_FACTOR_NONE;
@@ -672,14 +671,14 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
     if (   ksq == blockSq1
         && opposite_colors(ksq, wbsq)
         && (   bbsq == blockSq2
-            || (attacks_bb(BISHOP, blockSq2, pos.pieces()) & pos.pieces(weakSide, BISHOP))
+            || (attacks_bb<BISHOP>(blockSq2, pos.pieces()) & pos.pieces(weakSide, BISHOP))
             || distance<Rank>(psq1, psq2) >= 2))
         return SCALE_FACTOR_DRAW;
 
     else if (   ksq == blockSq2
              && opposite_colors(ksq, wbsq)
              && (   bbsq == blockSq1
-                 || (attacks_bb(BISHOP, blockSq1, pos.pieces()) & pos.pieces(weakSide, BISHOP))))
+                 || (attacks_bb<BISHOP>(blockSq1, pos.pieces()) & pos.pieces(weakSide, BISHOP))))
         return SCALE_FACTOR_DRAW;
     else
         return SCALE_FACTOR_NONE;
@@ -728,27 +727,6 @@ ScaleFactor Endgame<KNPK>::operator()(const Position& pos) const {
 
   if (pawnSq == SQ_A7 && distance(SQ_A8, weakKingSq) <= 1)
       return SCALE_FACTOR_DRAW;
-
-  return SCALE_FACTOR_NONE;
-}
-
-
-/// KNP vs KB. If knight can block bishop from taking pawn, it's a win.
-/// Otherwise the position is drawn.
-template<>
-ScaleFactor Endgame<KNPKB>::operator()(const Position& pos) const {
-
-  assert(verify_material(pos, strongSide, KnightValueMg, 1));
-  assert(verify_material(pos, weakSide, BishopValueMg, 0));
-
-  Square pawnSq = pos.square<PAWN>(strongSide);
-  Square bishopSq = pos.square<BISHOP>(weakSide);
-  Square weakKingSq = pos.square<KING>(weakSide);
-
-  // King needs to get close to promoting pawn to prevent knight from blocking.
-  // Rules for this are very tricky, so just approximate.
-  if (forward_file_bb(strongSide, pawnSq) & attacks_bb(BISHOP, bishopSq, pos.pieces()))
-      return ScaleFactor(distance(weakKingSq, pawnSq));
 
   return SCALE_FACTOR_NONE;
 }
