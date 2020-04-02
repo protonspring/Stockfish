@@ -257,7 +257,7 @@ template<> inline int distance<Square>(Square x, Square y) { return SquareDistan
 inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
 inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 
-// Return the target bitboard of a step from a square
+// Return the target square bitboard if we're sure we didn't step off the board.
 inline Bitboard safe_destination(Square s, int step)
 {
     Square to = Square(s + step);
