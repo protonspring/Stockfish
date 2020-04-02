@@ -85,7 +85,7 @@ namespace {
 
     e->passedPawns[Us] = 0;
     e->kingSquares[Us] = SQ_NONE;
-    e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
+    e->pawnAttacks[Us] = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
     while ((s = *pl++) != SQ_NONE)
@@ -109,10 +109,6 @@ namespace {
         // the adjacent files and cannot safely advance.
         backward =  !(neighbours & forward_ranks_bb(Them, s + Up))
                   && (leverPush | blocked);
-
-        // Compute additional span if pawn is not backward nor blocked
-        if (!backward && !blocked)
-            e->pawnAttacksSpan[Us] |= pawn_attack_span(Us, s);
 
         // A pawn is passed if one of the three following conditions is true:
         // (a) there is no stoppers except some levers

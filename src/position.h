@@ -130,6 +130,7 @@ public:
 
   // Piece specific
   bool pawn_passed(Color c, Square s) const;
+  bool outpost_square(Color c, Square s) const;
   bool opposite_bishops() const;
   int  pawns_on_same_color_squares(Color c, Square s) const;
 
@@ -328,6 +329,10 @@ inline bool Position::is_discovery_check_on_king(Color c, Move m) const {
 
 inline bool Position::pawn_passed(Color c, Square s) const {
   return !(pieces(~c, PAWN) & passed_pawn_span(c, s));
+}
+
+inline bool Position::outpost_square(Color c, Square s) const {
+  return !(pieces(~c, PAWN) & pawn_attack_span(c, s));
 }
 
 inline bool Position::advanced_pawn_push(Move m) const {
