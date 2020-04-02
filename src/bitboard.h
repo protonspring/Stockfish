@@ -166,7 +166,6 @@ constexpr Bitboard shift(Bitboard b) {
         : 0;
 }
 
-
 /// pawn_attacks_bb() returns the squares attacked by pawns of the given color
 /// from the squares in the given bitboard.
 
@@ -257,6 +256,13 @@ template<> inline int distance<Square>(Square x, Square y) { return SquareDistan
 
 inline File edge_distance(File f) { return std::min(f, File(FILE_H - f)); }
 inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
+
+// Return the target bitboard of a step from a square
+inline Bitboard safe_destination(Square s, int step)
+{
+    Square to = Square(s + step);
+    return is_ok(to) && distance(s, to) <= 2 ? square_bb(to) : Bitboard(0);
+}
 
 /// attacks_bb() returns a bitboard representing all the squares attacked by a
 /// piece of type Pt (bishop or rook) placed on 's'.
