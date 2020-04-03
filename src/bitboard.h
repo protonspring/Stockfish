@@ -106,7 +106,7 @@ extern Magic RookMagics[SQUARE_NB];
 extern Magic BishopMagics[SQUARE_NB];
 
 inline Bitboard square_bb(Square s) {
-  assert(s >= SQ_A1 && s <= SQ_H8);
+  assert(is_ok(s));
   return SquareBB[s];
 }
 
@@ -174,6 +174,10 @@ template<Color C>
 constexpr Bitboard pawn_attacks_bb(Bitboard b) {
   return C == WHITE ? shift<NORTH_WEST>(b) | shift<NORTH_EAST>(b)
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
+}
+
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+    return PawnAttacks[c][s];
 }
 
 
@@ -264,13 +268,15 @@ inline Rank edge_distance(Rank r) { return std::min(r, Rank(RANK_8 - r)); }
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
+  assert(is_ok(s) && ((Pt == ROOK) || (Pt == BISHOP)));
+
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
   return m.attacks[m.index(occupied)];
 }
 
-inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
+inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied = 0) {
 
-  assert(pt != PAWN);
+  assert((pt != PAWN) && is_ok(s));
 
   switch (pt)
   {
