@@ -149,14 +149,10 @@ Move MovePicker::select(Pred filter) {
 }
 
 template<GenType Type>
-void MovePicker::initialize(ExtMove* em)
-{
-          cur = em;
-          endMoves = generate<Type>(pos, cur);
-          score<Type>();
+void MovePicker::initialize(ExtMove* em) {
 
-          if (Type == QUIETS)
-              partial_insertion_sort(cur, endMoves, -3000 * depth);
+    endMoves = generate<Type>(pos, cur = em);
+    score<Type>();
 }
 
 /// MovePicker::next_move() is the most important method of the MovePicker class. It
@@ -210,7 +206,10 @@ top:
 
   case QUIET_INIT:
       if (!skipQuiets)
+      {
           initialize<QUIETS>(endBadCaptures);
+          partial_insertion_sort(cur, endMoves, -3000 * depth);
+      }
 
       ++stage;
       /* fallthrough */
