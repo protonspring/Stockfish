@@ -320,7 +320,7 @@ void Position::set_check_info(StateInfo* si) const {
   Square ksq = square<KING>(~sideToMove);
 
   si->checkSquares[PAWN]   = PawnAttacks[~sideToMove][ksq];
-  si->checkSquares[KNIGHT] = attacks_bb(KNIGHT, ksq, pieces());
+  si->checkSquares[KNIGHT] = PseudoAttacks[KNIGHT][ksq];
   si->checkSquares[BISHOP] = attacks_bb<BISHOP>(ksq, pieces());
   si->checkSquares[ROOK]   = attacks_bb<ROOK>(ksq, pieces());
   si->checkSquares[QUEEN]  = si->checkSquares[BISHOP] | si->checkSquares[ROOK];
@@ -480,12 +480,12 @@ Bitboard Position::slider_blockers(Bitboard sliders, Square s, Bitboard& pinners
 
 Bitboard Position::attackers_to(Square s, Bitboard occupied) const {
 
-  return  (PawnAttacks[BLACK][s]    & pieces(WHITE, PAWN))
-        | (PawnAttacks[WHITE][s]    & pieces(BLACK, PAWN))
-        | (attacks_bb(KNIGHT, s)         & pieces(KNIGHT))
+  return  (PawnAttacks[BLACK][s]           & pieces(WHITE, PAWN))
+        | (PawnAttacks[WHITE][s]           & pieces(BLACK, PAWN))
+        | (PseudoAttacks[KNIGHT][s]        & pieces(KNIGHT))
         | (attacks_bb<  ROOK>(s, occupied) & pieces(  ROOK, QUEEN))
         | (attacks_bb<BISHOP>(s, occupied) & pieces(BISHOP, QUEEN))
-        | (attacks_bb(KING, s)           & pieces(KING));
+        | (PseudoAttacks[KING][s]          & pieces(KING));
 }
 
 

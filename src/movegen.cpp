@@ -225,7 +225,7 @@ namespace {
     if (Type != QUIET_CHECKS && Type != EVASIONS)
     {
         Square ksq = pos.square<KING>(Us);
-        Bitboard b = attacks_bb(KING, ksq, pos.pieces()) & target;
+        Bitboard b = PseudoAttacks[KING][ksq] & target;
         while (b)
             *moveList++ = make_move(ksq, pop_lsb(&b));
 
@@ -323,7 +323,7 @@ ExtMove* generate<EVASIONS>(const Position& pos, ExtMove* moveList) {
   }
 
   // Generate evasions for king, capture and non capture moves
-  Bitboard b = attacks_bb(KING, ksq) & ~pos.pieces(us) & ~sliderAttacks;
+  Bitboard b = PseudoAttacks[KING][ksq] & ~pos.pieces(us) & ~sliderAttacks;
   while (b)
       *moveList++ = make_move(ksq, pop_lsb(&b));
 
