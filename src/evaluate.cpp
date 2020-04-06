@@ -554,7 +554,7 @@ namespace {
         Square s = pos.square<QUEEN>(Them);
         safe = mobilityArea[Us] & ~stronglyProtected;
 
-        b = attackedBy[Us][KNIGHT] & PsuedoAttacks[KNIGHT][s];
+        b = attackedBy[Us][KNIGHT] & PseudoAttacks[KNIGHT][s];
 
         score += KnightOnQueen * popcount(b & safe);
 
