@@ -322,7 +322,6 @@ void Position::set_check_info(StateInfo* si) const {
   si->checkSquares[PAWN]   = PawnAttacks[~sideToMove][ksq];
   si->checkSquares[KNIGHT] = attacks_bb(KNIGHT, ksq, pieces());
   si->checkSquares[BISHOP] = attacks_bb<BISHOP>(ksq, pieces());
-  //si->checkSquares[BISHOP] = attacks_bb(BISHOP, ksq, pieces());
   si->checkSquares[ROOK]   = attacks_bb<ROOK>(ksq, pieces());
   si->checkSquares[QUEEN]  = si->checkSquares[BISHOP] | si->checkSquares[ROOK];
   si->checkSquares[KING]   = 0;
