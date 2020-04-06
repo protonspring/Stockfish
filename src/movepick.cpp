@@ -148,6 +148,17 @@ Move MovePicker::select(Pred filter) {
   return MOVE_NONE;
 }
 
+template<GenType Type>
+void MovePicker::initialize(ExtMove* em)
+{
+          cur = em;
+          endMoves = generate<Type>(pos, cur);
+          score<Type>();
+
+          if (Type == QUIETS)
+              partial_insertion_sort(cur, endMoves, -3000 * depth);
+}
+
 /// MovePicker::next_move() is the most important method of the MovePicker class. It
 /// returns a new pseudo legal move every time it is called until there are no more
 /// moves left, picking the move with the highest score from a list of generated moves.
@@ -166,10 +177,7 @@ top:
   case CAPTURE_INIT:
   case PROBCUT_INIT:
   case QCAPTURE_INIT:
-      cur = endBadCaptures = moves;
-      endMoves = generate<CAPTURES>(pos, cur);
-
-      score<CAPTURES>();
+      initialize<CAPTURES>(endBadCaptures = moves);
       ++stage;
       goto top;
 
@@ -202,13 +210,7 @@ top:
 
   case QUIET_INIT:
       if (!skipQuiets)
-      {
-          cur = endBadCaptures;
-          endMoves = generate<QUIETS>(pos, cur);
-
-          score<QUIETS>();
-          partial_insertion_sort(cur, endMoves, -3000 * depth);
-      }
+          initialize<QUIETS>(endBadCaptures);
 
       ++stage;
       /* fallthrough */
@@ -231,10 +233,7 @@ top:
       return select<Next>([](){ return true; });
 
   case EVASION_INIT:
-      cur = moves;
-      endMoves = generate<EVASIONS>(pos, cur);
-
-      score<EVASIONS>();
+      initialize<EVASIONS>(moves);
       ++stage;
       /* fallthrough */
 

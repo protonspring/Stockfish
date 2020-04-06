@@ -139,6 +139,7 @@ public:
 
 private:
   template<PickType T, typename Pred> Move select(Pred);
+  template<GenType> void initialize(ExtMove* em);
   template<GenType> void score();
   ExtMove* begin() { return cur; }
   ExtMove* end() { return endMoves; }
