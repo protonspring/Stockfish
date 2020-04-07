@@ -334,7 +334,7 @@ namespace {
             }
             else //KNIGHT
             {
-                if (shift<pawn_push(Us)>(pos.pieces(Us, PAWN) & PseudoAttacks[KNIGHT][s]))
+                if (shift<pawn_push(Us)>(pos.pieces(Us, PAWN)) & PseudoAttacks[KNIGHT][s])
                     make_score(10,0);
             }
         }
