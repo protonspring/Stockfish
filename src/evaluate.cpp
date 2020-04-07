@@ -331,6 +331,10 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //Penalty for bishops on open files
+                if (pos.is_on_semiopen_file(Us, s))
+                    score -= make_score(10,0);
             }
         }
 
