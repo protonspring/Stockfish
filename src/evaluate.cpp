@@ -530,7 +530,8 @@ namespace {
     score += RestrictedPiece * popcount(b);
 
     // Protected or unattacked squares
-    safe = ~attackedBy[Them][ALL_PIECES] | attackedBy[Us][ALL_PIECES];
+    safe = ~attackedBy[Them][ALL_PIECES] |
+           (attackedBy[Us][ALL_PIECES] & ~attackedBy2[Them]);
 
     // Bonus for attacking enemy pieces with our relatively safe pawns
     b = pos.pieces(Us, PAWN) & safe;
