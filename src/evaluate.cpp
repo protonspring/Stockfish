@@ -332,6 +332,11 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
+            else //KNIGHT
+            {
+                if (shift<pawn_push(Us)>(pos.pieces(Us, PAWN) & PseudoAttacks[KNIGHT][s]))
+                    make_score(10,0);
+            }
         }
 
         if (Pt == ROOK)
