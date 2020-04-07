@@ -335,7 +335,7 @@ namespace {
             else //KNIGHT
             {
                 if (shift<pawn_push(Us)>(pos.pieces(Us, PAWN)) & PseudoAttacks[KNIGHT][s])
-                    make_score(10,0);
+                    score += make_score(10,0);
             }
         }
 
