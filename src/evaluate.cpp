@@ -134,7 +134,7 @@ namespace {
   constexpr Score KingProtector       = S(  7,  8);
   constexpr Score KnightOnQueen       = S( 16, 12);
   constexpr Score LongDiagonalBishop  = S( 45,  0);
-  constexpr Score MinorBehindPawn     = S( 12,  2);
+  constexpr Score MinorBehindPawn     = S( 18,  3);
   constexpr Score Outpost             = S( 30, 21);
   constexpr Score PassedFile          = S( 11,  8);
   constexpr Score PawnlessFlank       = S( 17, 95);
@@ -334,7 +334,7 @@ namespace {
 
                 //Bishop bonus for being behind a supported pawn
                 if (shift<Down>(pos.pieces(Us, PAWN) & pe->pawn_attacks(Us)) & s)
-                    score += make_score(20, 0);
+                    score += make_score(15, 5);
             }
         }
 
