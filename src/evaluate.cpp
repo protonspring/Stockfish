@@ -331,6 +331,10 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //Bishop bonus for being behind a supported pawn
+                if (shift<Down>(pos.pieces(Us, PAWN) & pe->pawn_attacks(Us)) & s)
+                    score += make_score(10,0);
             }
         }
 
