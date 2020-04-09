@@ -282,6 +282,14 @@ namespace {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
+
+            // Bonus if we're also supported by another piece
+            if (Pt == BISHOP)
+            {
+                Square targetSq = lsb(b & kingRing[Them]);
+                if (LineBB[s][targetSq] & pos.pieces(Us, QUEEN))
+                    score += make_score(10,0);
+            }
         }
 
         int mob = popcount(b & mobilityArea[Us]);
