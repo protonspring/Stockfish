@@ -319,6 +319,13 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
+                // Bonus for bishops next to an open file
+                if      (file_of(s) > FILE_A && !(pos.pieces(PAWN) & file_bb(s + WEST)))
+                    score += make_score(10,0);
+                else if (file_of(s) < FILE_H && !(pos.pieces(PAWN) & file_bb(s + EAST)))
+                    score += make_score(10,0);
+
+
                 // An important Chess960 pattern: a cornered bishop blocked by a friendly
                 // pawn diagonally in front of it is a very serious problem, especially
                 // when that pawn is also blocked.
