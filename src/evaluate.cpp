@@ -284,11 +284,11 @@ namespace {
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
 
             // Bonus if we're also supported by another piece
-            if (Pt == ROOK)
+            if (Pt == BISHOP)
             {
                 Square targetSq = lsb(b & kingRing[Them]);
-                if (LineBB[s][targetSq] & pos.pieces(Us, QUEEN, ROOK))
-                    score += make_score(10,0);
+                if (LineBB[s][targetSq] & pos.pieces(Us, QUEEN))
+                    score += make_score(15,0);
             }
         }
 
