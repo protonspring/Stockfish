@@ -332,6 +332,12 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
+            else //KNIGHT
+            {
+                //Bonus for valuable pieces within two moves
+                Bitboard targets = pos.pieces(Them, KING, QUEEN) | pos.pieces(Them, ROOK);
+                score += make_score(4,0) * popcount(Knight2Moves[s] & targets);
+            }
         }
 
         if (Pt == ROOK)

@@ -31,6 +31,7 @@ Bitboard SquareBB[SQUARE_NB];
 Bitboard LineBB[SQUARE_NB][SQUARE_NB];
 Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+Bitboard Knight2Moves[SQUARE_NB];
 
 Magic RookMagics[SQUARE_NB];
 Magic BishopMagics[SQUARE_NB];
@@ -109,6 +110,15 @@ void Bitboards::init() {
           for (Square s2 = SQ_A1; s2 <= SQ_H8; ++s2)
               if (PseudoAttacks[pt][s1] & s2)
                   LineBB[s1][s2] = (attacks_bb(pt, s1, 0) & attacks_bb(pt, s2, 0)) | s1 | s2;
+  }
+
+  for (Square s = SQ_A1; s <= SQ_H8; ++s)
+  {
+      Bitboard firstAttacks = PseudoAttacks[KNIGHT][s];
+      Knight2Moves[s] = firstAttacks;
+
+      while(firstAttacks)
+          Knight2Moves[s] |= PseudoAttacks[KNIGHT][pop_lsb(&firstAttacks)];
   }
 }
 
