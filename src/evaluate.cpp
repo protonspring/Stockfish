@@ -334,7 +334,7 @@ namespace {
 
                 //Bishop bonus for being behind a supported pawn
                 if (shift<Down>(pos.pieces(Us, PAWN) & pe->pawn_attacks(Us)) & s)
-                    score += make_score(15, 5);
+                    score += make_score( 0, 5);
             }
         }
 
