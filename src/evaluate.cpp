@@ -337,7 +337,7 @@ namespace {
                 //Bonus for valuable pieces within two moves
                 Bitboard targets = pos.pieces(Them, KING, QUEEN) | pos.pieces(Them, ROOK);
                 if (more_than_one(Knight2Moves[s] & targets))
-                    score += make_score(6,0);
+                    score += make_score(14,0);
             }
         }
 
