@@ -293,7 +293,16 @@ namespace {
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
             if (bb & s)
+            {
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
+
+                //more bonus if we attack an unsupported pawn from the outpost
+                if (Pt == KNIGHT)
+                {
+                    if (b & pos.pieces(Them, PAWN) & ~pe->pawn_attacks(Them))
+                        score += make_score( 8,0);
+                }
+            }
 
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
                 score += Outpost;
