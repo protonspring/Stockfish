@@ -331,6 +331,13 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+                else //KNIGHT
+                {
+                    //if the knight can attacks unsupported pawns
+                    Bitboard easyPawns = pos.pieces(Them, PAWN) & ~pawn_attacks_bb<Them>(pos.pieces(Them, PAWN));
+                    if (more_than_one(easyPawns & b))
+                        score += make_score(10,0);
+                }
             }
         }
 
