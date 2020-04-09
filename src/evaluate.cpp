@@ -295,8 +295,14 @@ namespace {
             if (bb & s)
                 score += Outpost * (Pt == KNIGHT ? 2 : 1);
 
-            else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
-                score += Outpost;
+            else if (Pt == KNIGHT)
+            {
+                if (bb & b & ~pos.pieces(Us))
+                    score += Outpost;
+
+                else if (Knight2Moves[s] & bb)
+                    score += Outpost / 2;
+            }
 
             // Bonus for a knight or bishop shielded by pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
@@ -332,13 +338,13 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
-            else //KNIGHT
-            {
-                //Bonus for valuable pieces within two moves
-                Bitboard targets = pos.pieces(Them, KING, QUEEN);
-                if (more_than_one(Knight2Moves[s] & targets))
-                    score += make_score(0,10);
-            }
+            //else //KNIGHT
+            //{
+                ////Bonus for valuable pieces within two moves
+                //Bitboard targets = pos.pieces(Them, KING, QUEEN);
+                //if (more_than_one(Knight2Moves[s] & targets))
+                    //score += make_score(0,10);
+            //}
         }
 
         if (Pt == ROOK)
