@@ -321,9 +321,9 @@ namespace {
 
                 // Bonus for bishops next to an open file
                 if      (file_of(s) > FILE_A && !(pos.pieces(PAWN) & file_bb(s + WEST)))
-                    score += make_score( 5,0);
+                    score += make_score(15,0);
                 else if (file_of(s) < FILE_H && !(pos.pieces(PAWN) & file_bb(s + EAST)))
-                    score += make_score( 5,0);
+                    score += make_score(15,0);
 
 
                 // An important Chess960 pattern: a cornered bishop blocked by a friendly
