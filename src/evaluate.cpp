@@ -350,6 +350,10 @@ namespace {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
+
+                //Worse if we're in the corners
+                if (Corners & s)
+                    score -= TrappedRook / 2;
             }
         }
 
