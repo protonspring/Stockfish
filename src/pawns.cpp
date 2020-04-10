@@ -240,7 +240,7 @@ Score Entry::do_king_safety(const Position& pos) {
 
   // In endgame we like to bring our king near our closest pawn
   Bitboard pawns = pos.pieces(PAWN);
-  int minPawnDist = pawns 8 : 0;
+  int minPawnDist = pawns ? 8 : 0;
 
   if (pos.count<PAWN>() <= 5)
   {
