@@ -348,7 +348,11 @@ namespace {
             else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
+                File rf = file_of(s);
+
+                if ((kf <= FILE_E) && (rf <= kf))  // queen_side
+                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
+                else if ((kf > FILE_D) && (rf >= kf))  // king_side
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
         }
