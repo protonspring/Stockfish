@@ -242,7 +242,7 @@ Score Entry::do_king_safety(const Position& pos) {
   Bitboard pawns = pos.pieces(PAWN);
   int minPawnDist = pawns ? 8 : 0;
 
-  if (pos.count<PAWN>() <= 4)
+  if (pos.count<PAWN>() <= 6)
   {
       if (pawns & PseudoAttacks[KING][ksq])
           minPawnDist = 1;
