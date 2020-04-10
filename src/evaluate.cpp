@@ -350,9 +350,9 @@ namespace {
                 File kf = file_of(pos.square<KING>(Us));
                 File rf = file_of(s);
 
-                if ((kf <= FILE_E) && (rf <= kf))  // queen_side
-                    score -= TrappedRook * (1 + !pos.castling_rights(Us));
-                else if ((kf > FILE_D) && (rf >= kf))  // king_side
+                if ((kf < FILE_E) && (rf < kf))  // queen_side
+                    score -= TrappedRook * 2;
+                else if ((kf >= FILE_E) && (rf >= kf))  // king_side
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
         }
