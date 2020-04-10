@@ -115,7 +115,7 @@ void Bitboards::init() {
   for (Square s = SQ_A1; s <= SQ_H8; ++s)
   {
       Bitboard firstAttacks = PseudoAttacks[KNIGHT][s];
-      Knight2Moves[s] = firstAttacks;
+      //Knight2Moves[s] = firstAttacks;
 
       while(firstAttacks)
           Knight2Moves[s] |= PseudoAttacks[KNIGHT][pop_lsb(&firstAttacks)];
