@@ -353,7 +353,7 @@ namespace {
 
                 //Worse if we're in the corners
                 if (Corners & s)
-                    score -= TrappedRook / 2;
+                    score -= TrappedRook / 4;
             }
         }
 
