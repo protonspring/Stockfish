@@ -277,7 +277,7 @@ namespace {
         attackedBy[Us][Pt] |= b;
         attackedBy[Us][ALL_PIECES] |= b;
 
-        if (b & kingRing[Them])
+        if ((b & kingRing[Them]) || ((Pt == KNIGHT) && (Knight2Moves[s] & kingRing[Them])))
         {
             kingAttackersCount[Us]++;
             kingAttackersWeight[Us] += KingAttackWeights[Pt];
@@ -332,13 +332,13 @@ namespace {
                                                                                   : CorneredBishop;
                 }
             }
-            else //KNIGHT
-            {
+            //else //KNIGHT
+            //{
                 //Bonus for valuable pieces within two moves
-                Bitboard targets = pos.pieces(Them, KING, QUEEN) | pos.pieces(Them, ROOK);
-                if (more_than_one(Knight2Moves[s] & targets))
-                    score += make_score(10,0);
-            }
+                //Bitboard targets = pos.pieces(Them, KING, QUEEN) | pos.pieces(Them, ROOK);
+                //if (more_than_one(Knight2Moves[s] & targets))
+                    //score += make_score(10,0);
+            //}
         }
 
         if (Pt == ROOK)
