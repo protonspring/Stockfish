@@ -256,6 +256,9 @@ namespace {
     constexpr Direction Down = -pawn_push(Us);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
+    constexpr Bitboard otherCamp = (Us == WHITE ? Rank1BB | Rank2BB | Rank3BB | Rank4BB
+                                                : Rank5BB | Rank6BB | Rank7BB | Rank8BB);
+
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -331,6 +334,10 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //Bonus for bishops that can see two or more squares in opponents's camp
+                if (more_than_one(otherCamp & b))
+                    score += make_score(10,0);
             }
         }
 
