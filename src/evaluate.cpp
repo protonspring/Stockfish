@@ -282,7 +282,7 @@ namespace {
             b &= LineBB[pos.square<KING>(Us)][s];
 
         if (lowPawnSide & s)
-            score += make_score(5,0);
+            score += make_score(3,0);
 
         attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
         attackedBy[Us][Pt] |= b;
