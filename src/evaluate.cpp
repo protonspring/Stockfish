@@ -205,6 +205,8 @@ namespace {
     // a white knight on g5 and black's king is on g8, this white knight adds 2
     // to kingAttacksCount[WHITE].
     int kingAttacksCount[COLOR_NB];
+
+    Bitboard lowPawnSide; //The side of the board with the least # of pawns
   };
 
 
@@ -245,6 +247,12 @@ namespace {
 
     // Remove from kingRing[] the squares defended by two pawns
     kingRing[Us] &= ~dblAttackByPawn;
+
+    lowPawnSide = AllSquares;
+    int kSide = popcount(pos.pieces(PAWN) & KingSide);
+    int qSide = popcount(pos.pieces(PAWN) & QueenSide);
+    if (kSide > qSide) lowPawnSide = kSide;
+    else if (qSide > kSide) lowPawnSide = qSide;
   }
 
 
@@ -272,6 +280,9 @@ namespace {
 
         if (pos.blockers_for_king(Us) & s)
             b &= LineBB[pos.square<KING>(Us)][s];
+
+        if (lowPawnSide & s)
+            score += make_score(5,0);
 
         attackedBy2[Us] |= attackedBy[Us][ALL_PIECES] & b;
         attackedBy[Us][Pt] |= b;
