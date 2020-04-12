@@ -794,15 +794,6 @@ namespace {
     initialize<WHITE>();
     initialize<BLACK>();
 
-    // Strategy:  If we're winning ATTACK, if we're losing DEFEND
-    if ((pos.side_to_move() == WHITE && v < 0) ||
-        (pos.side_to_move() == BLACK && v > 0))
-        strategy = STRATEGY_DEFEND;
-    else strategy = STRATEGY_ATTACK;
-
-    if (strategy == STRATEGY_DEFEND)
-        score += make_score(0,3) * pe->blocked_pawns();
-
     // Pieces should be evaluated first (populate attack tables)
     score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
             + pieces<WHITE, BISHOP>() - pieces<BLACK, BISHOP>()
@@ -817,6 +808,21 @@ namespace {
             + space<  WHITE>() - space<  BLACK>();
 
     score += initiative(score);
+
+    // If we're losing in endgame, reward for blocked pawns
+    v = eg_value(score);
+    if (pos.side_to_move() == WHITE && v < (-PawnValueEg/2))
+    {
+        //v = std::min(VALUE_NONE, v + 3 * pe->blocked_pawns());
+        //score = make_score(mg_value(score), v);
+        score += make_score(0,3) * pe->blocked_pawns();
+    }
+    else if (pos.side_to_move() == BLACK && v > (PawnValueEg/2))
+    {
+        //v = std::max(VALUE_NONE, v - 3 * pe->blocked_pawns());
+        //score = make_score(mg_value(score), v);
+        score -= make_score(0,3) * pe->blocked_pawns();
+    }
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
     ScaleFactor sf = scale_factor(eg_value(score));
