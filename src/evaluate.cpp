@@ -251,8 +251,8 @@ namespace {
     lowPawnSide = AllSquares;
     int kSide = popcount(pos.pieces(PAWN) & KingSide);
     int qSide = popcount(pos.pieces(PAWN) & QueenSide);
-    if (kSide > qSide) lowPawnSide = qSide;
-    else if (qSide > kSide) lowPawnSide = kSide;
+    if (kSide > qSide) lowPawnSide = QueenSide;
+    else if (qSide > kSide) lowPawnSide = KingSide;
   }
 
 
