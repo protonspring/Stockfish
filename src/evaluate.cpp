@@ -795,7 +795,8 @@ namespace {
     initialize<BLACK>();
 
     // Strategy:  If we're winning ATTACK, if we're losing DEFEND
-    if (pos.side_to_move() == WHITE && v < 0)
+    if ((pos.side_to_move() == WHITE && v < -PawnValueEg) ||
+        (pos.side_to_move() == BLACK && v >  PawnValueEg))
         strategy = STRATEGY_DEFEND;
     else strategy = STRATEGY_ATTACK;
 
