@@ -161,6 +161,12 @@ enum ScaleFactor {
   SCALE_FACTOR_NONE    = 255
 };
 
+enum Strategy {
+    STRATEGY_ATTACK,
+    STRATEGY_DEFEND,
+    STRATEGY_NB
+};
+
 enum Bound {
   BOUND_NONE,
   BOUND_UPPER,

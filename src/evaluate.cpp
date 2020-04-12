@@ -205,6 +205,8 @@ namespace {
     // a white knight on g5 and black's king is on g8, this white knight adds 2
     // to kingAttacksCount[WHITE].
     int kingAttacksCount[COLOR_NB];
+
+    Strategy strategy; //attack or defend
   };
 
 
@@ -789,9 +791,16 @@ namespace {
        return pos.side_to_move() == WHITE ? v : -v;
 
     // Main evaluation begins here
-
     initialize<WHITE>();
     initialize<BLACK>();
+
+    // Strategy:  If we're winning ATTACK, if we're losing DEFEND
+    if (pos.side_to_move() == WHITE && v < 0)
+        strategy = STRATEGY_DEFEND;
+    else strategy = STRATEGY_ATTACK;
+
+    if (strategy == STRATEGY_DEFEND)
+        score += make_score(3,3) * pe->blocked_pawns();
 
     // Pieces should be evaluated first (populate attack tables)
     score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
