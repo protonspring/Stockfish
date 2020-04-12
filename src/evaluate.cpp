@@ -795,13 +795,13 @@ namespace {
     initialize<BLACK>();
 
     // Strategy:  If we're winning ATTACK, if we're losing DEFEND
-    if ((pos.side_to_move() == WHITE && v < -PawnValueEg) ||
-        (pos.side_to_move() == BLACK && v >  PawnValueEg))
+    if ((pos.side_to_move() == WHITE && v < 0) ||
+        (pos.side_to_move() == BLACK && v > 0))
         strategy = STRATEGY_DEFEND;
     else strategy = STRATEGY_ATTACK;
 
     if (strategy == STRATEGY_DEFEND)
-        score += make_score(0,4) * pe->blocked_pawns();
+        score += make_score(0,3) * pe->blocked_pawns();
 
     // Pieces should be evaluated first (populate attack tables)
     score +=  pieces<WHITE, KNIGHT>() - pieces<BLACK, KNIGHT>()
