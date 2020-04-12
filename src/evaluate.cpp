@@ -335,7 +335,7 @@ namespace {
                 //Bonus for bishops on an open file and supported by a pawn
                 if (!(pos.pieces(PAWN) & file_bb(s)) &&
                         (pe->pawn_attacks(Us) & s))
-                    score += make_score(10,0);
+                    score += make_score( 0, 10);
             }
         }
 
