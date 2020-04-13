@@ -218,7 +218,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
           if (!(ourPawns & pawn_attack_span(Us, s)) &&
                (theirPawns & pawn_attack_span(Us, s)))
           {
-              bonus -= make_score(ShelterStrength[d][ourRank] / 4, 0);
+              bonus -= make_score(10, 0);
           }
       }
 
