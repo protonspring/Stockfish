@@ -256,6 +256,8 @@ namespace {
     constexpr Direction Down = -pawn_push(Us);
     constexpr Bitboard OutpostRanks = (Us == WHITE ? Rank4BB | Rank5BB | Rank6BB
                                                    : Rank5BB | Rank4BB | Rank3BB);
+    constexpr Bitboard SuperForward = (Us == WHITE ? Rank7BB | Rank8BB
+                                                   : Rank1BB | Rank2BB);
     const Square* pl = pos.squares<Pt>(Us);
 
     Bitboard b, bb;
@@ -331,6 +333,10 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //Penalize super forward bishops
+                if (SuperForward & s)
+                    score -= make_score(10,0);
             }
         }
 
