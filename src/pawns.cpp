@@ -211,6 +211,17 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
       File d = File(edge_distance(f));
       bonus += make_score(ShelterStrength[d][ourRank], 0);
 
+      //Shelter penalty if this Pawn can be levered
+      if (ourRank)
+      {
+          Square s = make_square(f, Rank(ourRank));
+          if (!(ourPawns & pawn_attack_span(Us, s)) &&
+               (theirPawns & pawn_attack_span(Us, s)))
+          {
+              bonus -= make_score(ShelterStrength[d][ourRank] / 4, 0);
+          }
+      }
+
       if (ourRank && (ourRank == theirRank - 1))
           bonus -= BlockedStorm * int(theirRank == RANK_3);
       else
