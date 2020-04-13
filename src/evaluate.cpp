@@ -286,6 +286,11 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
+        // Reduce mobility if sliding pieces can't move more than one square
+        if ((Pt == ROOK) || (Pt == BISHOP) || (Pt == QUEEN))
+            if (!(b & mobilityArea[Us] & ~PseudoAttacks[KING][s]))
+                mob /= 2;
+
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
