@@ -199,6 +199,11 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   Score bonus = make_score(5, 5);
 
+  // Penalty if no pawn on the edge on the side of the king
+  File edge = file_of(ksq) < FILE_E ? FILE_A : FILE_H;
+  if (!(ourPawns & file_bb(edge)))
+      bonus -= make_score( 0, 10);
+
   File center = Utility::clamp(file_of(ksq), FILE_B, FILE_G);
   for (File f = File(center - 1); f <= File(center + 1); ++f)
   {
