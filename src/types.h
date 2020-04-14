@@ -332,9 +332,11 @@ inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
 /// a very high risk of overflow. So user should explicitly convert to integer.
 Score operator*(Score, Score) = delete;
 
-/// Division of a Score must be handled separately for each term
+/// A Value should not exceed 16-bits.
+/// For safety, Division of a Score assume values fit in 20-bits
 inline Score operator/(Score s, int i) {
-  return make_score(mg_value(s) / i, eg_value(s) / i);
+  assert(i < (1 << 12));
+  return Score(((s) / i) & 0xFFFFF000FFFFF);
 }
 
 /// Multiplication of a Score by an integer. We check for overflow in debug mode.
