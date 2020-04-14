@@ -155,6 +155,10 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        if ((stoppers && pawn_attack_span(Us, s)) &&
+            !(opposed))
+            score -= make_score(0,8);
     }
 
     return score;
