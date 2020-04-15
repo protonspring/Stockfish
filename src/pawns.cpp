@@ -159,7 +159,7 @@ namespace {
 
     //Bonus for passed pawns supporting passed pawns
     if (e->passedPawns[Us] & pawn_attacks_bb<Us>(e->passedPawns[Us]))
-        score += make_score(15, 0);
+        score += make_score(30, 0);
 
     return score;
   }
