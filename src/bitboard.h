@@ -320,11 +320,6 @@ inline Square lsb(Bitboard b) {
   return Square(__builtin_ctzll(b));
 }
 
-inline Square msb(Bitboard b) {
-  assert(b);
-  return Square(63 ^ __builtin_clzll(b));
-}
-
 #elif defined(_MSC_VER)  // MSVC
 
 #ifdef _WIN64  // MSVC, WIN64
@@ -333,13 +328,6 @@ inline Square lsb(Bitboard b) {
   assert(b);
   unsigned long idx;
   _BitScanForward64(&idx, b);
-  return (Square) idx;
-}
-
-inline Square msb(Bitboard b) {
-  assert(b);
-  unsigned long idx;
-  _BitScanReverse64(&idx, b);
   return (Square) idx;
 }
 
@@ -358,19 +346,6 @@ inline Square lsb(Bitboard b) {
   }
 }
 
-inline Square msb(Bitboard b) {
-  assert(b);
-  unsigned long idx;
-
-  if (b >> 32) {
-      _BitScanReverse(&idx, int32_t(b >> 32));
-      return Square(idx + 32);
-  } else {
-      _BitScanReverse(&idx, int32_t(b));
-      return Square(idx);
-  }
-}
-
 #endif
 
 #else  // Compiler is neither GCC nor MSVC compatible
@@ -379,13 +354,21 @@ inline Square msb(Bitboard b) {
 
 #endif
 
-
 /// pop_lsb() finds and clears the least significant bit in a non-zero bitboard
 
 inline Square pop_lsb(Bitboard* b) {
   assert(*b);
   const Square s = lsb(*b);
   *b &= *b - 1;
+  return s;
+}
+
+inline Square msb(Bitboard b) {
+  assert(b);
+
+  Square s = SQ_NONE;
+  while(b) s = pop_lsb(&b);
+
   return s;
 }
 
