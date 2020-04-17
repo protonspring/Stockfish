@@ -41,7 +41,7 @@ namespace {
   // based on ply.  The aim is to attribute more time to earlier moves.
   inline double move_importance(int ply) {
 
-    float mid = (ply - 80) / 50;
+    float mid = (ply - 80.0) / 50.0;
     return 0.65 - mid / (1.2 + abs(mid));
   }
 
