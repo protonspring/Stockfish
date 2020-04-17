@@ -41,8 +41,8 @@ namespace {
   // based on ply.  The aim is to attribute more time to earlier moves.
   inline double move_importance(int ply) {
 
-    int mid = ply - 97;
-    return 1 - mid / std::hypot(45, mid);
+    int mid = ply - 88;
+    return 1.0 - mid / std::sqrt(mid * mid + 2000);
   }
 
   template<TimeType T>
