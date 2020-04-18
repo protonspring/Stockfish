@@ -42,13 +42,10 @@ namespace {
   // is considered "undecided" as long as neither side has >275cp advantage.
   // Data was extracted from the CCRL game database with some simple filtering criteria.
 
-  double move_importance(int ply) {
+  constexpr double move_importance(int ply) {
 
-    constexpr double XScale = 6.85;
-    constexpr double XShift = 64.5;
-    constexpr double Skew   = 0.171;
-
-    return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
+    return ply < 58 ? 1.03 - 0.001 * ply
+                    : 0.11 + (ply - 160.0) * (ply - 160.0) / 12100.0;
   }
 
   template<TimeType T>
