@@ -651,6 +651,10 @@ namespace {
                 if ((pos.pieces(Us) & bb) || (attackedBy[Us][ALL_PIECES] & blockSq))
                     k += 5;
 
+                // Assign a larger bonus if there is a passed neighbour
+                if (pe->passed_pawns(Us) & adjacent_files_bb(s))
+                    k += 2;
+
                 bonus += make_score(k * w, k * w);
             }
         } // r > RANK_3
