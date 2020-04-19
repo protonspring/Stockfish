@@ -155,7 +155,7 @@ namespace {
 
             //Penalize for pawns behind this backward pawn
             if (ourPawns & forward_file_bb(Them, s))
-                score -= make_score( 8, 0);
+                score -= make_score( 0, 8);
         }
 
         if (!support)
