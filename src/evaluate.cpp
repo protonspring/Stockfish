@@ -331,6 +331,10 @@ namespace {
                                 : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
                                                                                   : CorneredBishop;
                 }
+
+                //bonus for attacking multiple squares ahead of a pawn chain.
+                if (more_than_one(b & shift<pawn_push(Us)>(pos.pieces(Us, PAWN))))
+                    score += make_score(10,0);
             }
         }
 
