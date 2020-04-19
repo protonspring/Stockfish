@@ -23,6 +23,7 @@
 #include <cstring>   // For std::memset
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 #include "bitboard.h"
 #include "evaluate.h"
@@ -287,6 +288,14 @@ namespace {
         int mob = popcount(b & mobilityArea[Us]);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
+
+        // Adjust psqt according to mobility.
+        if (Pt == BISHOP)
+        {
+            Score s2 = ((make_score(60, 60) + PSQTBonus[BISHOP][file_of(s)][rank_of(s)]) * mob) / 64;
+
+            score += s2;
+        }
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
