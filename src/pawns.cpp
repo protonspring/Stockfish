@@ -149,8 +149,14 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         else if (backward)
+        {
             score -=   Backward
                      + WeakUnopposed * !opposed;
+
+            //Penalize for pawns behind this backward pawn
+            if (ourPawns & forward_file_bb(Them, s))
+                score -= make_score( 8, 0);
+        }
 
         if (!support)
             score -=   Doubled * doubled
