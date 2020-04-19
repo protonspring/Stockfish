@@ -219,7 +219,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
 
   // increase bonus if this isn't the real square of the king
   if (pos.square<KING>(Us) != ksq && bonus > SCORE_ZERO)
-      bonus += bonus / 4;
+      bonus += bonus / 8;
   return bonus;
 }
 
