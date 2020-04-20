@@ -332,9 +332,9 @@ namespace {
                                                                                   : CorneredBishop;
                 }
 
-                //bonus for attacking multiple squares ahead of a pawn chain.
-                if (more_than_one(b & shift<pawn_push(Us)>(pos.pieces(Us, PAWN))))
-                    score += make_score( 0, 10);
+                //bonus for attacking squares ahead of a pawn chain.
+                if (more_than_one(b & shift<pawn_push(Us)>(pos.pieces(Us, PAWN) & ~pos.pieces(Them, PAWN))))
+                    score += make_score(10,0);
             }
         }
 
