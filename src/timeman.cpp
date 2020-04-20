@@ -109,24 +109,20 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   const int maxMTG = limits.movestogo ? std::min(limits.movestogo, MoveHorizon) : MoveHorizon;
 
-  // We calculate optimum time usage for different hypothetical "moves to go" values
-  // and choose the minimum of calculated search time values. Usually the greatest
-  // hypMTG gives the minimum values.
-  for (int hypMTG = 1; hypMTG <= maxMTG; ++hypMTG)
-  {
-      // Calculate thinking time for hypothetical "moves to go"-value
-      hypMyTime =  limits.time[us]
-                 + limits.inc[us] * (hypMTG - 1)
-                 - moveOverhead * (2 + std::min(hypMTG, 40));
+  int hypMTG = std::max(maxMTG - 2, 0);
 
-      hypMyTime = std::max(hypMyTime, TimePoint(0));
+  hypMyTime =  limits.time[us]
+             + limits.inc[us] * (hypMTG - 1)
+             - moveOverhead * (2 + std::min(hypMTG, 40));
 
-      TimePoint t1 = minThinkingTime + remaining<OptimumTime>(hypMyTime, hypMTG, ply, slowMover);
-      TimePoint t2 = minThinkingTime + remaining<MaxTime    >(hypMyTime, hypMTG, ply, slowMover);
+  hypMyTime = std::max(hypMyTime, TimePoint(0));
 
-      optimumTime = std::min(t1, optimumTime);
-      maximumTime = std::min(t2, maximumTime);
-  }
+  TimePoint t1 = minThinkingTime + remaining<OptimumTime>(hypMyTime, hypMTG, ply, slowMover);
+  TimePoint t2 = minThinkingTime + remaining<MaxTime    >(hypMyTime, hypMTG, ply, slowMover);
+
+  optimumTime = std::min(t1, optimumTime);
+
+  maximumTime = std::min(t2, maximumTime);
 
   if (Options["Ponder"])
       optimumTime += optimumTime / 4;
