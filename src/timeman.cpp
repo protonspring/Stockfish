@@ -36,6 +36,7 @@ namespace {
   constexpr double MaxRatio   = 7.3;  // When in trouble, we can step over reserved time with this ratio
   constexpr double StealRatio = 0.34; // However we must not steal time from remaining moves over this ratio
 
+  int timeParms[2] = {30, 20};
 
   // move_importance() is a skew-logistic function based on naive statistical
   // analysis of "how many games are still undecided after n half-moves". Game
@@ -51,6 +52,8 @@ namespace {
     return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
   }
 
+TUNE(timeParms);
+
   template<TimeType T>
   TimePoint remaining(TimePoint myTime, int movesToGo, int ply, TimePoint slowMover) {
 
@@ -58,10 +61,8 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
 
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    double otherMovesImportance = timeParms[0] * movesToGo/(timeParms[1] + ply);
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
