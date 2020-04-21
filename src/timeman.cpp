@@ -28,6 +28,8 @@
 
 TimeManagement Time; // Our global time management object
 
+int timeParms[2] = {400, 670};
+
 namespace {
 
   enum TimeType { OptimumTime, MaxTime };
@@ -58,10 +60,9 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
 
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    int divisor = timeParms[0] - (timeParms[1] * ply / 100.0);
+    double otherMovesImportance = movesToGo - movesToGo * movesToGo / divisor;
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
@@ -69,8 +70,10 @@ namespace {
     return TimePoint(myTime * std::min(ratio1, ratio2)); // Intel C++ asks for an explicit cast
   }
 
+
 } // namespace
 
+TUNE(timeParms);
 
 /// init() is called at the beginning of the search and calculates the allowed
 /// thinking time out of the time control and current game ply. We support four
