@@ -58,10 +58,9 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
-
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    double offset = movesToGo - 55.0;
+    double scale = std::max(1.0, 42.0 - ply / 3.0) / 42.0;
+    double otherMovesImportance = (40.0 - offset * offset / 74.0) * scale;
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
@@ -70,7 +69,6 @@ namespace {
   }
 
 } // namespace
-
 
 /// init() is called at the beginning of the search and calculates the allowed
 /// thinking time out of the time control and current game ply. We support four
