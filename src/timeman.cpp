@@ -72,6 +72,7 @@ namespace {
 
 } // namespace
 
+TUNE(timeParms);
 
 /// init() is called at the beginning of the search and calculates the allowed
 /// thinking time out of the time control and current game ply. We support four
