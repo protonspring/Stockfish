@@ -51,6 +51,8 @@ namespace {
     return pow((1 + exp((ply - XShift) / XScale)), -Skew) + DBL_MIN; // Ensure non-zero
   }
 
+  int timeParms[4] = {1, 42, 3, 48};
+
   template<TimeType T>
   TimePoint remaining(TimePoint myTime, int movesToGo, int ply, TimePoint slowMover) {
 
@@ -58,10 +60,9 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 0.0;
-
-    for (int i = 1; i < movesToGo; ++i)
-        otherMovesImportance += move_importance(ply + 2 * i);
+    //double otherMovesImportance = 30.0 * movesToGo/(20.0 + ply);
+    //double otherMovesImportance = movesToGo/(ply / 10.0 + 1.0);
+    double otherMovesImportance = movesToGo * std::max(double(timeParms[0]), double(timeParms[1])-ply/double(timeParms[2])) / double(timeParms[3]);
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
