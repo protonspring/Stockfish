@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -67,9 +68,20 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  double scale = 7.5 * (9.0 - std::log2(ply));
-  double offset = std::min<int>(timeLeft / 2, 92);
+  //OPTIMUM TIME
+  double scale1 = 6.5 * (9.0 - std::log2(ply + 1));
+  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
 
-  optimumTime = double(timeLeft) / scale + offset;
-  maximumTime = std::min<int>(0.8 * limits.time[us], 3 * optimumTime);
+  //MAXIMUM TIME
+  double scale2 = 1.2 * (8.0 - std::log2(ply + 1));
+  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+
+  std::cout << "move: " << limits.time[us]
+            << " all:  " << timeLeft
+            << " opt: " << optimumTime
+            << " max: " << maximumTime
+            << " ply: " << ply
+            << " s1: " << scale1
+            << " s2: " << scale2
+            << std::endl;
 }
