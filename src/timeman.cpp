@@ -58,7 +58,7 @@ namespace {
     constexpr double TStealRatio = (T == OptimumTime ? 0.0 : StealRatio);
 
     double moveImportance = (move_importance(ply) * slowMover) / 100.0;
-    double otherMovesImportance = 9 * (movesToGo * move_importance(9 * (ply + movesToGo) / 10)) / 10;
+    double otherMovesImportance = 0.85 * (movesToGo * move_importance(ply + movesToGo));
 
     double ratio1 = (TMaxRatio * moveImportance) / (TMaxRatio * moveImportance + otherMovesImportance);
     double ratio2 = (moveImportance + TStealRatio * otherMovesImportance) / (moveImportance + otherMovesImportance);
