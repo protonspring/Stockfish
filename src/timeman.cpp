@@ -68,10 +68,10 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
   //OPTIMUM TIME
-  double scale1 = 8.2 * (9.0 - std::log2(ply + 1));
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  double scale1 = std::min<double>(0.02 + ply * ply / 400000.0, 0.5);
+  optimumTime = std::min<int>(0.2 * limits.time[us], scale1 * timeLeft);
 
   //MAXIMUM TIME
-  double scale2 = 1.7 * (8.0 - std::log2(ply + 1));
-  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+  double scale2 = std::min<double>(0.1 + ply * ply / 30000.0, 0.5);
+  maximumTime = std::min<int>(0.8 * limits.time[us], scale2 * timeLeft);
 }
