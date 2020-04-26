@@ -73,7 +73,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       //fastAdjust = 0.4;
 
   //OPTIMUM TIME
-  double scale1 = std::max(8.2 * (9.0 - std::log2(ply + 1)), 2.0);
+  double scale1 = std::max(8.2 * (8.6 - std::log2(ply + 1)), 2.0);
   optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
   optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
