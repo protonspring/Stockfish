@@ -67,7 +67,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  if (timeLeft < 5000)
+  if (timeLeft < 2000)
   //{
       timeLeft = limits.time[us];
       //optimumTime = limits.time[us] / 30;
