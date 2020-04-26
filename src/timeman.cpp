@@ -67,11 +67,34 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
+  if (timeLeft < 5000)
+  //{
+      timeLeft = limits.time[us];
+      //optimumTime = limits.time[us] / 30;
+      //maximumTime = limits.time[us] / 35;
+  //}
+
+  //else
+  //{
   //OPTIMUM TIME
   double scale1 = std::max(8.2 * (9.0 - std::log2(ply + 1)), 2.0);
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  optimumTime = std::min<int>(0.1 * limits.time[us], timeLeft / scale1);
+  optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
   //MAXIMUM TIME
   double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
-  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+  maximumTime = std::min<int>(0.4 * limits.time[us], timeLeft / scale2);
+  maximumTime = std::max<int>(minThinkingTime, optimumTime);
+
+  //std::cout << "<ply: " << ply
+            //<< ", limit: " << limits.time[us]
+            //<< ", inc: " << limits.inc[us]
+            //<< ", over: " << moveOverhead
+            //<< ", time: " << timeLeft
+            //<< ", optimum: " << optimumTime
+            //<< ", s1: " << scale1
+            //<< ", max: " << maximumTime
+            //<< ", s2: " << scale2
+            //<< std::endl;
+  //}
 }
