@@ -60,26 +60,24 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   }
 
   startTime = limits.startTime;
-  optimumTime = minThinkingTime * slowMover / 100.0;
 
   int mtg = limits.movestogo ? std::min(limits.movestogo, 50) : 50;
 
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  int p = ply;
+  timeLeft = slowMover * timeLeft / 100;
 
-  //force a min ply for super short times and no increment
+  //adjust for crazy fast games with no increment
+  double fastAdjust = 0.0;
   if (limits.time[us] < 15000 && limits.inc[us] < 100)
-      p = std::max(p, 10);
+      fastAdjust = 0.4;
 
   //OPTIMUM TIME
-  double scale1 = std::max(8.2 * (9.0 - std::log2(p + 1)), 2.0);
-  //optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  double scale1 = std::max(8.2 * (9.0 - fastAdjust - std::log2(ply + 1)), 2.0);
   optimumTime = std::max<int>(minThinkingTime, timeLeft / scale1);
 
   //MAXIMUM TIME
-  double scale2 = std::max(1.7 * (8.0 - std::log2(p + 1)), 0.5);
-  //maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+  double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
   maximumTime = std::max<int>(minThinkingTime, timeLeft / scale2);
 }
