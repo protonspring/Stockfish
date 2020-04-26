@@ -66,19 +66,28 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  //timeLeft = slowMover * timeLeft / 100;
-  //adjust for crazy fast games with no increment
-  //double fastAdjust = 0.0;
-  //if (limits.time[us] < 15000 && limits.inc[us] < 100)
-      //fastAdjust = 0.4;
+  //If after calculating overhead and increments, there is no time left,
+  //Default to a safer algorithm
+  if (timeLeft == 0)
+  {
+      double scale1 = std::max(8.2 * (8.6 - std::log2(ply + 1)), 2.0);
+      optimumTime = std::max<int>(minThinkingTime, timeLeft / scale1);
 
-  //OPTIMUM TIME
-  double scale1 = std::max(8.2 * (8.6 - std::log2(ply + 1)), 2.0);
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
-  optimumTime = std::max<int>(minThinkingTime, optimumTime);
+      double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
+      maximumTime = std::max<int>(minThinkingTime, timeLeft / scale2);
+  }
+  else
+  {
+      //Note to self: use clamp here.
+      double scale1 = std::max(8.2 * (9.0 - std::log2(ply + 1)), 2.0);
+      optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+      optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
-  //MAXIMUM TIME
-  double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
-  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
-  maximumTime = std::max<int>(minThinkingTime, maximumTime);
+      double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
+      maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+      maximumTime = std::max<int>(minThinkingTime, maximumTime);
+  }
+
+  if (Options["Ponder"])
+      optimumTime += optimumTime / 4;
 }
