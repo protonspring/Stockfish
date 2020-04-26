@@ -67,11 +67,19 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
+  int p = ply;
+
+  //force a min ply for super short times and no increment
+  if (limits.time[us] < 15000 && limits.inc[us] < 100)
+      p = std::max(p, 10);
+
   //OPTIMUM TIME
-  double scale1 = std::max(8.2 * (9.0 - std::log2(ply + 1)), 2.0);
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  double scale1 = std::max(8.2 * (9.0 - std::log2(p + 1)), 2.0);
+  //optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  optimumTime = std::max<int>(minThinkingTime, timeLeft / scale1);
 
   //MAXIMUM TIME
-  double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
-  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+  double scale2 = std::max(1.7 * (8.0 - std::log2(p + 1)), 0.5);
+  //maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+  maximumTime = std::max<int>(minThinkingTime, timeLeft / scale2);
 }
