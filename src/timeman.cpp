@@ -66,9 +66,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  //If after calculating overhead and increments, there is no time left,
-  //Default to a safer algorithm
-  if (timeLeft == 0)
+  if (limits.time[us] < 10000 && limits.inc[us] < 100)
   {
       double scale1 = std::max(8.2 * (8.6 - std::log2(ply + 1)), 2.0);
       optimumTime = std::max<int>(minThinkingTime, timeLeft / scale1);
