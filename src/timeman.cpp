@@ -41,7 +41,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   TimePoint minThinkingTime = Options["Minimum Thinking Time"];
   TimePoint moveOverhead    = Options["Move Overhead"];
-  //TimePoint slowMover       = Options["Slow Mover"];
+  TimePoint slowMover       = Options["Slow Mover"];
   TimePoint npmsec          = Options["nodestime"];
 
   // If we have to play in 'nodes as time' mode, then convert from time
@@ -65,6 +65,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
+
+  timeLeft = slowMover * timeLeft / 100;
 
   if (limits.time[us] < 10000 && limits.inc[us] < 100)
   {
