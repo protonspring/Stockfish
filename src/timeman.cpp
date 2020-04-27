@@ -67,9 +67,9 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  // If there is no time left, use actual game time w/ 32 move horizon.
+  // If there is no time left, use actual game time.
   if (timeLeft == 0)
-      minThinkingTime = limits.time[us] / 32;
+      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 32);
 
   //OPTIMUM TIME
   double scale1 = 8.2 * (9.0 - std::log2(ply + 1));
