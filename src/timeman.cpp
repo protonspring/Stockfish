@@ -41,7 +41,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   TimePoint minThinkingTime = Options["Minimum Thinking Time"];
   TimePoint moveOverhead    = Options["Move Overhead"];
-  TimePoint slowMover       = Options["Slow Mover"];
+  //TimePoint slowMover       = Options["Slow Mover"];
   TimePoint npmsec          = Options["nodestime"];
 
   // If we have to play in 'nodes as time' mode, then convert from time
@@ -60,7 +60,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   }
 
   startTime = limits.startTime;
-  optimumTime = minThinkingTime * slowMover / 100.0;
+  //optimumTime = minThinkingTime * slowMover / 100.0;
 
   int mtg = limits.movestogo ? std::min(limits.movestogo, 50) : 50;
 
@@ -79,5 +79,5 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //MAXIMUM TIME
   double scale2 = 1.7 * (8.0 - std::log2(ply + 1));
   maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
-  maximumTime = std::min<int>(minThinkingTime, maximumTime);
+  maximumTime = std::max<int>(minThinkingTime, maximumTime);
 }
