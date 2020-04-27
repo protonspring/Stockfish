@@ -41,7 +41,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   TimePoint minThinkingTime = Options["Minimum Thinking Time"];
   TimePoint moveOverhead    = Options["Move Overhead"];
-  //TimePoint slowMover       = Options["Slow Mover"];
+  TimePoint slowMover       = Options["Slow Mover"];
   TimePoint npmsec          = Options["nodestime"];
 
   // If we have to play in 'nodes as time' mode, then convert from time
@@ -66,12 +66,15 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
-  //timeLeft = slowMover * timeLeft / 100;
-
-  if (limits.time[us] < 5000 && limits.inc[us] < 100)
+  if (limits.time[us] < 11000 && limits.inc[us] < 100)
   {
+      timeLeft = slowMover * timeLeft / 100;
       double scale1 = std::max(8.2 * (8.6 - std::log2(ply + 1)), 2.0);
       optimumTime = std::max<int>(minThinkingTime, timeLeft / scale1);
+
+      double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
+      maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+      maximumTime = std::max<int>(minThinkingTime, maximumTime);
   }
   else
   {
@@ -79,12 +82,12 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       double scale1 = std::max(8.2 * (9.0 - std::log2(ply + 1)), 2.0);
       optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
       optimumTime = std::max<int>(minThinkingTime, optimumTime);
+
+      double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
+      maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
+      maximumTime = std::max<int>(minThinkingTime, maximumTime);
   }
 
-  double scale2 = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
-  maximumTime = std::min<int>(0.8 * limits.time[us], timeLeft / scale2);
-  maximumTime = std::max<int>(minThinkingTime, maximumTime);
-
-  if (Options["Ponder"])
-      optimumTime += optimumTime / 4;
+  //if (Options["Ponder"])
+      //optimumTime += optimumTime / 4;
 }
