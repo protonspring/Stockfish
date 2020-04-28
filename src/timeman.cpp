@@ -70,7 +70,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   // If there is no time left, use actual game time.
   if (timeLeft == 0)
-      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
+      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 40);
 
   //OPTIMUM TIME
   double scale1 = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
