@@ -74,26 +74,13 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   if (timeLeft == 0)
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
-  // If there is no increment, go a little faster.
-  //if (limits.inc[us] == 0)
-      //scale1 = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
-  //else
-      //scale1 = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
-
   //OPTIMUM TIME
-  scale1 = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+  scale = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
+  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
   optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
   //MAXIMUM TIME
-  double scale2 = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
-  maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale2);
+  scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
+  maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
   maximumTime = std::max<int>(minThinkingTime, maximumTime);
-
-  //std::cout << "ply," << ply
-            //<< ",timeLeft," << timeLeft
-            //<< ",timelimit," << limits.time[us]
-            //<< ",optim," << optimumTime
-            //<< ",maxim," << maximumTime
-            //<< std::endl;
 }
