@@ -71,15 +71,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   if (limits.time[us] < 10000 && limits.inc[us] < 100)
   {
-      //If there is no time left, steal from actual game time.
-      if (timeLeft == 0)
-          optimumTime = limits.time[us] / 32;
-      else
-      {
-          scale = std::max(2.0, 6.0 * (9.0 - std::log2(ply + 1)));
-          optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
-      }
-
+      scale = std::max(2.0, 8.2 * (8.6 - std::log2(ply + 1)));
+      optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
       optimumTime = std::max<int>(minThinkingTime, optimumTime);
   }
   else
