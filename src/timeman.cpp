@@ -21,6 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+//#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -43,6 +44,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   TimePoint moveOverhead    = Options["Move Overhead"];
   TimePoint slowMover       = Options["Slow Mover"];
   TimePoint npmsec          = Options["nodestime"];
+  double scale;
 
   // If we have to play in 'nodes as time' mode, then convert from time
   // to nodes, and use resulting values in time management formulas.
@@ -68,12 +70,18 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   timeLeft = slowMover * timeLeft / 100;
 
-  // If there is no time left, use actual game time.
+  // If there is no time left, carefully use actual game time.
   if (timeLeft == 0)
-      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 40);
+      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
+
+  // If there is no increment, go a little faster.
+  //if (limits.inc[us] == 0)
+      //scale1 = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
+  //else
+      //scale1 = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
 
   //OPTIMUM TIME
-  double scale1 = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
+  scale1 = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
   optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
   optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
@@ -81,4 +89,11 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   double scale2 = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
   maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale2);
   maximumTime = std::max<int>(minThinkingTime, maximumTime);
+
+  //std::cout << "ply," << ply
+            //<< ",timeLeft," << timeLeft
+            //<< ",timelimit," << limits.time[us]
+            //<< ",optim," << optimumTime
+            //<< ",maxim," << maximumTime
+            //<< std::endl;
 }
