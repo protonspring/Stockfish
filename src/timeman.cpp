@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
-#include <iostream>
+//#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -72,7 +72,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   // If there is no time left, carefully use actual game time.
   if (timeLeft == 0)
-      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
+      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / mtg);
 
   //OPTIMUM TIME
   scale = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
@@ -84,9 +84,9 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
   maximumTime = std::max<int>(minThinkingTime, maximumTime);
 
-  std::cout << "ply," << ply
-            << ",limits.time," << limits.time[us]
-            << ",optim," << optimumTime
-            << ",maxim," << maximumTime
-            << std::endl;
+  //std::cout << "ply," << ply
+            //<< ",limits.time," << limits.time[us]
+            //<< ",optim," << optimumTime
+            //<< ",maxim," << maximumTime
+            //<< std::endl;
 }
