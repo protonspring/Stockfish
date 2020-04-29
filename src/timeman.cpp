@@ -75,7 +75,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
   //OPTIMUM TIME
-  scale = std::max(2.0, 8.0 * (9.0 - std::log2(ply + 1)));
+  scale = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
   optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
   optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
@@ -83,4 +83,10 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
   maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
   maximumTime = std::max<int>(minThinkingTime, maximumTime);
+
+  std::cout << "ply," << ply
+            << ",limits.time," << limits.time[us]
+            << ",optim," << optimumTime
+            << ",maxim," << maximumTime
+            << std::endl;
 }
