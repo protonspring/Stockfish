@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
-//#include <iostream>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
@@ -75,18 +75,21 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / mtg);
 
   //OPTIMUM TIME
-  scale = std::max(2.0, 5.0 * (9.0 - std::log2(ply + 2)));
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
-  optimumTime = std::max<int>(minThinkingTime, optimumTime);
+  //scale = std::max(2.0, 7.0 * (9.0 - std::log2(ply + 2)));
+  //scale = std::max(2.0, 
+  //optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
+  optimumTime = std::max<int>(minThinkingTime, timeLeft / (ply + 10));
+  //optimumTime = timeLeft / (ply + 20);
 
   //MAXIMUM TIME
-  scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 2)));
-  maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
-  maximumTime = std::max<int>(minThinkingTime, maximumTime);
+  //scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 2)));
+  //maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
+  maximumTime = std::min<int>(optimumTime * 4, 0.8 * limits.time[us] - moveOverhead);
+  //maximumTime = limits.time[us] / (1 + ply / 4);
 
- //std::cout << "ply," << ply
-            //<< ",limits.time," << limits.time[us]
-            //<< ",optim," << optimumTime
-            //<< ",maxim," << maximumTime
-            //<< std::endl;
+ std::cout << "ply," << ply
+            << ",limits.time," << limits.time[us]
+            << ",optim," << optimumTime
+            << ",maxim," << maximumTime
+            << std::endl;
 }

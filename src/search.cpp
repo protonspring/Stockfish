@@ -224,7 +224,12 @@ void MainThread::search() {
   }
 
   Color us = rootPos.side_to_move();
-  Time.init(Limits, us, rootPos.game_ply());
+  //Time.init(Limits, us, rootPos.game_ply());
+  //Instead of ply, try amount of material.
+  int count = rootPos.count<KING>() + rootPos.count<QUEEN>() + rootPos.count<BISHOP>()
+            + rootPos.count<KNIGHT>() + rootPos.count<ROOK>() + rootPos.count<PAWN>();
+
+  Time.init(Limits, us, count);
   TT.new_search();
 
   if (rootMoves.empty())
