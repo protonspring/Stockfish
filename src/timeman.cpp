@@ -38,7 +38,7 @@ TimeManagement Time; // Our global time management object
 ///  inc >  0 && movestogo == 0 means: x basetime + z increment
 ///  inc >  0 && movestogo != 0 means: x moves in y minutes + z increment
 
-void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
+void TimeManagement::init(Search::LimitsType& limits, Color us, int material) {
 
   TimePoint minThinkingTime = Options["Minimum Thinking Time"];
   TimePoint moveOverhead    = Options["Move Overhead"];
@@ -75,21 +75,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / mtg);
 
   //OPTIMUM TIME
-  //scale = std::max(2.0, 7.0 * (9.0 - std::log2(ply + 2)));
-  //scale = std::max(2.0, 
-  //optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
-  optimumTime = std::max<int>(minThinkingTime, timeLeft / (ply + 10));
-  //optimumTime = timeLeft / (ply + 20);
+  optimumTime = std::max<int>(minThinkingTime, timeLeft / (material + 10));
 
   //MAXIMUM TIME
-  //scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 2)));
-  //maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
   maximumTime = std::min<int>(optimumTime * 4, 0.8 * limits.time[us] - moveOverhead);
-  //maximumTime = limits.time[us] / (1 + ply / 4);
-
- std::cout << "ply," << ply
-            << ",limits.time," << limits.time[us]
-            << ",optim," << optimumTime
-            << ",maxim," << maximumTime
-            << std::endl;
 }
