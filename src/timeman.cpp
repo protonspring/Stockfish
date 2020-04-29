@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
-//#include <iostream>
+#include <iostream>
 
 #include "search.h"
 #include "timeman.h"
