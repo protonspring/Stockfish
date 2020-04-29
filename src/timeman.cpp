@@ -75,7 +75,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / mtg);
 
   //OPTIMUM TIME
-  scale = std::max(2.0, 7.0 * (9.0 - std::log2(ply + 2)));
+  scale = std::max(2.0, 5.0 * (9.0 - std::log2(ply + 2)));
   optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
   optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
