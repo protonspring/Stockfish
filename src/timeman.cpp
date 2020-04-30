@@ -69,19 +69,20 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   timeLeft = slowMover * timeLeft / 100;
 
   // If there is no time left, carefully use actual game time.
-  if (timeLeft == 0)
-      minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
+  //if (timeLeft == 0)
+      //minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
-  //temporary HACK
+  //temporary HACK for short games
   if (limits.time[us] < 11000 && limits.inc[us] < 100)
   {
       //OPTIMUM TIME
-      double scale1 = std::max(2.0, 6.0 * (9.0 - std::log2(ply + 1)));
-      optimumTime = std::max<int>(2 * minThinkingTime, timeLeft / scale1);
+      double scale = std::max(6.0 * (9.0 - std::log2(ply + 1)), 2.0);
+      optimumTime = std::max<int>(2 * minThinkingTime, timeLeft / scale);
 
       //MAXIMUM TIME
-      if (3*minThinkingTime < timeLeft / scale1)
-          maximumTime = timeLeft / scale1;
+      scale = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
+      if (3*minThinkingTime < timeLeft / scale)
+          maximumTime = timeLeft / scale;
       else if (3 * minThinkingTime > 0.8 * limits.time[us] - moveOverhead)
           maximumTime = 0.8 * limits.time[us] - moveOverhead;
   }
