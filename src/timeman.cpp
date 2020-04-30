@@ -85,6 +85,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
           maximumTime = timeLeft / scale;
       else if (3 * minThinkingTime > 0.8 * limits.time[us] - moveOverhead)
           maximumTime = 0.8 * limits.time[us] - moveOverhead;
+      else
+          maximumTime = 3 * optimumTime / 2;
   }
   else
   {
