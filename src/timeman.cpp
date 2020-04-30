@@ -83,13 +83,13 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
       //MAXIMUM TIME
       scale = std::max(1.7 * (8.0 - std::log2(ply + 1)), 0.5);
-      maximumTime = std::max<int>(3 * minThinkingTime, timeLeft / scale);
-      //if (3*minThinkingTime < timeLeft / scale)
-          //maximumTime = timeLeft / scale;
+      //maximumTime = std::max<int>(3 * minThinkingTime, timeLeft / scale);
+      if (3*minThinkingTime < timeLeft / scale)
+          maximumTime = timeLeft / scale;
       //else if (3 * minThinkingTime > 0.8 * limits.time[us] - moveOverhead)
       //{
           //maximumTime = 0.8 * limits.time[us] - moveOverhead;
-          //std::cout << "<TRIGGER>" << std::endl;
+          ////std::cout << "<TRIGGER>" << std::endl;
       //}
   }
   else
