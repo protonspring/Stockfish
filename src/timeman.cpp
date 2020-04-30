@@ -72,13 +72,29 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   if (timeLeft == 0)
       minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
-  //OPTIMUM TIME
-  double scale1 = std::max(2.0, 8.6 * (9.0 - std::log2(ply + 1)));
-  optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
-  optimumTime = std::max<int>(minThinkingTime, optimumTime);
+  //temporary HACK
+  if (limits.time[us] < 11000 && limits.inc[us] < 100)
+  {
+      //OPTIMUM TIME
+      double scale1 = std::max(2.0, 6.0 * (9.0 - std::log2(ply + 1)));
+      optimumTime = std::max<int>(2 * minThinkingTime, timeLeft / scale1);
 
-  //MAXIMUM TIME
-  double scale2 = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
-  maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale2);
-  maximumTime = std::max<int>(minThinkingTime, maximumTime);
+      //MAXIMUM TIME
+      if (3*minThinkingTime < timeLeft / scale1)
+          maximumTime = timeLeft / scale1;
+      else if (3 * minThinkingTime > 0.8 * limits.time[us] - moveOverhead)
+          maximumTime = 0.8 * limits.time[us] - moveOverhead;
+  }
+  else
+  {
+      //OPTIMUM TIME
+      double scale1 = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
+      optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale1);
+      optimumTime = std::max<int>(minThinkingTime, optimumTime);
+
+      //MAXIMUM TIME
+      double scale2 = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
+      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale2);
+      maximumTime = std::max<int>(minThinkingTime, maximumTime);
+  }
 }
