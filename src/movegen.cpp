@@ -185,10 +185,10 @@ namespace {
 
     static_assert(Pt != KING && Pt != PAWN, "Unsupported piece type in generate_moves()");
 
-    const Square* pl = pos.squares<Pt>(us);
-
-    for (Square from = *pl; from != SQ_NONE; from = *++pl)
+    for (Bitboard p = pos.pieces(us, Pt); p; )
     {
+        Square from = pop_lsb(&p);
+
         if (Checks)
         {
             if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
