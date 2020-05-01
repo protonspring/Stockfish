@@ -93,7 +93,7 @@ namespace {
         assert(pos.piece_on(s) == make_piece(Us, PAWN));
 
         Rank r = relative_rank(Us, s);
-        score += make_score(10,0);
+        score += make_score( 0, 10);
 
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
