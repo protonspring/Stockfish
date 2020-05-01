@@ -69,8 +69,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   timeLeft = slowMover * timeLeft / 100;
 
-  // For fast games with little-to-no increment
-  if (limits.time[us] < 11000 && limits.inc[us] < 100)
+  // Special rules for games with tiny increment
+  if (limits.inc[us] && limits.inc[us] < 100)
   {
       scale = std::max(6.0 * (9.0 - std::log2(ply + 1)), 2.0);
       optimumTime = std::max<int>(40, timeLeft / scale);
@@ -86,9 +86,9 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
       maximumTime = std::max<int>(minThinkingTime, maximumTime);
   }
-  else  //all other games
+  else  //sudden death and healthy increments
   {
-      // The game is slow enough that we can safety steal from real game time
+      // If there is no calculated time, steal a little from real game time
       if (timeLeft == 0)
           minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
