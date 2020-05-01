@@ -44,7 +44,7 @@ namespace {
 
 #ifndef NDEBUG
   bool verify_material(const Position& pos, Color c, Value npm, int pawnsCnt) {
-    return pos.non_pawn_material(c) == npm && pos.count<PAWN>(c) == pawnsCnt;
+    return pos.non_pawn_material(c) == npm && pos.count(c, PAWN) == pawnsCnt;
   }
 #endif
 
@@ -52,7 +52,7 @@ namespace {
   // is on the left half of the board.
   Square normalize(const Position& pos, Color strongSide, Square sq) {
 
-    assert(pos.count<PAWN>(strongSide) == 1);
+    assert(pos.count(strongSide, PAWN) == 1);
 
     if (file_of(pos.square<PAWN>(strongSide)) >= FILE_E)
         sq = flip_file(sq);
@@ -107,13 +107,13 @@ Value Endgame<KXK>::operator()(const Position& pos) const {
   Square loserKSq = pos.square<KING>(weakSide);
 
   Value result =  pos.non_pawn_material(strongSide)
-                + pos.count<PAWN>(strongSide) * PawnValueEg
+                + pos.count(strongSide, PAWN) * PawnValueEg
                 + push_to_edge(loserKSq)
                 + push_close(winnerKSq, loserKSq);
 
-  if (   pos.count<QUEEN>(strongSide)
-      || pos.count<ROOK>(strongSide)
-      ||(pos.count<BISHOP>(strongSide) && pos.count<KNIGHT>(strongSide))
+  if (   pos.count(strongSide, QUEEN)
+      || pos.count(strongSide, ROOK)
+      ||(pos.count(strongSide, BISHOP) && pos.count(strongSide, KNIGHT))
       || (   (pos.pieces(strongSide, BISHOP) & ~DarkSquares)
           && (pos.pieces(strongSide, BISHOP) &  DarkSquares)))
       result = std::min(result + VALUE_KNOWN_WIN, VALUE_TB_WIN_IN_MAX_PLY - 1);
@@ -317,7 +317,7 @@ template<>
 ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
 
   assert(pos.non_pawn_material(strongSide) == BishopValueMg);
-  assert(pos.count<PAWN>(strongSide) >= 1);
+  assert(pos.count(strongSide, PAWN) >= 1);
 
   // No assertions about the material of weakSide, because we want draws to
   // be detected even when the weaker side has some pawns.
@@ -340,7 +340,7 @@ ScaleFactor Endgame<KBPsK>::operator()(const Position& pos) const {
   // If all the pawns are on the same B or G file, then it's potentially a draw
   if ((!(allPawns & ~FileBBB) || !(allPawns & ~FileGBB))
       && pos.non_pawn_material(weakSide) == 0
-      && pos.count<PAWN>(weakSide) >= 1)
+      && pos.count(weakSide, PAWN) >= 1)
   {
       // Get the least advanced weakSide pawn
       Square weakPawnSq = frontmost_sq(strongSide, pos.pieces(weakSide, PAWN));
@@ -381,8 +381,8 @@ template<>
 ScaleFactor Endgame<KQKRPs>::operator()(const Position& pos) const {
 
   assert(verify_material(pos, strongSide, QueenValueMg, 0));
-  assert(pos.count<ROOK>(weakSide) == 1);
-  assert(pos.count<PAWN>(weakSide) >= 1);
+  assert(pos.count(weakSide, ROOK) == 1);
+  assert(pos.count(weakSide, PAWN) >= 1);
 
   Square kingSq = pos.square<KING>(weakSide);
   Square rsq = pos.square<ROOK>(weakSide);
@@ -551,8 +551,8 @@ ScaleFactor Endgame<KRPPKRP>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, RookValueMg, 2));
   assert(verify_material(pos, weakSide,   RookValueMg, 1));
 
-  Square wpsq1 = pos.squares<PAWN>(strongSide)[0];
-  Square wpsq2 = pos.squares<PAWN>(strongSide)[1];
+  Square wpsq1 = lsb(pos.pieces(strongSide, PAWN)); //pos.squares<PAWN>(strongSide)[0];
+  Square wpsq2 = msb(pos.pieces(strongSide, PAWN)); //pos.squares<PAWN>(strongSide)[1];
   Square bksq = pos.square<KING>(weakSide);
 
   // Does the stronger side have a passed pawn?
@@ -578,7 +578,7 @@ template<>
 ScaleFactor Endgame<KPsK>::operator()(const Position& pos) const {
 
   assert(pos.non_pawn_material(strongSide) == VALUE_ZERO);
-  assert(pos.count<PAWN>(strongSide) >= 2);
+  assert(pos.count(strongSide, PAWN) >= 2);
   assert(verify_material(pos, weakSide, VALUE_ZERO, 0));
 
   Square ksq = pos.square<KING>(weakSide);
@@ -636,8 +636,8 @@ ScaleFactor Endgame<KBPPKB>::operator()(const Position& pos) const {
       return SCALE_FACTOR_NONE;
 
   Square ksq = pos.square<KING>(weakSide);
-  Square psq1 = pos.squares<PAWN>(strongSide)[0];
-  Square psq2 = pos.squares<PAWN>(strongSide)[1];
+  Square psq1 = lsb(pos.pieces(strongSide, PAWN)); //pos.squares<PAWN>(strongSide)[0];
+  Square psq2 = msb(pos.pieces(strongSide, PAWN)); //pos.squares<PAWN>(strongSide)[1];
   Square blockSq1, blockSq2;
 
   if (relative_rank(strongSide, psq1) > relative_rank(strongSide, psq2))
