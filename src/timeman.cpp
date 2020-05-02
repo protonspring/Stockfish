@@ -92,7 +92,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       if (timeLeft == 0)
           minThinkingTime = std::max<int>(minThinkingTime, limits.time[us] / 24);
 
-      scale = std::max(2.0, 8.2 * (9.0 - std::log2(ply + 1)));
+      scale = std::max(2.0, 8.2 * (8.8 - std::log2(ply + 1)));
       optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
       optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
