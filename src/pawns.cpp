@@ -73,10 +73,8 @@ namespace {
 
     Bitboard neighbours, stoppers, support, phalanx, opposed;
     Bitboard lever, leverPush, blocked;
-    //Square s;
     bool backward, passed, doubled;
     Score score = SCORE_ZERO;
-    //const Square* pl = pos.squares<PAWN>(Us);
 
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
@@ -88,7 +86,6 @@ namespace {
     e->pawnAttacks[Us] = e->pawnAttacksSpan[Us] = pawn_attacks_bb<Us>(ourPawns);
 
     // Loop through all pawns of the current color and score each pawn
-    //while ((s = *pl++) != SQ_NONE)
     for(Bitboard pl = pos.pieces(Us, PAWN); pl;)
     {
         Square s = pop_lsb(&pl);
