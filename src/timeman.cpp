@@ -105,18 +105,18 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //X moves in Y time
   else
   {
-      scale = std::max(2.0, 8.2 * (9.2 - std::log2(ply + 1)));
-      optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / scale);
+      //scale = std::max(2.0, 8.2 * (9.2 - std::log2(ply + 1)));
+      optimumTime = std::min<int>(0.2 * limits.time[us], timeLeft / mtg);
       optimumTime = std::max<int>(minThinkingTime, optimumTime);
     
-      scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
-      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, timeLeft / scale);
-      maximumTime = std::max<int>(minThinkingTime, maximumTime);
-      std::cout << "<TC_3>" 
-                    << ",timeLeft," << timeLeft
-                    << ",timeLimit," << limits.time[us]
-                    << ",mtg," << mtg
-                    << std::endl;
+      //scale = std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
+      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, 3 * optimumTime / 2);
+      //maximumTime = std::max<int>(minThinkingTime, maximumTime);
+      //std::cout << "<TC_3>" 
+                    //<< ",timeLeft," << timeLeft
+                    //<< ",timeLimit," << limits.time[us]
+                    //<< ",mtg," << mtg
+                    //<< std::endl;
   }
 
   if (Options["Ponder"])
