@@ -104,7 +104,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //X moves in Y time
   else
   {
-      scale = 1.1 * limits.movestogo;
+      scale = 0.7 * limits.movestogo;
       optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
     
       maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, 5 * optimumTime);
