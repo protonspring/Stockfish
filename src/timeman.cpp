@@ -108,13 +108,10 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       //ply based scaling .  speed up timing on the first 10 moves
       //scale = 1.0; //std::min<double>(1.0, 0.5 + ply / 16.0);
 
-      //double mid = (ply - 45.0) / 64.0;
-      //scale = 1.5 - mid / (1 + std::abs(mid)); //sigmoid
-      //scale = std::max(scale, 1.0);
-      //scale = std::max(1.0, 2.0 - 0.01 * ply);
-      //optimumTime = timeLeft / (limits.movestogo / 2.0) / scale;
-      scale = std::max(0.6, 1.0 - 0.005 * ply);
-      optimumTime = timeLeft / limits.movestogo / scale;
+      double mid = (ply - 30.0) / 32.0;
+      scale = 1.6 - mid / (1 + std::abs(mid)); //sigmoid
+      scale = std::max(scale, 1.0);
+      optimumTime = timeLeft / (limits.movestogo / 1.8) / scale;
 
       //scale  = std::max<double>(1.0, 1.2 - (ply - 15) * (ply - 15) / 512);
       //int hypMTG = limits.movestogo;
@@ -126,7 +123,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       //optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
       optimumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, optimumTime);
 
-      scale = std::min<double>(5.5, 1.5 + 0.2 * limits.movestogo);
+      scale = std::min<double>(5.5, 1.5 + 0.1 * limits.movestogo);
       maximumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, scale * optimumTime);
   }
 
