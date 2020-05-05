@@ -72,10 +72,10 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   timeLeft = slowMover * timeLeft / 100;
 
   //Given time is for the whole game.
-  if (limits.movestogo == 0)
+  if ((limits.movestogo == 0)) // || (limits.inc[us] < moveOverhead))
   {
       // For crazy fast games with little-to-no increment
-      if (limits.time[us] < 11000 && limits.inc[us] < moveOverhead)
+      if (limits.time[us] < 11000 && (limits.inc[us] < moveOverhead))
       {
           scale = std::max(6.0 * (9.0 - std::log2(ply + 1)), 2.0);
           optimumTime = std::max<int>(2 * minThinkingTime, timeLeft / scale);
@@ -105,12 +105,22 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //X moves in Y time
   else
   {
-      scale  = limits.movestogo > ply ? limits.movestogo :
-               limits.movestogo / ((1 + std::log2(ply + 2)) / 4);
-      optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
-      optimumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, optimumTime);
+      //ply based scaling .  speed up timing on the first 10 moves
+      scale = std::min<double>(1.0, 0.5 + ply / 16.0);
+      optimumTime = scale * timeLeft / (limits.movestogo / 1.2);
 
-      maximumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, 5 * optimumTime);
+      //scale  = std::max<double>(1.0, 1.2 - (ply - 15) * (ply - 15) / 512);
+      //int hypMTG = limits.movestogo;
+      //optimumTime = scale * timeLeft / hypMTG;
+             // ply ? limits.movestogo : limits.movestogo / 2;
+      //scale  = limits.movestogo > ply ? limits.movestogo :
+               //std::min<int>(limits.movestogo, 25);
+               //limits.movestogo / ((1 + std::log2(ply + 2)) / 3.5);
+      //optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
+      //optimumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, optimumTime);
+
+      scale = std::min<double>(6.0, 1.0 + 0.2 * limits.movestogo);
+      maximumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, scale * optimumTime);
   }
 
       //std::cout << "<TC>" 
