@@ -22,6 +22,7 @@
 #include <cfloat>
 #include <cmath>
 
+//#include <iostream>
 #include "search.h"
 #include "timeman.h"
 #include "uci.h"
@@ -104,11 +105,21 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //X moves in Y time
   else
   {
-      scale = 0.5 * limits.movestogo;
-      optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
-    
-      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, 5 * optimumTime);
+      scale = std::max(1.0, 4.0 - std::log2(ply + 1));
+      optimumTime = std::max<int>(minThinkingTime, (timeLeft / limits.movestogo) / scale);
+      optimumTime = std::min<int>(limits.time[us] - 2 * moveOverhead, optimumTime);
+
+      maximumTime = std::min<int>(limits.time[us] - (2 * limits.movestogo * moveOverhead), 4 * optimumTime);
   }
+
+      //std::cout << "<TC>" 
+                    //<< ",ply," << ply
+                    //<< ",timeLeft," << timeLeft
+                    //<< ",timeLimit," << limits.time[us]
+                    //<< ",mtg," << mtg
+                    //<< ",opt," << optimumTime
+                    //<< ",max," << maximumTime
+                    //<< std::endl;
 
   if (Options["Ponder"])
       optimumTime += optimumTime / 4;
