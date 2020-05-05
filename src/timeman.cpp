@@ -111,7 +111,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       double mid = (ply - 30.0) / 32.0;
       scale = 1.6 - mid / (1 + std::abs(mid)); //sigmoid
       scale = std::max(scale, 1.0);
-      optimumTime = timeLeft / (limits.movestogo / 2.0) / scale;
+      optimumTime = timeLeft / (limits.movestogo / 1.6) / scale;
 
       //scale  = std::max<double>(1.0, 1.2 - (ply - 15) * (ply - 15) / 512);
       //int hypMTG = limits.movestogo;
@@ -123,7 +123,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       //optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
       optimumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, optimumTime);
 
-      scale = std::min<double>(5.5, 1.5 + 0.15 * limits.movestogo);
+      scale = std::min<double>(5.5, 1.5 + 0.1 * limits.movestogo);
       maximumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, scale * optimumTime);
   }
 
