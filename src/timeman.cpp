@@ -105,11 +105,12 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   //X moves in Y time
   else
   {
-      scale = std::max(1.0, 4.0 - std::log2(ply + 1));
-      optimumTime = std::max<int>(minThinkingTime, (timeLeft / limits.movestogo) / scale);
-      optimumTime = std::min<int>(limits.time[us] - 2 * moveOverhead, optimumTime);
+      scale  = limits.movestogo > ply ? limits.movestogo :
+               limits.movestogo / ((1 + std::log2(ply + 2)) / 4);
+      optimumTime = std::max<int>(minThinkingTime, timeLeft / scale);
+      optimumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, optimumTime);
 
-      maximumTime = std::min<int>(limits.time[us] - (2 * limits.movestogo * moveOverhead), 4 * optimumTime);
+      maximumTime = std::min<int>(limits.time[us] - 2 * limits.movestogo * moveOverhead, 4 * optimumTime);
   }
 
       //std::cout << "<TC>" 
