@@ -76,7 +76,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       optimumTime = std::max<int>(minThinkingTime,
                     std::min<int>(0.1 * limits.time[us], scale * timeLeft));
 
-      maximumTime = 5.0 * optimumTime;
+      maximumTime = 4.6 * optimumTime;
   }
 
 ///  inc == 0 && movestogo != 0 means: x moves in y minutes
