@@ -60,7 +60,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   int mtg = limits.movestogo ? std::min(limits.movestogo, 50) : 50;
 
   // Adjust moveOverhead if it is not reasonable for current scenario
-  moveOverhead = std::max(10, std::min(limits.inc[us] / 2, moveOverhead);
+  moveOverhead = std::max(10, std::min<int>(limits.inc[us] / 2, moveOverhead));
 
   TimePoint timeLeft =  std::max(TimePoint(0),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
