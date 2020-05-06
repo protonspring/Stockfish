@@ -108,8 +108,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       //ply based scaling .  speed up timing on the first 10 moves
       //scale = 1.0; //std::min<double>(1.0, 0.5 + ply / 16.0);
 
-      double mid = (ply - 34.0) / 32.0;
-      scale = 1.6 - mid / (1 + std::abs(mid)); //sigmoid
+      double mid = (ply - 36.0) / 32.0;
+      scale = 1.5 - mid / (1 + std::abs(mid)); //sigmoid
       scale = std::max(scale, 1.0);
       optimumTime = timeLeft / (limits.movestogo / 1.6) / scale;
 
