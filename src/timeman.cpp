@@ -76,8 +76,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       optimumTime = std::min<int>(0.2 * limits.time[us], scale * timeLeft);
       optimumTime = std::max<int>(minThinkingTime, optimumTime);
 
-      scale = 1.0 / std::max(0.5, 1.7 * (8.0 - std::log2(ply + 1)));
-      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, scale * timeLeft);
+      scale = std::min(10.0, 5.5 + ply / 26.0);
+      maximumTime = std::min<int>(0.8 * limits.time[us] - moveOverhead, scale * optimumTime);
       maximumTime = std::max<int>(minThinkingTime, maximumTime);
   }
 
