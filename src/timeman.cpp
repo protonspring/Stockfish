@@ -70,7 +70,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   /// movestogo == 0 means: x basetime (+ z increment)
   if (limits.movestogo == 0)
   {
-      scale = 1.0 / std::max(2.0, 8.2 * (9.2 - std::log2(ply + 1)));
+      scale = std::min(0.5, 0.122 / (9.2 - std::log2(ply + 1)));
       optimumTime = std::min<int>(0.2 * limits.time[us], scale * timeLeft);
 
       scale = std::min(10.0, 5.5 + ply / 26.0);
