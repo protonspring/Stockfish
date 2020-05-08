@@ -62,7 +62,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   // Adjust moveOverhead to help with tiny increments (if needed)
   moveOverhead = std::max(10, std::min<int>(limits.inc[us] / 2, moveOverhead));
 
-  TimePoint timeLeft =  std::max(TimePoint(0),
+  TimePoint timeLeft =  std::max(TimePoint(1),
       limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
 
   timeLeft = slowMover * timeLeft / 100;
@@ -70,6 +70,9 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
       opt_scale = std::min(0.5, 0.122 / std::max(0.244, (9.2 - std::log2(ply + 1))));
+      //cap optimumTime at 20% of total time
+      opt_scale = std::min(opt_scale, 0.2 * limits.time[us] / double(timeLeft));
+
       max_scale = std::min(10.0, 5.5 + ply / 26.0);
   }
 
