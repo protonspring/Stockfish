@@ -69,7 +69,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
-      opt_scale = std::min(0.5, 0.02 + ply / 1600.0);
+      double mid = ply + 20.0;
+      opt_scale = std::min(0.5, 0.02 + mid * mid / 250000.0);
       max_scale = std::min(10.4, 5.5 + ply / 25.7);
   }
 
