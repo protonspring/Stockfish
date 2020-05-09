@@ -69,11 +69,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
-      opt_scale = std::min(0.5, 0.122 / std::max(0.244, (9.2 - std::log2(ply + 1))));
-      //cap optimumTime at 20% of total time
-      opt_scale = std::min(opt_scale, 0.2 * limits.time[us] / double(timeLeft));
-
-      max_scale = std::min(10.0, 5.5 + ply / 26.0);
+      opt_scale = std::min(0.49, 0.130 / std::max(0.25, (8.2 - std::log2(ply + 1))));
+      max_scale = std::min(10.4, 5.5 + ply / 25.7);
   }
 
   else // x moves in y seconds (+ z increment)
