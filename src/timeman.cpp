@@ -28,7 +28,7 @@
 
 TimeManagement Time; // Our global time management object
 
-int t[8] = {50, 122, 244, 92, 20, 10, 55, 26};
+int t[7] = {50, 122, 244, 92, 10, 55, 26};
 TUNE(t);
 
 /// init() is called at the beginning of the search and calculates the allowed
@@ -74,8 +74,6 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   {
       opt_scale = std::min(t[0]/100.0, (t[1]/1000.0) / std::max(t[2]/1000.0,
                            ((t[3]/10.0) - std::log2(ply + 1))));
-      //cap optimumTime at 20% of total time
-      opt_scale = std::min(opt_scale, (t[4]/100.0) * limits.time[us] / double(timeLeft));
 
       max_scale = std::min(t[5]/10.0, t[6]/10.0 + ply / t[7]);
   }
