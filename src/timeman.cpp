@@ -75,7 +75,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       opt_scale = std::min(t[0]/100.0, (t[1]/1000.0) / std::max(t[2]/1000.0,
                            ((t[3]/10.0) - std::log2(ply + 1))));
 
-      max_scale = std::min(t[5]/10.0, t[6]/10.0 + ply / t[7]);
+      max_scale = std::min(t[4]/10.0, t[5]/10.0 + ply / t[6]);
   }
 
   else // x moves in y seconds (+ z increment)
