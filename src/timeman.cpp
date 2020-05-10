@@ -32,6 +32,9 @@ TimeManagement Time; // Our global time management object
 /// thinking time out of the time control and current game ply. We support four
 /// different kinds of time controls, passed in 'limits':
 
+int t[6] = {50, 20, 350, 10, 55, 26};
+TUNE(t);
+
 void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   TimePoint minThinkingTime = Options["Minimum Thinking Time"];
@@ -69,8 +72,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
-      opt_scale = std::min(0.5, 0.02 + ply / 3500.0);
-      max_scale = std::min(10.0, 5.5 + ply / 26.0);
+      opt_scale = std::min(  t[0]/100.0, t[1]/1000.0 + ply / (10.0 * t[2]));
+      max_scale = std::min(double(t[3]),   t[4]/10.0 + ply / double(t[5]));
   }
 
   else // x moves in y seconds (+ z increment)
