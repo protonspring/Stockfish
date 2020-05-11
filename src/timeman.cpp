@@ -75,7 +75,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   else // x moves in y seconds (+ z increment)
   {
-      opt_scale = 0.8 + ply / 128.0;
+      opt_scale = (0.8 + ply / 128.0) / mtg;
       max_scale = std::min(6.3, 1.5 + 0.11 * mtg);
   }
 
