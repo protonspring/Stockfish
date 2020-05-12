@@ -28,6 +28,9 @@
 
 TimeManagement Time; // Our global time management object
 
+int t[7] = {7, 30, 50, 250, 40, 30, 30};
+TUNE(t);
+
 /// init() is called at the beginning of the search and calculates the allowed
 /// thinking time out of the time control and current game ply. We support four
 /// different kinds of time controls, passed in 'limits':
@@ -69,8 +72,8 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
-      opt_scale = 0.007 + std::pow(ply + 3, 0.5) / 250.0;
-      max_scale = 4 + std::pow(ply + 3, 0.3);
+      opt_scale = t[0] / 1000.0 + std::pow(ply + t[1] / 10.0, t[2]/100.0) / t[3];
+      max_scale = t[4]/10.0 + std::pow(ply + t[5]/10.0, t[6]/100.0);
   }
 
   else // x moves in y seconds (+ z increment)
