@@ -70,6 +70,11 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
       opt_scale = 0.007 + std::pow(ply + 3, 0.5) / 250.0;
+
+      //cap optimum time at 20% of total time remaining
+      if (opt_scale * timeLeft > 0.2 * limits.time[us])
+          opt_scale = (0.2 * limits.time[us] / (timeLeft + 1);
+
       max_scale = 4 + std::pow(ply + 3, 0.3);
   }
 
