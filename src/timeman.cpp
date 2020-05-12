@@ -70,11 +70,6 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   if (limits.movestogo == 0) /// x basetime (+ z increment)
   {
       opt_scale = 0.007 + std::pow(ply + 3, 0.5) / 250.0;
-
-      //cap optimum time at 20% of total time remaining
-      if (opt_scale * timeLeft > 0.2 * limits.time[us])
-          opt_scale = (0.2 * limits.time[us] / (timeLeft + 1));
-
       max_scale = 4 + std::pow(ply + 3, 0.3);
   }
 
@@ -84,10 +79,13 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
       max_scale = std::min(6.3, 1.5 + 0.11 * mtg);
   }
 
-  optimumTime = opt_scale * timeLeft;
+  // optimum max 70%, maximum max at 90%
+  optimumTime = std::min(0.7 * limits.time[us] - moveOverhead,
+                         opt_scale * timeLeft);
   optimumTime = std::max(minThinkingTime, optimumTime);
 
-  maximumTime = std::min(0.8 * limits.time[us] - moveOverhead, max_scale * optimumTime);
+  maximumTime = std::min(0.9 * limits.time[us] - moveOverhead,
+                         max_scale * optimumTime);
 
   if (Options["Ponder"])
       optimumTime += optimumTime / 4;
