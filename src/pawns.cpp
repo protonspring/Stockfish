@@ -96,7 +96,6 @@ namespace {
 
         // Flag the pawn
         opposed    = theirPawns & forward_file_bb(Us, s);
-        blocked    = theirPawns & (s + Up);
         stoppers   = theirPawns & passed_pawn_span(Us, s);
         lever      = theirPawns & PawnAttacks[Us][s];
         leverPush  = theirPawns & PawnAttacks[Us][s + Up];
@@ -104,8 +103,9 @@ namespace {
         neighbours = ourPawns   & adjacent_files_bb(s);
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
+        blocked    = (theirPawns | doubleAttackThem) & (s + Up);
 
-        e->blockedCount += blocked || more_than_one(leverPush);
+        e->blockedCount += blocked;
 
         // A pawn is backward when it is behind all pawns of the same color on
         // the adjacent files and cannot safely advance.
