@@ -231,7 +231,7 @@ void MainThread::search() {
                       rootPos.count<KNIGHT>() + rootPos.count<ROOK>() +
                       rootPos.count<PAWN>() + 2;
 
-  int scale = 30.0 * moveCount / pieceCount;
+  int scale = 40.0 * moveCount / pieceCount;
 
   Time.init(Limits, us, scale);
   TT.new_search();
