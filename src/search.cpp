@@ -224,7 +224,16 @@ void MainThread::search() {
   }
 
   Color us = rootPos.side_to_move();
-  Time.init(Limits, us, rootPos.game_ply());
+
+  //Average Moves per piece
+  double moveCount = rootMoves.size();
+  double pieceCount = rootPos.count<QUEEN>() + rootPos.count<BISHOP>() +
+                      rootPos.count<KNIGHT>() + rootPos.count<ROOK>() +
+                      rootPos.count<PAWN>() + 2;
+
+  int scale = 20.0 * moveCount / pieceCount;
+
+  Time.init(Limits, us, scale);
   TT.new_search();
 
   if (rootMoves.empty())
