@@ -225,10 +225,8 @@ void MainThread::search() {
 
   Color us = rootPos.side_to_move();
 
-  //Number of pawns
-  int pawnCount = 4.5 * (17.0 - rootPos.count<PAWN>());
-
-  Time.init(Limits, us, pawnCount);
+  int x = std::max(Value(1), (MidgameLimit - rootPos.non_pawn_material())) / 128;
+  Time.init(Limits, us, x);
   TT.new_search();
 
   if (rootMoves.empty())
