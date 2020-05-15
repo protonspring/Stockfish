@@ -152,8 +152,11 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         if (!support)
+        {
             score -=   Doubled * doubled
-                     + WeakLever * more_than_one(lever);
+                     + WeakLever * more_than_one(lever)
+                     + WeakLever * more_than_one(leverPush);
+        }
     }
 
     return score;
