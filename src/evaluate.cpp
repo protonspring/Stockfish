@@ -692,17 +692,19 @@ namespace {
                   : CenterFiles & (Rank7BB | Rank6BB | Rank5BB);
 
     // Find the available squares for our pieces inside the area defined by SpaceMask
-    Bitboard safe =   SpaceMask
-                   & ~pos.pieces(Us, PAWN)
-                   & ~attackedBy[Them][PAWN];
+    Bitboard ourPawns = pos.pieces(Us, PAWN);
+    Bitboard theirPawns = pos.pieces(Them, PAWN);
+    Bitboard safe = SpaceMask & ~ourPawns & ~attackedBy[Them][PAWN];
 
     // Find all squares which are at most three squares behind some friendly pawn
-    Bitboard behind = pos.pieces(Us, PAWN);
+    Bitboard behind = ourPawns;
     behind |= shift<Down>(behind);
     behind |= shift<Down+Down>(behind);
 
+    int blockedCount = popcount(ourPawns &
+            shift<Down>(theirPawns | pawn_double_attacks_bb<Them>(theirPawns)));
     int bonus = popcount(safe) + popcount(behind & safe & ~attackedBy[Them][ALL_PIECES]);
-    int weight = pos.count<ALL_PIECES>(Us) - 3 + std::min(pe->blocked_count(), 9);
+    int weight = pos.count<ALL_PIECES>(Us) - 3 + std::min(blockedCount, 9);
     Score score = make_score(bonus * weight * weight / 16, 0);
 
     if (T)
