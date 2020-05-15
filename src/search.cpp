@@ -225,15 +225,10 @@ void MainThread::search() {
 
   Color us = rootPos.side_to_move();
 
-  //Average Moves per piece
-  double moveCount = rootMoves.size();
-  double pieceCount = rootPos.count<QUEEN>() + rootPos.count<BISHOP>() +
-                      rootPos.count<KNIGHT>() + rootPos.count<ROOK>() +
-                      rootPos.count<PAWN>() + 2;
+  //Number of pawns
+  double pawnCount = 4 * (17 - rootPos.count<PAWN>());
 
-  int scale = 40.0 * moveCount / pieceCount;
-
-  Time.init(Limits, us, scale);
+  Time.init(Limits, us, pawnCount);
   TT.new_search();
 
   if (rootMoves.empty())
