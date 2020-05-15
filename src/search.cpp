@@ -226,7 +226,7 @@ void MainThread::search() {
   Color us = rootPos.side_to_move();
 
   //Number of pawns
-  int pawnCount = 3.5 * (17.0 - rootPos.count<PAWN>());
+  int pawnCount = 4.5 * (17.0 - rootPos.count<PAWN>());
 
   Time.init(Limits, us, pawnCount);
   TT.new_search();
