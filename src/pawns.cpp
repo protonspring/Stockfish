@@ -151,6 +151,10 @@ namespace {
             score -=   Backward
                      + WeakUnopposed * !opposed;
 
+        // This kind of pawn is hard to protect
+        if ((!support && !phalanx) && (theirPawns & forward_file_bb(Them, s)))
+            score -= make_score(10,0);
+
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
