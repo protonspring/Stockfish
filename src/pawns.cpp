@@ -105,6 +105,10 @@ namespace {
         phalanx    = neighbours & rank_bb(s);
         support    = neighbours & rank_bb(s - Up);
 
+        //Add double pawn moves to leverPush definition
+        if (r == RANK_4)
+            leverPush |= theirPawns & PawnAttacks[Us][s + Up + Up];
+
         e->blockedCount += blocked || more_than_one(leverPush);
 
         // A pawn is backward when it is behind all pawns of the same color on
