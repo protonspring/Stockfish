@@ -288,12 +288,13 @@ namespace {
             kingAttacksCount[Us] += popcount(b & attackedBy[Them][KING]);
         }
 
-        int mob = popcount(b & mobilityArea[Us]);
-
-        mobility[Us] += MobilityBonus[Pt - 2][mob];
-
         if (Pt == BISHOP || Pt == KNIGHT)
         {
+            Bitboard betterPieces = pos.pieces(Them, QUEEN, ROOK) |
+                                    pos.pieces(Them, BISHOP, KNIGHT);
+            int mob = popcount(b & (mobilityArea[Us] | betterPieces));
+            mobility[Us] += MobilityBonus[Pt - 2][mob];
+
             // Bonus if piece is on an outpost square or can reach one
             bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
             if (bb & s)
@@ -343,6 +344,10 @@ namespace {
 
         if (Pt == ROOK)
         {
+            Bitboard betterPieces = pos.pieces(Them, QUEEN, ROOK);
+            int mob = popcount(b & (mobilityArea[Us] | betterPieces));
+            mobility[Us] += MobilityBonus[Pt - 2][mob];
+
             // Bonus for rook on the same file as a queen
             if (file_bb(s) & pos.pieces(QUEEN))
                 score += RookOnQueenFile;
@@ -362,6 +367,10 @@ namespace {
 
         if (Pt == QUEEN)
         {
+            Bitboard betterPieces = pos.pieces(Them, QUEEN);
+            int mob = popcount(b & (mobilityArea[Us] | betterPieces));
+            mobility[Us] += MobilityBonus[Pt - 2][mob];
+
             // Penalty if any relative pin or discovered attack against the queen
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
