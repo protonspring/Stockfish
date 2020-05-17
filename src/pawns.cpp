@@ -153,7 +153,7 @@ namespace {
 
         // This kind of pawn is hard to protect
         if ((!support && !phalanx) && (theirPawns & forward_file_bb(Them, s)))
-            score -= make_score( 0, 15);
+            score -= make_score( 0, 20);
 
         if (!support)
             score -=   Doubled * doubled
