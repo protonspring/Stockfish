@@ -290,8 +290,7 @@ namespace {
 
         if (Pt == BISHOP || Pt == KNIGHT)
         {
-            Bitboard betterPieces = pos.pieces(Them, QUEEN, ROOK) |
-                                    pos.pieces(Them, BISHOP, KNIGHT);
+            Bitboard betterPieces = pos.pieces(Them, QUEEN, ROOK);
             int mob = popcount(b & (mobilityArea[Us] | betterPieces));
             mobility[Us] += MobilityBonus[Pt - 2][mob];
 
@@ -344,7 +343,7 @@ namespace {
 
         if (Pt == ROOK)
         {
-            Bitboard betterPieces = pos.pieces(Them, QUEEN, ROOK);
+            Bitboard betterPieces = pos.pieces(Them, QUEEN);
             int mob = popcount(b & (mobilityArea[Us] | betterPieces));
             mobility[Us] += MobilityBonus[Pt - 2][mob];
 
@@ -367,8 +366,7 @@ namespace {
 
         if (Pt == QUEEN)
         {
-            Bitboard betterPieces = pos.pieces(Them, QUEEN);
-            int mob = popcount(b & (mobilityArea[Us] | betterPieces));
+            int mob = popcount(b & (mobilityArea[Us]));
             mobility[Us] += MobilityBonus[Pt - 2][mob];
 
             // Penalty if any relative pin or discovered attack against the queen
