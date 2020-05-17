@@ -152,7 +152,8 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         // This kind of pawn is hard to protect
-        if ((!support && !phalanx) && (theirPawns & forward_file_bb(Them, s)))
+        if ((!support && !phalanx) &&
+                (theirPawns & pawn_attacks_bb<Them>(theirPawns) & forward_file_bb(Them, s)))
             score -= make_score( 0, 10);
 
         if (!support)
