@@ -41,6 +41,7 @@ namespace {
 
   // Connected pawn bonus
   constexpr int Connected[RANK_NB] = { 0, 7, 8, 12, 29, 48, 86 };
+  constexpr int tooAdvanced[RANK_NB] = { 0, 0, 0, 0, 5, 10, 15 };
 
   // Strength of pawn shelter for our king by [distance from edge][rank].
   // RANK_1 = 0 is used for files where we have no pawn, or pawn is behind our king.
@@ -154,6 +155,9 @@ namespace {
         if (!support)
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+        //Penalize too advanced pawns early in the game
+        score -= make_score(tooAdvanced[r],0);
     }
 
     return score;
