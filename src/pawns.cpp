@@ -255,10 +255,12 @@ Score Entry::do_king_safety(const Position& pos) {
       else while (ourPawns)
           minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&ourPawns)));
   }
-  else if (pos.count<PAWN>(Them) == 1)
+
+  //if we have no pawn, go to frontmost square of enemy pawns
+  else if (pos.pieces(Them, PAWN))
   {
-      Square queeningSq = make_square(file_of(pos.square<PAWN>(Them)),
-                                      relative_rank(Them, RANK_8));
+      Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
+      Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
       minPawnDist = distance(ksq, queeningSq);
   }
 
