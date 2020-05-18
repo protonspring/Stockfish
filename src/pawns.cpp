@@ -106,7 +106,7 @@ namespace {
         support    = neighbours & rank_bb(s - Up);
 
         //Add double pawn moves to leverPush definition
-        if (r == RANK_4)
+        if ((r == RANK_4) || (r == RANK_2))
             leverPush |= theirPawns & PawnAttacks[Us][s + Up + Up];
 
         e->blockedCount += blocked || more_than_one(leverPush);
