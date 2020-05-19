@@ -107,10 +107,8 @@ namespace {
 
         e->blockedCount += blocked || more_than_one(leverPush);
 
-        // A pawn is backward when it is behind all pawns of the same color on
-        // the adjacent files and cannot safely advance.
-        backward =  !(neighbours & forward_ranks_bb(Them, s + Up))
-                  && (leverPush | blocked);
+        // A pawn is backward when it is not supported and can't advance.
+        backward = !support && (leverPush | blocked);
 
         // Compute additional span if pawn is not backward nor blocked
         if (!backward && !blocked)
