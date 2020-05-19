@@ -591,7 +591,7 @@ namespace {
       return std::min(distance(pos.square<KING>(c), s), 5);
     };
 
-    Bitboard b, bb, squaresToQueen, unsafeSquares, blockedPassers, leverable;
+    Bitboard b, bb, squaresToQueen, unsafeSquares, blockedPassers, helpers;
     Score score = SCORE_ZERO;
 
     b = pe->passed_pawns(Us);
@@ -599,14 +599,12 @@ namespace {
     blockedPassers = b & shift<Down>(pos.pieces(Them, PAWN));
     if (blockedPassers)
     {
-        leverable =  shift<Up>(pos.pieces(Us, PAWN)) //unblocked pushes
-                   & ~pos.pieces(Them)
-                   & (~(attackedBy2[Them] | attackedBy[Them][KNIGHT] | attackedBy[Them][BISHOP]) | attackedBy[Us][ALL_PIECES]); //supported and not double attacked
+        helpers =  shift<Up>(pos.pieces(Us, PAWN)) & ~pos.pieces(Them)
+                   & (~(attackedBy2[Them] | attackedBy[Them][KNIGHT] | attackedBy[Them][BISHOP])
+                       | attackedBy[Us][ALL_PIECES]);
 
-        // Remove blocked passer otherwise
-        b &= ~blockedPassers
-            | shift<WEST>(leverable)
-            | shift<EAST>(leverable);
+        // Remove blocked passers that don't have help to pass
+        b &= ~blockedPassers | shift<WEST>(helpers) | shift<EAST>(helpers);
     }
 
     while (b)
