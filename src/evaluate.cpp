@@ -600,8 +600,7 @@ namespace {
     if (blockedPassers)
     {
         helpers =  shift<Up>(pos.pieces(Us, PAWN)) & ~pos.pieces(Them)
-                   & (~(attackedBy2[Them] | attackedBy[Them][KNIGHT] | attackedBy[Them][BISHOP])
-                       | attackedBy[Us][ALL_PIECES]);
+                   & (~attackedBy2[Them] | attackedBy[Us][ALL_PIECES]);
 
         // Remove blocked passers that don't have help to pass
         b &= ~blockedPassers | shift<WEST>(helpers) | shift<EAST>(helpers);
