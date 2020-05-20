@@ -213,15 +213,13 @@ constexpr Value PieceValue[PHASE_NB][PIECE_NB] = {
 
 typedef int Depth;
 
-enum : int {
-
+constexpr Depth 
   DEPTH_QS_CHECKS     =  0,
   DEPTH_QS_NO_CHECKS  = -1,
   DEPTH_QS_RECAPTURES = -5,
 
   DEPTH_NONE   = -6,
-  DEPTH_OFFSET = DEPTH_NONE
-};
+  DEPTH_OFFSET = DEPTH_NONE;
 
 enum Square : int {
   SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1,
