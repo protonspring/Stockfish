@@ -28,6 +28,10 @@
 
 TimeManagement Time; // Our global time management object
 
+int timeDivisor = 250;
+
+TUNE(timeDivisor);
+
 /// init() is called at the beginning of the search and calculates the bounds
 /// of time allowed for the current game ply.  We currently support:
 //      1) x basetime (+z increment)
@@ -77,7 +81,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
   // game time for the current move, so also cap to 20% of available game time.
   if (limits.movestogo == 0)
   {
-      opt_scale = std::min(0.007 + std::pow(ply + 3.0, 0.5) / 250.0,
+      opt_scale = std::min(0.007 + std::pow(ply + 3.0, 0.5) / timeDivisor,
                            0.2 * limits.time[us] / double(timeLeft));
       max_scale = 4 + std::pow(ply + 3, 0.3);
   }
