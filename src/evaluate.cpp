@@ -748,8 +748,11 @@ namespace {
     // Now apply the bonus: note that we find the attacking side by extracting the
     // sign of the midgame or endgame values, and that we carefully cap the bonus
     // so that the midgame and endgame scores do not change sign after the bonus.
-    int u = ((mg > 0) - (mg < 0)) * Utility::clamp(complexity + 50, -abs(mg), 0);
-    int v = ((eg > 0) - (eg < 0)) * std::max(complexity, -abs(eg));
+    // Make sure value doesn't change sign of the score
+    int u = mg < 0 ? -Utility::clamp<int>(complexity + 50,  mg, 0)
+                   :  Utility::clamp<int>(complexity + 50, -mg, 0);
+    int v = eg < 0 ? -std::max<int>(complexity,  eg)
+                   :  std::max<int>(complexity, -eg);
 
     if (T)
         Trace::add(INITIATIVE, make_score(u, v));
