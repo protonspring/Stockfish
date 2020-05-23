@@ -142,7 +142,7 @@ namespace {
                    + 21 * popcount(support);
 
             score += make_score(v, v * (r - 2) / 4)
-                   + make_score( 0, 10) * popcount(e->pawnAttacks[Us] & support);
+                   + make_score( 0, 7) * popcount(e->pawnAttacks[Us] & support);
         }
 
         else if (!neighbours)
