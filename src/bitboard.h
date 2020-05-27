@@ -278,15 +278,6 @@ inline Bitboard attacks_bb(Square s) {
   return PseudoAttacks[Pt][s];
 }
 
-/// attacks_bb() returns a bitboard representing all the squares attacked by a
-/// piece of type Pt (bishop or rook) placed on 's'.
-
-//template<PieceType Pt>
-//inline Bitboard attacks_bb(Square s, Bitboard occupied) {
-//
-  //const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
-  //return m.attacks[m.index(occupied)];
-//}
 
 template<PieceType Pt>
 inline Bitboard attacks_bb(Square s, Bitboard occupied) {
