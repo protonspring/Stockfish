@@ -303,7 +303,7 @@ ExtMove* generate<QUIET_CHECKS>(const Position& pos, ExtMove* moveList) {
      Square from = pop_lsb(&dc);
      PieceType pt = type_of(pos.piece_on(from));
 
-     Bitboard b = pos.attacks_from(pt, from) & ~pos.pieces();
+     Bitboard b = attacks_bb(pt, from, pos.pieces()) & ~pos.pieces();
 
      if (pt == KING)
          b &= ~PseudoAttacks[QUEEN][pos.square<KING>(~us)];
