@@ -110,6 +110,7 @@ inline Bitboard square_bb(Square s) {
   return SquareBB[s];
 }
 
+
 /// Overloads of bitwise operators between a Bitboard and a Square for testing
 /// whether a given bit is set in a bitboard, and for setting and clearing bits.
 
@@ -186,6 +187,17 @@ constexpr Bitboard pawn_double_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) & shift<SOUTH_EAST>(b);
 }
 
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+  assert(is_ok(s));
+  assert(c == WHITE || c == BLACK);
+  return PawnAttacks[c][s];
+}
+
+inline Bitboard pseudo_attacks_bb(PieceType pt, Square s) {
+  assert(pt >= KNIGHT && pt <= KING);
+  assert(is_ok(s));
+  return PseudoAttacks[pt][s];
+}
 
 /// adjacent_files_bb() returns a bitboard representing all the squares on the
 /// adjacent files of the given one.
@@ -285,7 +297,7 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case BISHOP: return attacks_bb<BISHOP>(s, occupied);
   case ROOK  : return attacks_bb<  ROOK>(s, occupied);
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[pt][s];
+  default    : return pseudo_attacks_bb(pt, s);
   }
 }
 
