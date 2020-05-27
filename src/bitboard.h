@@ -176,6 +176,10 @@ constexpr Bitboard pawn_attacks_bb(Bitboard b) {
                     : shift<SOUTH_WEST>(b) | shift<SOUTH_EAST>(b);
 }
 
+inline Bitboard pawn_attacks_bb(Color c, Square s) {
+  return PawnAttacks[c][s];
+}
+
 
 /// pawn_double_attacks_bb() returns the squares doubly attacked by pawns of the
 /// given color from the squares in the given bitboard.
@@ -274,6 +278,14 @@ inline Bitboard attacks_bb(Square s, Bitboard occupied) {
 
   const Magic& m = Pt == ROOK ? RookMagics[s] : BishopMagics[s];
   return m.attacks[m.index(occupied)];
+}
+
+/// Pseudo attacks not considering occupied squares
+template<PieceType Pt>
+inline Bitboard attacks_bb(Square s) {
+
+  assert(pt != PAWN);
+  return PseudoAttacks[Pt][s];
 }
 
 inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
