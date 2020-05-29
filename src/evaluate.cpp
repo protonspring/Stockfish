@@ -303,7 +303,7 @@ namespace {
             {
                 if (Pt == KNIGHT)
                 {
-                    int d = 18 - 4 * distance(s, pos.square<KING>(Them));
+                    int d = 18 - 3 * distance(s, pos.square<KING>(Them));
                     score += KnightOutpost + make_score(d, 0);
                 }
                 else
