@@ -66,7 +66,7 @@ void TimeManagement::init(Search::LimitsType& limits, Color us, int ply) {
 
   // Make sure timeLeft is > 0 since we may use it as a divisor
   TimePoint timeLeft =  std::max(TimePoint(1),
-      limits.time[us] + limits.inc[us] * (mtg - 1) - moveOverhead * (2 + mtg));
+      limits.time[us] + (limits.inc[us] - moveOverhead) * mtg);
 
   // A user may scale time usage by setting UCI option "Slow Mover"
   // Default is 100 and changing this value will probably lose elo.
