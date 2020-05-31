@@ -336,18 +336,13 @@ inline int popcount(Bitboard b) {
 }
 
 
-/// lsb() and msb() return the least/most significant bit in a non-zero bitboard
+/// lsb() returns the least/most significant bit in a non-zero bitboard
 
 #if defined(__GNUC__)  // GCC, Clang, ICC
 
 inline Square lsb(Bitboard b) {
   assert(b);
   return Square(__builtin_ctzll(b));
-}
-
-inline Square msb(Bitboard b) {
-  assert(b);
-  return Square(63 ^ __builtin_clzll(b));
 }
 
 #elif defined(_MSC_VER)  // MSVC
@@ -358,13 +353,6 @@ inline Square lsb(Bitboard b) {
   assert(b);
   unsigned long idx;
   _BitScanForward64(&idx, b);
-  return (Square) idx;
-}
-
-inline Square msb(Bitboard b) {
-  assert(b);
-  unsigned long idx;
-  _BitScanReverse64(&idx, b);
   return (Square) idx;
 }
 
@@ -383,18 +371,6 @@ inline Square lsb(Bitboard b) {
   }
 }
 
-inline Square msb(Bitboard b) {
-  assert(b);
-  unsigned long idx;
-
-  if (b >> 32) {
-      _BitScanReverse(&idx, int32_t(b >> 32));
-      return Square(idx + 32);
-  } else {
-      _BitScanReverse(&idx, int32_t(b));
-      return Square(idx);
-  }
-}
 
 #endif
 
@@ -414,6 +390,14 @@ inline Square pop_lsb(Bitboard* b) {
   return s;
 }
 
+inline Square msb(Bitboard b) {
+  assert(b);
+
+  Square s;
+  while(b) s = pop_lsb(&b);
+
+  return s;
+}
 
 /// frontmost_sq() returns the most advanced square for the given color,
 /// requires a non-zero bitboard.
