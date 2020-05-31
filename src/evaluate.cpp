@@ -368,7 +368,7 @@ namespace {
             if (!more_than_one(pos.pieces(Us, PAWN) & forward_file_bb(Us, s)) &&
                     leveredPawns & forward_file_bb(Us, s))
             {
-                score -= make_score( 10, 0);
+                score -= make_score( 0, 10);
             }
         }
 
