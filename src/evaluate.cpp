@@ -361,6 +361,15 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Bonus for a rook behind a levered pawn
+            Bitboard leveredPawns = pos.pieces(Us, PAWN) &
+                pawn_attacks_bb<Them>(pos.pieces(Them, PAWN));
+            if (!more_than_one(pos.pieces(Us, PAWN) & forward_file_bb(Us, s)) &&
+                    leveredPawns & forward_file_bb(Us, s))
+            {
+                score += make_score(10,0);
+            }
         }
 
         if (Pt == QUEEN)
