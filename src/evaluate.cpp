@@ -373,7 +373,7 @@ namespace {
             // Bonus for queens if there is a rook in front on a semi-open file
             if (pos.is_on_semiopen_file(Us, s) &&
                 (pos.pieces(Us, ROOK) & forward_file_bb(Us, s)))
-                score += make_score(10,0);
+                score += make_score(20,0);
         }
     }
     if (T)
