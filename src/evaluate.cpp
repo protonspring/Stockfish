@@ -369,6 +369,11 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            // Bonus for queens if there is a rook in front on a semi-open file
+            if (pos.is_on_semiopen_file(Us, s) &&
+                (pos.pieces(Us, ROOK) & forward_file_bb(Us, s)))
+                score += make_score(10,0);
         }
     }
     if (T)
