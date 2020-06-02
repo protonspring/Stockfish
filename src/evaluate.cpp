@@ -298,6 +298,10 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
+        //penalty if there is very low mobility and on the opponent's side
+        if ((mob < 3) && (relative_rank(Us, s) > RANK_4))
+            score -= make_score(10,0);
+
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
