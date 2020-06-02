@@ -368,7 +368,7 @@ namespace {
 
                 //penalty for low mobility and on the opponent's side
                 if (relative_rank(Us, s) > RANK_4)
-                    score -= make_score( 6,0);
+                    score -= make_score(15,0);
             }
         }
 
