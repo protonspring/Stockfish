@@ -298,10 +298,6 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
-        //penalty if there is very low mobility and on the opponent's side
-        if ((mob < 3) && (relative_rank(Us, s) > RANK_4))
-            score -= make_score(10,0);
-
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
@@ -369,6 +365,10 @@ namespace {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
+
+                //penalty for low mobility and on the opponent's side
+                if (relative_rank(Us, s) > RANK_4)
+                    score -= make_score(10,0);
             }
         }
 
