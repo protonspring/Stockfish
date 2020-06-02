@@ -308,12 +308,6 @@ namespace {
                 score += (Pt == KNIGHT) ? KnightOutpost : BishopOutpost;
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
                 score += ReachableOutpost;
-            else
-            { 
-                //penalty for low mobility and on the opponent's side
-                if ((mob < 3) && (relative_rank(Us, s) > RANK_4))
-                    score -= make_score(10,0);
-            }
 
             // Bonus for a knight or bishop shielded by pawn
             if (shift<Down>(pos.pieces(PAWN)) & s)
@@ -373,8 +367,8 @@ namespace {
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
 
                 //penalty for low mobility and on the opponent's side
-                //if (relative_rank(Us, s) > RANK_4)
-                    //score -= make_score(10,0);
+                if (relative_rank(Us, s) > RANK_4)
+                    score -= make_score( 6,0);
             }
         }
 
