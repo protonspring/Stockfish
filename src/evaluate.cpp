@@ -300,7 +300,7 @@ namespace {
 
         //penalty for low mobility and on the opponent's side
         if ((mob < 3) && (relative_rank(Us, s) > RANK_4))
-            mob -= relative_rank(Us, s) / 4;
+            mob = std::max(0, mob - relative_rank(Us, s) / 4);
 
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
