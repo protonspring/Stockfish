@@ -298,10 +298,6 @@ namespace {
 
         int mob = popcount(b & mobilityArea[Us]);
 
-        //penalty for low mobility and on the opponent's side
-        if ((mob < 3) && (relative_rank(Us, s) > RANK_4))
-            mob = std::max(0, mob - relative_rank(Us, s) / 4);
-
         mobility[Us] += MobilityBonus[Pt - 2][mob];
 
         if (Pt == BISHOP || Pt == KNIGHT)
@@ -378,6 +374,10 @@ namespace {
             Bitboard queenPinners;
             if (pos.slider_blockers(pos.pieces(Them, ROOK, BISHOP), s, queenPinners))
                 score -= WeakQueen;
+
+            //penalty for low mobility and on the opponent's side
+            if ((mob < 4) && (relative_rank(Us, s) > RANK_4))
+                score -= make_score(10,0);
         }
     }
     if (T)
