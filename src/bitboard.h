@@ -22,6 +22,7 @@
 #define BITBOARD_H_INCLUDED
 
 #include <string>
+#include <bitset>
 
 #include "types.h"
 
