@@ -367,7 +367,7 @@ namespace {
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
 
                 //penalty for low mobility and on the opponent's side
-                if (relative_rank(Us, s) > RANK_3)
+                if (relative_rank(Us, s) > RANK_5)
                     score -= make_score(10,0);
             }
         }
