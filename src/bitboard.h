@@ -71,7 +71,6 @@ constexpr Bitboard KingFlank[FILE_NB] = {
   KingSide, KingSide, KingSide ^ FileEBB
 };
 
-extern uint8_t PopCnt16[1 << 16];
 extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
@@ -321,8 +320,7 @@ inline int popcount(Bitboard b) {
 
 #ifndef USE_POPCNT
 
-  union { Bitboard bb; uint16_t u[4]; } v = { b };
-  return PopCnt16[v.u[0]] + PopCnt16[v.u[1]] + PopCnt16[v.u[2]] + PopCnt16[v.u[3]];
+  return std::bitset<64>(b).count();
 
 #elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
 
