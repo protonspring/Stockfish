@@ -229,11 +229,11 @@ void MainThread::search() {
   TT.new_search();
 
   //Check our learned positions DB
-  std::map<std::string, std::string>::iterator it = learnedPositions.find(rootPos.fen());
-  if (it != learnedPositions.end())
+  if (learnedPositions.find(rootPos.key()) != learnedPositions.end())
   {
-      std::string theMove = "e2e4";
-      Move m = UCI::to_move(rootPos, theMove);
+      Move m = learnedPositions.at(rootPos.key());
+      std::cout << "FOUND A POSITION: " << rootPos
+                << " move: " << m << std::endl;
 
       //make the move
   }
