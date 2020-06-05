@@ -24,7 +24,10 @@
 #include "types.h"
 
 const std::map<Key, Move> learnedPositions = {
-    { 0xB4D30CD15A43432D, MOVE_NONE }
+    { 0xB4D30CD15A43432D, make_move(SQ_E2,SQ_E4)},  //opening position
+    { 0x6BDFF9FE4592E7A4, make_move(SQ_D7,SQ_D6)},  //white, e4
+    { 0x4B9CA36CE6D81E08, make_move(SQ_D7,SQ_D5)},  //white, d4
+    { 0x5E0B24FCB7338217, make_move(SQ_B8,SQ_C6)},  //white, Nf3
 };
 
 #endif // #ifndef LEARNING_H_INCLUDED

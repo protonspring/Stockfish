@@ -232,10 +232,11 @@ void MainThread::search() {
   if (learnedPositions.find(rootPos.key()) != learnedPositions.end())
   {
       Move m = learnedPositions.at(rootPos.key());
-      std::cout << "FOUND A POSITION: " << rootPos
-                << " move: " << m << std::endl;
 
       //make the move
+      sync_cout << "bestmove " << UCI::move(m, rootPos.is_chess960());
+      std::cout << sync_endl;
+      return;
   }
 
   if (rootMoves.empty())
@@ -319,14 +320,6 @@ void MainThread::search() {
   // Send again PV info if we have a new best thread
   if (bestThread != this)
       sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, -VALUE_INFINITE, VALUE_INFINITE) << sync_endl;
-
-  //output some info
-  //if (bestThread->completedDepth == 1)
-  //{
-      //std::cout << "OUTPUT:" << bestThread->rootPos.fen();
-      //std::cout << "," << UCI::move(bestThread->rootMoves[0].pv[0], false)
-                //<< std::endl;
-  //}
 
   sync_cout << "bestmove " << UCI::move(bestThread->rootMoves[0].pv[0], rootPos.is_chess960());
 
