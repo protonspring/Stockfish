@@ -24,6 +24,7 @@
 #include "types.h"
 
 const std::map<Key, Move> learnedPositions = {
+    //white, ply1
     { 0xB4D30CD15A43432D, make_move(SQ_E2,SQ_E4)},  //opening position
 
     //black, ply1
@@ -42,7 +43,44 @@ const std::map<Key, Move> learnedPositions = {
 
     { 0x1862F673D552040C, make_move(SQ_C2,SQ_C4)},  //Nf3, Nf6
     { 0x98AFDAD67FC8B8ED, make_move(SQ_G2,SQ_G3)},  //Nf3, d5
-    { 0x422F5BC962E4FFD5, make_move(SQ_C2,SQ_C4)}   //Nf3, c5
+    { 0x422F5BC962E4FFD5, make_move(SQ_C2,SQ_C4)},  //Nf3, c5
+
+    //black, ply
+    { 0x9D23AEE67D355B5C, make_move(SQ_D7,SQ_D6)},  //e4, c5, Nf3
+    { 0xC040C1C32167C525, make_move(SQ_C8,SQ_C6)},  //e4, c5, Nc3
+    { 0xE2C3C6E66290F1F4, make_move(SQ_D7,SQ_D5)},  //e4, c5, c3
+
+    { 0xC058DE9FA60D09B1, make_move(SQ_B8,SQ_C6)},  //e4, e5, Nf3
+    { 0x9D3BB1BAFA5F97C8, make_move(SQ_G8,SQ_F6)},  //e4, e5, Nc3
+    { 0x409E1A6196F55BBF, make_move(SQ_G8,SQ_F6)}, //e4, e5, Bc4
+
+    //e4, e6,
+    //e4, e6,
+    //e4, e6,
+
+    //d4, Nf6,
+    //d4, Nf6,
+    //d4, Nf6,
+
+    //d4, d5,
+    //d4, d5,
+    //d4, d5,
+
+    //d4, e6,
+    //d4, e6,
+    //d4, e6,
+
+    //Nf3, Nf6,
+    //Nf3, Nf6,
+    //Nf3, Nf6,
+
+    //Nf3, d5,
+    //Nf3, d5,
+    //Nf3, d5,
+
+    //Nf3, c5,
+    //Nf3, c5,
+    //Nf3, c5,
 };
 
 #endif // #ifndef LEARNING_H_INCLUDED
