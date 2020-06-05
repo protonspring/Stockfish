@@ -25,9 +25,24 @@
 
 const std::map<Key, Move> learnedPositions = {
     { 0xB4D30CD15A43432D, make_move(SQ_E2,SQ_E4)},  //opening position
-    { 0x6BDFF9FE4592E7A4, make_move(SQ_D7,SQ_D6)},  //white, e4
-    { 0x4B9CA36CE6D81E08, make_move(SQ_D7,SQ_D5)},  //white, d4
-    { 0x5E0B24FCB7338217, make_move(SQ_B8,SQ_C6)},  //white, Nf3
+
+    //black, ply1
+    { 0x6BDFF9FE4592E7A4, make_move(SQ_E7,SQ_E5)},  //e4
+    { 0x4B9CA36CE6D81E08, make_move(SQ_D7,SQ_D5)},  //d4
+    { 0x5E0B24FCB7338217, make_move(SQ_B8,SQ_C6)},  //Nf3
+
+    //white, ply2
+    { 0x77FB86CB90459A66, make_move(SQ_G1,SQ_F3)},  //e4, c5
+    { 0x2A80F6B24B7DC88B, make_move(SQ_G1,SQ_F3)},  //e4, e5
+    { 0x8F7CF8EE9554A34B, make_move(SQ_D2,SQ_D4)},  //e4, e6
+
+    { 0x0DF571E384B99813, make_move(SQ_C2,SQ_C4)},  //d4, Nf6
+    { 0x8D385D462E2324F2, make_move(SQ_C2,SQ_C4)},  //d4, d5
+    { 0xAF3FA27C361E5AE7, make_move(SQ_C2,SQ_C4)},  //d4, e6
+
+    { 0x1862F673D552040C, make_move(SQ_C2,SQ_C4)},  //Nf3, Nf6
+    { 0x98AFDAD67FC8B8ED, make_move(SQ_G2,SQ_G3)},  //Nf3, d5
+    { 0x422F5BC962E4FFD5, make_move(SQ_C2,SQ_C4)}   //Nf3, c5
 };
 
 #endif // #ifndef LEARNING_H_INCLUDED
