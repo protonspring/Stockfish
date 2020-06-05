@@ -35,6 +35,7 @@
 #include "timeman.h"
 #include "tt.h"
 #include "uci.h"
+#include "learning.h"
 #include "syzygy/tbprobe.h"
 
 namespace Search {
@@ -227,6 +228,16 @@ void MainThread::search() {
   Time.init(Limits, us, rootPos.game_ply());
   TT.new_search();
 
+  //Check our learned positions DB
+  std::map<std::string, std::string>::iterator it = learnedPositions.find(rootPos.fen());
+  if (it != learnedPositions.end())
+  {
+      std::string theMove = "e2e4";
+      Move m = UCI::to_move(rootPos, theMove);
+
+      //make the move
+  }
+
   if (rootMoves.empty())
   {
       rootMoves.emplace_back(MOVE_NONE);
@@ -308,6 +319,14 @@ void MainThread::search() {
   // Send again PV info if we have a new best thread
   if (bestThread != this)
       sync_cout << UCI::pv(bestThread->rootPos, bestThread->completedDepth, -VALUE_INFINITE, VALUE_INFINITE) << sync_endl;
+
+  //output some info
+  //if (bestThread->completedDepth == 1)
+  //{
+      //std::cout << "OUTPUT:" << bestThread->rootPos.fen();
+      //std::cout << "," << UCI::move(bestThread->rootMoves[0].pv[0], false)
+                //<< std::endl;
+  //}
 
   sync_cout << "bestmove " << UCI::move(bestThread->rootMoves[0].pv[0], rootPos.is_chess960());
 
