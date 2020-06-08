@@ -24,6 +24,9 @@
 #include <cstring>   // For std::memset
 #include <iostream>
 #include <sstream>
+#include <fstream>
+#include <map>
+#include <set>
 
 #include "evaluate.h"
 #include "misc.h"
@@ -195,6 +198,58 @@ void Search::init() {
 
   for (int i = 1; i < MAX_MOVES; ++i)
       Reductions[i] = int((24.8 + std::log(Threads.size())) * std::log(i));
+
+  std::map<Key,std::set<Move>> goodMoves;
+  std::ifstream myfile;
+  std::string line;
+  myfile.open("feninput.txt");
+  if (myfile.is_open())
+  {
+      Position pos;
+      StateInfo st;
+      while(getline(myfile,line,','))
+      {
+          pos.set(line, false, &st, Threads.main());
+          getline(myfile,line);
+          Move m = UCI::to_move(pos, line);
+
+          if (goodMoves.find(pos.key()) != goodMoves.end())
+          {
+              //std::cout << "<Adding move to existing set.>" << std::endl;
+              std::set<Move> myset = goodMoves[pos.key()];
+              myset.insert(m);
+              goodMoves.insert(std::make_pair(pos.key(), myset));
+
+              myset = goodMoves[pos.key()];
+                  for(std::set<Move>::iterator it2 = myset.begin(); it2 != myset.end(); ++it2)
+                      std::cout << "," << *it2;
+
+                  std::cout << std::endl;
+          }
+          else
+          {
+              //std::cout << "<New position>" << std::endl;
+              std::set<Move> myset;
+              myset.insert(m);
+              goodMoves.insert(std::make_pair(pos.key(), myset));
+
+          }
+      }
+  }
+  myfile.close();
+
+  //output the data
+  for(std::map<Key, std::set<Move>>::iterator it = goodMoves.begin();
+          it != goodMoves.end(); ++it)
+  {
+      std::cout << it->first;
+
+      std::set<Move> myset = it->second;
+      for(std::set<Move>::iterator it2 = myset.begin(); it2 != myset.end(); ++it2)
+          std::cout << "," << *it2;
+
+      std::cout << std::endl;
+  }
 }
 
 
