@@ -297,8 +297,8 @@ namespace {
             score += BishopOnKingRing;
 
         // Bonus for attacking center squares
-        if (Center & b)
-            score += make_score(7,0);
+        if (attacks_bb<Pt>(s) & Center)
+            score += make_score(5,0);
 
         int mob = popcount(b & mobilityArea[Us]);
 
