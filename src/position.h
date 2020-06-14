@@ -110,7 +110,6 @@ public:
   bool is_discovery_check_on_king(Color c, Move m) const;
 
   // Attacks to/from a given square
-  Bitboard attackers_to(Square s) const;
   Bitboard attackers_to(Square s, Bitboard occupied) const;
   Bitboard slider_blockers(Bitboard sliders, Square s, Bitboard& pinners) const;
 
@@ -279,10 +278,6 @@ inline Square Position::castling_rook_square(CastlingRights cr) const {
   assert(cr == WHITE_OO || cr == WHITE_OOO || cr == BLACK_OO || cr == BLACK_OOO);
 
   return castlingRookSquare[cr];
-}
-
-inline Bitboard Position::attackers_to(Square s) const {
-  return attackers_to(s, pieces());
 }
 
 inline Bitboard Position::checkers() const {
