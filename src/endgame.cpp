@@ -222,7 +222,16 @@ Value Endgame<KRKB>::operator()(const Position& pos) const {
   assert(verify_material(pos, strongSide, RookValueMg, 0));
   assert(verify_material(pos, weakSide, BishopValueMg, 0));
 
-  Value result = Value(push_to_edge(pos.square<KING>(weakSide)));
+  //Value result = Value(push_to_edge(pos.square<KING>(weakSide)));
+  Square weakBishop = pos.square<BISHOP>(weakSide);
+  Square weakKing = pos.square<KING>(weakSide);
+
+  Bitboard mateSquares = opposite_colors(weakBishop, SQ_A1)
+            ? square_bb(SQ_A8) | SQ_H1
+            : square_bb(SQ_A1) | SQ_H8;
+
+  Value result = Value(weakKing & mateSquares ? 1000 : VALUE_DRAW);
+
   return strongSide == pos.side_to_move() ? result : -result;
 }
 
