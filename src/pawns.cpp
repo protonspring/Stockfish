@@ -266,9 +266,9 @@ Score Entry::do_king_safety(const Position& pos) {
   //if we have no pawn, go to frontmost square of enemy pawns
   else if (pos.pieces(Them, PAWN))
   {
-      Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
-      Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
-      minPawnDist = 2 * distance(ksq, queeningSq);
+      //Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
+      //Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
+      minPawnDist = -2;
   }
 
   return shelter - make_score(0, 16 * minPawnDist);
