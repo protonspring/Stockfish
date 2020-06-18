@@ -230,7 +230,7 @@ Value Endgame<KRKB>::operator()(const Position& pos) const {
             ? square_bb(SQ_A8) | SQ_H1
             : square_bb(SQ_A1) | SQ_H8;
 
-  Value result = Value(weakKing & mateSquares ? 1000 : VALUE_DRAW);
+  Value result = Value(weakKing & mateSquares ? 500 : VALUE_DRAW);
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
