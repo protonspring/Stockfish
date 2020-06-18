@@ -299,20 +299,24 @@ Value Endgame<KBPK>::operator()(const Position& pos) const {
   Square strongPawn = pos.square<PAWN>(strongSide);
   Square weakKing = pos.square<KING>(weakSide);
   Square queeningSquare = make_square(file_of(strongPawn), relative_rank(strongSide, RANK_8));
+  int tempo = (pos.side_to_move() == strongSide);
 
   Value result = VALUE_ZERO;
 
   // If the weak king can't catch the pawn
-  if (distance(strongPawn, queeningSquare) < distance(weakKing, queeningSquare))
+  if ((distance(strongPawn, queeningSquare) - tempo) <
+       distance(weakKing, queeningSquare))
       result = VALUE_KNOWN_WIN;
 
   //if the strong king protects the promotion path
   else if (!(forward_file_bb(strongSide, strongPawn) & ~attacks_bb<KING>(strongKing)))
       result = VALUE_KNOWN_WIN;
 
-  // if the bishop can't support promotion
-  else if (opposite_colors(strongBishop, queeningSquare))
-      result = VALUE_DRAW;
+  // if the bishop can't support promotion . . pretty drawish.
+  else if (opposite_colors(strongBishop, queeningSquare) &&
+          ((FileABB | FileHBB) & strongPawn) &&
+          (passed_pawn_span(strongSide, strongPawn) & weakKing))
+      result = Value(10 * relative_rank(strongSide, strongPawn));
 
   // the weak king can obstruct, but the bishop can force it out.
   else
