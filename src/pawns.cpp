@@ -268,7 +268,7 @@ Score Entry::do_king_safety(const Position& pos) {
   {
       Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
       Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
-      minPawnDist = distance(ksq, queeningSq) / 2;
+      minPawnDist = 2 * distance(ksq, queeningSq);
   }
 
   return shelter - make_score(0, 16 * minPawnDist);
