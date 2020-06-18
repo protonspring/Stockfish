@@ -77,6 +77,7 @@ namespace Endgames {
     add<KRKN>("KRKN");
     add<KQKP>("KQKP");
     add<KQKR>("KQKR");
+    add<KBPK>("KBPK");
     add<KNNKP>("KNNKP");
 
     add<KRPKR>("KRPKR");
@@ -284,6 +285,39 @@ Value Endgame<KQKR>::operator()(const Position& pos) const {
                 - RookValueEg
                 + push_to_edge(loserKSq)
                 + push_close(winnerKSq, loserKSq);
+
+  return strongSide == pos.side_to_move() ? result : -result;
+}
+
+template<>
+Value Endgame<KBPK>::operator()(const Position& pos) const {
+
+  assert(verify_material(pos, strongSide, BishopValueMg, 1));
+
+  Square strongKing   = pos.square<KING>(strongSide);
+  Square strongBishop = pos.square<BISHOP>(strongSide);
+  Square strongPawn = pos.square<PAWN>(strongSide);
+  Square weakKing = pos.square<KING>(weakSide);
+  Square queeningSquare = make_square(file_of(strongPawn), relative_rank(strongSide, RANK_8));
+
+  Value result = VALUE_ZERO;
+
+  // If the weak king can't catch the pawn
+  if (distance(strongPawn, queeningSquare) < distance(weakKing, queeningSquare))
+      result = VALUE_KNOWN_WIN;
+
+  //if the strong king protects the promotion path
+  else if (!(forward_file_bb(strongSide, strongPawn) & ~attacks_bb<KING>(strongKing)))
+      result = VALUE_KNOWN_WIN;
+
+  // if the bishop can't support promotion
+  else if (opposite_colors(strongBishop, queeningSquare))
+      result = VALUE_DRAW;
+
+  // the weak king can obstruct, but the bishop can force it out.
+  else
+      result = BishopValueEg + PawnValueEg +
+               50 * relative_rank(strongSide, strongPawn);
 
   return strongSide == pos.side_to_move() ? result : -result;
 }
