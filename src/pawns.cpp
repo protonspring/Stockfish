@@ -258,6 +258,10 @@ Score Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
+  //Penalty for king being in the middle and can't castle early in the game
+  if (pos.game_ply() < 20 && !pos.castling_rights(Us) && (CenterFiles & ksq))
+      shelter -= make_score (0,20);
+
   return shelter - make_score(0, 16 * minPawnDist);
 }
 
