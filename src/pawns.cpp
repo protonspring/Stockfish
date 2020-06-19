@@ -261,17 +261,19 @@ Score Entry::do_king_safety(const Position& pos) {
           minPawnDist = 1;
       else while (ourPawns)
           minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&ourPawns)));
+      return shelter - make_score(0, 16 * minPawnDist);
   }
 
   //if we have no pawn, go to frontmost square of enemy pawns
   else if (pos.pieces(Them, PAWN))
   {
-      //Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
-      //Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
-      minPawnDist = -2;
+      Square pawn = frontmost_sq(Them, pos.pieces(Them, PAWN));
+      Square queeningSq = make_square(file_of(pawn), relative_rank(Them, RANK_8));
+      minPawnDist = distance(ksq, queeningSq);
+      return shelter - make_score(0, 8 * minPawnDist);
   }
 
-  return shelter - make_score(0, 16 * minPawnDist);
+  return shelter - make_score(0, 96);
 }
 
 // Explicit template instantiation
