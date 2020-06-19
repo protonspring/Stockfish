@@ -241,6 +241,7 @@ Score Entry::do_king_safety(const Position& pos) {
   kingSquares[Us] = ksq;
   castlingRights[Us] = pos.castling_rights(Us);
   auto compare = [](Score a, Score b) { return mg_value(a) < mg_value(b); };
+  constexpr Bitboard kingSquares = square_bb(SQ_E1) | SQ_E8;
 
   Score shelter = evaluate_shelter<Us>(pos, ksq);
 
@@ -261,7 +262,12 @@ Score Entry::do_king_safety(const Position& pos) {
   else while (pawns)
       minPawnDist = std::min(minPawnDist, distance(ksq, pop_lsb(&pawns)));
 
-  return shelter - make_score(0, 16 * minPawnDist);
+  // A game ply penalty for not castling
+  int ply = pos.game_ply();
+  if ((ply < 20) && (kingSquares & ksq) && pos.can_castle(Us))
+      shelter -= make_score(0, ply);
+  
+  return shelter - make_score(0, 16 * minPawnDist - ply);
 }
 
 // Explicit template instantiation
