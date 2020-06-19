@@ -225,7 +225,7 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
   }
 
   if (pos.square<KING>(Us) != ksq)
-      bonus -= make_score( 0, 20);
+      bonus -= make_score( 0, 10);
 
   return bonus;
 }
