@@ -224,6 +224,9 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) {
           bonus -= make_score(UnblockedStorm[d][theirRank], 0);
   }
 
+  if (pos.square<KING>(Us) != ksq)
+      bonus -= make_score(20, 0);
+
   return bonus;
 }
 
