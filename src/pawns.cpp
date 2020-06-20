@@ -82,6 +82,7 @@ namespace {
     Bitboard ourPawns   = pos.pieces(  Us, PAWN);
     Bitboard theirPawns = pos.pieces(Them, PAWN);
 
+    Bitboard theirAttacks = pawn_attacks_bb<Them>(theirPawns);
     Bitboard doubleAttackThem = pawn_double_attacks_bb<Them>(theirPawns);
 
     e->passedPawns[Us] = 0;
@@ -159,8 +160,14 @@ namespace {
                      + WeakUnopposed * !opposed;
 
         if (!support)
+        {
             score -=   Doubled * doubled
                      + WeakLever * more_than_one(lever);
+
+            // Overextended pawns and no one can come help
+            if (!((adjacent_files_bb(s) & rank_bb(s - Up)) & ~theirAttacks))
+                score -= make_score(5, 0);
+        }
     }
 
     return score;
