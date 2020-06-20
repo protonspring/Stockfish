@@ -365,6 +365,10 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Bonus for multiple rooks (applied for each rook)
+            if (pos.count<ROOK>(Us) > 1)
+                score += make_score( 5, 0);
         }
 
         if (Pt == QUEEN)
