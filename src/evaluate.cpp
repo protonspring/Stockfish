@@ -368,7 +368,7 @@ namespace {
 
             // Bonus for multiple rooks (applied for each rook)
             if (pos.count<ROOK>(Us) > 1)
-                score += make_score( 5, 0);
+                score += make_score(10, 0);
         }
 
         if (Pt == QUEEN)
