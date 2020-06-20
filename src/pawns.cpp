@@ -166,7 +166,7 @@ namespace {
 
             // Overextended pawns and no one can come help
             if (!((adjacent_files_bb(s) & rank_bb(s - Up)) & ~theirAttacks))
-                score -= make_score(5, 0);
+                score -= make_score(10, 0);
         }
     }
 
