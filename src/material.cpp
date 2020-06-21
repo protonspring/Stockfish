@@ -33,7 +33,8 @@ namespace {
   constexpr int QuadraticOurs[][PIECE_TYPE_NB] = {
     //            OUR PIECES
     // pair pawn knight bishop rook queen
-    {1438                               }, // Bishop pair
+    //{1438                               }, // Bishop pair
+    {   0                               }, // Bishop pair
     {  40,   38                         }, // Pawn
     {  32,  255, -62                    }, // Knight      OUR PIECES
     {   0,  104,   4,    0              }, // Bishop
@@ -102,6 +103,9 @@ namespace {
 
         bonus += pieceCount[Us][pt1] * v;
     }
+
+    if (pieceCount[Us][0]) //bishop pair
+        bonus += 1438;
 
     return bonus;
   }
