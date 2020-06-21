@@ -104,8 +104,8 @@ namespace {
         bonus += pieceCount[Us][pt1] * v;
     }
 
-    if (pieceCount[Us][0]) //bishop pair
-        bonus += 1438;
+    //if (pieceCount[Us][0]) //bishop pair
+        //bonus += 1438;
 
     return bonus;
   }
@@ -216,7 +216,18 @@ Entry* probe(const Position& pos) {
   { pos.count<BISHOP>(BLACK) > 1, pos.count<PAWN>(BLACK), pos.count<KNIGHT>(BLACK),
     pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
 
-  e->value = int16_t((imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
+  int v = 0;
+  if (pos.count<BISHOP>(WHITE) > 1)
+     v += 1438;
+  if (pos.count<BISHOP>(BLACK) > 1)
+     v -= 1438;
+
+  e->value = int16_t((v + imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
+
+
+ //if (pieceCount[Us][0]) //bishop pair
+     //bonus += 1438;
+
   return e;
 }
 
