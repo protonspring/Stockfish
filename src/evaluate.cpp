@@ -153,6 +153,7 @@ namespace {
   constexpr Score TrappedRook         = S( 55, 13);
   constexpr Score WeakQueen           = S( 51, 14);
   constexpr Score WeakQueenProtection = S( 15,  0);
+  constexpr Score DoubleBishops       = S( 89, 89);
 
 #undef S
 
@@ -815,8 +816,8 @@ namespace {
     Score score = pos.psq_score() + me->imbalance() + pos.this_thread()->contempt;
 
     // Imbalance adjustments
-    if (pos.count<BISHOP>(WHITE) > 1) score += make_score(1438/16, 1438/16);
-    if (pos.count<BISHOP>(BLACK) > 1) score -= make_score(1438/16, 1438/16);
+    if (pos.count<BISHOP>(WHITE) > 1) score += DoubleBishops;
+    if (pos.count<BISHOP>(BLACK) > 1) score -= DoubleBishops;
 
     // Probe the pawn hash table
     pe = Pawns::probe(pos);
