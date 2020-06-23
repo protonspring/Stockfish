@@ -46,12 +46,12 @@ namespace {
   constexpr Score QuadraticTheirs[][PIECE_TYPE_NB] = {
     //           THEIR PIECES
     // pair pawn knight bishop rook queen
-    {S( 0, 0)                                                    }, // Bishop pair
-    {S(36,36),S(  0,  0)                                         }, // Pawn
-    {S( 9, 9),S( 63, 63),S(  0,  0)                              }, // Knight      OUR PIECES
-    {S(59,59),S( 65, 65),S( 42, 42),S(  0,  0)                   }, // Bishop
-    {S(46,46),S( 39, 39),S( 24, 24),S(-24,-24),S(  0,  0)        }, // Rook
-    {S(97,97),S(100,100),S(-42,-42),S(137,137),S(268,268),S(0,0) }  // Queen
+    {                                                            }, // Bishop pair
+    {S(36,36),                                                   }, // Pawn
+    {S( 9, 9),S( 63, 63),                                        }, // Knight      OUR PIECES
+    {S(59,59),S( 65, 65),S( 42, 42),                             }, // Bishop
+    {S(46,46),S( 39, 39),S( 24, 24),S(-24,-24),                  }, // Rook
+    {S(97,97),S(100,100),S(-42,-42),S(137,137),S(268,268)        }  // Queen
   };
 
   // Endgame evaluation and scaling functions are accessed directly and not through
