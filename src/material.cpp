@@ -32,7 +32,7 @@ namespace {
 
   // Polynomial material imbalance parameters
 
-  constexpr Score QuadraticOurs[][PIECE_TYPE_NB] = {
+  Score QuadraticOurs[][PIECE_TYPE_NB] = {
     //            OUR PIECES
     //    pair        pawn      knight    bishop        rook      queen
     {S(1438,1438)                                                        }, // Bishop pair
@@ -43,7 +43,7 @@ namespace {
     {S(-189,-189), S( 24, 24),S(117,117),S(133,133),S(-134,-134),S(-6,-6)}  // Queen
   };
 
-  constexpr Score QuadraticTheirs[][PIECE_TYPE_NB] = {
+  Score QuadraticTheirs[][PIECE_TYPE_NB] = {
     //           THEIR PIECES
     // pair pawn knight bishop rook queen
     {                                                     }, // Bishop pair
@@ -53,6 +53,8 @@ namespace {
     {S(46,46),S( 39, 39),S( 24, 24),S(-24,-24),           }, // Rook
     {S(97,97),S(100,100),S(-42,-42),S(137,137),S(268,268) }  // Queen
   };
+
+TUNE(QuadraticOurs, QuadraticTheirs);
 
 #undef S
 
