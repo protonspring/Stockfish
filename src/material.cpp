@@ -54,6 +54,8 @@ namespace {
     {S(97,97),S(100,100),S(-42,-42),S(137,137),S(268,268)        }  // Queen
   };
 
+#undef S
+
   // Endgame evaluation and scaling functions are accessed directly and not through
   // the function maps because they correspond to more than one material hash key.
   Endgame<KXK>    EvaluateKXK[] = { Endgame<KXK>(WHITE),    Endgame<KXK>(BLACK) };
