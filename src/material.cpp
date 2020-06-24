@@ -54,7 +54,7 @@ namespace {
     {S(97,97),S(100,100),S(-42,-42),S(137,137),S(268,268) }  // Queen
   };
 
-TUNE(QuadraticOurs, QuadraticTheirs);
+TUNE(QuadraticOurs, QuadraticTheirs, SetRange(-3000, 3000));
 
 #undef S
 
