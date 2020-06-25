@@ -163,20 +163,19 @@ Entry* probe(const Position& pos) {
     pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
 
   //Bishop pair
-  int bDiff = pieceCount[WHITE][0] - pieceCount[BLACK][0];
-  int imb = 1438 * bDiff;
+  int imb = 1438 * (pieceCount[WHITE][0] - pieceCount[BLACK][0]);
 
   //Pawns
   imb += pieceCount[WHITE][PAWN] *      (38 * pieceCount[WHITE][PAWN]
-           + 40 * pieceCount[WHITE][0] + 36 * pieceCount[BLACK][0]);
-  imb -= pieceCount[BLACK][PAWN] *      (38 * pieceCount[BLACK][PAWN]
+           + 40 * pieceCount[WHITE][0] + 36 * pieceCount[BLACK][0])
+       - pieceCount[BLACK][PAWN] *      (38 * pieceCount[BLACK][PAWN]
            + 40 * pieceCount[BLACK][0] + 36 * pieceCount[WHITE][0]);
 
   //Knights
   imb += pieceCount[WHITE][KNIGHT] * (-62 * pieceCount[WHITE][KNIGHT]
            + 255 * pieceCount[WHITE][PAWN] + 63 * pieceCount[BLACK][PAWN]
-           + 32 * pieceCount[WHITE][0] + 9 * pieceCount[BLACK][0]);
-  imb -= pieceCount[BLACK][KNIGHT] * (-62 * pieceCount[BLACK][KNIGHT]
+           + 32 * pieceCount[WHITE][0] + 9 * pieceCount[BLACK][0])
+       - pieceCount[BLACK][KNIGHT] * (-62 * pieceCount[BLACK][KNIGHT]
            + 255 * pieceCount[BLACK][PAWN] + 63 * pieceCount[WHITE][PAWN]
            + 32 * pieceCount[BLACK][0] + 9 * pieceCount[WHITE][0]);
 
@@ -184,8 +183,8 @@ Entry* probe(const Position& pos) {
   imb += pieceCount[WHITE][BISHOP] *
               (4 * pieceCount[WHITE][KNIGHT] + 42 * pieceCount[BLACK][KNIGHT]
            + 104 * pieceCount[WHITE][PAWN]   + 65 * pieceCount[BLACK][PAWN]
-           +  59 * pieceCount[BLACK][0]);
-  imb -= pieceCount[BLACK][BISHOP] *
+           +  59 * pieceCount[BLACK][0])
+       - pieceCount[BLACK][BISHOP] *
               (4 * pieceCount[BLACK][KNIGHT] + 42 * pieceCount[WHITE][KNIGHT]
            + 104 * pieceCount[BLACK][PAWN]   + 65 * pieceCount[WHITE][PAWN]
            +  59 * pieceCount[WHITE][0]);
@@ -195,8 +194,8 @@ Entry* probe(const Position& pos) {
            + 105 * pieceCount[WHITE][BISHOP] - 24 * pieceCount[BLACK][BISHOP]
            +  47 * pieceCount[WHITE][KNIGHT] + 24 * pieceCount[BLACK][KNIGHT]
            -   2 * pieceCount[WHITE][PAWN]   + 39 * pieceCount[BLACK][PAWN]
-           -  26 * pieceCount[WHITE][0]      + 46 * pieceCount[BLACK][0]);
-  imb -= pieceCount[BLACK][ROOK] * (-208 * pieceCount[BLACK][ROOK]
+           -  26 * pieceCount[WHITE][0]      + 46 * pieceCount[BLACK][0])
+       - pieceCount[BLACK][ROOK] * (-208 * pieceCount[BLACK][ROOK]
            + 105 * pieceCount[BLACK][BISHOP] - 24 * pieceCount[WHITE][BISHOP]
            +  47 * pieceCount[BLACK][KNIGHT] + 24 * pieceCount[WHITE][KNIGHT]
            -   2 * pieceCount[BLACK][PAWN]   + 39 * pieceCount[WHITE][PAWN]
@@ -208,8 +207,8 @@ Entry* probe(const Position& pos) {
            + 133 * pieceCount[WHITE][BISHOP] +137 * pieceCount[BLACK][BISHOP]
            + 117 * pieceCount[WHITE][KNIGHT] - 42 * pieceCount[BLACK][KNIGHT]
            +  24 * pieceCount[WHITE][PAWN]   +100 * pieceCount[BLACK][PAWN]
-           - 189 * pieceCount[WHITE][0]      + 97 * pieceCount[BLACK][0]);
-  imb -= pieceCount[BLACK][QUEEN] * (-6 * pieceCount[BLACK][QUEEN]
+           - 189 * pieceCount[WHITE][0]      + 97 * pieceCount[BLACK][0])
+       - pieceCount[BLACK][QUEEN] * (-6 * pieceCount[BLACK][QUEEN]
            - 134 * pieceCount[BLACK][ROOK]   +268 * pieceCount[WHITE][ROOK]
            + 133 * pieceCount[BLACK][BISHOP] +137 * pieceCount[WHITE][BISHOP]
            + 117 * pieceCount[BLACK][KNIGHT] - 42 * pieceCount[WHITE][KNIGHT]
