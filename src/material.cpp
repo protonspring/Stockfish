@@ -153,67 +153,50 @@ Entry* probe(const Position& pos) {
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
 
-  // Evaluate the material imbalance. We use PIECE_TYPE_NONE as a place holder
-  // for the bishop pair "extended piece", which allows us to be more flexible
-  // in defining bishop pair bonuses.
-  const int pieceCount[COLOR_NB][PIECE_TYPE_NB] = {
-  { pos.count<BISHOP>(WHITE) > 1, pos.count<PAWN>(WHITE), pos.count<KNIGHT>(WHITE),
-    pos.count<BISHOP>(WHITE)    , pos.count<ROOK>(WHITE), pos.count<QUEEN >(WHITE) },
-  { pos.count<BISHOP>(BLACK) > 1, pos.count<PAWN>(BLACK), pos.count<KNIGHT>(BLACK),
-    pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
+  // Some imbalance equations
+  int whiteBP = (pos.count<BISHOP>(WHITE) > 1), blackBP = (pos.count<BISHOP>(BLACK) > 1),
+      whitePawns = pos.count<PAWN>(WHITE), blackPawns = pos.count<PAWN>(BLACK),
+      whiteKnights = pos.count<KNIGHT>(WHITE), blackKnights = pos.count<KNIGHT>(BLACK),
+      whiteBishops = pos.count<BISHOP>(WHITE), blackBishops = pos.count<BISHOP>(BLACK),
+      whiteRooks   = pos.count<ROOK>(WHITE), blackRooks = pos.count<ROOK>(BLACK),
+      whiteQueens = pos.count<QUEEN>(WHITE), blackQueens = pos.count<QUEEN>(BLACK);
 
-  //Bishop pair
-  int imb = 1438 * (pieceCount[WHITE][0] - pieceCount[BLACK][0]);
+  //Bishop pairs
+  int imb = 1438 * (whiteBP - blackBP);
 
   //Pawns
-  imb += pieceCount[WHITE][PAWN] *      (38 * pieceCount[WHITE][PAWN]
-           + 40 * pieceCount[WHITE][0] + 36 * pieceCount[BLACK][0])
-       - pieceCount[BLACK][PAWN] *      (38 * pieceCount[BLACK][PAWN]
-           + 40 * pieceCount[BLACK][0] + 36 * pieceCount[WHITE][0]);
+  imb += 38 * (whitePawns * (whitePawns + whiteBP + blackBP)
+             - blackPawns * (blackPawns + whiteBP + blackBP));
 
   //Knights
-  imb += pieceCount[WHITE][KNIGHT] * (-62 * pieceCount[WHITE][KNIGHT]
-           + 255 * pieceCount[WHITE][PAWN] + 63 * pieceCount[BLACK][PAWN]
-           + 32 * pieceCount[WHITE][0] + 9 * pieceCount[BLACK][0])
-       - pieceCount[BLACK][KNIGHT] * (-62 * pieceCount[BLACK][KNIGHT]
-           + 255 * pieceCount[BLACK][PAWN] + 63 * pieceCount[WHITE][PAWN]
-           + 32 * pieceCount[BLACK][0] + 9 * pieceCount[WHITE][0]);
+  imb += whiteKnights * (-62 * whiteKnights + 255 * whitePawns
+                        + 63 * blackPawns + 32 * whiteBP + 9 * blackBP)
+       - blackKnights * (-62 * blackKnights + 255 * blackPawns
+                        + 63 * whitePawns + 32 * blackBP + 9 * whiteBP);
 
   //Bishops
-  imb += pieceCount[WHITE][BISHOP] *
-              (4 * pieceCount[WHITE][KNIGHT] + 42 * pieceCount[BLACK][KNIGHT]
-           + 104 * pieceCount[WHITE][PAWN]   + 65 * pieceCount[BLACK][PAWN]
-           +  59 * pieceCount[BLACK][0])
-       - pieceCount[BLACK][BISHOP] *
-              (4 * pieceCount[BLACK][KNIGHT] + 42 * pieceCount[WHITE][KNIGHT]
-           + 104 * pieceCount[BLACK][PAWN]   + 65 * pieceCount[WHITE][PAWN]
-           +  59 * pieceCount[WHITE][0]);
+  imb += whiteBishops * (        4 * whiteKnights + 42 * blackKnights
+           + 104 * whitePawns + 65 * blackPawns   + 59 * blackBP)
+       - blackBishops * (        4 * blackKnights + 42 * whiteKnights
+           + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP);
 
   //Rooks
-  imb += pieceCount[WHITE][ROOK] * (-208 * pieceCount[WHITE][ROOK]
-           + 105 * pieceCount[WHITE][BISHOP] - 24 * pieceCount[BLACK][BISHOP]
-           +  47 * pieceCount[WHITE][KNIGHT] + 24 * pieceCount[BLACK][KNIGHT]
-           -   2 * pieceCount[WHITE][PAWN]   + 39 * pieceCount[BLACK][PAWN]
-           -  26 * pieceCount[WHITE][0]      + 46 * pieceCount[BLACK][0])
-       - pieceCount[BLACK][ROOK] * (-208 * pieceCount[BLACK][ROOK]
-           + 105 * pieceCount[BLACK][BISHOP] - 24 * pieceCount[WHITE][BISHOP]
-           +  47 * pieceCount[BLACK][KNIGHT] + 24 * pieceCount[WHITE][KNIGHT]
-           -   2 * pieceCount[BLACK][PAWN]   + 39 * pieceCount[WHITE][PAWN]
-           -  26 * pieceCount[BLACK][0]      + 46 * pieceCount[WHITE][0]);
+  imb += whiteRooks * (-208 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
+                      +  47 * whiteKnights + 24 * blackKnights -  2 * whitePawns
+                      +  39 * blackPawns  -  26 * whiteBP      + 46 * blackBP)
+       - blackRooks * (-208 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
+                       + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
+                       + 39 * whitePawns  -  26 * blackBP      + 46 * whiteBP);
 
   //Queens
-  imb += pieceCount[WHITE][QUEEN] * (-6 * pieceCount[WHITE][QUEEN]
-           - 134 * pieceCount[WHITE][ROOK]   +268 * pieceCount[BLACK][ROOK]
-           + 133 * pieceCount[WHITE][BISHOP] +137 * pieceCount[BLACK][BISHOP]
-           + 117 * pieceCount[WHITE][KNIGHT] - 42 * pieceCount[BLACK][KNIGHT]
-           +  24 * pieceCount[WHITE][PAWN]   +100 * pieceCount[BLACK][PAWN]
-           - 189 * pieceCount[WHITE][0]      + 97 * pieceCount[BLACK][0])
-       - pieceCount[BLACK][QUEEN] * (-6 * pieceCount[BLACK][QUEEN]
-           - 134 * pieceCount[BLACK][ROOK]   +268 * pieceCount[WHITE][ROOK]
-           + 133 * pieceCount[BLACK][BISHOP] +137 * pieceCount[WHITE][BISHOP]
-           + 117 * pieceCount[BLACK][KNIGHT] - 42 * pieceCount[WHITE][KNIGHT]
-           +  24 * pieceCount[BLACK][PAWN]   +100 * pieceCount[WHITE][PAWN]
-           - 189 * pieceCount[BLACK][0]      + 97 * pieceCount[WHITE][0]);
+  imb += whiteQueens * (-6 * whiteQueens  - 134 * whiteRooks   + 268 * blackRooks
+                     + 133 * whiteBishops + 137 * blackBishops + 117 * whiteKnights
+                      - 42 * blackKnights +  24 * whitePawns   + 100 * blackPawns
+                     - 189 * whiteBP      +  97 * blackBP)
+       - blackQueens * (-6 * blackQueens  - 134 * blackRooks   + 268 * whiteRooks
+                     + 133 * blackBishops + 137 * whiteBishops + 117 * blackKnights
+                     -  42 * whiteKnights +  24 * blackPawns   + 100 * whitePawns
+                     - 189 * blackBP      +  97 * whiteBP);
 
   e->value = int16_t(imb / 16);
   return e;
