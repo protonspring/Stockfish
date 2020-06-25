@@ -83,8 +83,10 @@ namespace {
           && pos.count<PAWN>(~us) >= 1;
   }
 
+
   /// imbalance() calculates the imbalance by comparing the piece count of each
   /// piece type for both colors.
+
   template<Color Us>
   Score imbalance(const int pieceCount[][PIECE_TYPE_NB]) {
 
@@ -100,7 +102,7 @@ namespace {
 
         Score v = SCORE_ZERO;
 
-        for (int pt2 = NO_PIECE_TYPE; pt2 <= pt1; ++pt2)
+        for (int pt2 = NO_PIECE_TYPE; pt2 < pt1; ++pt2)
             v +=  QuadraticOurs[pt1][pt2] * pieceCount[Us][pt2]
                 + QuadraticTheirs[pt1][pt2] * pieceCount[Them][pt2];
 
@@ -113,6 +115,7 @@ namespace {
 } // namespace
 
 namespace Material {
+
 
 /// Material::probe() looks up the current position's material configuration in
 /// the material hash table. It returns a pointer to the Entry if the position
