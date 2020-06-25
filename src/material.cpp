@@ -153,7 +153,8 @@ Entry* probe(const Position& pos) {
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
 
-  // Some imbalance equations
+  // Some imbalance equations for evaluating piece imbalances.
+  // Example: Queen vs rook and bishop.
   int whiteBP = (pos.count<BISHOP>(WHITE) > 1), blackBP = (pos.count<BISHOP>(BLACK) > 1),
       whitePawns = pos.count<PAWN>(WHITE), blackPawns = pos.count<PAWN>(BLACK),
       whiteKnights = pos.count<KNIGHT>(WHITE), blackKnights = pos.count<KNIGHT>(BLACK),
