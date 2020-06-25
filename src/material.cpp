@@ -33,9 +33,9 @@ namespace {
   constexpr int QuadraticOurs[][PIECE_TYPE_NB] = {
     //            OUR PIECES
     // pair pawn knight bishop rook queen
-    {1438                               }, // Bishop pair
-    {  40,   38                         }, // Pawn
-    {  32,  255, -62                    }, // Knight      OUR PIECES
+    {   0                               }, // Bishop pair
+    {   0,    0                         }, // Pawn
+    {   0,    0,   0                    }, // Knight      OUR PIECES
     {   0,  104,   4,    0              }, // Bishop
     { -26,   -2,  47,   105,  -208      }, // Rook
     {-189,   24, 117,   133,  -134, -6  }  // Queen
@@ -45,8 +45,8 @@ namespace {
     //           THEIR PIECES
     // pair pawn knight bishop rook queen
     {                                   }, // Bishop pair
-    {  36,                              }, // Pawn
-    {   9,   63,                        }, // Knight      OUR PIECES
+    {   0,                              }, // Pawn
+    {   0,    0,                        }, // Knight      OUR PIECES
     {  59,   65,  42,                   }, // Bishop
     {  46,   39,  24,   -24,            }, // Rook
     {  97,  100, -42,   137,  268,      }  // Queen
@@ -91,7 +91,8 @@ namespace {
     int bonus = 0;
 
     // Second-degree polynomial material imbalance, by Tord Romstad
-    for (int pt1 = NO_PIECE_TYPE; pt1 <= QUEEN; ++pt1)
+    //for (int pt1 = NO_PIECE_TYPE; pt1 <= QUEEN; ++pt1)
+    for (int pt1 = BISHOP; pt1 <= QUEEN; ++pt1)
     {
         if (!pieceCount[Us][pt1])
             continue;
@@ -215,7 +216,27 @@ Entry* probe(const Position& pos) {
   { pos.count<BISHOP>(BLACK) > 1, pos.count<PAWN>(BLACK), pos.count<KNIGHT>(BLACK),
     pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
 
-  e->value = int16_t((imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
+  //Bishop pair
+  int bDiff = pieceCount[WHITE][0] - pieceCount[BLACK][0];
+  int imb = 1438 * bDiff;
+
+  //Pawns
+  imb += pieceCount[WHITE][PAWN] * (38 * pieceCount[WHITE][PAWN]
+           + 40 * pieceCount[WHITE][0]
+           + 36 * pieceCount[BLACK][0]);
+  imb -= pieceCount[BLACK][PAWN] * (38 * pieceCount[BLACK][PAWN]
+           + 40 * pieceCount[BLACK][0]
+           + 36 * pieceCount[WHITE][0]);
+
+  //Knights
+  imb += pieceCount[WHITE][KNIGHT] * (-62 * pieceCount[WHITE][KNIGHT]
+           + 255 * pieceCount[WHITE][PAWN] + 63 * pieceCount[BLACK][PAWN]
+           + 32 * pieceCount[WHITE][0] + 9 * pieceCount[BLACK][0]);
+  imb -= pieceCount[BLACK][KNIGHT] * (-62 * pieceCount[BLACK][KNIGHT]
+           + 255 * pieceCount[BLACK][PAWN] + 63 * pieceCount[WHITE][PAWN]
+           + 32 * pieceCount[BLACK][0] + 9 * pieceCount[WHITE][0]);
+
+  e->value = int16_t((imb + imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
   return e;
 }
 
