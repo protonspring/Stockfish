@@ -216,26 +216,12 @@ Entry* probe(const Position& pos) {
     pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
 
   //Bishop pair
-  int bDiff = pieceCount[WHITE][0] - pieceCount[BLACK][0];
-  int imb = 1438 * bDiff;
+  int imb = 1438 * (pieceCount[WHITE][0] - pieceCount[BLACK][0]);
 
   //Pawns
-  //imb += pieceCount[WHITE][PAWN] * (40 * pieceCount[WHITE][PAWN]
-           //+ 40 * pieceCount[WHITE][0] + 40 * pieceCount[BLACK][0]);
-  //imb -= pieceCount[BLACK][PAWN] * (40 * pieceCount[BLACK][PAWN]
-           //+ 40 * pieceCount[BLACK][0] + 40 * pieceCount[WHITE][0]);
-  //imb += 40 * pieceCount[WHITE][PAWN] *
-            //(pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0]);
-  //imb -= 40 * pieceCount[BLACK][PAWN] *
-            //(pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]);
-  //imb += 40 * pieceCount[WHITE][PAWN] *
-            //(pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0])
-       //- 40 * pieceCount[BLACK][PAWN] *
-            //(pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]);
-  imb += 40 * (pieceCount[WHITE][PAWN] *
-              (pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0])
-             - pieceCount[BLACK][PAWN] *
-              (pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]));
+  int BPSum  = pieceCount[WHITE][0] + pieceCount[BLACK][0];
+  imb += 40 * (pieceCount[WHITE][PAWN] * (pieceCount[WHITE][PAWN] + BPSum)
+             - pieceCount[BLACK][PAWN] * (pieceCount[BLACK][PAWN] + BPSum));
 
   e->value = int16_t((imb + imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
   return e;
