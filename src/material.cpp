@@ -33,8 +33,8 @@ namespace {
   constexpr int QuadraticOurs[][PIECE_TYPE_NB] = {
     //            OUR PIECES
     // pair pawn knight bishop rook queen
-    {1438                               }, // Bishop pair
-    {  40,   38                         }, // Pawn
+    {   0                               }, // Bishop pair
+    {   0,    0                         }, // Pawn
     {  32,  255, -62                    }, // Knight      OUR PIECES
     {   0,  104,   4,    0              }, // Bishop
     { -26,   -2,  47,   105,  -208      }, // Rook
@@ -45,7 +45,7 @@ namespace {
     //           THEIR PIECES
     // pair pawn knight bishop rook queen
     {                                   }, // Bishop pair
-    {  36,                              }, // Pawn
+    {   0,                              }, // Pawn
     {   9,   63,                        }, // Knight      OUR PIECES
     {  59,   65,  42,                   }, // Bishop
     {  46,   39,  24,   -24,            }, // Rook
@@ -215,7 +215,29 @@ Entry* probe(const Position& pos) {
   { pos.count<BISHOP>(BLACK) > 1, pos.count<PAWN>(BLACK), pos.count<KNIGHT>(BLACK),
     pos.count<BISHOP>(BLACK)    , pos.count<ROOK>(BLACK), pos.count<QUEEN >(BLACK) } };
 
-  e->value = int16_t((imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
+  //Bishop pair
+  int bDiff = pieceCount[WHITE][0] - pieceCount[BLACK][0];
+  int imb = 1438 * bDiff;
+
+  //Pawns
+  //imb += pieceCount[WHITE][PAWN] * (40 * pieceCount[WHITE][PAWN]
+           //+ 40 * pieceCount[WHITE][0] + 40 * pieceCount[BLACK][0]);
+  //imb -= pieceCount[BLACK][PAWN] * (40 * pieceCount[BLACK][PAWN]
+           //+ 40 * pieceCount[BLACK][0] + 40 * pieceCount[WHITE][0]);
+  //imb += 40 * pieceCount[WHITE][PAWN] *
+            //(pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0]);
+  //imb -= 40 * pieceCount[BLACK][PAWN] *
+            //(pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]);
+  //imb += 40 * pieceCount[WHITE][PAWN] *
+            //(pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0])
+       //- 40 * pieceCount[BLACK][PAWN] *
+            //(pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]);
+  imb += 40 * (pieceCount[WHITE][PAWN] *
+              (pieceCount[WHITE][PAWN] + pieceCount[WHITE][0] + pieceCount[BLACK][0])
+             - pieceCount[BLACK][PAWN] *
+              (pieceCount[BLACK][PAWN] + pieceCount[BLACK][0] + pieceCount[WHITE][0]));
+
+  e->value = int16_t((imb + imbalance<WHITE>(pieceCount) - imbalance<BLACK>(pieceCount)) / 16);
   return e;
 }
 
