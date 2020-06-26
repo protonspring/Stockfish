@@ -169,8 +169,8 @@ Entry* probe(const Position& pos) {
   imb += 38 * (whitePawns * whitePawns - blackPawns * blackPawns);
 
   //Knights
-  imb += 64 * (whiteKnights * (4 * whitePawns + blackPawns - whiteKnights)
-             - blackKnights * (4 * blackPawns + whitePawns - blackKnights));
+  imb += 64 * (whiteKnights * (4 * whitePawns + blackPawns)
+             - blackKnights * (4 * blackPawns + whitePawns));
 
   //Bishops
   imb += whiteBishops * (        4 * whiteKnights + 42 * blackKnights
