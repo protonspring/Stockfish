@@ -169,8 +169,8 @@ Entry* probe(const Position& pos) {
   imb += 38 * (whitePawns * whitePawns - blackPawns * blackPawns);
 
   //Knights
-  imb += whiteKnights * (-62 * whiteKnights + 255 * whitePawns + 63 * blackPawns)
-       - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns);
+  imb += 64 * (whiteKnights * (4 * whitePawns + blackPawns - whiteKnights)
+             - blackKnights * (4 * blackPawns + whitePawns - blackKnights));
 
   //Bishops
   imb += whiteBishops * (   4 * whiteKnights + 42 * blackKnights
@@ -179,12 +179,12 @@ Entry* probe(const Position& pos) {
                         + 104 * blackPawns + 65 * whitePawns);
 
   //Rooks
-  imb += whiteRooks * (-208 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
+  imb += whiteRooks * (-160 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
                       +  47 * whiteKnights + 24 * blackKnights -  2 * whitePawns
-                      +  39 * blackPawns   - 26 * whiteBP      + 46 * blackBP)
-       - blackRooks * (-208 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
+                      +  39 * blackPawns)
+       - blackRooks * (-160 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
                        + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
-                       + 39 * whitePawns   - 26 * blackBP      + 46 * whiteBP);
+                       + 39 * whitePawns);
 
   //Queens
   imb += whiteQueens * (-134 * whiteRooks   + 268 * blackRooks
