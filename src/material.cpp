@@ -181,20 +181,20 @@ Entry* probe(const Position& pos) {
   //Rooks
   imb += whiteRooks * (-208 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
                       +  47 * whiteKnights + 24 * blackKnights -  2 * whitePawns
-                      +  39 * blackPawns)
+                      +  39 * blackPawns   - 26 * whiteBP      + 46 * blackBP)
        - blackRooks * (-208 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
                        + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
-                       + 39 * whitePawns);
+                       + 39 * whitePawns   - 26 * blackBP      + 46 * whiteBP);
 
   //Queens
-  imb += whiteQueens * (-6 * whiteQueens  - 134 * whiteRooks   + 268 * blackRooks
+  imb += whiteQueens * (-134 * whiteRooks   + 268 * blackRooks
                      + 133 * whiteBishops + 137 * blackBishops + 117 * whiteKnights
                       - 42 * blackKnights +  24 * whitePawns   + 100 * blackPawns
-                     - 189 * whiteBP      +  97 * blackBP)
-       - blackQueens * (-6 * blackQueens  - 134 * blackRooks   + 268 * whiteRooks
+                     - 189 * whiteBP      +  97 * blackBP - 6)
+       - blackQueens * (-134 * blackRooks   + 268 * whiteRooks
                      + 133 * blackBishops + 137 * whiteBishops + 117 * blackKnights
                      -  42 * whiteKnights +  24 * blackPawns   + 100 * whitePawns
-                     - 189 * blackBP      +  97 * whiteBP);
+                     - 189 * blackBP      +  97 * whiteBP - 6);
 
   e->value = int16_t(imb / 16);
   return e;
