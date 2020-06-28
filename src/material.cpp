@@ -173,9 +173,9 @@ Entry* probe(const Position& pos) {
        - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns);
 
   //Bishops
-  imb += whiteBishops * (        4 * whiteKnights + 42 * blackKnights
+  imb += whiteBishops * (    42 * blackKnights
            + 104 * whitePawns + 65 * blackPawns   + 59 * blackBP)
-       - blackBishops * (        4 * blackKnights + 42 * whiteKnights
+       - blackBishops * (    42 * whiteKnights
            + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP);
 
   //Rooks
