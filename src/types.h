@@ -115,16 +115,16 @@ constexpr int MAX_PLY   = 246;
 /// any normal move destination square is always different from origin square
 /// while MOVE_NONE and MOVE_NULL have the same origin and destination square.
 
-enum Move : int {
+enum Move : int32_t {
   MOVE_NONE,
-  MOVE_NULL = 65
+  MOVE_NULL = 129
 };
 
 enum MoveType {
   NORMAL,
-  PROMOTION = 1 << 14,
-  ENPASSANT = 2 << 14,
-  CASTLING  = 3 << 14
+  PROMOTION = 1 << 16,
+  ENPASSANT = 2 << 16,
+  CASTLING  = 3 << 16
 };
 
 enum Color {
@@ -232,7 +232,7 @@ enum Square : int {
   SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8,
   SQ_NONE,
 
-  SQUARE_NB = 64
+  SQUARE_NB = 100
 };
 
 enum Direction : int {
@@ -419,27 +419,27 @@ constexpr Direction pawn_push(Color c) {
 }
 
 constexpr Square from_sq(Move m) {
-  return Square((m >> 6) & 0x3F);
+  return Square((m >> 7) & 0x7F);
 }
 
 constexpr Square to_sq(Move m) {
-  return Square(m & 0x3F);
+  return Square(m & 0x7F);
 }
 
 constexpr int from_to(Move m) {
- return m & 0xFFF;
+ return m & 0x3FFF;
 }
 
 constexpr MoveType type_of(Move m) {
-  return MoveType(m & (3 << 14));
+  return MoveType(m & (3 << 16));
 }
 
 constexpr PieceType promotion_type(Move m) {
-  return PieceType(((m >> 12) & 3) + KNIGHT);
+  return PieceType(((m >> 14) & 3) + KNIGHT);
 }
 
 constexpr Move make_move(Square from, Square to) {
-  return Move((from << 6) + to);
+  return Move((from << 7) + to);
 }
 
 constexpr Move reverse_move(Move m) {
@@ -448,7 +448,7 @@ constexpr Move reverse_move(Move m) {
 
 template<MoveType T>
 constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
-  return Move(T + ((pt - KNIGHT) << 12) + (from << 6) + to);
+  return Move(T + ((pt - KNIGHT) << 14) + (from << 7) + to);
 }
 
 constexpr bool is_ok(Move m) {
