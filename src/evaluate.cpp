@@ -26,7 +26,6 @@
 
 #include "bitboard.h"
 #include "evaluate.h"
-#include "material.h"
 #include "pawns.h"
 #include "thread.h"
 
@@ -178,7 +177,6 @@ namespace {
     Value winnable(Score score) const;
 
     const Position& pos;
-    Material::Entry* me;
     Pawns::Entry* pe;
     Bitboard mobilityArea[COLOR_NB];
     Score mobility[COLOR_NB] = { SCORE_ZERO, SCORE_ZERO };
@@ -769,7 +767,7 @@ namespace {
     // Compute the scale factor for the winning side
 
     Color strongSide = eg > VALUE_DRAW ? WHITE : BLACK;
-    int sf = me->scale_factor(pos, strongSide);
+    int sf = SCALE_FACTOR_NORMAL;
 
     // If scale is not already specific, scale down the endgame via general heuristics
     if (sf == SCALE_FACTOR_NORMAL)
@@ -787,9 +785,7 @@ namespace {
     }
 
     // Interpolate between the middlegame and (scaled by 'sf') endgame score
-    v =  mg * int(me->game_phase())
-       + eg * int(PHASE_MIDGAME - me->game_phase()) * ScaleFactor(sf) / SCALE_FACTOR_NORMAL;
-    v /= PHASE_MIDGAME;
+    v = (mg + eg) / 2;
 
     if (T)
     {
@@ -811,12 +807,12 @@ namespace {
     assert(!pos.checkers());
 
     // Probe the material hash table
-    me = Material::probe(pos);
+    //me = Material::probe(pos);
 
     // If we have a specialized evaluation function for the current material
     // configuration, call it and return.
-    if (me->specialized_eval_exists())
-        return me->evaluate(pos);
+    //if (me->specialized_eval_exists())
+        //return me->evaluate(pos);
 
     // Initialize score by reading the incrementally updated scores included in
     // the position object (material + piece square tables) and the material
