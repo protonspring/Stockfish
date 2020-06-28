@@ -153,50 +153,6 @@ Entry* probe(const Position& pos) {
       e->factor[BLACK] = uint8_t(npm_b <  RookValueMg   ? SCALE_FACTOR_DRAW :
                                  npm_w <= BishopValueMg ? 4 : 14);
 
-  // Some imbalance equations for evaluating piece imbalances.
-  // Example: Queen vs rook and bishop.
-  int whiteBP = (pos.count<BISHOP>(WHITE) > 1), blackBP = (pos.count<BISHOP>(BLACK) > 1),
-      whitePawns = pos.count<PAWN>(WHITE), blackPawns = pos.count<PAWN>(BLACK),
-      whiteKnights = pos.count<KNIGHT>(WHITE), blackKnights = pos.count<KNIGHT>(BLACK),
-      whiteBishops = pos.count<BISHOP>(WHITE), blackBishops = pos.count<BISHOP>(BLACK),
-      whiteRooks   = pos.count<ROOK>(WHITE), blackRooks = pos.count<ROOK>(BLACK),
-      whiteQueens = pos.count<QUEEN>(WHITE), blackQueens = pos.count<QUEEN>(BLACK);
-
-  //Bishop pairs
-  int imb = 1438 * (whiteBP - blackBP);
-
-  //Pawns
-  imb += 38 * (whitePawns * whitePawns - blackPawns * blackPawns);
-
-  //Knights
-  imb += whiteKnights * (-62 * whiteKnights + 255 * whitePawns + 63 * blackPawns)
-       - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns);
-
-  //Bishops
-  imb += whiteBishops * (        4 * whiteKnights + 42 * blackKnights
-           + 104 * whitePawns + 65 * blackPawns   + 59 * blackBP)
-       - blackBishops * (        4 * blackKnights + 42 * whiteKnights
-           + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP);
-
-  //Rooks
-  imb += whiteRooks * (-208 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
-                      +  47 * whiteKnights + 24 * blackKnights -  2 * whitePawns
-                      +  39 * blackPawns  -  26 * whiteBP      + 46 * blackBP)
-       - blackRooks * (-208 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
-                       + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
-                       + 39 * whitePawns  -  26 * blackBP      + 46 * whiteBP);
-
-  //Queens
-  imb += whiteQueens * (-6 * whiteQueens  - 134 * whiteRooks   + 268 * blackRooks
-                     + 133 * whiteBishops + 137 * blackBishops + 117 * whiteKnights
-                      - 42 * blackKnights +  24 * whitePawns   + 100 * blackPawns
-                     - 189 * whiteBP      +  97 * blackBP)
-       - blackQueens * (-6 * blackQueens  - 134 * blackRooks   + 268 * whiteRooks
-                     + 133 * blackBishops + 137 * whiteBishops + 117 * blackKnights
-                     -  42 * whiteKnights +  24 * blackPawns   + 100 * whitePawns
-                     - 189 * blackBP      +  97 * whiteBP);
-
-  e->value = int16_t(imb / 16);
   return e;
 }
 
