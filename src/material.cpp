@@ -28,28 +28,14 @@ using namespace std;
 
 namespace {
 
-  // Polynomial material imbalance parameters
-
-  constexpr int QuadraticOurs[][PIECE_TYPE_NB] = {
-    //            OUR PIECES
-    // pair pawn knight bishop rook queen
-    {1438                               }, // Bishop pair
-    {  40,   38                         }, // Pawn
-    {  32,  255, -62                    }, // Knight      OUR PIECES
-    {   0,  104,   4,    0              }, // Bishop
-    { -26,   -2,  47,   105,  -208      }, // Rook
-    {-189,   24, 117,   133,  -134, -6  }  // Queen
-  };
-
-  constexpr int QuadraticTheirs[][PIECE_TYPE_NB] = {
-    //           THEIR PIECES
-    // pair pawn knight bishop rook queen
-    {                                   }, // Bishop pair
-    {  36,                              }, // Pawn
-    {   9,   63,                        }, // Knight      OUR PIECES
-    {  59,   65,  42,                   }, // Bishop
-    {  46,   39,  24,   -24,            }, // Rook
-    {  97,  100, -42,   137,  268,      }  // Queen
+  // Coefficients for quadratic equations calculating material imbalance
+  constexpr int coef[PIECE_TYPE_NB][PIECE_TYPE_NB] = {
+    {1438,   36,   9,    59,    46,  97  },
+    {  40,   38,  63,    65,    39, 100  },
+    {  32,  255, -62,    42,    24, -42  },
+    {   0,  104,   4,     0,   -24, 137  },
+    { -26,   -2,  47,   105,  -208, 268  },
+    {-189,   24, 117,   133,  -134,  -6  }
   };
 
   // Endgame evaluation and scaling functions are accessed directly and not through
@@ -96,11 +82,11 @@ namespace {
         if (!pieceCount[Us][pt1])
             continue;
 
-        int v = QuadraticOurs[pt1][pt1] * pieceCount[Us][pt1];
+        int v = coef[pt1][pt1] * pieceCount[Us][pt1];
 
         for (int pt2 = NO_PIECE_TYPE; pt2 < pt1; ++pt2)
-            v +=  QuadraticOurs[pt1][pt2] * pieceCount[Us][pt2]
-                + QuadraticTheirs[pt1][pt2] * pieceCount[Them][pt2];
+            v +=  coef[pt1][pt2] * pieceCount[Us][pt2]
+                + coef[pt2][pt1] * pieceCount[Them][pt2];
 
         bonus += pieceCount[Us][pt1] * v;
     }
