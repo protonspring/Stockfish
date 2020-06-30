@@ -728,18 +728,27 @@ ScaleFactor Endgame<KPKP>::operator()(const Position& pos) const {
   assert(verify_material(pos, weakSide,   VALUE_ZERO, 1));
 
   // Assume strongSide is white and the pawn is on files A-D
+  Square wPawn = pos.square<PAWN>(weakSide);
+  Square sPawn = pos.square<PAWN>(strongSide);
   Square strongKing = normalize(pos, strongSide, pos.square<KING>(strongSide));
+  Square strongPawn = normalize(pos, strongSide, sPawn);
   Square weakKing   = normalize(pos, strongSide, pos.square<KING>(weakSide));
-  Square strongPawn = normalize(pos, strongSide, pos.square<PAWN>(strongSide));
+  Square weakPawn   = normalize(pos, strongSide, wPawn);
 
   Color us = strongSide == pos.side_to_move() ? WHITE : BLACK;
 
-  // If the pawn has advanced to the fifth rank or further, and is not a
-  // rook pawn, it's too dangerous to assume that it's at least a draw.
-  if (rank_of(strongPawn) >= RANK_5 && file_of(strongPawn) != FILE_A)
-      return SCALE_FACTOR_NONE;
+  // If the pawns are in the way of each other, it's probably a draw
+  if (passed_pawn_span(strongSide, sPawn) & wPawn)
+      return SCALE_FACTOR_DRAW;
 
-  // Probe the KPK bitbase with the weakest side's pawn removed. If it's a draw,
-  // it's probably at least a draw even with the pawn.
-  return Bitbases::probe(strongKing, strongPawn, weakKing, us) ? SCALE_FACTOR_NONE : SCALE_FACTOR_DRAW;
+  // If both pawns are in winning positions, drawn if pawn ranks are close
+  if (Bitbases::probe(strongKing, strongPawn, weakKing, us) &&
+      Bitbases::probe(weakKing, weakPawn, strongKing, us))
+  {
+      if (abs(rank_of(weakPawn) - rank_of(strongPawn)) < 2)
+          return SCALE_FACTOR_DRAW;
+  }
+
+  return SCALE_FACTOR_NONE;
 }
+
