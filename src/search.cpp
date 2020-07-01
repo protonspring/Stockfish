@@ -24,6 +24,7 @@
 #include <cstring>   // For std::memset
 #include <iostream>
 #include <sstream>
+#include <set>
 
 #include "evaluate.h"
 #include "misc.h"
@@ -35,6 +36,7 @@
 #include "timeman.h"
 #include "tt.h"
 #include "uci.h"
+#include "badfens.h"
 #include "syzygy/tbprobe.h"
 
 namespace Search {
@@ -57,6 +59,8 @@ using Eval::evaluate;
 using namespace Search;
 
 namespace {
+  // Positions databases
+  std::set<Key> badPositions;
 
   // Different node types, used as a template parameter
   enum NodeType { NonPV, PV };
@@ -195,8 +199,16 @@ void Search::init() {
 
   for (int i = 1; i < MAX_MOVES; ++i)
       Reductions[i] = int((24.8 + std::log(Threads.size())) * std::log(i));
-}
 
+  //Load the set of bad positions;
+  StateInfo st;
+  for(std::string fen : badFens)
+  {
+      Position pos;
+      pos.set(fen, false, &st, 0);
+      badPositions.insert(pos.key());
+  }
+}
 
 /// Search::clear() resets search state to its initial value
 
@@ -430,6 +442,19 @@ void Thread::search() {
               // new PV that goes to the front. Note that in case of MultiPV
               // search the already searched PV lines are preserved.
               std::stable_sort(rootMoves.begin() + pvIdx, rootMoves.begin() + pvLast);
+
+              // If the best move results in a bad position, swap it with the second best
+              StateInfo st;
+              Position pos2;
+              pos2.set(rootPos.fen() false, &st, 0);
+              pos2.do_move((rootMoves.begin() + pvIdx).pv[0], st);
+
+              if (badPositions.find(pos2.key()) != badPositions.end())
+              {
+                  std::cout << "<SWAPPING>" << std::endl;
+                  //if (rootMoves.size() > 1)
+                      //std::swap(*(rootMoves.begin() + pvIdx), *(rootMoves.begin() + pvIdx + 1));
+              }
 
               // If search has been stopped, we break immediately. Sorting is
               // safe because RootMoves is still valid, although it refers to
