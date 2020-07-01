@@ -435,6 +435,18 @@ void Thread::search() {
               Depth adjustedDepth = std::max(1, rootDepth - failedHighCnt - searchAgainCounter);
               bestValue = ::search<PV>(rootPos, ss, alpha, beta, adjustedDepth, false);
 
+              // Reduce score for moves we know are bad, regardless of search
+              StateInfo st;
+              for(RootMove rm : rootMoves)
+              {
+                  rootPos.do_move(rm.pv[0], st);
+
+                  if (badPositions.find(rootPos.key()) != badPositions.end())
+                      rm.score = -VALUE_INFINITE;
+
+                  rootPos.undo_move(rm.pv[0]);
+              }
+
               // Bring the best move to the front. It is critical that sorting
               // is done with a stable algorithm because all the values but the
               // first and eventually the new best one are set to -VALUE_INFINITE
@@ -442,19 +454,6 @@ void Thread::search() {
               // new PV that goes to the front. Note that in case of MultiPV
               // search the already searched PV lines are preserved.
               std::stable_sort(rootMoves.begin() + pvIdx, rootMoves.begin() + pvLast);
-
-              // If the best move results in a bad position, swap it with the second best
-              StateInfo st;
-              Position pos2;
-              pos2.set(rootPos.fen() false, &st, 0);
-              pos2.do_move((rootMoves.begin() + pvIdx).pv[0], st);
-
-              if (badPositions.find(pos2.key()) != badPositions.end())
-              {
-                  std::cout << "<SWAPPING>" << std::endl;
-                  //if (rootMoves.size() > 1)
-                      //std::swap(*(rootMoves.begin() + pvIdx), *(rootMoves.begin() + pvIdx + 1));
-              }
 
               // If search has been stopped, we break immediately. Sorting is
               // safe because RootMoves is still valid, although it refers to
