@@ -160,7 +160,8 @@ inline Bitboard file_bb(Square s) {
 template<Direction D>
 constexpr Bitboard shift(Bitboard b) {
   return  D == NORTH      ?  b             << 8 : D == SOUTH      ?  b             >> 8
-        : D == NORTH+NORTH?  b             <<16 : D == SOUTH+SOUTH?  b             >>16
+        : D == 2 * NORTH  ?  b             <<16 : D == 2 * SOUTH  ?  b             >>16
+        : D == 4 * NORTH  ?  b             <<32 : D == 4 * SOUTH  ?  b             >>32
         : D == EAST       ? (b & ~FileHBB) << 1 : D == WEST       ? (b & ~FileABB) >> 1
         : D == NORTH_EAST ? (b & ~FileHBB) << 9 : D == NORTH_WEST ? (b & ~FileABB) << 7
         : D == SOUTH_EAST ? (b & ~FileHBB) >> 7 : D == SOUTH_WEST ? (b & ~FileABB) >> 9
@@ -237,21 +238,20 @@ inline Bitboard forward_ranks_bb(Color c, Square s) {
 
 /// forward_file_bb() returns a bitboard representing all the squares along the
 /// line in front of the given one, from the point of view of the given color.
+template<Color C>
+inline Bitboard forward_file_bb(Square s) {
+
+    constexpr Direction Up = pawn_push(C);
+
+    Bitboard ff  = shift<    Up>(square_bb(s));
+             ff |= shift<    Up>(ff);
+             ff |= shift<2 * Up>(ff);
+    return   ff |  shift<4 * Up>(ff);
+}
 
 inline Bitboard forward_file_bb(Color c, Square s) {
-
-  if (c == WHITE)
-  {
-      Bitboard b = shift<NORTH>(square_bb(s));
-      b |= b << 8; b |= b << 16; b |= b << 32;
-      return b;
-  }
-  else
-  {
-      Bitboard b = shift<SOUTH>(square_bb(s));
-      b |= b >> 8; b |= b >> 16; b |= b >> 32;
-      return b;
-  }
+    return c == WHITE ? forward_file_bb<WHITE>(s)
+                      : forward_file_bb<BLACK>(s);
 }
 
 
