@@ -103,7 +103,7 @@ namespace {
         Rank r = relative_rank(Us, s);
 
         // Flag the pawn
-        opposed    = theirPawns & forward_file_bb(Us, s);
+        opposed    = theirPawns & forward_file_bb<Us>(s);
         blocked    = theirPawns & (s + Up);
         stoppers   = theirPawns & passed_pawn_span(Us, s);
         lever      = theirPawns & pawn_attacks_bb(Us, s);
@@ -133,7 +133,7 @@ namespace {
                 || (   stoppers == blocked && r >= RANK_5
                     && (shift<Up>(support) & ~(theirPawns | doubleAttackThem)));
 
-        passed &= !(forward_file_bb(Us, s) & ourPawns);
+        passed &= !(forward_file_bb<Us>(s) & ourPawns);
 
         // Passed pawns will be properly scored later in evaluation when we have
         // full attack info.
@@ -152,7 +152,7 @@ namespace {
         else if (!neighbours)
         {
             if (     opposed
-                &&  (ourPawns & forward_file_bb(Them, s))
+                &&  (ourPawns & forward_file_bb<Them>(s))
                 && !(theirPawns & adjacent_files_bb(s)))
                 score -= Doubled;
             else

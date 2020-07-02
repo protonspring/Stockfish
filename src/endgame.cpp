@@ -189,7 +189,7 @@ Value Endgame<KRKP>::operator()(const Position& pos) const {
   Value result;
 
   // If the stronger side's king is in front of the pawn, it's a win
-  if (forward_file_bb(WHITE, strongKing) & weakPawn)
+  if (forward_file_bb<WHITE>(strongKing) & weakPawn)
       result = RookValueEg - distance(strongKing, weakPawn);
 
   // If the weaker side's king is too far from the pawn and the rook,
