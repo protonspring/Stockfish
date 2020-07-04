@@ -171,14 +171,14 @@ Entry* probe(const Position& pos) {
   //Knights
   imb += whiteKnights * (-62 * whiteKnights + 255 * whitePawns + 63 * blackPawns)
        - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns)
-       + 8 * whiteKnights - 8 * blackKnights;
+       + 16 * (whiteKnights > blackKnights + 1) - 16 * (blackKnights > whiteKnights + 1);
 
   //Bishops
   imb += whiteBishops * (42 * blackKnights
            + 104 * whitePawns + 65 * blackPawns   + 59 * blackBP)
        - blackBishops * (42 * whiteKnights
            + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP)
-       + 8 * whiteBishops - 8 * blackBishops;
+       + 16 * (whiteBishops > blackBishops+1) - 16 * (blackBishops>whiteBishops+1);
 
   //Rooks
   imb += whiteRooks * (-170 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
@@ -187,7 +187,7 @@ Entry* probe(const Position& pos) {
        - blackRooks * (-170 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
                        + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
                        + 39 * whitePawns  -  26 * blackBP      + 46 * whiteBP)
-       + 8 * whiteRooks - 8 * blackRooks;
+       + 16 * (whiteRooks>blackRooks+1) - 16 * (blackRooks > whiteRooks+1);
 
   //Queens
   imb += whiteQueens * (-6 * whiteQueens  - 134 * whiteRooks   + 268 * blackRooks
@@ -197,8 +197,7 @@ Entry* probe(const Position& pos) {
        - blackQueens * (-6 * blackQueens  - 134 * blackRooks   + 268 * whiteRooks
                      + 133 * blackBishops + 137 * whiteBishops + 117 * blackKnights
                      -  42 * whiteKnights +  24 * blackPawns   + 100 * whitePawns
-                     - 189 * blackBP      +  97 * whiteBP)
-       + 8 * whiteQueens - 8 * blackQueens;
+                     - 189 * blackBP      +  97 * whiteBP);
 
   e->value = int16_t(imb / 16);
   return e;
