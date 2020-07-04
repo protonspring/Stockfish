@@ -170,15 +170,13 @@ Entry* probe(const Position& pos) {
 
   //Knights
   imb += whiteKnights * (-62 * whiteKnights + 255 * whitePawns + 63 * blackPawns)
-       - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns)
-       + 16 * (whiteKnights > blackKnights + 1) - 16 * (blackKnights > whiteKnights + 1);
+       - blackKnights * (-62 * blackKnights + 255 * blackPawns + 63 * whitePawns);
 
   //Bishops
   imb += whiteBishops * (42 * blackKnights
            + 104 * whitePawns + 65 * blackPawns   + 59 * blackBP)
        - blackBishops * (42 * whiteKnights
-           + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP)
-       + 16 * (whiteBishops > blackBishops+1) - 16 * (blackBishops>whiteBishops+1);
+           + 104 * blackPawns + 65 * whitePawns   + 59 * whiteBP);
 
   //Rooks
   imb += whiteRooks * (-170 * whiteRooks  + 105 * whiteBishops - 24 * blackBishops
@@ -186,8 +184,7 @@ Entry* probe(const Position& pos) {
                       +  39 * blackPawns  -  26 * whiteBP      + 46 * blackBP)
        - blackRooks * (-170 * blackRooks  + 105 * blackBishops - 24 * whiteBishops
                        + 47 * blackKnights + 24 * whiteKnights -  2 * blackPawns
-                       + 39 * whitePawns  -  26 * blackBP      + 46 * whiteBP)
-       + 16 * (whiteRooks>blackRooks+1) - 16 * (blackRooks > whiteRooks+1);
+                       + 39 * whitePawns  -  26 * blackBP      + 46 * whiteBP);
 
   //Queens
   imb += whiteQueens * (-6 * whiteQueens  - 134 * whiteRooks   + 268 * blackRooks
@@ -199,6 +196,12 @@ Entry* probe(const Position& pos) {
                      -  42 * whiteKnights +  24 * blackPawns   + 100 * whitePawns
                      - 189 * blackBP      +  97 * whiteBP);
 
+  // Piece Count imbalance
+  if ((whiteKnights + whiteBishops + whiteRooks) > (blackKnights + blackBishops + blackRooks + 1))
+     imb += 16;
+  else if ((blackKnights + blackBishops + blackRooks) > (whiteKnights + whiteBishops + whiteRooks + 1))
+     imb -= 16;
+ 
   e->value = int16_t(imb / 16);
   return e;
 }
