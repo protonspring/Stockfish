@@ -76,8 +76,10 @@ extern uint8_t SquareDistance[SQUARE_NB][SQUARE_NB];
 
 extern Bitboard SquareBB[SQUARE_NB];
 extern Bitboard LineBB[SQUARE_NB][SQUARE_NB];
-extern Bitboard PseudoAttacks[PIECE_TYPE_NB][SQUARE_NB];
 extern Bitboard PawnAttacks[COLOR_NB][SQUARE_NB];
+extern Bitboard BishopAttacks[SQUARE_NB];
+extern Bitboard KnightAttacks[SQUARE_NB];
+extern Bitboard KingAttacks[SQUARE_NB];
 
 
 /// Magic holds all magic bitboards relevant data for a single square
@@ -298,7 +300,14 @@ inline Bitboard attacks_bb(Square s) {
 
   assert((Pt != PAWN) && (is_ok(s)));
 
-  return PseudoAttacks[Pt][s];
+  switch (Pt)
+  {
+  case BISHOP: return BishopAttacks[s];
+  case ROOK  : return file_bb(s) | rank_bb(s);
+  case QUEEN : return attacks_bb<BISHOP>(s) | attacks_bb<ROOK>(s);
+  case KNIGHT: return KnightAttacks[s];
+  default    : return KingAttacks[s];
+  }
 }
 
 
@@ -316,7 +325,8 @@ inline Bitboard attacks_bb(Square s, Bitboard occupied) {
   case BISHOP: return BishopMagics[s].attacks[BishopMagics[s].index(occupied)];
   case ROOK  : return   RookMagics[s].attacks[  RookMagics[s].index(occupied)];
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[Pt][s];
+  case KNIGHT: return KnightAttacks[s];
+  default    : return KingAttacks[s];
   }
 }
 
@@ -329,7 +339,8 @@ inline Bitboard attacks_bb(PieceType pt, Square s, Bitboard occupied) {
   case BISHOP: return attacks_bb<BISHOP>(s, occupied);
   case ROOK  : return attacks_bb<  ROOK>(s, occupied);
   case QUEEN : return attacks_bb<BISHOP>(s, occupied) | attacks_bb<ROOK>(s, occupied);
-  default    : return PseudoAttacks[pt][s];
+  case KNIGHT: return KnightAttacks[s];
+  default    : return KingAttacks[s];
   }
 }
 
