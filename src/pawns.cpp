@@ -32,17 +32,17 @@ namespace {
   #define S(mg, eg) make_score(mg, eg)
 
   // Pawn penalties
-  constexpr Score Backward      = S( 9, 24);
-  constexpr Score Doubled       = S(11, 56);
-  constexpr Score Isolated      = S( 5, 15);
-  constexpr Score WeakLever     = S( 0, 56);
-  constexpr Score WeakUnopposed = S(13, 27);
+  constexpr Score Backward      = S( -9, -24);
+  constexpr Score Doubled       = S(-11, -56);
+  constexpr Score Isolated      = S( -5, -15);
+  constexpr Score WeakLever     = S(  0, -56);
+  constexpr Score WeakUnopposed = S(-13, -27);
 
   // Bonus for blocked pawns at 5th or 6th rank
   constexpr Score BlockedPawn[2] = { S(-10, -3), S(-3, 3) };
 
   constexpr Score BlockedStorm[RANK_NB] = {
-    S(0, 0), S(0, 0), S(76, 78), S(-10, 15), S(-7, 10), S(-4, 6), S(-1, 2)
+    S(0, 0), S(0, 0), S(-76, -78), S( 10, -15), S(7, -10), S(4, -6), S(1, -2)
   };
 
   // Connected pawn bonus
@@ -62,10 +62,10 @@ namespace {
   // is behind our king. Note that UnblockedStorm[0][1-2] accommodate opponent pawn
   // on edge, likely blocked by our king.
   constexpr Value UnblockedStorm[int(FILE_NB) / 2][RANK_NB] = {
-    { V( 85), V(-289), V(-166), V(97), V(50), V( 45), V( 50) },
-    { V( 46), V( -25), V( 122), V(45), V(37), V(-10), V( 20) },
-    { V( -6), V(  51), V( 168), V(34), V(-2), V(-22), V(-14) },
-    { V(-15), V( -11), V( 101), V( 4), V(11), V(-15), V(-29) }
+    { V( -85), V(289), V( 166), V(-97), V(-50), V(-45), V(-50) },
+    { V( -46), V( 25), V(-122), V(-45), V(-37), V( 10), V(-20) },
+    { V(   6), V(-51), V(-168), V(-34), V(  2), V( 22), V( 14) },
+    { V(  15), V( 11), V(-101), V( -4), V(-11), V( 15), V( 29) }
   };
 
   #undef S
@@ -159,18 +159,18 @@ namespace {
             if (     opposed
                 &&  (ourPawns & forward_file_bb(Them, s))
                 && !(theirPawns & adjacent_files_bb(s)))
-                score -= Doubled;
+                score += Doubled;
             else
-                score -=  Isolated
+                score +=  Isolated
                         + WeakUnopposed * !opposed;
         }
 
         else if (backward)
-            score -=  Backward
+            score +=  Backward
                     + WeakUnopposed * !opposed;
 
         if (!support)
-            score -=  Doubled * doubled
+            score +=  Doubled * doubled
                     + WeakLever * more_than_one(lever);
 
         if (blocked && r > RANK_4)
@@ -234,9 +234,9 @@ Score Entry::evaluate_shelter(const Position& pos, Square ksq) const {
       bonus += make_score(ShelterStrength[d][ourRank], 0);
 
       if (ourRank && (ourRank == theirRank - 1))
-          bonus -= BlockedStorm[theirRank];
+          bonus += BlockedStorm[theirRank];
       else
-          bonus -= make_score(UnblockedStorm[d][theirRank], 0);
+          bonus += make_score(UnblockedStorm[d][theirRank], 0);
   }
 
   return bonus;
