@@ -256,7 +256,7 @@ inline Bitboard pawn_attack_span(Color c, Square s) {
 /// the given color and on the given square is a passed pawn.
 
 inline Bitboard passed_pawn_span(Color c, Square s) {
-  return pawn_attack_span(c, s) | forward_file_bb(c, s);
+  return (adjacent_files_bb(s) | file_bb(s)) & forward_ranks_bb(c, s);
 }
 
 
