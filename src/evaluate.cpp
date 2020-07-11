@@ -371,6 +371,11 @@ namespace {
                 if ((kf < FILE_E) == (file_of(s) < kf))
                     score -= TrappedRook * (1 + !pos.castling_rights(Us));
             }
+
+            // Bonus for being able to check the king on the next move
+            Bitboard occupied = pos.pieces();
+            if (attacks_bb<ROOK>(s, occupied) & attacks_bb<ROOK>(pos.square<KING>(Them), occupied))
+                score += make_score(10,0);
         }
 
         if (Pt == QUEEN)
