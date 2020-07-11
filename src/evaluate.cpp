@@ -375,7 +375,7 @@ namespace {
             // Bonus for being able to check the king on the next move
             Bitboard occupied = pos.pieces();
             if (attacks_bb<ROOK>(s, occupied) & attacks_bb<ROOK>(pos.square<KING>(Them), occupied))
-                score += make_score(10,0);
+                score += make_score( 0, 10);
         }
 
         if (Pt == QUEEN)
