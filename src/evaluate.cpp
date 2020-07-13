@@ -318,9 +318,10 @@ namespace {
                              (s & QueenSide ? QueenSide : KingSide))
                     - pos.can_castle(Us & QUEEN_SIDE)) <= 1))
                     score += BadOutpost;
-            }
+
             else if (bb & s)
                 score += Outpost[Pt == BISHOP];
+
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
                 score += ReachableOutpost;
 
