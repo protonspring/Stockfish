@@ -316,7 +316,7 @@ namespace {
                 && !(b & pos.pieces(Them) & ~pos.pieces(PAWN))
                 && ((popcount(pos.pieces(Them) & ~pos.pieces(PAWN) &
                              (s & QueenSide ? QueenSide : KingSide))
-                    - pos.can_castle(Us & QUEEN_SIDE)) <= 1))
+                    - pos.can_castle(Them & QUEEN_SIDE)) <= 1))
                     score += BadOutpost;
 
             else if (bb & s)
