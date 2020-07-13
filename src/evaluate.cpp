@@ -318,7 +318,7 @@ namespace {
                 && bb & s & ~CenterFiles
                 && !(b & pos.pieces(Them) & ~pos.pieces(PAWN))
                 && ((popcount(pos.pieces(Them) & ~pos.pieces(PAWN) & theSide)
-                    - pos.can_castle(Us & cr)) <= 1))
+                    - pos.can_castle(Them & cr)) <= 1))
                     score += BadOutpost;
 
             else if (bb & s)
