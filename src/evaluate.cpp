@@ -314,9 +314,11 @@ namespace {
             if (   Pt == KNIGHT
                 && bb & s & ~CenterFiles
                 && !(b & pos.pieces(Them) & ~pos.pieces(PAWN))
-                && !conditional_more_than_two(
-                      pos.pieces(Them) & ~pos.pieces(PAWN) & (s & QueenSide ? QueenSide : KingSide)))
-                score += BadOutpost;
+                && ((popcount(pos.pieces(Them) & ~pos.pieces(PAWN) &
+                             (s & QueenSide ? QueenSide : KingSide))
+                    - pos.can_castle(Us & QUEEN_SIDE)) <= 1))
+                    score += BadOutpost;
+            }
             else if (bb & s)
                 score += Outpost[Pt == BISHOP];
             else if (Pt == KNIGHT && bb & b & ~pos.pieces(Us))
