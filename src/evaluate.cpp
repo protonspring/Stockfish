@@ -318,7 +318,7 @@ namespace {
             if (   Pt == KNIGHT
                 && bb & s & ~CenterFiles
                 && !(b & targets)
-                && popcount(sideTargets) < 2 + bool(sideTargets & FileABB))
+                && popcount(sideTargets) < 2 + bool(sideTargets & SQ_A1))
                 score += BadOutpost;
             else if (bb & s)
                 score += Outpost[Pt == BISHOP];
