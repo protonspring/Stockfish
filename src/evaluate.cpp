@@ -318,7 +318,7 @@ namespace {
 
             if (   Pt == KNIGHT
                 && bb & s & ~CenterFiles) // on a side outpost
-                score += popcount(sideTargets) * make_score(-3, 18);
+                score += popcount(sideTargets) * make_score(-2, 12);
                 //&& !(b & targets)  // no relevant targets
                 //&& (more_than_one(sideTargets) == bool(sideTargets & SQ_A1)))
                 //&& (popcount(sideTargets) < 2 + bool(sideTargets & SQ_A1)))
