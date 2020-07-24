@@ -314,11 +314,10 @@ namespace {
             bb = OutpostRanks & attackedBy[Us][PAWN] & ~pe->pawn_attacks_span(Them);
             Bitboard targets = pos.pieces(Them) & ~pos.pieces(PAWN);
             Bitboard sideTargets = targets & (QueenSide & s ? QueenSide : KingSide);
-
             if (   Pt == KNIGHT
-                && bb & s & ~CenterFiles
-                && !(b & targets)
-                && popcount(sideTargets) < 2 + bool(sideTargets & SQ_A1))
+                && bb & s & ~CenterFiles // on a side outpost
+                && !(b & targets)  // no relevant targets
+                && (more_than_one(sideTargets) == bool(sideTargets & SQ_A1)))
                 score += BadOutpost;
             else if (bb & s)
                 score += Outpost[Pt == BISHOP];
