@@ -189,7 +189,7 @@ namespace {
         if (Checks)
         {
             if (    (Pt == BISHOP || Pt == ROOK || Pt == QUEEN)
-                && !(attacks_bb<Pt>(from) & target & pos.check_squares(Pt)))
+                && !(attacks_bb<Pt>(from) & target))
                 continue;
 
             if (pos.blockers_for_king(~Us) & from)
