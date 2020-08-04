@@ -506,8 +506,8 @@ void Thread::search() {
           && !Threads.stop
           && !mainThread->stopOnPonderhit)
       {
-          double fallingEval = (49.0 + mainThread->bestPreviousScore - 2 * bestValue
-                                     + mainThread->iterValue[iterIdx]) / 121.0;
+          double fallingEval = 0.405 - 0.016 * int(bestValue) + 0.008 *
+                  int(mainThread->bestPreviousScore + mainThread->iterValue[iterIdx]);
 
           fallingEval = Utility::clamp(fallingEval, 0.5, 1.5);
 
